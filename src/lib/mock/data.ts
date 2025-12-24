@@ -1,3 +1,5 @@
+import { FaWhatsapp, FaInstagram, FaFacebookF, FaTiktok } from "react-icons/fa";
+
 export const mockAdvisorLanding = {
   heroTitle: "Julia Espinoza",
   heroSubtitle:
@@ -61,7 +63,7 @@ export const mockAdvisorLanding = {
       text: "Excelente servicio de tour inmobiliario por las zonas cercanas al Lago Ypacaraí.",
     },
     {
-      name: "Leticia",
+      name: "Leticia y Lucas",
       text: "Gracias a Julia logramos encontrar la opción de inversión adecuada a nuestro presupuesto.",
     },
     {
@@ -75,14 +77,26 @@ export const mockAdvisorLanding = {
       label: "WhatsApp",
       value: "+595 985 444 801",
       href: "https://wa.me/595985444801",
+      icon: "whatsapp",
     },
     {
       label: "Instagram",
       value: "@juliespinoza.skyone",
-      href: "https://instagram.com/juliespinoza.skyone",
+      href: "https://instagram.com/juespinoza.skyone",
+      icon: "instagram",
     },
-    { label: "Facebook", value: "Julia Espinoza — Real Estate", href: "#" },
-    { label: "TikTok", value: "@juliespinoza_skyone", href: "#" },
+    {
+      label: "Facebook",
+      value: "Julia Espinoza — Real Estate",
+      href: "https://www.facebook.com/juespinoza.skyone",
+      icon: "facebook",
+    },
+    {
+      label: "TikTok",
+      value: "@juliespinoza_skyone",
+      href: "https://www.tiktok.com/@juliaespinoza.sky",
+      icon: "tiktok",
+    },
   ],
 };
 
@@ -190,3 +204,18 @@ export const mockPropertyLanding = {
     "Detalles y razones de inversión (placeholder).",
   ],
 };
+
+export const mockPillars = [
+  {
+    title: "Objetivos",
+    text: "4 Torres de edificios, listos para entregar desde USD 47.900.",
+  },
+  {
+    title: "Misión",
+    text: "Lofts universitarios equipados, disponibles para el 2027 desde USD 43.000.",
+  },
+  {
+    title: "Visión",
+    text: "Casa de 3 dormitorios, 1 baño y 2 estacionamientos; cochera a GS 480.000.000.",
+  },
+];

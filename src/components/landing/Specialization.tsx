@@ -11,7 +11,7 @@ export function Specialization({
   ctaHref: string;
 }) {
   return (
-    <section className="container-page container-narrow py-14">
+    <section className="container-page container-narrow py-6">
       <div className="grid gap-10 md:grid-cols-2 md:items-start">
         <div>
           <SectionTitle title="Especialización" subtitle="" align="left" />

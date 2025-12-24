@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/Button";
 
 export default function LeadMagnetPage() {
   return (
-    <div className="container-page py-14">
+    <div className="container-page py-6">
       <SectionTitle
         title="Guía gratuita para inversores"
         subtitle="Dejá tu WhatsApp o correo y te la envío."

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/Button";
 
 export function OfficesGrid({ title, items }: { title: string; items: any[] }) {
   return (
-    <section className="container-page py-14">
+    <section className="container-page py-6">
       <h2 className="text-4xl font-semibold">{title}</h2>
 
       <div className="mt-8 grid gap-6 md:grid-cols-3">

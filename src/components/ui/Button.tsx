@@ -31,9 +31,9 @@ export function Button(props: ButtonProps) {
   const base =
     "inline-flex items-center justify-center px-4 py-2 text-sm text-accent2 font-medium transition";
   const variants: Record<ButtonVariant, string> = {
-    primary: "bg-accent1 text-main hover:opacity-90",
+    primary: "bg-accent1 text-primary hover:opacity-90",
     secondary:
-      "border border-accent1 text-accent1 hover:bg-accent1 hover:text-main",
+      "border border-accent1 text-accent1 hover:bg-accent1 hover:text-primary",
   };
 
   const cls = cn(base, variants[variant], className);

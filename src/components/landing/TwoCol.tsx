@@ -22,7 +22,7 @@ export function TwoCol({
   ctaHref,
 }: Props) {
   return (
-    <section className="container-page container-narrow py-14">
+    <section className="container-page container-narrow py-6">
       <div className="grid gap-10 md:grid-cols-2 md:items-center">
         <div className="overflow-hidden bg-accent2">
           <img

@@ -17,7 +17,7 @@ export default function PublicLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable}`}>
-        <div className="min-h-screen bg-base text-main">
+        <div className="min-h-screen bg-base text-primary">
           <NavBar />
           <main>{children}</main>
           <Footer />
