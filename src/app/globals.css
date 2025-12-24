@@ -1,26 +1,150 @@
+/* Tailwind 4: un solo import */
 @import "tailwindcss";
 
+/* ============================
+   COLORES LIGHT/DARK - SUMO
+   ============================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ip-primary: #0a1a2f; /* Azul dark */
+  --ip-primary-hover: #475569; /* Gris medio */
+  --ip-secondary: #1f3b58; /* Azul medio */
+  --ip-accent1: #d6a84e; /* Dorado */
+  --ip-accent2: #f4ede2; /* Beige claro */
+
+  --ip-bg: #f4ede2; /* Background general */
+  --ip-surface: #ffffff; /* Cards, modals, etc. */
+  --ip-border: #e2e8f0; /* Bordes suaves */
+
+  --ip-text-primary: #0a1a2f; /* Texto principal */
+  --ip-text-secondary: #475569; /* Texto secundario */
+  --ip-text-muted: #94a3b8; /* Etiquetas, helpers */
+  --ip-text-highlight: #d6a84e;
+
+  --ip-danger: #ef4444; /* (opcional) errores */
+  --ip-success: #16a34a; /* (opcional) estados OK */
 }
 
-@theme inline {
+/* Versión Dark de la misma paleta */
+:root.dark,
+.dark :root {
+  --ip-primary: #386294; /* Azul mar */
+  --ip-primary-hover: #93bceb; /* Azul celeste */
+  --ip-secondary: #7cd9df; /* Turquesa */
+  --ip-accent1: #d6a84e; /* Dorado */
+  --ip-accent2: #f4ede2; /* Beige claro */
+
+  --ip-bg: #0a1124; /* Background oscuro */
+  --ip-surface: #1e293b; /* Cards en dark */
+  --ip-border: #334155; /* Bordes más marcados */
+
+  --ip-text-primary: #f8fafc;
+  --ip-text-secondary: #cbd5e1;
+  --ip-text-muted: #64748b;
+  --ip-text-highlight: #7cd9df;
+
+  --ip-danger: #fca5a5;
+  --ip-success: #4ade80;
+}
+
+/* ============================
+   TIPOGRAFÍA – SUMO
+   ============================ */
+
+:root {
+  --font-primary: var(--font-inter);
+  --font-brand: var(--font-playfair);
+
+  /* Escala tipográfica recomendada */
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.125rem; /* 18px */
+  --text-xl: 1.25rem; /* 20px */
+  --text-2xl: 1.5rem; /* 24px */
+  --text-3xl: 1.875rem; /* 30px */
+}
+
+/* Fondo base y tipografía global */
+body {
+  background-color: var(--ip-surface);
+  color: var(--ip-text-primary);
+  font-family: var(--font-primary), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-playfair), serif;
+}
+
+/* @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+} */
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .container-page {
+    @apply mx-auto max-w-6xl px-4;
+  }
+
+  .container-narrow {
+    @apply mx-auto px-4 md:px-[8%];
+  }
+
+  .text-inter {
+    font-family: var(--font-inter), sans-serif;
+  }
+  .bg-primary {
+    background-color: var(--ip-primary);
+  }
+  .bg-secondary {
+    background-color: var(--ip-secondary);
+  }
+  .bg-accent1 {
+    background-color: var(--ip-accent1);
+  }
+
+  .text-primary {
+    color: var(--ip-text-primary);
+  }
+  .text-secondary {
+    color: var(--ip-text-secondary);
+  }
+  .text-muted {
+    color: var(--ip-text-muted);
+  }
+  .text-highlight {
+    color: var(--ip-text-highlight);
+  }
+  .text-accent1 {
+    color: var(--ip-accent1);
+  }
+  .text-accent2 {
+    color: var(--ip-accent2);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-sm px-4 py-2 font-medium hover:opacity-90;
+    background-color: var(--ip-bg);
+    color: var(--ip-text-primary);
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-sm px-4 py-2 font-medium border;
+    border-color: var(--ip-accent1);
+    color: var(--ip-text-primary);
+  }
+  .btn-secondary:hover {
+    background-color: var(--ip-accent1);
+  }
 }
