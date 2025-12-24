@@ -10,36 +10,46 @@ export function FeaturedGrid({
   items: any[];
 }) {
   return (
-    <section className="container-page py-14">
-      {title ? <h2 className="text-4xl font-semibold">{title}</h2> : null}
-      <div
-        className={`mt-8 grid gap-6 ${
-          items.length >= 3 ? "md:grid-cols-3" : "md:grid-cols-2"
-        }`}
-      >
-        {items.map((p) => (
-          <Card key={p.slug}>
-            <div className="relative">
-              <img
-                src={p.imageUrl}
-                alt={p.title}
-                className="h-48 w-full object-cover"
-              />
-              <span className="absolute left-3 top-3 rounded-sm bg-secondary px-3 py-1 text-xs text-white">
-                {p.badge ?? "Venta"}
-              </span>
-            </div>
-            <div className="p-5">
-              <h3 className="text-lg font-semibold">{p.title}</h3>
-              <p className="mt-2 text-sm text-secondary">{p.subtitle}</p>
-              <div className="mt-5">
-                <Button href={p.href ?? `/bienes-raices/propiedades/${p.slug}`}>
-                  Consultar
-                </Button>
+    <section className="relative overflow-hidden">
+      <div className="absolute inset-0">
+        <div
+          className="h-full w-full bg-cover bg-center"
+          style={{ backgroundImage: `url('/backgrounds/background.png')` }}
+        />
+        <div className="absolute inset-0 bg-white/70" />
+      </div>
+      <div className="container-page container-narrow relative py-4 md:py-8">
+        {title ? <h2 className="text-4xl font-semibold">{title}</h2> : null}
+        <div
+          className={`mt-8 grid gap-6 ${
+            items.length >= 3 ? "md:grid-cols-3" : "md:grid-cols-2"
+          }`}
+        >
+          {items.map((p) => (
+            <Card key={p.slug}>
+              <div className="relative">
+                <img
+                  src={p.imageUrl}
+                  alt={p.title}
+                  className="h-48 w-full object-cover"
+                />
+                <span className="absolute right-0 top-3 bg-secondary px-3 py-1 text-xs text-white">
+                  {p.badge ?? "Venta"}
+                </span>
               </div>
-            </div>
-          </Card>
-        ))}
+              <div className="bottom-0 bg-white py-2 min-h-20">
+                <h3 className="text-lg font-semibold px-2">{p.title}</h3>
+                <p className="text-sm text-secondary px-2">{p.subtitle}</p>
+              </div>
+              <Button
+                href={p.href ?? `/bienes-raices/propiedades/${p.slug}`}
+                className="w-full"
+              >
+                Consultar
+              </Button>
+            </Card>
+          ))}
+        </div>
       </div>
     </section>
   );

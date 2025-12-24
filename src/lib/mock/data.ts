@@ -34,9 +34,9 @@ export const mockAdvisorLanding = {
   featuredProperties: [
     {
       slug: "oga-ciudad-jardin",
-      title: "Oga - Ciudad Jardín",
+      title: "Oga Ciudad Jardín",
       subtitle: "4 Torres de edificios, listos para entregar",
-      imageUrl: "/images/prop1.jpg",
+      imageUrl: "/images/prop1.png",
       badge: "Venta",
     },
     {

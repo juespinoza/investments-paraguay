@@ -30,7 +30,7 @@ export default function HomePage() {
         title={d.profile.title}
         meta={[
           { label: "Años de carrera", value: d.profile.years },
-          { label: "Inmobiliaria", value: d.profile.company },
+          { label: "Oficina", value: d.profile.company },
         ]}
         paragraphs={d.profile.paragraphs}
         ctaLabel="Contactar"

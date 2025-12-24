@@ -26,11 +26,11 @@ export default function AdvisorLandingPage() {
       <TwoCol
         leftImageUrl={d.profile.imageUrl}
         leftImageAlt="Asesor"
-        eyebrow="Carrera inmobiliaria"
+        eyebrow="Conoce más sobre mí."
         title={d.profile.title}
         meta={[
           { label: "Años de carrera", value: d.profile.years },
-          { label: "Inmobiliaria", value: d.profile.company },
+          { label: "Oficina", value: d.profile.company },
         ]}
         paragraphs={d.profile.paragraphs}
         ctaLabel="Contactar"

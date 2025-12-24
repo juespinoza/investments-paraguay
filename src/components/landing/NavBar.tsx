@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function NavBar() {
@@ -5,7 +6,12 @@ export function NavBar() {
     <header className="border-b bg-white">
       <div className="container-page container-narrow flex items-center justify-between py-4">
         <Link href="/" className="font-semibold tracking-wide">
-          INVESTMENTS <span className="text-accent1">PARAGUAY</span>
+          <Image
+            src="/images/logo.png"
+            alt="Investments Paraguay"
+            width={180}
+            height={40}
+          />
         </Link>
 
         <nav className="flex gap-3">

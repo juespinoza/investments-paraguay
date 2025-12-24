@@ -8,12 +8,7 @@ export function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={cn(
-        "overflow-hidden rounded-sm border bg-white shadow-sm",
-        className
-      )}
-    >
+    <div className={cn("overflow-hidden", className)}>
       {children}
     </div>
   );
