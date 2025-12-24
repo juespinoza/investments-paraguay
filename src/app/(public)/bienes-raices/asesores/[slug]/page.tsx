@@ -7,6 +7,11 @@ import { Testimonials } from "@/components/landing/Testimonials";
 import { SocialLinks } from "@/components/landing/SocialLinks";
 import { mockAdvisorLanding } from "@/lib/mock/data";
 
+const Metadata = {
+  title: mockAdvisorLanding.metadata.title,
+  description: mockAdvisorLanding.metadata.description,
+};
+
 export default function AdvisorLandingPage() {
   const d = mockAdvisorLanding;
 

@@ -24,8 +24,8 @@ export function HeroSplit({
     <section className="relative overflow-hidden">
       <div className="absolute inset-0">
         <div
-          className="h-full w-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${backgroundImageUrl})` }}
+          className="h-full w-full bg-cover bg-center bg-accent2"
+          // style={{ backgroundImage: `url(${backgroundImageUrl})` }}
         />
         <div className="absolute inset-0 bg-white/70" />
       </div>

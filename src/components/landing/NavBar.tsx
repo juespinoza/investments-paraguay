@@ -10,7 +10,7 @@ export function NavBar() {
             src="/images/logo.png"
             alt="Investments Paraguay"
             width={180}
-            height={40}
+            height={59.4}
           />
         </Link>
 

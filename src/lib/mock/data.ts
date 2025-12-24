@@ -1,3 +1,5 @@
+import { metadata } from "@/app/_layout";
+import { title } from "process";
 import { FaWhatsapp, FaInstagram, FaFacebookF, FaTiktok } from "react-icons/fa";
 
 export const mockAdvisorLanding = {
@@ -7,6 +9,12 @@ export const mockAdvisorLanding = {
   heroCtaLabel: "Contactar",
   heroCtaHref: "/bienes-raices/asesores/julia-espinoza",
   heroBg: "/backgrounds/background.png",
+
+  metadata: {
+    title: `Julia Espinoza - ${metadata.title}`,
+    description:
+      "Asesora inmobiliaria especializada en inversiones inteligentes en Paraguay. Conéctate con Julia para descubrir oportunidades de inversión excepcionales.",
+  },
 
   profile: {
     imageUrl: "/images/profile.jpg",
@@ -81,7 +89,7 @@ export const mockAdvisorLanding = {
     },
     {
       label: "Instagram",
-      value: "@juliespinoza.skyone",
+      value: "@juespinoza.skyone",
       href: "https://instagram.com/juespinoza.skyone",
       icon: "instagram",
     },
@@ -93,8 +101,8 @@ export const mockAdvisorLanding = {
     },
     {
       label: "TikTok",
-      value: "@juliespinoza_skyone",
-      href: "https://www.tiktok.com/@juliaespinoza.sky",
+      value: "@juespinoza.skyone",
+      href: "https://www.tiktok.com/@juespinoza.skyone",
       icon: "tiktok",
     },
   ],

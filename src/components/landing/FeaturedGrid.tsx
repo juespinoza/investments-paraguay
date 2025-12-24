@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import Image from "next/image";
 
 export function FeaturedGrid({
   title,
@@ -13,8 +14,8 @@ export function FeaturedGrid({
     <section className="relative overflow-hidden">
       <div className="absolute inset-0">
         <div
-          className="h-full w-full bg-cover bg-center"
-          style={{ backgroundImage: `url('/backgrounds/background.png')` }}
+          className="h-full w-full bg-cover bg-center bg-accent2"
+          // style={{ backgroundImage: `url('/backgrounds/background.png')` }}
         />
         <div className="absolute inset-0 bg-white/70" />
       </div>
@@ -28,8 +29,15 @@ export function FeaturedGrid({
           {items.map((p) => (
             <Card key={p.slug}>
               <div className="relative">
-                <img
+                {/* <img
                   src={p.imageUrl}
+                  alt={p.title}
+                  className="h-48 w-full object-cover"
+                /> */}
+                <Image
+                  src={p.imageUrl}
+                  width={400}
+                  height={300}
                   alt={p.title}
                   className="h-48 w-full object-cover"
                 />
