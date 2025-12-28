@@ -1,7 +1,7 @@
-import Link from "next/link";
+"use client";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import Image from "next/image";
+import { CldImage } from "next-cloudinary";
 
 export function FeaturedGrid({
   title,
@@ -29,17 +29,15 @@ export function FeaturedGrid({
           {items.map((p) => (
             <Card key={p.slug}>
               <div className="relative">
-                {/* <img
-                  src={p.imageUrl}
+                <CldImage
+                  src={p.coverImageUrl}
+                  width="400"
+                  height="300"
+                  crop={{
+                    type: "auto",
+                    source: true,
+                  }}
                   alt={p.title}
-                  className="h-48 w-full object-cover"
-                /> */}
-                <Image
-                  src={p.coverImageUrl || "/images/prop2.jpg"}
-                  width={400}
-                  height={300}
-                  alt={p.title}
-                  className="h-48 w-full object-cover"
                 />
                 <span className="absolute right-0 top-3 bg-secondary px-3 py-1 text-xs text-white">
                   {p.badge ?? "Venta"}
