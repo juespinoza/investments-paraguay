@@ -4,37 +4,10 @@ import { HeroSplit } from "@/components/landing/HeroSplit";
 import { AboutSection } from "@/components/landing/AboutSection";
 import { FeaturedGrid } from "@/components/landing/FeaturedGrid";
 import { SocialLinks } from "@/components/landing/SocialLinks";
-import { SocialItem } from "@/lib/data/types";
+import { PublicAdvisorLanding } from "@/lib/data/types";
+import { ServicesSection } from "@/components/landing/ServicesSection";
 
-export const revalidate = 120;
-
-type PublicAdvisorLanding = {
-  slug: string;
-  fullName: string;
-  headline: string | null;
-  heroBgUrl: string | null;
-  ctaLabel: string | null;
-  ctaHref: string | null;
-
-  about: {
-    imageUrl: string;
-    title: string;
-    startDate: string;
-    company: string;
-    description: string | null;
-    paragraphs: [string, string];
-  };
-
-  featuredProperties: Array<{
-    slug: string;
-    title: string;
-    coverImageUrl: string | null;
-    priceUsd: number | null;
-    city: string | null;
-  }>;
-
-  socialMedia: Array<SocialItem>;
-};
+export const revalidate = 300;
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -43,16 +16,18 @@ export default async function AdvisorLandingPage({ params }: PageProps) {
 
   const d = await apiGet<PublicAdvisorLanding>(
     `/api/public/asesores/${slug}`,
-    300
+    revalidate
   );
 
   if (!d) notFound();
+
+  console.log("Advisor landing data:", d);
 
   const featuredItems = d.featuredProperties.map((p) => ({
     slug: p.slug,
     title: p.title,
     subtitle: p.city ?? "",
-    coverImageUrl: p.coverImageUrl ?? "/placeholders/property.jpg",
+    coverImageUrl: p.coverImageUrl ?? "intentoPortada_wku8ef",
     href: `/bienes-raices/${p.slug}`,
     badge: "Venta",
   }));
@@ -75,6 +50,16 @@ export default async function AdvisorLandingPage({ params }: PageProps) {
         eyebrow="Sobre mí"
         title={d.about.title}
         paragraphs={[d.about.paragraphs[0], d.about.paragraphs[1]]}
+        ctaLabel={d.ctaLabel ?? "Contactar"}
+        ctaHref={d.ctaHref ?? "#"}
+      />
+
+      <ServicesSection
+        rightImageUrl="specialization_gccm0n"
+        rightImageAlt="Especialidad"
+        eyebrow="Servicios inmobiliarios"
+        title="Especialización y compromiso"
+        paragraphs={[d.services.paragraphs[0], d.services.paragraphs[1]]}
         ctaLabel={d.ctaLabel ?? "Contactar"}
         ctaHref={d.ctaHref ?? "#"}
       />

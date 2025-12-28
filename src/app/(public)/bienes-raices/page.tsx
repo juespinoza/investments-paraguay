@@ -24,8 +24,8 @@ export default async function BienesRaicesPage() {
       slug: p.slug,
       title: p.title,
       subtitle: p.subtitle ?? "",
-      coverImageUrl: p.coverImageUrl ?? "/placeholders/property.jpg",
-      href: `/bienes-raices/${p.slug}`,
+      coverImageUrl: p.coverImageUrl ?? "intentoPortada_wku8ef",
+      href: `/bienes-raices/propiedades/${p.slug}`,
       badge: "Venta",
     })) ?? [];
 

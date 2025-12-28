@@ -1,7 +1,7 @@
 import { apiGet } from "@/lib/api/public";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import { Button } from "@/components/ui/Button";
+import { ImageCloudinary } from "@/components/ui/ImageCloudinary";
 
 export const revalidate = 120;
 
@@ -39,13 +39,11 @@ export default async function PropertyPage({ params }: PageProps) {
     <section className="container-page container-narrow py-8">
       <div className="grid gap-8 md:grid-cols-2">
         <div className="overflow-hidden rounded-xl border bg-white">
-          <Image
-            src={property.coverImageUrl ?? "/placeholders/property.jpg"}
+          <ImageCloudinary
+            imageUrl={property.coverImageUrl ?? "intentoPortada_wku8ef"}
             width={1200}
             height={800}
             alt={property.title}
-            className="h-auto w-full object-cover"
-            priority
           />
         </div>
 

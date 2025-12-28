@@ -1,13 +1,22 @@
 import { Button } from "@/components/ui/Button";
 import { SectionTitle } from "./SectionTitle";
 import Image from "next/image";
+import { ImageCloudinary } from "../ui/ImageCloudinary";
 
 export function ServicesSection({
-  items,
+  rightImageUrl,
+  rightImageAlt,
+  eyebrow,
+  title,
+  paragraphs,
   ctaLabel,
   ctaHref,
 }: {
-  items: string[];
+  rightImageUrl: string;
+  rightImageAlt: string;
+  eyebrow: string;
+  title: string;
+  paragraphs: string[];
   ctaLabel: string;
   ctaHref: string;
 }) {
@@ -16,17 +25,23 @@ export function ServicesSection({
       <div className="flex flex-col md:flex-row gap-8 ">
         <div className="order-2 md:order-1 flex-1">
           <p className="text-sm uppercase tracking-widest text-secondary">
-            {`Servicios`}
+            {eyebrow}
           </p>
-          <SectionTitle title="Mi especialización" subtitle="" align="left" />
-          <div className="mt-6 space-y-6">
+          {/* <h2 className="mt-2 text-4xl font-semibold">{title}</h2> */}
+          <SectionTitle title={title} subtitle="" align="left" />
+          {/* <div className="mt-6 space-y-6">
             {items.map((it, key) => (
               <div key={`servicios-${key}`}>
-                {/* <h3 className="font-semibold">{it.title}</h3> */}
-                {/* {it.lines.map((l) => ( */}
+                <h3 className="font-semibold">{it.title}</h3>
+                {it.lines.map((l) => (
                 <p className="font-light">{it}</p>
-                {/* ))} */}
+                ))}
               </div>
+            ))}
+          </div> */}
+          <div className="mt-5 space-y-3 text-secondary font-light">
+            {paragraphs.map((p, idx) => (
+              <p key={idx}>{p}</p>
             ))}
           </div>
 
@@ -38,12 +53,18 @@ export function ServicesSection({
         </div>
 
         <div className="overflow-hidden bg-accent2 order-1 md:order-2 flex-1">
-          <Image
-            src="/images/specialization.png"
+          {/* <Image
+            src={rightImageUrl}
             width={400}
             height={300}
-            alt="Specialization"
+            alt={rightImageAlt}
             className="h-42 md:h-full w-full object-cover "
+          /> */}
+          <ImageCloudinary
+            imageUrl={rightImageUrl}
+            width={400}
+            height={300}
+            alt={rightImageAlt}
           />
         </div>
       </div>

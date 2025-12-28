@@ -30,7 +30,7 @@ export function FeaturedGrid({
             <Card key={p.slug}>
               <div className="relative">
                 <CldImage
-                  src={p.coverImageUrl}
+                  src={p.coverImageUrl ?? "intentoPortada_wku8ef"}
                   width="400"
                   height="300"
                   crop={{

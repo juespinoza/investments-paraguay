@@ -20,7 +20,7 @@ export function NavBar() {
           </Link>
           <Link
             className="bg-secondary px-4 py-2 text-sm text-white"
-            href="/bienes-raices/propiedades"
+            href="/bienes-raices"
           >
             Bienes raíces
           </Link>

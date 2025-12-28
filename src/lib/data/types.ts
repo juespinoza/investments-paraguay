@@ -72,3 +72,39 @@ export type SocialItem = {
   href: string;
   platform: SocialPlatform;
 };
+
+export type PublicAdvisorLanding = {
+  slug: string;
+  fullName: string;
+  headline: string | null;
+  heroBgUrl: string | null;
+  ctaLabel: string | null;
+  ctaHref: string | null;
+
+  about: {
+    imageUrl: string;
+    title: string;
+    startDate: string;
+    company: string;
+    description: string | null;
+    paragraphs: [string, string];
+  };
+
+  services: {
+    propertyTypes: string[];
+    clientTypes: string[];
+    areas: string[];
+    serviceList: string[];
+    paragraphs: [string, string];
+  };
+
+  featuredProperties: Array<{
+    slug: string;
+    title: string;
+    coverImageUrl: string | null;
+    priceUsd: number | null;
+    city: string | null;
+  }>;
+
+  socialMedia: Array<SocialItem>;
+};

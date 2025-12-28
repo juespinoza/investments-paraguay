@@ -14,22 +14,22 @@ export function Footer() {
             />
           </div>
           <div className="flex flex-col md:flex-row gap-6">
-            <a className="hover:text-primary" href="#">
+            {/* <a className="hover:text-primary" href="/bienes-raices/asesores">
               Asesores
-            </a>
-            <a className="hover:text-primary" href="#">
+            </a> */}
+            <a className="hover:text-primary" href="legales">
               Legales
             </a>
-            <a className="hover:text-primary" href="#">
+            <a className="hover:text-primary" href="/nosotros">
               Nosotros
             </a>
-            <a className="hover:text-primary" href="/blog">
+            {/* <a className="hover:text-primary" href="/blog">
               Blog
-            </a>
-            <a className="hover:text-primary" href="#">
+            </a> */}
+            <a className="hover:text-primary" href="/cookies">
               Cookies
             </a>
-            <a className="hover:text-primary" href="#">
+            <a className="hover:text-primary" href="/contacto">
               Contacto
             </a>
           </div>
