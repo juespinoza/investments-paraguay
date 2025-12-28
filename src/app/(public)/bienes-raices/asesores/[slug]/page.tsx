@@ -43,7 +43,7 @@ export default async function AdvisorLandingPage({ params }: PageProps) {
 
   const d = await apiGet<PublicAdvisorLanding>(
     `/api/public/asesores/${slug}`,
-    120
+    300
   );
 
   if (!d) notFound();

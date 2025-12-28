@@ -94,5 +94,9 @@ export async function GET(_req: Request, { params }: Params) {
     })),
   };
 
-  return NextResponse.json(response);
+  return NextResponse.json(response, {
+    headers: {
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
+    },
+  });
 }
