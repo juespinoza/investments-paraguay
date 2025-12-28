@@ -6,6 +6,8 @@ import { FeaturedGrid } from "@/components/landing/FeaturedGrid";
 import { SocialLinks } from "@/components/landing/SocialLinks";
 import { PublicAdvisorLanding } from "@/lib/data/types";
 import { ServicesSection } from "@/components/landing/ServicesSection";
+import { CTAWide } from "@/components/landing/CTAWide";
+import { Testimonials } from "@/components/landing/Testimonials";
 
 export const revalidate = 300;
 
@@ -64,7 +66,14 @@ export default async function AdvisorLandingPage({ params }: PageProps) {
         ctaHref={d.ctaHref ?? "#"}
       />
 
+      <CTAWide
+        line1="Obtenga las mejores opciones de inversión con la ayuda de"
+        highlight="nuestro grupo de asesores altamente experimentados"
+      />
+
       <FeaturedGrid title="Propiedades destacadas" items={featuredItems} />
+
+      <Testimonials title="Testimonios" items={d.testimonies} />
 
       <SocialLinks title="Redes sociales" items={d.socialMedia} />
     </>

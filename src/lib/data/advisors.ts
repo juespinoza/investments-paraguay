@@ -39,7 +39,7 @@ export const ADVISORS: Advisor[] = [
 
     featuredPropertySlugs: ["oga-ciudad-jardin", "campus-3", "casa-colonial"],
 
-    testimonials: [
+    testimonies: [
       { name: "David", text: "Excelente servicio de tour inmobiliario..." },
       { name: "Leticia y Lucas", text: "Gracias a Julia logramos..." },
       { name: "Christopher", text: "Julia invirtió el tiempo..." },

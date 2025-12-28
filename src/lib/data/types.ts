@@ -52,7 +52,7 @@ export type Advisor = {
 
   featuredPropertySlugs: string[]; // referencia a propiedades
 
-  testimonials: Testimonial[];
+  testimonies: Testimonial[];
   socialLinks: SocialLink[];
 };
 
@@ -105,6 +105,8 @@ export type PublicAdvisorLanding = {
     priceUsd: number | null;
     city: string | null;
   }>;
+
+  testimonies: Array<Testimonial>;
 
   socialMedia: Array<SocialItem>;
 };
