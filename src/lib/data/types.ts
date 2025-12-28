@@ -1,12 +1,5 @@
 export type SocialIconKey = "whatsapp" | "instagram" | "facebook" | "tiktok";
 
-export type SocialLink = {
-  label: string;
-  value: string;
-  href: string;
-  icon: SocialIconKey;
-};
-
 export type Testimonial = {
   name: string;
   text: string;
@@ -70,6 +63,14 @@ export type SocialItem = {
   label: string;
   value: string;
   href: string;
+  platform: SocialPlatform;
+};
+
+export type SocialLink = {
+  label: string;
+  value: string;
+  href: string;
+  icon: SocialIconKey;
   platform: SocialPlatform;
 };
 

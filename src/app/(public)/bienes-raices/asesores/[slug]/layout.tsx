@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -6,12 +7,10 @@ export const metadata: Metadata = {
     "Asesora inmobiliaria especializada en inversiones inteligentes en Paraguay. Conéctate con Julia para descubrir oportunidades de inversión excepcionales.",
 };
 
-export default function AsesorLayout({
-  children,
-  slug,
-}: {
-  children: React.ReactNode;
-  slug: string;
-}) {
+type Props = {
+  children: ReactNode;
+};
+
+export default function AsesorLayout({ children }: Props) {
   return <div>{children}</div>;
 }

@@ -1,6 +1,7 @@
 import { metadata } from "@/app/_layout";
 import { title } from "process";
 import { FaWhatsapp, FaInstagram, FaFacebookF, FaTiktok } from "react-icons/fa";
+import { SocialLink } from "../data/types";
 
 export const mockAdvisorLanding = {
   heroTitle: "Julia Espinoza",
@@ -193,11 +194,29 @@ export const mockAgencyLanding = {
   ],
 
   socialLinks: [
-    { label: "WhatsApp", value: "+595 999 999 999", href: "#" },
-    { label: "Instagram", value: "@skyoneparaguay", href: "#" },
-    { label: "Facebook", value: "SkyOne Real Estate Latam", href: "#" },
-    { label: "TikTok", value: "@skyone_paraguay", href: "#" },
-  ],
+    {
+      label: "WhatsApp",
+      value: "+595 999 999 999",
+      href: "#",
+      icon: "whatsapp",
+      platform: "WHATSAPP",
+    },
+    {
+      label: "Instagram",
+      value: "@skyoneparaguay",
+      href: "#",
+      icon: "instagram",
+      platform: "INSTAGRAM",
+    },
+    {
+      label: "Facebook",
+      value: "SkyOne Real Estate Latam",
+      href: "#",
+      icon: "facebook",
+      platform: "FACEBOOK",
+    },
+    { label: "TikTok", value: "@skyone_paraguay", href: "#", icon: "tiktok" },
+  ] as SocialLink[],
 };
 
 export const mockPropertyLanding = {

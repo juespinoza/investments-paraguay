@@ -25,16 +25,16 @@ export default function HomePage() {
         highlight="ayuda de nuestro grupo de asesores altamente experimentados."
       />
 
-      <FeaturedGrid title="Propiedades" items={d.featuredProperties} />
+      {/* <FeaturedGrid title="Propiedades" items={d.featuredProperties} /> */}
 
-      <CTAWide
+      {/* <CTAWide
         line1="Obtenga las mejores opciones de inversión con la"
         highlight="ayuda de nuestro grupo de asesores altamente experimentados."
-      />
+      /> */}
 
-      <FeaturedGrid title="Finanzas" items={d.featuredProperties} />
+      {/* <FeaturedGrid title="Finanzas" items={d.featuredProperties} /> */}
 
-      <SocialLinks title="Redes sociales" items={d.socialLinks} />
+      {/* <SocialLinks title="Redes sociales" items={d.socialLinks} /> */}
     </>
   );
 }

@@ -1,7 +1,6 @@
 import { HeroSplit } from "@/components/landing/HeroSplit";
-import { TwoCol } from "@/components/landing/AboutSection";
+import { TwoCol } from "@/components/landing/TwoCol";
 import { OfficesGrid } from "@/components/landing/OfficesGrid";
-import { Specialization } from "@/components/landing/ServicesSection";
 import { CTAWide } from "@/components/landing/CTAWide";
 import { Testimonials } from "@/components/landing/Testimonials";
 import { SocialLinks } from "@/components/landing/SocialLinks";
@@ -25,14 +24,14 @@ export default function AgencyLandingPage() {
       />
 
       <TwoCol
-        leftImageUrl={d.about.imageUrl}
-        leftImageAlt="SkyOne"
+        rightImageAlt={d.about.imageUrl}
+        rightImageUrl="SkyOne"
         eyebrow="SkyOne Paraguay"
         title={d.about.title}
-        meta={[
-          { label: "Años en el mercado", value: d.about.years },
-          { label: "Operaciones", value: d.about.ops },
-        ]}
+        // meta={[
+        //   { label: "Años en el mercado", value: d.about.years },
+        //   { label: "Operaciones", value: d.about.ops },
+        // ]}
         paragraphs={d.about.paragraphs}
         ctaLabel="Contactar"
         ctaHref={d.heroCtaHref}
@@ -40,11 +39,11 @@ export default function AgencyLandingPage() {
 
       <OfficesGrid title="Nuestras oficinas" items={d.offices} />
 
-      <Specialization
-        items={d.specialization}
+      {/* <ServicesSection
+        paragraphs={d.specialization}
         ctaLabel="Contactar"
         ctaHref={d.heroCtaHref}
-      />
+      /> */}
 
       <CTAWide
         line1="Obtenga las mejores opciones de inversión con la"
