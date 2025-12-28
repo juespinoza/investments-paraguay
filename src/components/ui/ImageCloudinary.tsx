@@ -6,22 +6,23 @@ export function ImageCloudinary({
   width,
   height,
   alt,
-  className,
 }: {
   imageUrl: string;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
   alt: string;
-  className?: string;
 }) {
   return (
     <CldImage
       src={imageUrl}
-      width={width}
-      height={height}
       alt={alt}
-      className={className ?? "h-auto w-full object-cover"}
-      priority
+      fill
+      crop="fill"
+      gravity="center"
+      sizes="(min-width: 768px) 300px, 100vw"
+      width={width ?? undefined}
+      height={height ?? undefined}
+      className="object-cover"
     />
   );
 }

@@ -10,6 +10,23 @@ import {
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
+const SOCIAL_PLATFORM_ORDER: SocialPlatform[] = [
+  "WHATSAPP",
+  "EMAIL",
+  "BLOG",
+  "WEB",
+  "INSTAGRAM",
+  "FACEBOOK",
+  "X",
+  "TIKTOK",
+];
+
+const SOCIAL_PLATFORM_INDEX: Record<SocialPlatform, number> =
+  SOCIAL_PLATFORM_ORDER.reduce((acc, platform, index) => {
+    acc[platform] = index;
+    return acc;
+  }, {} as Record<SocialPlatform, number>);
+
 const ICONS: Record<SocialPlatform, React.ComponentType<{ size?: number }>> = {
   WHATSAPP: FaWhatsapp,
   EMAIL: FaEnvelope,
@@ -30,9 +47,17 @@ export function SocialLinks({
 }) {
   // 🔒 Seguridad + performance:
   // solo renderizamos links con href real
-  const validItems = items.filter((i) => i.href && i.href.trim().length > 0);
+  const validItems = items
+    .filter((i) => i.href && i.href.trim().length > 0)
+    .sort((a, b) => {
+      const aIndex = SOCIAL_PLATFORM_INDEX[a.platform] ?? 999;
+      const bIndex = SOCIAL_PLATFORM_INDEX[b.platform] ?? 999;
+      return aIndex - bIndex;
+    });
 
   if (!validItems.length) return null;
+
+  console.log("Social links received:", validItems);
 
   return (
     <section className="container-page container-narrow py-6">

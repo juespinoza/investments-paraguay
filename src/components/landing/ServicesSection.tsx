@@ -22,7 +22,7 @@ export function ServicesSection({
 }) {
   return (
     <section className="container-page container-narrow py-6">
-      <div className="flex flex-col md:flex-row gap-8 ">
+      <div className="flex flex-col md:flex-row gap-8 md:items-center">
         <div className="order-2 md:order-1 flex-1">
           <p className="text-sm uppercase tracking-widest text-secondary">
             {eyebrow}
@@ -52,20 +52,8 @@ export function ServicesSection({
           </div>
         </div>
 
-        <div className="overflow-hidden bg-accent2 order-1 md:order-2 flex-1">
-          {/* <Image
-            src={rightImageUrl}
-            width={400}
-            height={300}
-            alt={rightImageAlt}
-            className="h-42 md:h-full w-full object-cover "
-          /> */}
-          <ImageCloudinary
-            imageUrl={rightImageUrl}
-            width={400}
-            height={300}
-            alt={rightImageAlt}
-          />
+        <div className="relative w-full max-w-137.5 aspect-3/2 overflow-hidden bg-accent2 order-1 md:order-2">
+          <ImageCloudinary imageUrl={rightImageUrl} alt={rightImageAlt} />
         </div>
       </div>
     </section>

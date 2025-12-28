@@ -30,7 +30,7 @@ export default async function AdvisorLandingPage({ params }: PageProps) {
     title: p.title,
     subtitle: p.city ?? "",
     coverImageUrl: p.coverImageUrl ?? "intentoPortada_wku8ef",
-    href: `/bienes-raices/${p.slug}`,
+    href: `/bienes-raices/propiedades/${p.slug}`,
     badge: "Venta",
   }));
 

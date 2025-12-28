@@ -51,7 +51,7 @@ export async function GET(_req: Request, { params }: Params) {
     ctaHref: advisor.ctaHref,
 
     about: {
-      imageUrl: advisor.landing.aboutImageUrl,
+      imageUrl: advisor.photoUrl,
       title: advisor.landing.aboutTitle,
       startDate: advisor.landing.startDate,
       company: advisor.landing.company,

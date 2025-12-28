@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
+import { ImageCloudinary } from "../ui/ImageCloudinary";
 
 type Props = {
   leftImageUrl: string;
@@ -25,14 +26,15 @@ export function AboutSection({
   return (
     <section className="container-page container-narrow py-6">
       <div className="grid gap-8 md:grid-cols-2 md:items-center">
-        <div className="overflow-hidden bg-1">
-          <Image
+        <div className="relative w-full max-w-137.5 aspect-3/2 overflow-hidden bg-1">
+          {/* <Image
             src={leftImageUrl}
-            width={400}
-            height={300}
+            width={300}
+            height={200}
             alt={leftImageAlt}
             className="h-42 md:h-full w-full object-cover"
-          />
+          /> */}
+          <ImageCloudinary imageUrl={leftImageUrl} alt={leftImageAlt} />
         </div>
 
         <div>
