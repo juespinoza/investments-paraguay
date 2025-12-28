@@ -1,17 +1,24 @@
-import { FaWhatsapp, FaInstagram, FaFacebookF, FaTiktok } from "react-icons/fa";
+import { SocialItem, SocialPlatform } from "@/lib/data/types";
+import {
+  FaWhatsapp,
+  FaInstagram,
+  FaFacebookF,
+  FaTiktok,
+  FaEnvelope,
+  FaGlobe,
+  FaPenNib,
+} from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
-const ICONS = {
-  whatsapp: FaWhatsapp,
-  instagram: FaInstagram,
-  facebook: FaFacebookF,
-  tiktok: FaTiktok,
-};
-
-type SocialItem = {
-  label: string;
-  value: string;
-  href: string;
-  icon: string;
+const ICONS: Record<SocialPlatform, React.ComponentType<{ size?: number }>> = {
+  WHATSAPP: FaWhatsapp,
+  EMAIL: FaEnvelope,
+  BLOG: FaPenNib,
+  WEB: FaGlobe,
+  INSTAGRAM: FaInstagram,
+  FACEBOOK: FaFacebookF,
+  X: FaXTwitter,
+  TIKTOK: FaTiktok,
 };
 
 export function SocialLinks({
@@ -21,32 +28,35 @@ export function SocialLinks({
   title: string;
   items: SocialItem[];
 }) {
+  // 🔒 Seguridad + performance:
+  // solo renderizamos links con href real
+  const validItems = items.filter((i) => i.href && i.href.trim().length > 0);
+
+  if (!validItems.length) return null;
+
   return (
     <section className="container-page container-narrow py-6">
       <h2 className="text-4xl font-semibold">{title}</h2>
 
-      <div className="flex flex-col gap-2 md:flex-row md:gap-4 mt-8">
-        {items.map((i) => {
-          const Icon = ICONS[i.icon as keyof typeof ICONS];
+      <div className="mt-8 flex flex-col gap-3 md:flex-row md:flex-wrap md:gap-4">
+        {validItems.map((i, key) => {
+          const Icon = ICONS[i.platform];
 
           return (
             <a
-              key={i.label}
+              key={`${i.platform}-${i.value}-${key}`}
               href={i.href}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2"
+              className="flex items-center gap-3"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent1 text-accent2">
                 <Icon size={16} />
               </span>
 
-              <div className="flex flex-col">
-                {/* <span className="font-medium text-primary">{i.label}</span> */}
-                <span className="text-sm text-secondary hover:underline">
-                  {i.value}
-                </span>
-              </div>
+              <span className="text-sm text-secondary hover:underline">
+                {i.value}
+              </span>
             </a>
           );
         })}

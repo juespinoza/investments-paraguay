@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
@@ -20,6 +20,17 @@ enum Role {
   BLOGUERO
 }
 
+enum SocialPlatform {
+  WHATSAPP
+  EMAIL
+  BLOG
+  WEB
+  INSTAGRAM
+  FACEBOOK
+  X
+  TIKTOK
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -28,7 +39,7 @@ model User {
   role      Role     @default(ASESOR)
 
   inmobiliariaId String?
-  asesorId       String?
+  advisorId       String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -45,13 +56,14 @@ model Inmobiliaria {
 
   blogs       BlogPost[]
   properties  Property[]
+  advisors    Advisor[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
 }
 
-model Asesor {
+model Advisor {
   id          String  @id @default(cuid())
   fullName    String
   slug        String  @unique
@@ -67,6 +79,19 @@ model Asesor {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
+
+  // Landing base fields
+  headline   String?  // slogan
+  heroBgUrl  String?  // background puede ser null
+  ctaLabel   String?  // por defecto lo setearás desde UI
+  ctaHref    String?
+
+  // Relación opcional con inmobiliaria
+  inmobiliariaId String?
+  inmobiliaria   Inmobiliaria? @relation(fields: [inmobiliariaId], references: [id])
+
+  // 1:1 landing editable
+  landing   LandingAdvisor?
 }
 
 model Property {
@@ -78,13 +103,11 @@ model Property {
   description    String?
   coverImageUrl  String?
   gallery        String[] // simple
-
   inmobiliariaId String?
   inmobiliaria   Inmobiliaria? @relation(fields: [inmobiliariaId], references: [id])
-
-  asesorId       String?
-  asesor         Asesor? @relation(fields: [asesorId], references: [id])
-
+  advisorId       String?
+  advisor         Advisor? @relation(fields: [advisorId], references: [id])
+  featuredInLandings LandingAdvisorFeaturedProperty[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
@@ -100,12 +123,121 @@ model BlogPost {
   inmobiliariaId String?
   inmobiliaria   Inmobiliaria? @relation(fields: [inmobiliariaId], references: [id])
 
-  asesorId       String?
-  asesor         Asesor? @relation(fields: [asesorId], references: [id])
+  advisorId       String?
+  advisor         Advisor? @relation(fields: [advisorId], references: [id])
 
   authorRole     Role
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
+}
+
+model LandingAdvisor {
+  id        String   @id @default(cuid())
+  advisorId  String   @unique
+  advisor    Advisor   @relation(fields: [advisorId], references: [id], onDelete: Cascade)
+
+  // ABOUT
+  aboutImageUrl    String
+  aboutTitle       String
+  startDate        DateTime
+  company          String
+  aboutDescription String?
+  aboutParagraph1  String
+  aboutParagraph2  String
+
+  // SERVICES
+  servicesParagraph1 String
+  servicesParagraph2 String
+
+  propertyTypes  LandingAdvisorPropertyType[]
+  clientTypes    LandingAdvisorClientType[]
+  areas          LandingAdvisorArea[]
+  serviceList    LandingAdvisorServiceItem[]
+
+  // Featured properties (máx 3 por regla en backend)
+  featuredProperties LandingAdvisorFeaturedProperty[]
+
+  // Testimonios y redes (pueden estar acá para mantener "la landing" completa)
+  testimonies  AdvisorTestimonial[]
+  socialMedia  AdvisorSocialLink[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+model LandingAdvisorPropertyType {
+  id        String @id @default(cuid())
+  value     String
+  landingId String
+  landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
+
+  @@index([landingId])
+}
+
+model LandingAdvisorClientType {
+  id        String @id @default(cuid())
+  value     String
+  landingId String
+  landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
+
+  @@index([landingId])
+}
+
+model LandingAdvisorArea {
+  id        String @id @default(cuid())
+  value     String
+  landingId String
+  landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
+
+  @@index([landingId])
+}
+
+model LandingAdvisorServiceItem {
+  id        String @id @default(cuid())
+  value     String
+  landingId String
+  landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
+
+  @@index([landingId])
+}
+
+model LandingAdvisorFeaturedProperty {
+  id         String @id @default(cuid())
+  landingId  String
+  propertyId String
+  order      Int
+
+  landing  LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
+  property Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([landingId, propertyId])
+  @@unique([landingId, order])
+  @@index([landingId])
+}
+
+model AdvisorTestimonial {
+  id        String @id @default(cuid())
+  name      String
+  text      String
+
+  landingId String
+  landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
+
+  @@index([landingId])
+}
+
+model AdvisorSocialLink {
+  id        String @id @default(cuid())
+  label     String
+  value     String
+  href      String
+  platform  SocialPlatform
+
+  landingId String
+  landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
+
+  @@index([landingId])
 }

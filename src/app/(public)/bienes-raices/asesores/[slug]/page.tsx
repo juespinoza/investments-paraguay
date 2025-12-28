@@ -1,66 +1,87 @@
+import { apiGet } from "@/lib/api/public";
+import { notFound } from "next/navigation";
 import { HeroSplit } from "@/components/landing/HeroSplit";
-import { TwoCol } from "@/components/landing/TwoCol";
-import { Specialization } from "@/components/landing/Specialization";
+import { AboutSection } from "@/components/landing/AboutSection";
 import { FeaturedGrid } from "@/components/landing/FeaturedGrid";
-import { CTAWide } from "@/components/landing/CTAWide";
-import { Testimonials } from "@/components/landing/Testimonials";
 import { SocialLinks } from "@/components/landing/SocialLinks";
-import { mockAdvisorLanding } from "@/lib/mock/data";
+import { SocialItem } from "@/lib/data/types";
 
-const Metadata = {
-  title: mockAdvisorLanding.metadata.title,
-  description: mockAdvisorLanding.metadata.description,
+export const revalidate = 120;
+
+type PublicAdvisorLanding = {
+  slug: string;
+  fullName: string;
+  headline: string | null;
+  heroBgUrl: string | null;
+  ctaLabel: string | null;
+  ctaHref: string | null;
+
+  about: {
+    imageUrl: string;
+    title: string;
+    startDate: string;
+    company: string;
+    description: string | null;
+    paragraphs: [string, string];
+  };
+
+  featuredProperties: Array<{
+    slug: string;
+    title: string;
+    coverImageUrl: string | null;
+    priceUsd: number | null;
+    city: string | null;
+  }>;
+
+  socialMedia: Array<SocialItem>;
 };
 
-export default function AdvisorLandingPage() {
-  const d = mockAdvisorLanding;
+type PageProps = { params: Promise<{ slug: string }> };
+
+export default async function AdvisorLandingPage({ params }: PageProps) {
+  const { slug } = await params;
+
+  const d = await apiGet<PublicAdvisorLanding>(
+    `/api/public/asesores/${slug}`,
+    120
+  );
+
+  if (!d) notFound();
+
+  const featuredItems = d.featuredProperties.map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    subtitle: p.city ?? "",
+    coverImageUrl: p.coverImageUrl ?? "/placeholders/property.jpg",
+    href: `/bienes-raices/${p.slug}`,
+    badge: "Venta",
+  }));
 
   return (
     <>
       <HeroSplit
-        brandLeft="INVESTMENTS"
-        brandRight="PARAGUAY"
-        menuActive="Bienes raíces"
-        title={d.heroTitle}
-        subtitle={d.heroSubtitle}
-        ctaLabel={d.heroCtaLabel}
-        ctaHref={d.heroCtaHref}
-        backgroundImageUrl={d.heroBg}
+        brandLeft=""
+        brandRight=""
+        title={d.fullName}
+        subtitle={d.headline ?? ""}
+        ctaLabel={d.ctaLabel ?? "Contactar"}
+        ctaHref={d.ctaHref ?? "#"}
+        backgroundImageUrl={d.heroBgUrl ?? "/backgrounds/office.jpg"}
       />
 
-      <TwoCol
-        leftImageUrl={d.profile.imageUrl}
-        leftImageAlt="Asesor"
-        eyebrow="Conoce más sobre mí."
-        title={d.profile.title}
-        meta={[
-          { label: "Años de carrera", value: d.profile.years },
-          { label: "Oficina", value: d.profile.company },
-        ]}
-        paragraphs={d.profile.paragraphs}
-        ctaLabel="Contactar"
-        ctaHref={d.heroCtaHref}
+      <AboutSection
+        leftImageUrl={d.about.imageUrl}
+        leftImageAlt={d.fullName}
+        eyebrow="Sobre mí"
+        title={d.about.title}
+        paragraphs={[d.about.paragraphs[0], d.about.paragraphs[1]]}
+        ctaLabel={d.ctaLabel ?? "Contactar"}
+        ctaHref={d.ctaHref ?? "#"}
       />
 
-      <Specialization
-        items={d.specialization}
-        ctaLabel="Contactar"
-        ctaHref={d.heroCtaHref}
-      />
+      <FeaturedGrid title="Propiedades destacadas" items={featuredItems} />
 
-      <FeaturedGrid
-        title="Propiedades destacadas"
-        items={d.featuredProperties}
-      />
-
-      <CTAWide
-        line1="Obtenga las mejores opciones de inversión con la"
-        highlight="ayuda de nuestro grupo de asesores altamente experimentados."
-      />
-
-      <Testimonials title="Testimonios" items={d.testimonials} />
-
-      <SocialLinks title="Redes sociales" items={d.socialLinks} />
+      <SocialLinks title="Redes sociales" items={d.socialMedia} />
     </>
   );
 }

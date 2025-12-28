@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import Image from "next/image";
 
 type Props = {
   leftImageUrl: string;
@@ -11,7 +12,7 @@ type Props = {
   ctaHref: string;
 };
 
-export function TwoCol({
+export function AboutSection({
   leftImageUrl,
   leftImageAlt,
   eyebrow,
@@ -23,12 +24,14 @@ export function TwoCol({
 }: Props) {
   return (
     <section className="container-page container-narrow py-6">
-      <div className="grid gap-10 md:grid-cols-2 md:items-center">
-        <div className="overflow-hidden bg-accent2">
-          <img
+      <div className="grid gap-8 md:grid-cols-2 md:items-center">
+        <div className="overflow-hidden bg-1">
+          <Image
             src={leftImageUrl}
+            width={400}
+            height={300}
             alt={leftImageAlt}
-            className="h-full w-full object-cover"
+            className="h-42 md:h-full w-full object-cover"
           />
         </div>
 
@@ -38,7 +41,7 @@ export function TwoCol({
           </p>
           <h2 className="mt-2 text-4xl font-semibold">{title}</h2>
 
-          {meta?.length ? (
+          {/* {meta?.length ? (
             <div className="mt-4 grid gap-1 text-secondary font-light">
               {meta.map((m) => (
                 <div key={m.label}>
@@ -47,7 +50,7 @@ export function TwoCol({
                 </div>
               ))}
             </div>
-          ) : null}
+          ) : null} */}
 
           <div className="mt-5 space-y-3 text-secondary font-light">
             {paragraphs.map((p, idx) => (

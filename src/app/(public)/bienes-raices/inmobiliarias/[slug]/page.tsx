@@ -1,7 +1,7 @@
 import { HeroSplit } from "@/components/landing/HeroSplit";
-import { TwoCol } from "@/components/landing/TwoCol";
+import { TwoCol } from "@/components/landing/AboutSection";
 import { OfficesGrid } from "@/components/landing/OfficesGrid";
-import { Specialization } from "@/components/landing/Specialization";
+import { Specialization } from "@/components/landing/ServicesSection";
 import { CTAWide } from "@/components/landing/CTAWide";
 import { Testimonials } from "@/components/landing/Testimonials";
 import { SocialLinks } from "@/components/landing/SocialLinks";

@@ -35,7 +35,7 @@ export function FeaturedGrid({
                   className="h-48 w-full object-cover"
                 /> */}
                 <Image
-                  src={p.imageUrl}
+                  src={p.coverImageUrl || "/images/prop2.jpg"}
                   width={400}
                   height={300}
                   alt={p.title}

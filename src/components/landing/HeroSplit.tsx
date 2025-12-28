@@ -41,9 +41,7 @@ export function HeroSplit({
         <h1 className="text-4xl md:text-6xl font-semibold leading-tight">
           {title}
         </h1>
-        <p className="mt-2 max-w-2xl font-light text-lg text-secondary">
-          {subtitle}
-        </p>
+        <p className="mt-2 max-w-2xl font-light text-lg">{subtitle}</p>
 
         <div className="mt-3">
           <Button href={ctaHref}>{ctaLabel}</Button>
