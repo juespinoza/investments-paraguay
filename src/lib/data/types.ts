@@ -111,3 +111,12 @@ export type PublicAdvisorLanding = {
 
   socialMedia: Array<SocialItem>;
 };
+
+export type SessionPayload = {
+  sub: string; // userId
+  id: string;
+  email: string;
+  role: "ADMIN" | "INMOBILIARIA" | "ASESOR" | "BLOGUERO";
+  inmobiliariaId?: string | null;
+  advisorId?: string | null;
+};

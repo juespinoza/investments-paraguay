@@ -9,6 +9,7 @@ function getSecret() {
 }
 
 export async function middleware(req: NextRequest) {
+  // TODO: Fix middleware authentication for virtual office
   // const { pathname } = req.nextUrl;
   // // ✅ Ignorar assets / internals
   // if (

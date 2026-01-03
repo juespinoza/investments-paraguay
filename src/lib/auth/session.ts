@@ -1,12 +1,13 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
+import { SessionPayload } from "../data/types";
 
-export type SessionPayload = {
-  sub: string; // userId
-  email: string;
-  role: "ADMIN" | "INMOBILIARIA" | "ASESOR" | "BLOGUERO";
-};
+// export type SessionPayload = {
+//   sub: string; // userId
+//   email: string;
+//   role: "ADMIN" | "INMOBILIARIA" | "ASESOR" | "BLOGUERO";
+// };
 
 function getSecret() {
   const s = process.env.AUTH_SECRET;
@@ -22,9 +23,14 @@ export async function getSession(): Promise<SessionPayload | null> {
   try {
     const { payload } = await jwtVerify(token, getSecret());
     return {
+      id: String(payload.id ?? ""),
       sub: String(payload.sub ?? ""),
       email: String(payload.email ?? ""),
       role: payload.role as SessionPayload["role"],
+      inmobiliariaId: payload.inmobiliariaId
+        ? String(payload.inmobiliariaId)
+        : null,
+      advisorId: payload.advisorId ? String(payload.advisorId) : null,
     };
   } catch {
     return null;

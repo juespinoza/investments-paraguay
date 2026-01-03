@@ -1,3 +1,4 @@
+// src/app/(public)/bienes-raices/asesores/[slug]/page.tsx
 import { apiGet } from "@/lib/api/public";
 import { notFound } from "next/navigation";
 import { HeroSplit } from "@/components/landing/HeroSplit";
