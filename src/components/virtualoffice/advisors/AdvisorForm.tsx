@@ -1,92 +1,26 @@
 // src/components/virtualoffice/advisors/AdvisorForm.tsx
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-const SocialPlatformSchema = z.enum([
-  "WHATSAPP",
-  "EMAIL",
-  "BLOG",
-  "WEB",
-  "INSTAGRAM",
-  "FACEBOOK",
-  "X",
-  "TIKTOK",
-]);
-
-const FormSchema = z.object({
-  fullName: z.string().min(3, "Full name required"),
-  slug: z
-    .string()
-    .min(3)
-    .transform((v) => slugify(v))
-    .refine((v) => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(v), "Invalid slug"),
-  headline: z.string().optional().nullable(),
-  heroBgUrl: z.string().optional().nullable(),
-  ctaLabel: z.string().optional().nullable(),
-  ctaHref: z.string().optional().nullable(),
-
-  // si admin: puede reasignar inmobiliaria
-  inmobiliariaId: z.string().optional().nullable(),
-
-  landing: z.object({
-    aboutImageUrl: z.string().optional().nullable(),
-    aboutTitle: z.string().min(1),
-    startDate: z.string().min(1),
-    company: z.string().min(1),
-    aboutDescription: z.string().optional().nullable(),
-    aboutParagraph1: z.string().min(1),
-    aboutParagraph2: z.string().min(1),
-
-    servicesParagraph1: z.string().min(1),
-    servicesParagraph2: z.string().min(1),
-
-    propertyTypes: z.array(z.string()).default([]),
-    clientTypes: z.array(z.string()).default([]),
-    areas: z.array(z.string()).default([]),
-    serviceList: z.array(z.string()).default([]),
-
-    testimonies: z
-      .array(
-        z.object({
-          name: z.string().min(1),
-          text: z.string().min(1),
-        })
-      )
-      .default([]),
-
-    socialMedia: z
-      .array(
-        z.object({
-          platform: SocialPlatformSchema,
-          label: z.string().min(1),
-          value: z.string().min(1),
-          href: z.string().min(1),
-        })
-      )
-      .default([]),
-
-    featuredPropertyIds: z.array(z.string()).max(3).default([]),
-  }),
-});
+import { FormSchema, SocialPlatformSchema } from "./schema";
+import { slugify } from "./utils";
+import { useWatch } from "react-hook-form";
+import { FeaturedPicker } from "./FeaturedPicker";
+import { StringArrayEditor } from "./StringArrayEditor";
+import BaseSection from "./sections/BaseSection";
 
 export type AdvisorFormValues = z.input<typeof FormSchema>; // lo que RHF maneja
 export type AdvisorFormOutput = z.output<typeof FormSchema>; // lo que Zod entrega (slug transformado)
-
-function slugify(input: string) {
-  return input
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
 
 type PropertyOption = {
   id: string;
@@ -99,7 +33,6 @@ type Props = {
   mode: "create" | "edit";
   advisorId?: string; // requerido para edit
   initialData?: Partial<AdvisorFormValues>;
-  propertiesOptions?: PropertyOption[];
   canEditInmobiliariaId?: boolean; // true para ADMIN
 };
 
@@ -107,7 +40,6 @@ export function AdvisorForm({
   mode,
   advisorId,
   initialData,
-  propertiesOptions = [],
   canEditInmobiliariaId = false,
 }: Props) {
   const router = useRouter();
@@ -172,11 +104,18 @@ export function AdvisorForm({
 
   const fullName = watch("fullName");
   const slug = watch("slug");
-  const propertyTypes = watch("landing.propertyTypes") ?? [];
-  const clientTypes = watch("landing.clientTypes") ?? [];
-  const areas = watch("landing.areas") ?? [];
-  const serviceList = watch("landing.serviceList") ?? [];
-  const featuredIds = watch("landing.featuredPropertyIds") ?? [];
+  //   const propertyTypes = watch("landing.propertyTypes") ?? [];
+  const propertyTypes =
+    useWatch({ control, name: "landing.propertyTypes" }) ?? [];
+  //   const clientTypes = watch("landing.clientTypes") ?? [];
+  const clientTypes = useWatch({ control, name: "landing.clientTypes" }) ?? [];
+  //   const areas = watch("landing.areas") ?? [];
+  const areas = useWatch({ control, name: "landing.areas" }) ?? [];
+  //   const serviceList = watch("landing.serviceList") ?? [];
+  const serviceList = useWatch({ control, name: "landing.serviceList" }) ?? [];
+  //   const featuredIds = watch("landing.featuredPropertyIds") ?? [];
+  const featuredIds =
+    useWatch({ control, name: "landing.featuredPropertyIds" }) ?? [];
 
   // si el usuario tocó slug manualmente, no autogeneramos más
   const slugTouchedRef = useRef(false);
@@ -237,6 +176,16 @@ export function AdvisorForm({
       setSaving(false);
     }
   };
+
+  const onFeaturedChange = useCallback(
+    (ids: string[]) => {
+      setValue("landing.featuredPropertyIds", ids, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    },
+    [setValue]
+  );
 
   async function onDelete() {
     if (!advisorId) return;
@@ -363,100 +312,14 @@ export function AdvisorForm({
       ) : null}
 
       {/* Base */}
-      <section className="rounded-xl border border-accent2 bg-white p-4">
-        <h2 className="text-lg font-semibold">Datos base</h2>
-
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="text-sm text-secondary">Nombre completo</label>
-            <input
-              {...register("fullName")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
-              placeholder="Julia Espinoza"
-            />
-            {formState.errors.fullName ? (
-              <p className="mt-1 text-xs text-red-600">
-                {formState.errors.fullName.message}
-              </p>
-            ) : null}
-          </div>
-
-          <div>
-            <label className="text-sm text-secondary">Slug</label>
-            <input
-              {...register("slug", {
-                onChange: () => {
-                  slugTouchedRef.current = true;
-                },
-                onBlur: (e) => {
-                  // normaliza en blur (por si pegó texto raro)
-                  const normalized = slugify(e.target.value);
-                  setValue("slug", normalized, {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  });
-                },
-              })}
-              className="mt-1 w-full rounded-md border px-3 py-2"
-              placeholder="nombre-completo"
-            />
-            {formState.errors.slug ? (
-              <p className="mt-1 text-xs text-red-600">
-                {formState.errors.slug.message as any}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="md:col-span-2">
-            <label className="text-sm text-secondary">Headline / Slogan</label>
-            <input
-              {...register("headline")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
-              placeholder="Inversiones inteligentes en Paraguay"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-secondary">CTA Label</label>
-            <input
-              {...register("ctaLabel")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
-              placeholder="Contactar"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-secondary">CTA Href</label>
-            <input
-              {...register("ctaHref")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
-              placeholder="https://wa.me/..."
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-secondary">
-              Hero Bg (Cloudinary public_id o URL)
-            </label>
-            <input
-              {...register("heroBgUrl")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
-              placeholder="office_bg_xxx"
-            />
-          </div>
-
-          {canEditInmobiliariaId ? (
-            <div>
-              <label className="text-sm text-secondary">Inmobiliaria ID</label>
-              <input
-                {...register("inmobiliariaId")}
-                className="mt-1 w-full rounded-md border px-3 py-2"
-                placeholder="cuid..."
-              />
-            </div>
-          ) : null}
-        </div>
-      </section>
+      <BaseSection
+        register={register}
+        formState={formState}
+        setValue={setValue}
+        slugify={slugify}
+        slugTouchedRef={slugTouchedRef}
+        canEditInmobiliariaId={canEditInmobiliariaId}
+      />
 
       {/* About */}
       <section className="rounded-xl border border-accent2 bg-white p-4">
@@ -600,14 +463,10 @@ export function AdvisorForm({
 
         <div className="mt-4">
           <FeaturedPicker
-            properties={propertiesOptions}
+            advisorId={mode === "edit" ? advisorId : undefined}
             selectedIds={featuredIds}
-            onChange={(ids) =>
-              setValue("landing.featuredPropertyIds", ids, {
-                shouldDirty: true,
-                shouldValidate: true,
-              })
-            }
+            onChange={onFeaturedChange}
+            max={3}
           />
         </div>
       </section>
@@ -737,116 +596,5 @@ export function AdvisorForm({
         </div>
       </section>
     </form>
-  );
-}
-
-// ---------- small components ----------
-function StringArrayEditor({
-  title,
-  items,
-  onAdd,
-  onRemove,
-}: {
-  title: string;
-  items: string[];
-  onAdd: (value: string) => void;
-  onRemove: (value: string) => void;
-}) {
-  const [value, setValue] = useState("");
-
-  return (
-    <div className="rounded-md border p-3">
-      <div className="font-medium">{title}</div>
-
-      <div className="mt-2 flex gap-2">
-        <input
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          className="w-full rounded-md border px-3 py-2"
-          placeholder="Agregar..."
-        />
-        <button
-          type="button"
-          onClick={() => {
-            onAdd(value);
-            setValue("");
-          }}
-          className="rounded-md bg-accent1 px-3 py-2 text-sm font-medium text-primary hover:opacity-90"
-        >
-          Agregar
-        </button>
-      </div>
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        {items?.map((it) => (
-          <button
-            key={it}
-            type="button"
-            onClick={() => onRemove(it)}
-            className="rounded-full bg-accent2 px-3 py-1 text-sm text-secondary hover:opacity-80"
-            title="Quitar"
-          >
-            {it} ✕
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function FeaturedPicker({
-  properties,
-  selectedIds,
-  onChange,
-}: {
-  properties: PropertyOption[];
-  selectedIds: string[];
-  onChange: (ids: string[]) => void;
-}) {
-  function toggle(id: string) {
-    const exists = selectedIds.includes(id);
-    if (exists) {
-      onChange(selectedIds.filter((x) => x !== id));
-      return;
-    }
-    if (selectedIds.length >= 3) return;
-    onChange([...selectedIds, id]);
-  }
-
-  const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
-
-  return (
-    <div className="space-y-2">
-      <div className="text-sm text-secondary">
-        Seleccionadas: {selectedIds.length}/3
-      </div>
-
-      <div className="grid gap-2 md:grid-cols-2">
-        {properties.map((p) => (
-          <button
-            key={p.id}
-            type="button"
-            onClick={() => toggle(p.id)}
-            className={`rounded-md border p-3 text-left hover:bg-accent2 ${
-              selectedSet.has(p.id) ? "border-accent1" : "border-accent2"
-            }`}
-          >
-            <div className="font-medium">{p.title}</div>
-            <div className="text-sm text-secondary">
-              {p.city ?? "-"} {p.priceUsd ? `• USD ${p.priceUsd}` : ""}
-            </div>
-            {selectedSet.has(p.id) ? (
-              <div className="mt-1 text-xs text-secondary">Seleccionada</div>
-            ) : null}
-          </button>
-        ))}
-
-        {!properties.length ? (
-          <div className="text-sm text-secondary">
-            Este asesor todavía no tiene propiedades cargadas.
-          </div>
-        ) : null}
-      </div>
-    </div>
   );
 }

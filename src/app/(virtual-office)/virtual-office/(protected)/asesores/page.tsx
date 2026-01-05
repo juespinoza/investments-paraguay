@@ -46,7 +46,7 @@ export default async function AdvisorsPage() {
 
         {session.role !== "ASESOR" ? (
           <Link
-            href="/virtual-office/asesores/nuevo"
+            href="/virtual-office/asesores/new"
             className="rounded-md bg-accent1 px-4 py-2 text-sm font-medium text-primary hover:opacity-90"
           >
             Nuevo asesor
