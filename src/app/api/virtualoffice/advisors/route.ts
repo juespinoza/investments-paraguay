@@ -2,119 +2,125 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-import { revalidateTag } from "@/lib/cache/revalidate";
-import { requireSession } from "@/lib/auth/require-session";
-import { SessionPayload } from "@/lib/data/types";
-
-// --------- utils ----------
-function slugify(input: string) {
-  return input
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
+import { getSession } from "@/lib/auth/session";
 
 const CreateAdvisorSchema = z.object({
   fullName: z.string().min(3),
-  slug: z
-    .string()
-    .optional()
-    .transform((v) => (v ? slugify(v) : v))
-    .refine((v) => !v || /^[a-z0-9]+(-[a-z0-9]+)*$/.test(v), "Invalid slug"),
-  inmobiliariaId: z.string().optional().nullable(),
-  headline: z.string().optional().nullable(),
-  heroBgUrl: z.string().optional().nullable(),
-  ctaLabel: z.string().optional().nullable(),
-  ctaHref: z.string().optional().nullable(),
+  slug: z.string().min(3),
+  headline: z.string().nullable().optional(),
+  heroBgUrl: z.string().nullable().optional(),
+  ctaLabel: z.string().nullable().optional(),
+  ctaHref: z.string().nullable().optional(),
+  inmobiliariaId: z.string().nullable().optional(),
 
-  // opcional: si querés crear también base de landing desde acá
-  landing: z
-    .object({
-      aboutTitle: z.string().optional(),
-      company: z.string().optional(),
-    })
-    .optional(),
+  landing: z.object({
+    aboutImageUrl: z.string().nullable().optional(),
+    aboutTitle: z.string().min(1),
+    startDate: z.string().min(1), // yyyy-mm-dd
+    company: z.string().min(1),
+    aboutDescription: z.string().nullable().optional(),
+    aboutParagraph1: z.string().min(1),
+    aboutParagraph2: z.string().min(1),
+
+    servicesParagraph1: z.string().min(1),
+    servicesParagraph2: z.string().min(1),
+
+    propertyTypes: z.array(z.string()).default([]),
+    clientTypes: z.array(z.string()).default([]),
+    areas: z.array(z.string()).default([]),
+    serviceList: z.array(z.string()).default([]),
+
+    testimonies: z
+      .array(z.object({ name: z.string().min(1), text: z.string().min(1) }))
+      .default([]),
+
+    socialMedia: z
+      .array(
+        z.object({
+          platform: z.enum([
+            "WHATSAPP",
+            "EMAIL",
+            "BLOG",
+            "WEB",
+            "INSTAGRAM",
+            "FACEBOOK",
+            "X",
+            "TIKTOK",
+          ]),
+          label: z.string().min(1),
+          value: z.string().min(1),
+          href: z.string().min(1),
+        })
+      )
+      .default([]),
+
+    featuredPropertyIds: z.array(z.string()).max(3).default([]),
+  }),
 });
 
 // --------- GET: list advisors ----------
 export async function GET(req: Request) {
-  const session = (await requireSession()) as SessionPayload;
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-  const { searchParams } = new URL(req.url);
-  const q = (searchParams.get("q") || "").trim();
-  const page = Math.max(1, Number(searchParams.get("page") || "1"));
-  const limit = Math.min(
-    50,
-    Math.max(5, Number(searchParams.get("limit") || "20"))
-  );
-  const skip = (page - 1) * limit;
+  const url = new URL(req.url);
+  const q = (url.searchParams.get("q") ?? "").trim();
+  const take = Math.min(Number(url.searchParams.get("take") ?? "20"), 50);
 
-  // scope por role (multitenant)
-  const where: any = { deletedAt: null };
-
-  if (session.role === "INMOBILIARIA") {
+  // scoping
+  const whereBase: any = { deletedAt: null };
+  if (session.role !== "ADMIN") {
     if (!session.inmobiliariaId) {
-      return NextResponse.json({ items: [], page, limit, total: 0 });
+      return NextResponse.json(
+        { error: "Missing inmobiliaria scope" },
+        { status: 403 }
+      );
     }
-    where.inmobiliariaId = session.inmobiliariaId;
-  } else if (session.role === "ASESOR") {
-    // Asesor solo ve su propio advisor
-    if (!session.advisorId) {
-      return NextResponse.json({ items: [], page, limit, total: 0 });
-    }
-    where.id = session.advisorId;
-  } else if (session.role !== "ADMIN") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    whereBase.inmobiliariaId = session.inmobiliariaId;
   }
 
-  if (q) {
-    where.OR = [
-      { fullName: { contains: q, mode: "insensitive" } },
-      { slug: { contains: q, mode: "insensitive" } },
-      { headline: { contains: q, mode: "insensitive" } },
-    ];
-  }
+  const where = q
+    ? {
+        ...whereBase,
+        OR: [
+          { fullName: { contains: q, mode: "insensitive" } },
+          { slug: { contains: q, mode: "insensitive" } },
+        ],
+      }
+    : whereBase;
 
-  const [total, items] = await prisma.$transaction([
-    prisma.advisor.count({ where }),
-    prisma.advisor.findMany({
-      where,
-      orderBy: { updatedAt: "desc" },
-      skip,
-      take: limit,
-      select: {
-        id: true,
-        fullName: true,
-        slug: true,
-        headline: true,
-        inmobiliariaId: true,
-        inmobiliaria: { select: { id: true, name: true, slug: true } },
-        updatedAt: true,
-      },
-    }),
-  ]);
+  const items = await prisma.advisor.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    take,
+    select: {
+      id: true,
+      fullName: true,
+      slug: true,
+      headline: true,
+      inmobiliariaId: true,
+      createdAt: true,
+    },
+  });
 
-  return NextResponse.json(
-    { items, page, limit, total },
-    { headers: { "Cache-Control": "no-store" } }
-  );
+  return NextResponse.json({ items });
 }
 
 // --------- POST: create advisor ----------
 export async function POST(req: Request) {
-  const session = await requireSession();
+  const session = await getSession();
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  // permisos básicos
   if (session.role !== "ADMIN" && session.role !== "INMOBILIARIA") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = await req.json().catch(() => null);
+  const body = await req.json();
   const parsed = CreateAdvisorSchema.safeParse(body);
-
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Invalid payload", details: parsed.error.flatten() },
@@ -124,65 +130,153 @@ export async function POST(req: Request) {
 
   const data = parsed.data;
 
-  // slug fallback
-  const finalSlug = data.slug?.trim() || slugify(data.fullName);
-
-  // si INMOBILIARIA, fuerza inmobiliariaId = la suya
+  // scope inmobiliaria
   const inmobiliariaId =
-    session.role === "INMOBILIARIA"
-      ? session.inmobiliariaId
-      : data.inmobiliariaId ?? null;
+    session.role === "ADMIN"
+      ? data.inmobiliariaId ?? null
+      : session.inmobiliariaId ?? null;
 
-  if (session.role === "INMOBILIARIA" && !inmobiliariaId) {
+  if (session.role !== "ADMIN" && !inmobiliariaId) {
     return NextResponse.json(
       { error: "Missing inmobiliariaId in session" },
-      { status: 400 }
+      { status: 403 }
     );
   }
 
-  // unique slug check
-  const existing = await prisma.advisor.findUnique({
-    where: { slug: finalSlug },
-  });
-  if (existing) {
-    return NextResponse.json({ error: "Slug already exists" }, { status: 409 });
-  }
-
-  const now = new Date();
-
-  const created = await prisma.advisor.create({
-    data: {
-      fullName: data.fullName,
-      slug: finalSlug,
-      headline: data.headline ?? null,
-      heroBgUrl: data.heroBgUrl ?? null,
-      ctaLabel: data.ctaLabel ?? "Contactar",
-      ctaHref: data.ctaHref ?? "#",
-      inmobiliariaId: inmobiliariaId ?? null,
-
-      landing: {
-        create: {
-          aboutImageUrl: "", // podés cambiar a un placeholder
-          aboutTitle: data.landing?.aboutTitle ?? "Sobre mí",
-          startDate: now,
-          company: data.landing?.company ?? "SkyOne",
-          aboutDescription: null,
-          aboutParagraph1: "Escribe aquí tu primer párrafo.",
-          aboutParagraph2: "Escribe aquí tu segundo párrafo.",
-          servicesParagraph1: "Servicios - párrafo 1",
-          servicesParagraph2: "Servicios - párrafo 2",
+  try {
+    const created = await prisma.$transaction(async (tx) => {
+      const advisor = await tx.advisor.create({
+        data: {
+          fullName: data.fullName,
+          slug: data.slug,
+          headline: data.headline ?? null,
+          heroBgUrl: data.heroBgUrl ?? null,
+          ctaLabel: data.ctaLabel ?? "Contactar",
+          ctaHref: data.ctaHref ?? "#",
+          inmobiliariaId,
         },
-      },
-    },
-    select: { id: true, slug: true },
-  });
+        select: { id: true },
+      });
 
-  // Invalida caches públicas (por si hay listados públicos)
-  revalidateTag("public:advisors");
-  revalidateTag(`public:advisor:${created.slug}`);
+      const landing = await tx.landingAdvisor.create({
+        data: {
+          advisorId: advisor.id,
+          aboutImageUrl: data.landing.aboutImageUrl ?? "",
+          aboutTitle: data.landing.aboutTitle,
+          startDate: new Date(data.landing.startDate),
+          company: data.landing.company,
+          aboutDescription: data.landing.aboutDescription ?? null,
+          aboutParagraph1: data.landing.aboutParagraph1,
+          aboutParagraph2: data.landing.aboutParagraph2,
+          servicesParagraph1: data.landing.servicesParagraph1,
+          servicesParagraph2: data.landing.servicesParagraph2,
+        },
+        select: { id: true },
+      });
 
-  return NextResponse.json(
-    { ok: true, id: created.id, slug: created.slug },
-    { status: 201 }
-  );
+      // arrays simples
+      if (data.landing.propertyTypes.length) {
+        await tx.landingAdvisorPropertyType.createMany({
+          data: data.landing.propertyTypes.map((value) => ({
+            landingId: landing.id,
+            value,
+          })),
+        });
+      }
+      if (data.landing.clientTypes.length) {
+        await tx.landingAdvisorClientType.createMany({
+          data: data.landing.clientTypes.map((value) => ({
+            landingId: landing.id,
+            value,
+          })),
+        });
+      }
+      if (data.landing.areas.length) {
+        await tx.landingAdvisorArea.createMany({
+          data: data.landing.areas.map((value) => ({
+            landingId: landing.id,
+            value,
+          })),
+        });
+      }
+      if (data.landing.serviceList.length) {
+        await tx.landingAdvisorServiceItem.createMany({
+          data: data.landing.serviceList.map((value) => ({
+            landingId: landing.id,
+            value,
+          })),
+        });
+      }
+
+      // testimonios
+      if (data.landing.testimonies.length) {
+        await tx.advisorTestimonial.createMany({
+          data: data.landing.testimonies.map((t) => ({
+            landingId: landing.id,
+            name: t.name,
+            text: t.text,
+          })),
+        });
+      }
+
+      // social links
+      if (data.landing.socialMedia.length) {
+        await tx.advisorSocialLink.createMany({
+          data: data.landing.socialMedia.map((s) => ({
+            landingId: landing.id,
+            platform: s.platform,
+            label: s.label,
+            value: s.value,
+            href: s.href,
+          })),
+        });
+      }
+
+      // featured properties (validación: solo del asesor creado o scoping por inmobiliaria si querés)
+      const ids = data.landing.featuredPropertyIds.slice(0, 3);
+      if (ids.length) {
+        // Validar que existan
+        const found = await tx.property.findMany({
+          where: { id: { in: ids }, deletedAt: null },
+          select: { id: true, advisorId: true, inmobiliariaId: true },
+        });
+
+        const foundSet = new Set(found.map((p) => p.id));
+        for (const id of ids) {
+          if (!foundSet.has(id)) throw new Error("Featured property not found");
+        }
+
+        // regla: si querés limitar a propiedades del asesor, todavía no tiene -> podrías permitir solo por inmobiliaria
+        // acá: si no es ADMIN, exige inmobiliariaId match
+        if (session.role !== "ADMIN") {
+          for (const p of found) {
+            if (p.inmobiliariaId !== inmobiliariaId) {
+              throw new Error("Featured property outside scope");
+            }
+          }
+        }
+
+        await tx.landingAdvisorFeaturedProperty.createMany({
+          data: ids.map((propertyId, idx) => ({
+            landingId: landing.id,
+            propertyId,
+            order: idx + 1,
+          })),
+        });
+      }
+
+      return advisor;
+    });
+
+    return NextResponse.json({ id: created.id }, { status: 201 });
+  } catch (e: any) {
+    // Prisma unique constraint slug
+    if (String(e?.code) === "P2002") {
+      return NextResponse.json({ error: "Slug ya existe" }, { status: 409 });
+    }
+    return NextResponse.json(
+      { error: e?.message ?? "Create failed" },
+      { status: 500 }
+    );
+  }
 }

@@ -273,7 +273,7 @@ export function AdvisorForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Header actions */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 sticky top-0 z-10 -mx-4 mb-4 bg-white/80 px-4 py-3 backdrop-blur">
         <div>
           <h1 className="text-2xl font-semibold">
             {mode === "create" ? "Nuevo asesor" : "Editar asesor"}
@@ -297,7 +297,7 @@ export function AdvisorForm({
 
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || formState.isSubmitting || !formState.isDirty}
             className="rounded-md bg-accent1 px-4 py-2 text-sm font-medium text-primary hover:opacity-90 disabled:opacity-60"
           >
             {saving ? "Guardando..." : "Guardar"}
@@ -465,7 +465,12 @@ export function AdvisorForm({
           <FeaturedPicker
             advisorId={mode === "edit" ? advisorId : undefined}
             selectedIds={featuredIds}
-            onChange={onFeaturedChange}
+            onChange={(ids) =>
+              setValue("landing.featuredPropertyIds", ids, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
             max={3}
           />
         </div>

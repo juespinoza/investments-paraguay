@@ -26,7 +26,14 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.findUnique({
     where: { email },
-    select: { id: true, email: true, password: true, role: true },
+    select: {
+      id: true,
+      email: true,
+      password: true,
+      role: true,
+      inmobiliariaId: true,
+      advisorId: true,
+    },
   });
 
   if (!user) {
@@ -39,9 +46,12 @@ export async function POST(req: Request) {
   }
 
   const token = await new SignJWT({
+    id: user.id,
     sub: user.id,
     email: user.email,
     role: user.role,
+    inmobiliariaId: user.inmobiliariaId ?? null,
+    advisorId: user.advisorId ?? null,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()

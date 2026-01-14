@@ -3,12 +3,6 @@ import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { SessionPayload } from "../data/types";
 
-// export type SessionPayload = {
-//   sub: string; // userId
-//   email: string;
-//   role: "ADMIN" | "INMOBILIARIA" | "ASESOR" | "BLOGUERO";
-// };
-
 function getSecret() {
   const s = process.env.AUTH_SECRET;
   if (!s) throw new Error("Missing AUTH_SECRET");
@@ -18,6 +12,7 @@ function getSecret() {
 export async function getSession(): Promise<SessionPayload | null> {
   const cookieName = process.env.AUTH_COOKIE_NAME || "ip_session";
   const token = (await cookies()).get(cookieName)?.value;
+  console.log("Session token:", token);
   if (!token) return null;
 
   try {
