@@ -63,7 +63,7 @@ async function assertScope(session: any, advisorId: string) {
     where: { id: advisorId, deletedAt: null },
     select: { id: true, inmobiliariaId: true },
   });
-  console.log("advisor", advisor);
+  // console.log("advisor", advisor);
   if (!advisor) return null;
 
   if (session.role !== "ADMIN") {
@@ -78,17 +78,17 @@ async function assertScope(session: any, advisorId: string) {
 }
 
 export async function GET(_req: Request, { params }: Params) {
-  console.log("GET advisor by id");
+  // console.log("GET advisor by id:");
   const session = await getSession();
-  console.log("session", session);
+  // console.log("session in GET", session);
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  console.log("Fetching advisor", id);
+  console.log("GET advisor by id", id);
 
   const scope = await assertScope(session, id);
-  console.log("scope", scope);
+  // console.log("scope", scope);
   if (!scope) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (scope === "forbidden")
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -162,6 +162,7 @@ export async function GET(_req: Request, { params }: Params) {
 
 export async function PATCH(req: Request, { params }: Params) {
   const session = await getSession();
+  console.log("session in PATCH", session);
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

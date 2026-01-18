@@ -69,7 +69,6 @@ export function AdvisorForm({
           initialData?.landing?.servicesParagraph1 ?? "Servicios párrafo 1",
         servicesParagraph2:
           initialData?.landing?.servicesParagraph2 ?? "Servicios párrafo 2",
-
         propertyTypes: initialData?.landing?.propertyTypes ?? [],
         clientTypes: initialData?.landing?.clientTypes ?? [],
         areas: initialData?.landing?.areas ?? [],
@@ -131,6 +130,20 @@ export function AdvisorForm({
       // ✅ acá Zod valida + aplica transform() (slugify)
       const parsed: AdvisorFormOutput = FormSchema.parse(values);
 
+      // console.log("Submitting advisor form:", {
+      //   fullName: parsed.fullName,
+      //   slug: parsed.slug, // ✅ ya viene slugified
+      //   inmobiliariaId: parsed.inmobiliariaId ?? null,
+      //   headline: parsed.headline,
+      //   heroBgUrl: parsed.heroBgUrl,
+      //   ctaLabel: parsed.ctaLabel,
+      //   ctaHref: parsed.ctaHref,
+      //   landing: {
+      //     aboutTitle: parsed.landing.aboutTitle,
+      //     company: parsed.landing.company,
+      //   },
+      // });
+
       if (mode === "create") {
         const res = await fetch("/api/virtualoffice/advisors", {
           method: "POST",
@@ -138,19 +151,17 @@ export function AdvisorForm({
           body: JSON.stringify({
             fullName: parsed.fullName,
             slug: parsed.slug, // ✅ ya viene slugified
-            inmobiliariaId: parsed.inmobiliariaId,
+            inmobiliariaId: parsed.inmobiliariaId ?? null,
             headline: parsed.headline,
             heroBgUrl: parsed.heroBgUrl,
             ctaLabel: parsed.ctaLabel,
             ctaHref: parsed.ctaHref,
-            landing: {
-              aboutTitle: parsed.landing.aboutTitle,
-              company: parsed.landing.company,
-            },
+            landing: parsed.landing,
           }),
         });
 
         const json = await res.json();
+        // console.log("Create advisor response:", json);
         if (!res.ok) throw new Error(json?.error || "Create failed");
 
         router.replace(`/virtual-office/asesores/${json.id}`);
@@ -167,6 +178,7 @@ export function AdvisorForm({
       });
 
       const json = await res.json();
+      // console.log("Update advisor response:", json);
       if (!res.ok) throw new Error(json?.error || "Update failed");
 
       router.refresh();

@@ -17,6 +17,16 @@ export async function getSession(): Promise<SessionPayload | null> {
 
   try {
     const { payload } = await jwtVerify(token, getSecret());
+    // console.log("Session payload constructed:", {
+    //   id: String(payload.id ?? ""),
+    //   sub: String(payload.sub ?? ""),
+    //   email: String(payload.email ?? ""),
+    //   role: payload.role as SessionPayload["role"],
+    //   inmobiliariaId: payload.inmobiliariaId
+    //     ? String(payload.inmobiliariaId)
+    //     : null,
+    //   advisorId: payload.advisorId ? String(payload.advisorId) : null,
+    // });
     return {
       id: String(payload.id ?? ""),
       sub: String(payload.sub ?? ""),

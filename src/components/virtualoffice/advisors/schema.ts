@@ -2,16 +2,7 @@ import { z } from "zod";
 import { SocialPlatform } from "@/generated/prisma";
 import { slugify } from "./utils";
 
-export const SocialPlatformSchema = z.enum([
-  "WHATSAPP",
-  "EMAIL",
-  "BLOG",
-  "WEB",
-  "INSTAGRAM",
-  "FACEBOOK",
-  "X",
-  "TIKTOK",
-]);
+export const SocialPlatformSchema = z.enum(SocialPlatform);
 
 export const FormSchema = z.object({
   fullName: z.string().min(3, "Full name required"),
@@ -57,7 +48,7 @@ export const FormSchema = z.object({
     socialMedia: z
       .array(
         z.object({
-          platform: SocialPlatform,
+          platform: SocialPlatformSchema,
           label: z.string().min(1),
           value: z.string().min(1),
           href: z.string().min(1),
