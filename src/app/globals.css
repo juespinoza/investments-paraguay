@@ -79,6 +79,28 @@ h4 {
   font-family: var(--font-playfair), serif;
 }
 
+p,
+ul,
+ol,
+li,
+span,
+a {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ip-text-secondary);
+}
+
+a {
+  color: var(--ip-accent1);
+  font-size: 12px;
+}
+
+a:hover {
+  color: var(--ip-text-highlight);
+  text-decoration: underline;
+}
+
 /* @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
