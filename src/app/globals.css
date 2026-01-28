@@ -82,9 +82,7 @@ h4 {
 p,
 ul,
 ol,
-li,
-span,
-a {
+li {
   font-family: var(--font-inter), sans-serif;
   font-size: 14px;
   line-height: 1.6;
@@ -92,6 +90,7 @@ a {
 }
 
 a {
+  font-family: var(--font-inter), sans-serif;
   color: var(--ip-accent1);
   font-size: 12px;
 }
