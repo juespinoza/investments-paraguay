@@ -1,4 +1,4 @@
-import { metadata } from "@/app/_layout";
+import { metadata } from "@/app/layout";
 import { title } from "process";
 import { FaWhatsapp, FaInstagram, FaFacebookF, FaTiktok } from "react-icons/fa";
 import { SocialLink } from "../data/types";

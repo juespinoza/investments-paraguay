@@ -31,6 +31,29 @@ export default function HomePage() {
         line1="Obtenga las mejores opciones de inversión con la"
         highlight="ayuda de nuestro grupo de asesores altamente experimentados."
       /> */}
+      <section className="relative my-4 overflow-hidden py-6">
+        <div className="container-page container-narrow relative py-6 text-center flex flex-row items-center gap-6">
+          <div className="mt-4 text-lg text-secondary bg-[#d3bf98] p-4 rounded-md">
+            <h3 className="text-xl font-semibold">
+              Inversiones inmobiliarias en Paraguay
+            </h3>
+            <span className="mt-4">
+              Descubre por qué es el destino favorito de los inversores
+              extranjeros y cómo aprovechar sus oportunidades únicas.
+            </span>
+          </div>
+          <div className="mt-4 text-lg text-secondary bg-[#d3bf98] p-4 rounded-md">
+            <h3 className="text-xl font-semibold">
+              Ideas de negocios en Paraguay
+            </h3>
+            <span className="mt-4">
+              Desde startups tecnológicas hasta franquicias, conoce las
+              industrias y negocios en los podes invertir con éxito en el
+              mercado paraguayo.
+            </span>
+          </div>
+        </div>
+      </section>
 
       {/* <FeaturedGrid title="Finanzas" items={d.featuredProperties} /> */}
 

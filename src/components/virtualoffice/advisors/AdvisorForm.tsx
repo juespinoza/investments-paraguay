@@ -1,4 +1,3 @@
-// src/components/virtualoffice/advisors/AdvisorForm.tsx
 "use client";
 
 import React, {
@@ -9,32 +8,52 @@ import React, {
   useCallback,
 } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useFieldArray, type SubmitHandler } from "react-hook-form";
-import { z } from "zod";
+import {
+  useForm,
+  useFieldArray,
+  useWatch,
+  type SubmitHandler,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSchema, SocialPlatformSchema } from "./schema";
+import type { z } from "zod";
 import { slugify } from "./utils";
-import { useWatch } from "react-hook-form";
+import BaseSection from "./sections/BaseSection";
 import { FeaturedPicker } from "./FeaturedPicker";
 import { StringArrayEditor } from "./StringArrayEditor";
-import BaseSection from "./sections/BaseSection";
+import {
+  updateAdvisorAction,
+  createAdvisorAction,
+  deleteAdvisorAction,
+} from "@/app/api/virtualoffice/advisors/actions";
+import { createAdvisor } from "@/app/api/virtualoffice/advisors/repo";
 
-export type AdvisorFormValues = z.input<typeof FormSchema>; // lo que RHF maneja
-export type AdvisorFormOutput = z.output<typeof FormSchema>; // lo que Zod entrega (slug transformado)
-
-type PropertyOption = {
-  id: string;
-  title: string;
-  city?: string | null;
-  priceUsd?: number | null;
-};
+export type AdvisorFormValues = z.input<typeof FormSchema>;
+export type AdvisorFormOutput = z.output<typeof FormSchema>;
 
 type Props = {
   mode: "create" | "edit";
-  advisorId?: string; // requerido para edit
+  advisorId?: string;
   initialData?: Partial<AdvisorFormValues>;
-  canEditInmobiliariaId?: boolean; // true para ADMIN
+  canEditInmobiliariaId?: boolean;
 };
+
+type Banner = { type: "success" | "error"; message: string } | null;
+
+function BannerMessage({ banner }: { banner: Banner }) {
+  if (!banner) return null;
+
+  const cls =
+    banner.type === "success"
+      ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+      : "border-red-200 bg-red-50 text-red-700";
+
+  return (
+    <div className={`rounded-xl border px-4 py-3 text-sm ${cls}`}>
+      {banner.message}
+    </div>
+  );
+}
 
 export function AdvisorForm({
   mode,
@@ -43,9 +62,11 @@ export function AdvisorForm({
   canEditInmobiliariaId = false,
 }: Props) {
   const router = useRouter();
-  const [saving, setSaving] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const [saving, setSaving] = useState(false);
+  const [banner, setBanner] = useState<Banner>(null);
+
+  // ========= Defaults (centralizados) =========
   const defaults: AdvisorFormValues = useMemo(
     () => ({
       fullName: initialData?.fullName ?? "",
@@ -78,195 +99,54 @@ export function AdvisorForm({
         featuredPropertyIds: initialData?.landing?.featuredPropertyIds ?? [],
       },
     }),
-    [initialData]
+    [initialData],
   );
 
+  // ========= RHF =========
   const form = useForm<AdvisorFormValues>({
     resolver: zodResolver(FormSchema),
     defaultValues: defaults,
     mode: "onBlur",
+    shouldFocusError: true,
   });
 
-  const { register, handleSubmit, watch, setValue, control, formState } = form;
-
-  const testimoniesFA = useFieldArray({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
     control,
-    name: "landing.testimonies",
-  });
+    formState: { errors, isDirty, isSubmitting },
+    setFocus,
+  } = form;
 
-  const socialFA = useFieldArray({
-    control,
-    name: "landing.socialMedia",
-  });
+  // Arrays dinámicos
+  const testimoniesFA = useFieldArray({ control, name: "landing.testimonies" });
+  const socialFA = useFieldArray({ control, name: "landing.socialMedia" });
 
-  const featured = watch("landing.featuredPropertyIds");
+  // Watch solo lo necesario
+  const fullName = useWatch({ control, name: "fullName" });
+  const slug = useWatch({ control, name: "slug" });
 
-  const fullName = watch("fullName");
-  const slug = watch("slug");
-  //   const propertyTypes = watch("landing.propertyTypes") ?? [];
   const propertyTypes =
     useWatch({ control, name: "landing.propertyTypes" }) ?? [];
-  //   const clientTypes = watch("landing.clientTypes") ?? [];
   const clientTypes = useWatch({ control, name: "landing.clientTypes" }) ?? [];
-  //   const areas = watch("landing.areas") ?? [];
   const areas = useWatch({ control, name: "landing.areas" }) ?? [];
-  //   const serviceList = watch("landing.serviceList") ?? [];
   const serviceList = useWatch({ control, name: "landing.serviceList" }) ?? [];
-  //   const featuredIds = watch("landing.featuredPropertyIds") ?? [];
   const featuredIds =
     useWatch({ control, name: "landing.featuredPropertyIds" }) ?? [];
 
-  // si el usuario tocó slug manualmente, no autogeneramos más
+  // ========= Slug autofill con “touched” =========
   const slugTouchedRef = useRef(false);
-
-  // valor inicial del slug para detectar si lo modificó
   const initialSlugRef = useRef(defaults.slug);
 
-  const onSubmit: SubmitHandler<AdvisorFormValues> = async (values) => {
-    setSaving(true);
-    setErrorMsg(null);
-
-    try {
-      // ✅ acá Zod valida + aplica transform() (slugify)
-      const parsed: AdvisorFormOutput = FormSchema.parse(values);
-
-      // console.log("Submitting advisor form:", {
-      //   fullName: parsed.fullName,
-      //   slug: parsed.slug, // ✅ ya viene slugified
-      //   inmobiliariaId: parsed.inmobiliariaId ?? null,
-      //   headline: parsed.headline,
-      //   heroBgUrl: parsed.heroBgUrl,
-      //   ctaLabel: parsed.ctaLabel,
-      //   ctaHref: parsed.ctaHref,
-      //   landing: {
-      //     aboutTitle: parsed.landing.aboutTitle,
-      //     company: parsed.landing.company,
-      //   },
-      // });
-
-      if (mode === "create") {
-        const res = await fetch("/api/virtualoffice/advisors", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            fullName: parsed.fullName,
-            slug: parsed.slug, // ✅ ya viene slugified
-            inmobiliariaId: parsed.inmobiliariaId ?? null,
-            headline: parsed.headline,
-            heroBgUrl: parsed.heroBgUrl,
-            ctaLabel: parsed.ctaLabel,
-            ctaHref: parsed.ctaHref,
-            landing: parsed.landing,
-          }),
-        });
-
-        const json = await res.json();
-        // console.log("Create advisor response:", json);
-        if (!res.ok) throw new Error(json?.error || "Create failed");
-
-        router.replace(`/virtual-office/asesores/${json.id}`);
-        router.refresh();
-        return;
-      }
-
-      if (!advisorId) throw new Error("Missing advisorId for edit");
-
-      const res = await fetch(`/api/virtualoffice/advisors/${advisorId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed), // ✅ mandás el payload normalizado
-      });
-
-      const json = await res.json();
-      // console.log("Update advisor response:", json);
-      if (!res.ok) throw new Error(json?.error || "Update failed");
-
-      router.refresh();
-    } catch (e: any) {
-      setErrorMsg(e?.message ?? "Error");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const onFeaturedChange = useCallback(
-    (ids: string[]) => {
-      setValue("landing.featuredPropertyIds", ids, {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
-    },
-    [setValue]
-  );
-
-  async function onDelete() {
-    if (!advisorId) return;
-    if (!confirm("¿Seguro que quieres eliminar este asesor? (soft delete)"))
-      return;
-
-    setSaving(true);
-    setErrorMsg(null);
-
-    try {
-      const res = await fetch(`/api/virtualoffice/advisors/${advisorId}`, {
-        method: "DELETE",
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || "Delete failed");
-      router.replace("/virtual-office/asesores");
-      router.refresh();
-    } catch (e: any) {
-      setErrorMsg(e?.message ?? "Error");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  function addToStringArray(
-    path:
-      | "landing.propertyTypes"
-      | "landing.clientTypes"
-      | "landing.areas"
-      | "landing.serviceList",
-    value: string
-  ) {
-    const v = value.trim();
-    if (!v) return;
-    const current = (watch(path) as string[]) ?? [];
-    if (current.includes(v)) return;
-    setValue(path as any, [...current, v], {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-  }
-
-  function removeFromStringArray(
-    path:
-      | "landing.propertyTypes"
-      | "landing.clientTypes"
-      | "landing.areas"
-      | "landing.serviceList",
-    value: string
-  ) {
-    const current = (watch(path) as string[]) ?? [];
-    setValue(
-      path as any,
-      current.filter((x) => x !== value),
-      { shouldDirty: true, shouldValidate: true }
-    );
-  }
-
   useEffect(() => {
-    // si el usuario ya tocó el slug, no lo pises
     if (slugTouchedRef.current) return;
-
     const name = (fullName ?? "").trim();
     if (!name) return;
 
     const next = slugify(name);
 
-    // si en modo edit ya venía un slug distinto, no lo pises automáticamente
-    // a menos que el slug actual sea igual al initialSlug o esté vacío
     const current = (slug ?? "").trim();
     const initial = (initialSlugRef.current ?? "").trim();
 
@@ -282,194 +162,306 @@ export function AdvisorForm({
     }
   }, [fullName, slug, setValue]);
 
+  // ========= Helpers StringArrays (sin watch extra) =========
+  const addToArray = useCallback(
+    (
+      path:
+        | "landing.propertyTypes"
+        | "landing.clientTypes"
+        | "landing.areas"
+        | "landing.serviceList",
+      value: string,
+    ) => {
+      const v = value.trim();
+      if (!v) return;
+
+      const current = (getValues(path) as string[]) ?? [];
+      if (current.includes(v)) return;
+
+      setValue(path as any, [...current, v], {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    },
+    [getValues, setValue],
+  );
+
+  const removeFromArray = useCallback(
+    (
+      path:
+        | "landing.propertyTypes"
+        | "landing.clientTypes"
+        | "landing.areas"
+        | "landing.serviceList",
+      value: string,
+    ) => {
+      const current = (getValues(path) as string[]) ?? [];
+      setValue(
+        path as any,
+        current.filter((x) => x !== value),
+        { shouldDirty: true, shouldValidate: true },
+      );
+    },
+    [getValues, setValue],
+  );
+
+  // ========= UX: focus al primer error visible =========
+  const focusFirstError = useCallback(() => {
+    // Prioridad: fullName -> slug -> campos landing comunes
+    if (errors.fullName) return setFocus("fullName");
+    if (errors.slug) return setFocus("slug");
+    // si querés extender, acá agregás más
+  }, [errors.fullName, errors.slug, setFocus]);
+
+  // ========= Submit =========
+  const onSubmit: SubmitHandler<AdvisorFormValues> = async (values) => {
+    setSaving(true);
+    setBanner(null);
+
+    try {
+      const parsed: AdvisorFormOutput = FormSchema.parse(values);
+
+      let res = null;
+      if (mode === "edit" && advisorId !== undefined) {
+        res = await updateAdvisorAction(advisorId, parsed);
+        if (!res.ok) throw new Error(res.error ?? "No se pudo guardar.");
+      } else {
+        res = await createAdvisorAction(parsed);
+        if (!res.ok) throw new Error(res.error ?? "No se pudo guardar.");
+      }
+
+      setBanner({
+        type: "success",
+        message:
+          mode === "create"
+            ? "Asesor creado correctamente."
+            : "Cambios guardados.",
+      });
+
+      if (mode === "create") {
+        router.replace(`/virtual-office/asesores/${res.id}`);
+      }
+      router.refresh();
+    } catch (e: any) {
+      setBanner({ type: "error", message: e?.message ?? "Error" });
+      focusFirstError();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // ========= Delete =========
+  const onDelete = useCallback(async () => {
+    if (!advisorId) return;
+
+    const ok = confirm(
+      "¿Seguro que querés eliminar este asesor? (soft delete)",
+    );
+    if (!ok) return;
+
+    setSaving(true);
+    setBanner(null);
+
+    try {
+      const res = await deleteAdvisorAction(advisorId);
+      if (!res.ok) throw new Error(res.error ?? "No se pudo eliminar.");
+
+      router.replace("/virtual-office/asesores");
+      router.refresh();
+    } catch (e: any) {
+      setBanner({ type: "error", message: e?.message ?? "Error" });
+    } finally {
+      setSaving(false);
+    }
+  }, [advisorId, router]);
+
+  const disableSave = saving || isSubmitting || !isDirty;
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Header actions */}
-      <div className="flex items-center justify-between gap-3 sticky top-0 z-10 -mx-4 mb-4 bg-white/80 px-4 py-3 backdrop-blur">
-        <div>
-          <h1 className="text-2xl font-semibold">
-            {mode === "create" ? "Nuevo asesor" : "Editar asesor"}
-          </h1>
-          <p className="text-secondary">
-            Landing + redes + testimonios + destacadas (máx 3).
-          </p>
-        </div>
+      {/* Sticky action bar (real UX) */}
+      <div className="sticky top-0 z-20 -mx-4 border-b border-zinc-200 bg-white/85 px-4 py-3 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-6xl items-start justify-between gap-4">
+          <div>
+            <h1 className="text-xl font-semibold tracking-tight">
+              {mode === "create" ? "Nuevo asesor" : "Editar asesor"}
+            </h1>
+            <p className="mt-1 text-sm text-zinc-600">
+              Landing · redes · testimonios · destacadas (máx 3)
+              {isDirty ? (
+                <span className="ml-2 font-medium text-zinc-900">
+                  • Cambios sin guardar
+                </span>
+              ) : null}
+            </p>
+          </div>
 
-        <div className="flex items-center gap-2">
-          {mode === "edit" ? (
+          <div className="flex items-center gap-2">
+            {mode === "edit" ? (
+              <button
+                type="button"
+                onClick={onDelete}
+                disabled={saving}
+                className="rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-60"
+              >
+                Eliminar
+              </button>
+            ) : null}
+
             <button
-              type="button"
-              onClick={onDelete}
-              disabled={saving}
-              className="rounded-md border px-3 py-2 text-sm hover:bg-accent2 disabled:opacity-60"
+              type="submit"
+              disabled={disableSave}
+              className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
             >
-              Eliminar
+              {saving ? "Guardando..." : "Guardar"}
             </button>
-          ) : null}
-
-          <button
-            type="submit"
-            disabled={saving || formState.isSubmitting || !formState.isDirty}
-            className="rounded-md bg-accent1 px-4 py-2 text-sm font-medium text-primary hover:opacity-90 disabled:opacity-60"
-          >
-            {saving ? "Guardando..." : "Guardar"}
-          </button>
+          </div>
         </div>
       </div>
 
-      {errorMsg ? (
-        <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          {errorMsg}
-        </div>
-      ) : null}
+      <BannerMessage banner={banner} />
 
       {/* Base */}
-      <BaseSection
-        register={register}
-        formState={formState}
-        setValue={setValue}
-        slugify={slugify}
-        slugTouchedRef={slugTouchedRef}
-        canEditInmobiliariaId={canEditInmobiliariaId}
-      />
+      <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+        <BaseSection
+          register={register}
+          formState={form.formState}
+          setValue={setValue}
+          slugify={slugify}
+          slugTouchedRef={slugTouchedRef}
+          canEditInmobiliariaId={canEditInmobiliariaId}
+        />
+        {/* Tip de UX: si querés mostrar error de slug/fullName arriba */}
+        {(errors.fullName || errors.slug) && (
+          <p className="mt-3 text-sm text-red-700">
+            Revisá los campos marcados. (Nombre completo / Slug)
+          </p>
+        )}
+      </section>
 
       {/* About */}
-      <section className="rounded-xl border border-accent2 bg-white p-4">
-        <h2 className="text-lg font-semibold">About (Landing)</h2>
+      <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+        <h2 className="text-base font-semibold">About (Landing)</h2>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="text-sm text-secondary">
-              Imagen (Cloudinary public_id o URL)
-            </label>
+          <Field
+            label="Imagen (Cloudinary public_id o URL)"
+            hint="Ej: profile_xxx"
+          >
             <input
               {...register("landing.aboutImageUrl")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
+              className="input"
               placeholder="profile_xxx"
             />
-          </div>
+          </Field>
 
-          <div>
-            <label className="text-sm text-secondary">Título</label>
+          <Field label="Título" hint="Ej: Sobre mí">
             <input
               {...register("landing.aboutTitle")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
+              className="input"
               placeholder="Sobre mí"
             />
-          </div>
+          </Field>
 
-          <div>
-            <label className="text-sm text-secondary">Fecha inicio</label>
+          <Field label="Fecha inicio">
             <input
               type="date"
               {...register("landing.startDate")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
+              className="input"
             />
-          </div>
+          </Field>
 
-          <div>
-            <label className="text-sm text-secondary">Empresa</label>
+          <Field label="Empresa" hint="Ej: SkyOne">
             <input
               {...register("landing.company")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
+              className="input"
               placeholder="SkyOne"
             />
-          </div>
+          </Field>
 
-          <div className="md:col-span-2">
-            <label className="text-sm text-secondary">
-              Descripción (opcional)
-            </label>
+          <Field label="Descripción (opcional)" className="md:col-span-2">
             <textarea
               {...register("landing.aboutDescription")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
+              className="textarea"
               rows={2}
             />
-          </div>
+          </Field>
 
-          <div className="md:col-span-2">
-            <label className="text-sm text-secondary">Párrafo 1</label>
+          <Field label="Párrafo 1" className="md:col-span-2">
             <textarea
               {...register("landing.aboutParagraph1")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
+              className="textarea"
               rows={3}
             />
-          </div>
+          </Field>
 
-          <div className="md:col-span-2">
-            <label className="text-sm text-secondary">Párrafo 2</label>
+          <Field label="Párrafo 2" className="md:col-span-2">
             <textarea
               {...register("landing.aboutParagraph2")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
+              className="textarea"
               rows={3}
             />
-          </div>
+          </Field>
         </div>
       </section>
 
       {/* Services */}
-      <section className="rounded-xl border border-accent2 bg-white p-4">
-        <h2 className="text-lg font-semibold">Servicios (Landing)</h2>
+      <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+        <h2 className="text-base font-semibold">Servicios (Landing)</h2>
 
         <div className="mt-4 grid gap-4">
-          <div>
-            <label className="text-sm text-secondary">
-              Servicios - párrafo 1
-            </label>
+          <Field label="Servicios - párrafo 1">
             <textarea
               {...register("landing.servicesParagraph1")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
+              className="textarea"
               rows={3}
             />
-          </div>
+          </Field>
 
-          <div>
-            <label className="text-sm text-secondary">
-              Servicios - párrafo 2
-            </label>
+          <Field label="Servicios - párrafo 2">
             <textarea
               {...register("landing.servicesParagraph2")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
+              className="textarea"
               rows={3}
             />
-          </div>
+          </Field>
 
           <StringArrayEditor
             title="Tipos de propiedad"
             items={propertyTypes}
-            onAdd={(v) => addToStringArray("landing.propertyTypes", v)}
-            onRemove={(v) => removeFromStringArray("landing.propertyTypes", v)}
+            onAdd={(v) => addToArray("landing.propertyTypes", v)}
+            onRemove={(v) => removeFromArray("landing.propertyTypes", v)}
           />
 
           <StringArrayEditor
             title="Tipos de clientes"
             items={clientTypes}
-            onAdd={(v) => addToStringArray("landing.clientTypes", v)}
-            onRemove={(v) => removeFromStringArray("landing.clientTypes", v)}
+            onAdd={(v) => addToArray("landing.clientTypes", v)}
+            onRemove={(v) => removeFromArray("landing.clientTypes", v)}
           />
 
           <StringArrayEditor
-            title="Zonas / Areas"
+            title="Zonas / Áreas"
             items={areas}
-            onAdd={(v) => addToStringArray("landing.areas", v)}
-            onRemove={(v) => removeFromStringArray("landing.areas", v)}
+            onAdd={(v) => addToArray("landing.areas", v)}
+            onRemove={(v) => removeFromArray("landing.areas", v)}
           />
 
           <StringArrayEditor
             title="Lista de servicios"
             items={serviceList}
-            onAdd={(v) => addToStringArray("landing.serviceList", v)}
-            onRemove={(v) => removeFromStringArray("landing.serviceList", v)}
+            onAdd={(v) => addToArray("landing.serviceList", v)}
+            onRemove={(v) => removeFromArray("landing.serviceList", v)}
           />
         </div>
       </section>
 
       {/* Featured properties */}
-      <section className="rounded-xl border border-accent2 bg-white p-4">
-        <h2 className="text-lg font-semibold">
+      <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+        <h2 className="text-base font-semibold">
           Propiedades destacadas (máx 3)
         </h2>
-        <p className="text-sm text-secondary">
+        <p className="mt-1 text-sm text-zinc-600">
           Solo propiedades de este asesor.
         </p>
 
@@ -489,35 +481,36 @@ export function AdvisorForm({
       </section>
 
       {/* Testimonials */}
-      <section className="rounded-xl border border-accent2 bg-white p-4">
-        <h2 className="text-lg font-semibold">Testimonios</h2>
+      <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+        <h2 className="text-base font-semibold">Testimonios</h2>
 
         <div className="mt-4 space-y-3">
           {testimoniesFA.fields.map((f, idx) => (
-            <div key={f.id} className="rounded-md border p-3">
+            <div key={f.id} className="rounded-xl border border-zinc-200 p-4">
               <div className="grid gap-3 md:grid-cols-2">
-                <div>
-                  <label className="text-sm text-secondary">Nombre</label>
+                <Field label="Nombre">
                   <input
                     {...register(`landing.testimonies.${idx}.name` as const)}
-                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    className="input"
+                    placeholder="Nombre del cliente"
                   />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="text-sm text-secondary">Texto</label>
+                </Field>
+
+                <Field label="Texto" className="md:col-span-2">
                   <textarea
                     {...register(`landing.testimonies.${idx}.text` as const)}
-                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    className="textarea"
                     rows={2}
+                    placeholder="Comentario del cliente..."
                   />
-                </div>
+                </Field>
               </div>
 
-              <div className="mt-2 flex justify-end">
+              <div className="mt-3 flex justify-end">
                 <button
                   type="button"
                   onClick={() => testimoniesFA.remove(idx)}
-                  className="rounded-md px-3 py-2 text-sm hover:bg-accent2"
+                  className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
                 >
                   Quitar
                 </button>
@@ -528,7 +521,7 @@ export function AdvisorForm({
           <button
             type="button"
             onClick={() => testimoniesFA.append({ name: "", text: "" })}
-            className="rounded-md border px-3 py-2 text-sm hover:bg-accent2"
+            className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium hover:bg-zinc-50"
           >
             + Agregar testimonio
           </button>
@@ -536,20 +529,19 @@ export function AdvisorForm({
       </section>
 
       {/* Social links */}
-      <section className="rounded-xl border border-accent2 bg-white p-4">
-        <h2 className="text-lg font-semibold">Redes sociales</h2>
+      <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
+        <h2 className="text-base font-semibold">Redes sociales</h2>
 
         <div className="mt-4 space-y-3">
           {socialFA.fields.map((f, idx) => (
-            <div key={f.id} className="rounded-md border p-3">
+            <div key={f.id} className="rounded-xl border border-zinc-200 p-4">
               <div className="grid gap-3 md:grid-cols-4">
-                <div>
-                  <label className="text-sm text-secondary">Plataforma</label>
+                <Field label="Plataforma">
                   <select
                     {...register(
-                      `landing.socialMedia.${idx}.platform` as const
+                      `landing.socialMedia.${idx}.platform` as const,
                     )}
-                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    className="input"
                   >
                     {SocialPlatformSchema.options.map((p) => (
                       <option key={p} value={p}>
@@ -557,38 +549,38 @@ export function AdvisorForm({
                       </option>
                     ))}
                   </select>
-                </div>
-                <div>
-                  <label className="text-sm text-secondary">Label</label>
+                </Field>
+
+                <Field label="Label">
                   <input
                     {...register(`landing.socialMedia.${idx}.label` as const)}
-                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    className="input"
                     placeholder="WhatsApp"
                   />
-                </div>
-                <div>
-                  <label className="text-sm text-secondary">Value</label>
+                </Field>
+
+                <Field label="Value">
                   <input
                     {...register(`landing.socialMedia.${idx}.value` as const)}
-                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    className="input"
                     placeholder="+595..."
                   />
-                </div>
-                <div>
-                  <label className="text-sm text-secondary">Href</label>
+                </Field>
+
+                <Field label="Href">
                   <input
                     {...register(`landing.socialMedia.${idx}.href` as const)}
-                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    className="input"
                     placeholder="https://..."
                   />
-                </div>
+                </Field>
               </div>
 
-              <div className="mt-2 flex justify-end">
+              <div className="mt-3 flex justify-end">
                 <button
                   type="button"
                   onClick={() => socialFA.remove(idx)}
-                  className="rounded-md px-3 py-2 text-sm hover:bg-accent2"
+                  className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
                 >
                   Quitar
                 </button>
@@ -606,12 +598,62 @@ export function AdvisorForm({
                 href: "",
               })
             }
-            className="rounded-md border px-3 py-2 text-sm hover:bg-accent2"
+            className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium hover:bg-zinc-50"
           >
             + Agregar red social
           </button>
         </div>
       </section>
+
+      {/* util: clases locales */}
+      <style jsx global>{`
+        .input {
+          width: 100%;
+          border-radius: 0.75rem;
+          border: 1px solid rgb(228 228 231);
+          background: white;
+          padding: 0.5rem 0.75rem;
+          font-size: 0.875rem;
+          outline: none;
+        }
+        .input:focus {
+          border-color: rgb(161 161 170);
+        }
+        .textarea {
+          width: 100%;
+          border-radius: 0.75rem;
+          border: 1px solid rgb(228 228 231);
+          background: white;
+          padding: 0.5rem 0.75rem;
+          font-size: 0.875rem;
+          outline: none;
+        }
+        .textarea:focus {
+          border-color: rgb(161 161 170);
+        }
+      `}</style>
     </form>
+  );
+}
+
+function Field({
+  label,
+  hint,
+  className,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className={className ?? ""}>
+      <div className="mb-1 flex items-center justify-between gap-2">
+        <span className="text-sm font-medium text-zinc-800">{label}</span>
+        {hint ? <span className="text-xs text-zinc-500">{hint}</span> : null}
+      </div>
+      {children}
+    </label>
   );
 }

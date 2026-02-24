@@ -25,7 +25,7 @@ export function HeroSplit({
       <div className="absolute inset-0">
         <div
           className="h-full w-full bg-cover bg-center bg-accent2"
-          // style={{ backgroundImage: `url(${backgroundImageUrl})` }}
+          style={{ backgroundImage: `url(${backgroundImageUrl})` }}
         />
         <div className="absolute inset-0 bg-white/70" />
       </div>
@@ -44,7 +44,9 @@ export function HeroSplit({
         <p className="mt-2 max-w-2xl font-light text-lg">{subtitle}</p>
 
         <div className="mt-3">
-          <Button href={ctaHref}>{ctaLabel}</Button>
+          <Button href={ctaHref} target="_blank">
+            {ctaLabel}
+          </Button>
         </div>
       </div>
     </section>

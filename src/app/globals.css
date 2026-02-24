@@ -84,19 +84,15 @@ ul,
 ol,
 li {
   font-family: var(--font-inter), sans-serif;
-  font-size: 14px;
   line-height: 1.6;
-  color: var(--ip-text-secondary);
 }
 
 a {
   font-family: var(--font-inter), sans-serif;
-  color: var(--ip-accent1);
   font-size: 12px;
 }
 
 a:hover {
-  color: var(--ip-text-highlight);
   text-decoration: underline;
 }
 

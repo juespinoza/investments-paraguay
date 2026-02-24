@@ -1,6 +1,7 @@
+// src/app/(public)/layout.tsx
 import type { Metadata } from "next";
 import "@/app/globals.css";
-import { inter, playfair } from "@/app/fonts";
+// import { inter, playfair } from "@/app/fonts";
 import { NavBar } from "@/components/landing/NavBar";
 import { Footer } from "@/components/landing/Footer";
 
@@ -15,14 +16,17 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${playfair.variable}`}>
-        <div className="min-h-screen bg-base text-primary">
-          <NavBar />
-          <main>{children}</main>
-          <Footer />
-        </div>
-      </body>
-    </html>
+    // <html lang="en">
+    //   <body
+    //     className={`${inter.variable} ${playfair.variable}`}
+    //     cz-shortcut-listen="true"
+    //   >
+    <div className="min-h-screen bg-base text-primary">
+      <NavBar />
+      <main>{children}</main>
+      <Footer />
+    </div>
+    //   </body>
+    // </html>
   );
 }

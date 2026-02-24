@@ -1,3 +1,4 @@
+// src/app/api/virtualoffice/advisors/[id]/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth/session";
