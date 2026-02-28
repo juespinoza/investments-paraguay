@@ -1,6 +1,9 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 export function Footer() {
+  const t = useTranslations();
+
   return (
     <footer className="mt-6 border-t bg-white">
       <div className="container-page py-10 text-sm text-secondary">
@@ -18,19 +21,19 @@ export function Footer() {
               Asesores
             </a> */}
             <a className="hover:text-primary" href="legales">
-              Legales
+              {t("footer.legal")}
             </a>
             <a className="hover:text-primary" href="/nosotros">
-              Nosotros
+              {t("footer.us")}
             </a>
             {/* <a className="hover:text-primary" href="/blog">
               Blog
             </a> */}
             <a className="hover:text-primary" href="/cookies">
-              Cookies
+              {t("footer.cookies")}
             </a>
             <a className="hover:text-primary" href="/contacto">
-              Contacto
+              {t("footer.contact")}
             </a>
           </div>
         </div>

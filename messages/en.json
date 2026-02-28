@@ -1,0 +1,27 @@
+{
+  "header": {
+    "home": "Home",
+    "realEstate": "Real Estate",
+    "business": "Business",
+    "blog": "Blog"
+  },
+  "footer": {
+    "legal": "Legal",
+    "us": "About Us",
+    "cookies": "Cookies Policy",
+    "contact": "Contact"
+  },
+  "heroTitle": "Meet Paraguay",
+  "heroDescription": "A country where investments are at their most profitable point",
+  "heroCta": "Explore Opportunities",
+  "bannerText": "Get the best investment options with the",
+  "bannerTextHighlight": "help of our highly experienced group of advisors.",
+  "bussinessModel_1": {
+    "title": "Real estate investments in Paraguay",
+    "description": "Discover why it's the favorite destination for foreign investors and how to take advantage of its unique opportunities."
+  },
+  "bussinessModel_2": {
+    "title": "Business ideas in Paraguay",
+    "description": "From tech startups to franchises, learn about the industries and businesses you can successfully invest in the Paraguayan market."
+  }
+}

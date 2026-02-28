@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import createMiddleware from "next-intl/middleware";
 
 function getSecret() {
   const s = process.env.AUTH_SECRET;
@@ -50,6 +51,23 @@ export async function middleware(req: NextRequest) {
   // }
 }
 
+export default createMiddleware({
+  locales: ["en", "es"],
+  defaultLocale: "en",
+
+  // IMPORTANT: sin prefijos /en /es
+  localePrefix: "never",
+
+  // Activa detección por Accept-Language + cookie
+  localeDetection: true,
+
+  // Usá TU cookie "locale" en vez de NEXT_LOCALE (opcional pero recomendado)
+  localeCookie: {
+    name: "locale",
+    maxAge: 60 * 60 * 24 * 365, // 1 año
+  },
+});
+
 export const config = {
-  matcher: ["/virtual-office/:path*"],
+  matcher: ["/virtual-office/:path*", "/((?!api|_next|.*\\..*).*)"],
 };

@@ -1,0 +1,27 @@
+{
+  "header": {
+    "home": "Inicio",
+    "realEstate": "Bienes raíces",
+    "business": "Negocios",
+    "blog": "Blog"
+  },
+  "footer": {
+    "legal": "Legal",
+    "us": "Nosotros",
+    "cookies": "Política de cookies",
+    "contact": "Contacto"
+  },
+  "heroTitle": "Conoce Paraguay",
+  "heroDescription": "Un país donde las inversiones están en su punto mas rentable",
+  "heroCta": "Explorar Oportunidades",
+  "bannerText": "Obtenga las mejores opciones de inversión con la",
+  "bannerTextHighlight": "ayuda de nuestro grupo de asesores altamente experimentados.",
+  "bussinessModel_1": {
+    "title": "Inversiones inmobiliarias en Paraguay",
+    "description": "Descubre por qué es el destino favorito de los inversores extranjeros y cómo aprovechar sus oportunidades únicas."
+  },
+  "bussinessModel_2": {
+    "title": "Ideas de negocios en Paraguay",
+    "description": "Desde startups tecnológicas hasta franquicias, conoce las industrias y negocios en los podes invertir con éxito en el mercado paraguayo."
+  }
+}
