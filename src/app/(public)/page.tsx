@@ -3,11 +3,11 @@ import { FeaturedGrid } from "@/components/landing/FeaturedGrid";
 import { CTAWide } from "@/components/landing/CTAWide";
 import { SocialLinks } from "@/components/landing/SocialLinks";
 import { mockAdvisorLanding } from "@/lib/mock/data";
-import { useTranslations } from "next-intl";
+// import { useTranslations } from "next-intl";
 
 export default function HomePage() {
   const d = mockAdvisorLanding;
-  const t = useTranslations("HomePage");
+  // const t = useTranslations("HomePage");
 
   return (
     <>
@@ -55,7 +55,7 @@ export default function HomePage() {
             </span>
           </div>
         </div>
-        <div>{t("title")}</div>
+        {/* <div>{t("title")}</div> */}
       </section>
 
       {/* <FeaturedGrid title="Finanzas" items={d.featuredProperties} /> */}

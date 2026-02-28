@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { inter, playfair } from "./fonts";
-import { NextIntlClientProvider } from "next-intl";
+// import { NextIntlClientProvider } from "next-intl";
 
 export const metadata: Metadata = {
   title: "Investments Paraguay",
@@ -17,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable}`}>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        {/* <NextIntlClientProvider> */}
+        {children}
+        {/* </NextIntlClientProvider> */}
       </body>
     </html>
   );
