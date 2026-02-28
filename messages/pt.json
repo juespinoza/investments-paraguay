@@ -1,0 +1,26 @@
+{
+  "header": {
+    "home": "Início",
+    "realEstate": "Imóveis",
+    "blog": "Blog"
+  },
+  "footer": {
+    "legal": "Legal",
+    "us": "Sobre Nós",
+    "cookies": "Política de Cookies",
+    "contact": "Contato"
+  },
+  "heroTitle": "Conheça o Paraguai",
+  "heroDescription": "Um país onde os investimentos estão no seu ponto mais lucrativo",
+  "heroCta": "Explorar Oportunidades",
+  "bannerText": "Obtenha as melhores opções de investimento com a",
+  "bannerTextHighlight": "ajuda do nosso grupo de consultores altamente experientes.",
+  "bussinessModel_1": {
+    "title": "Investimentos imobiliários no Paraguai",
+    "description": "Descubra por que é o destino favorito dos investidores estrangeiros e como aproveitar suas oportunidades únicas."
+  },
+  "bussinessModel_2": {
+    "title": "Ideias de negócios no Paraguai",
+    "description": "Desde startups de tecnologia até franquias, conheça as indústrias e negócios nos quais você pode investir com sucesso no mercado paraguaio."
+  }
+}

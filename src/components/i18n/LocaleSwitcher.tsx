@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { Globe } from "lucide-react";
 import { setLocale } from "@/app/actions/set-locate";
 
-type Locale = "en" | "es";
+type Locale = "en" | "es" | "pt" | "de";
 
 const LOCALES: Array<{ value: Locale; icon: string; label: string }> = [
   { value: "en", icon: "🇺🇸", label: "English" },
   { value: "es", icon: "🇵🇾", label: "Español" },
+  { value: "pt", icon: "🇧🇷", label: "Português" },
+  { value: "de", icon: "🇩🇪", label: "Deutsch" },
 ];
 
 function readCookieLocale(): Locale {
@@ -21,7 +23,13 @@ function readCookieLocale(): Locale {
     .find((v) => v.startsWith("locale="));
 
   const value = match?.split("=")[1];
-  return value === "es" ? "es" : "en";
+  return value === "es"
+    ? "es"
+    : value === "pt"
+      ? "pt"
+      : value === "de"
+        ? "de"
+        : "en";
 }
 
 export function LocaleSwitcher() {
@@ -91,7 +99,7 @@ export function LocaleSwitcher() {
         <div
           role="menu"
           aria-label="Select language"
-          className="absolute right-0 top-full z-50 mt-2 w-16 overflow-hidden rounded-md bg-white shadow-lg"
+          className="absolute right-0 top-full z-50 mt-2 w-14 overflow-hidden rounded-md bg-white shadow-lg"
         >
           {LOCALES.map((l) => {
             const active = l.value === selected;
@@ -102,7 +110,7 @@ export function LocaleSwitcher() {
                 role="menuitem"
                 onClick={() => pick(l.value)}
                 disabled={isPending}
-                className={`flex w-full items-center justify-between px-3 py-2 text-left text-md hover:bg-gray-50 disabled:opacity-60 ${
+                className={`flex w-full items-center justify-between px-2.5 py-1 text-left text-md hover:bg-gray-50 disabled:opacity-60 ${
                   active ? "bg-gray-100 text-green-500" : ""
                 }`}
                 aria-label={l.label}

@@ -2,7 +2,7 @@
 import { cookies, headers } from "next/headers";
 import { getRequestConfig } from "next-intl/server";
 
-const SUPPORTED = ["en", "es"] as const;
+const SUPPORTED = ["en", "es", "pt", "de"] as const;
 type Locale = (typeof SUPPORTED)[number];
 
 function pickFromAcceptLanguage(value: string | null): Locale {
@@ -16,6 +16,8 @@ function pickFromAcceptLanguage(value: string | null): Locale {
 
   // match simple por prefijo
   if (langs.some((l) => l === "es" || l.startsWith("es-"))) return "es";
+  if (langs.some((l) => l === "pt" || l.startsWith("pt-"))) return "pt";
+  if (langs.some((l) => l === "de" || l.startsWith("de-"))) return "de";
   if (langs.some((l) => l === "en" || l.startsWith("en-"))) return "en";
   return "en";
 }

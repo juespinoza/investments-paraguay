@@ -1,0 +1,27 @@
+{
+  "header": {
+    "home": "Startseite",
+    "realEstate": "Immobilien",
+    "business": "Geschäft",
+    "blog": "Blog"
+  },
+  "footer": {
+    "legal": "Rechtliches",
+    "us": "Über uns",
+    "cookies": "Cookie-Richtlinie",
+    "contact": "Kontakt"
+  },
+  "heroTitle": "Lernen Sie Paraguay kennen",
+  "heroDescription": "Ein Land, in dem Investitionen am profitabelsten sind",
+  "heroCta": "Chancen erkunden",
+  "bannerText": "Erhalten Sie die besten Investitionsmöglichkeiten mit der",
+  "bannerTextHighlight": "Hilfe unserer hochqualifizierten Beratergruppe.",
+  "bussinessModel_1": {
+    "title": "Immobilieninvestitionen in Paraguay",
+    "description": "Entdecken Sie, warum es das Lieblingsziel für ausländische Investoren ist und wie Sie seine einzigartigen Möglichkeiten nutzen können."
+  },
+  "bussinessModel_2": {
+    "title": "Geschäftsideen in Paraguay",
+    "description": "Von Tech-Startups bis hin zu Franchise-Unternehmen, erfahren Sie mehr über die Branchen und Unternehmen, in die Sie erfolgreich auf dem paraguayischen Markt investieren können."
+  }
+}
