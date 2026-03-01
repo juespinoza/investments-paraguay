@@ -30,24 +30,23 @@ export default function HomePage() {
         line1="Obtenga las mejores opciones de inversión con la"
         highlight="ayuda de nuestro grupo de asesores altamente experimentados."
       /> */}
-      <section className="relative my-4 overflow-hidden py-6">
-        <div className="container-page container-narrow relative py-6 text-center flex flex-row items-center gap-6">
-          <div className="mt-4 text-lg text-secondary bg-[#d3bf98] p-4 rounded-md">
-            <h3 className="text-xl font-semibold">
-              {t("bussinessModel_1.title")}
-            </h3>
-            <span className="mt-4">{t("bussinessModel_1.description")}</span>
-          </div>
-          <div className="mt-4 text-lg text-secondary bg-[#d3bf98] p-4 rounded-md">
-            <h3 className="text-xl font-semibold">
-              {t("bussinessModel_2.title")}
-            </h3>
-            <span className="mt-4">
-              {t("bussinessModel_2.description")}
-            </span>
+      <section className="relative overflow-hidden">
+        <div className="container-page container-narrow relative py-6">
+          <div className="flex flex-col gap-x-0 md:gap-x-6 gap-y-6 md:gap-y-0 text-center md:flex-row md:items-stretch">
+            <div className="w-full rounded-md bg-[#d3bf98] p-4 text-lg text-secondary md:w-1/2">
+              <h3 className="text-xl font-semibold">
+                {t("bussinessModel_1.title")}
+              </h3>
+              <p className="mt-4">{t("bussinessModel_1.description")}</p>
+            </div>
+            <div className="w-full rounded-md bg-[#d3bf98] p-4 text-lg text-secondary md:w-1/2">
+              <h3 className="text-xl font-semibold">
+                {t("bussinessModel_2.title")}
+              </h3>
+              <p className="mt-4">{t("bussinessModel_2.description")}</p>
+            </div>
           </div>
         </div>
-        {/* <div>{t("title")}</div> */}
       </section>
 
       {/* <FeaturedGrid title="Finanzas" items={d.featuredProperties} /> */}

@@ -6,7 +6,7 @@ export function CTAWide({
   highlight: string;
 }) {
   return (
-    <section className="relative my-4 overflow-hidden py-6">
+    <section className="relative overflow-hidden py-6">
       {/* <div className="absolute inset-0">
         <div className="h-full w-full bg-[radial-gradient(circle_at_center,rgba(10,26,47,0.06),transparent_60%)]" />
       </div> */}
