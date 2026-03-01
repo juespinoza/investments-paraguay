@@ -1,7 +1,8 @@
 // src/app/(public)/layout.tsx
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import type { Metadata } from "next";
 import "@/app/globals.css";
-// import { inter, playfair } from "@/app/fonts";
 import { NavBar } from "@/components/landing/NavBar";
 import { Footer } from "@/components/landing/Footer";
 
@@ -10,23 +11,19 @@ export const metadata: Metadata = {
   description: "Check out investment opportunities in Paraguay.",
 };
 
-export default function PublicLayout({
+export default async function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    // <html lang="en">
-    //   <body
-    //     className={`${inter.variable} ${playfair.variable}`}
-    //     cz-shortcut-listen="true"
-    //   >
-    <div className="min-h-screen bg-base text-primary">
+    <NextIntlClientProvider locale={locale} messages={messages}>
       <NavBar />
       <main>{children}</main>
       <Footer />
-    </div>
-    //   </body>
-    // </html>
+    </NextIntlClientProvider>
   );
 }
