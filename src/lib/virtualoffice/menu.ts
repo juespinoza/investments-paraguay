@@ -17,14 +17,14 @@ export const VIRTUALOFFICE_MENU: MenuItem[] = [
 
   {
     label: "Inmobiliarias",
-    href: "/virtual-office/inmobiliarias",
+    href: "/virtual-office/inmobiliaria",
     roles: ["ADMIN", "INMOBILIARIA"],
   },
 
   {
     label: "Asesores",
     href: "/virtual-office/asesores",
-    roles: ["ADMIN", "ASESOR"],
+    roles: ["ADMIN", "INMOBILIARIA", "ASESOR"],
   },
 
   {

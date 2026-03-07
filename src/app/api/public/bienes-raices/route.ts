@@ -12,6 +12,7 @@ export async function GET() {
     select: {
       slug: true,
       title: true,
+      description: true,
       coverImageUrl: true,
       priceUsd: true,
       city: true,
@@ -24,10 +25,10 @@ export async function GET() {
     },
   });
 
-  const response = properties.map((p: any) => ({
+  const response = properties.map((p) => ({
     slug: p.slug,
     title: p.title,
-    subtitle: p.subtitle,
+    subtitle: p.description,
     coverImageUrl: p.coverImageUrl,
     priceUsd: p.priceUsd,
     city: p.city,

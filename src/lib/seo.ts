@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
+import {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  type AppLocale,
+} from "@/lib/i18n";
 
 export const SITE_URL = "https://www.investmentsparaguay.com";
 export const SITE_NAME = "Investments Paraguay";
-export const DEFAULT_LOCALE = "en";
-export const SUPPORTED_LOCALES = ["en", "es", "pt", "de"] as const;
-
-type Locale = (typeof SUPPORTED_LOCALES)[number];
 
 type SeoInput = {
   title: string;
   description: string;
   pathname?: string;
-  locale?: Locale;
+  locale?: AppLocale;
   image?: string;
   noIndex?: boolean;
   keywords?: string[];

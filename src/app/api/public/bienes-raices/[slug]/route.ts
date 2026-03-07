@@ -34,6 +34,7 @@ export async function GET(_req: Request, { params }: Params) {
   const response = {
     slug: property.slug,
     title: property.title,
+    subtitle: property.description,
     description: property.description,
     coverImageUrl: property.coverImageUrl,
     gallery: property.gallery,

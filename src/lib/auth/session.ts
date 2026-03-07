@@ -12,7 +12,6 @@ function getSecret() {
 export async function getSession(): Promise<SessionPayload | null> {
   const cookieName = process.env.AUTH_COOKIE_NAME || "ip_session";
   const token = (await cookies()).get(cookieName)?.value;
-  console.log("Session token:", token);
   if (!token) return null;
 
   try {
