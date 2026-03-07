@@ -1,8 +1,51 @@
 import Link from "next/link";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { SITE_URL } from "@/lib/seo";
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Investments Paraguay",
+  url: SITE_URL,
+  logo: `${SITE_URL}/images/logo.png`,
+  sameAs: ["https://www.instagram.com/investmentsparaguay"],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "sales",
+    telephone: "+595985444801",
+    availableLanguage: ["English", "Spanish", "Portuguese", "German"],
+  },
+};
+
+const articleJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline:
+    "Por qué Paraguay se está convirtiendo en el nuevo polo de inversión inmobiliaria en Sudamérica",
+  description:
+    "Paraguay viene ganando atención como destino de inversión inmobiliaria por su estabilidad macro relativa, una inflación controlada dentro de una meta oficial, incentivos a la inversión y un ciclo de expansión urbana en Asunción y Gran Asunción.",
+  image: `${SITE_URL}/images/logo.png`,
+  datePublished: "2026-01-27",
+  dateModified: "2026-01-27",
+  author: {
+    "@type": "Person",
+    name: "Julia Espinoza",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Investments Paraguay",
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITE_URL}/images/logo.png`,
+    },
+  },
+  mainEntityOfPage: `${SITE_URL}/blog/paraguay-polo-inversion-inmobiliaria-sudamerica`,
+};
 
 export default function BlogPostPage() {
   return (
     <div className="container-page py-10">
+      <StructuredData data={[organizationJsonLd, articleJsonLd]} />
       <h1 className="text-4xl font-semibold mb-16 text-center">
         Por qué Paraguay se está convirtiendo en el nuevo polo de inversión
         inmobiliaria en Sudamérica

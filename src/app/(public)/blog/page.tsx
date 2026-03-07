@@ -1,5 +1,21 @@
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import Link from "next/link";
+import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Investment Blog Paraguay | Real Estate, Business and Market Insights",
+  description:
+    "Read articles about investing in Paraguay, the local real estate market, business opportunities and guidance for foreign investors.",
+  pathname: "/blog",
+  locale: "en",
+  keywords: [
+    "Paraguay investment blog",
+    "Paraguay real estate blog",
+    "Paraguay market insights",
+    "invest in Paraguay blog",
+  ],
+});
 
 export default function BlogPage() {
   return (

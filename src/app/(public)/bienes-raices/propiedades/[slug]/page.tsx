@@ -2,8 +2,9 @@ import { apiGet } from "@/lib/api/public";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { ImageCloudinary } from "@/components/ui/ImageCloudinary";
-import { AboutSection } from "@/components/landing/AboutSection";
 import { SectionTitle } from "@/components/landing/SectionTitle";
+import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 
 export const revalidate = 120;
 
@@ -26,6 +27,44 @@ type PublicPropertyDetail = {
 };
 
 type PageProps = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const property = await apiGet<PublicPropertyDetail>(
+    `/api/public/bienes-raices/${slug}`,
+    revalidate,
+  );
+
+  if (!property) {
+    return buildMetadata({
+      title: "Propiedad en Paraguay | Investments Paraguay",
+      description:
+        "Explora oportunidades inmobiliarias en Paraguay con asesoría profesional.",
+      pathname: `/bienes-raices/propiedades/${slug}`,
+      locale: "es",
+      noIndex: true,
+    });
+  }
+
+  const description =
+    property.description ??
+    property.subtitle ??
+    `Propiedad en ${property.city ?? "Paraguay"} con potencial de inversión.`;
+
+  return buildMetadata({
+    title: `${property.title} | Inversión inmobiliaria en Paraguay`,
+    description,
+    pathname: `/bienes-raices/propiedades/${slug}`,
+    locale: "es",
+    image: property.coverImageUrl || "/images/logo.png",
+    keywords: [
+      property.title,
+      property.city ?? "paraguay",
+      "propiedad en venta paraguay",
+      "inversión inmobiliaria paraguay",
+    ],
+  });
+}
 
 export default async function PropertyPage({ params }: PageProps) {
   const { slug } = await params;

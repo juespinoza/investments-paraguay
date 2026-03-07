@@ -1,5 +1,22 @@
 import { apiGet } from "@/lib/api/public";
 import { FeaturedGrid } from "@/components/landing/FeaturedGrid";
+import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Real Estate Investment in Paraguay | Apartments, Land and Projects",
+  description:
+    "Find apartments, land, houses and investment projects in Paraguay with professional advisory for local and international buyers.",
+  pathname: "/bienes-raices",
+  locale: "es",
+  keywords: [
+    "inversion inmobiliaria paraguay",
+    "departamentos en paraguay",
+    "terrenos en paraguay",
+    "proyectos inmobiliarios paraguay",
+    "asesor inmobiliario paraguay",
+  ],
+});
 
 export const revalidate = 60;
 
@@ -16,7 +33,7 @@ type PublicPropertyListItem = {
 export default async function BienesRaicesPage() {
   const properties = await apiGet<PublicPropertyListItem[]>(
     "/api/public/bienes-raices",
-    60
+    60,
   );
 
   const items =

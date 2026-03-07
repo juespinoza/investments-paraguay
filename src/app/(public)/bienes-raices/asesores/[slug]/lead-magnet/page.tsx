@@ -1,5 +1,22 @@
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { Button } from "@/components/ui/Button";
+import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
+
+type PageProps = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+
+  return buildMetadata({
+    title: "Guía para inversores | Investments Paraguay",
+    description:
+      "Solicita una guía gratuita para evaluar oportunidades de inversión en Paraguay.",
+    pathname: `/bienes-raices/asesores/${slug}/lead-magnet`,
+    locale: "es",
+    noIndex: true,
+  });
+}
 
 export default function LeadMagnetPage() {
   return (

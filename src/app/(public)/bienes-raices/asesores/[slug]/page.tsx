@@ -9,10 +9,50 @@ import { PublicAdvisorLanding } from "@/lib/data/types";
 import { ServicesSection } from "@/components/landing/ServicesSection";
 import { CTAWide } from "@/components/landing/CTAWide";
 import { Testimonials } from "@/components/landing/Testimonials";
+import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 
 export const revalidate = 300;
 
 type PageProps = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const advisor = await apiGet<PublicAdvisorLanding>(
+    `/api/public/asesores/${slug}`,
+    revalidate,
+  );
+
+  if (!advisor) {
+    return buildMetadata({
+      title: "Asesor inmobiliario | Investments Paraguay",
+      description:
+        "Conoce asesores inmobiliarios especializados en inversiones en Paraguay.",
+      pathname: `/bienes-raices/asesores/${slug}`,
+      locale: "es",
+      noIndex: true,
+    });
+  }
+
+  const description =
+    advisor.headline ??
+    advisor.about.description ??
+    "Asesor inmobiliario especializado en inversión en Paraguay.";
+
+  return buildMetadata({
+    title: `${advisor.fullName} | Asesor Inmobiliario en Paraguay`,
+    description,
+    pathname: `/bienes-raices/asesores/${slug}`,
+    locale: "es",
+    image: advisor.about.imageUrl || "/images/logo.png",
+    keywords: [
+      advisor.fullName,
+      "asesor inmobiliario paraguay",
+      "inversión inmobiliaria paraguay",
+      "bienes raíces paraguay",
+    ],
+  });
+}
 
 export default async function AdvisorLandingPage({ params }: PageProps) {
   const { slug } = await params;
@@ -23,8 +63,6 @@ export default async function AdvisorLandingPage({ params }: PageProps) {
   );
 
   if (!d) notFound();
-
-  console.log("Advisor landing data:", d);
 
   const featuredItems = d.featuredProperties.map((p) => ({
     slug: p.slug,

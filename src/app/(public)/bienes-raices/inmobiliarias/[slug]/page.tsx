@@ -5,6 +5,21 @@ import { CTAWide } from "@/components/landing/CTAWide";
 import { Testimonials } from "@/components/landing/Testimonials";
 import { SocialLinks } from "@/components/landing/SocialLinks";
 import { mockAgencyLanding } from "@/lib/mock/data";
+import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
+
+type PageProps = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  return buildMetadata({
+    title: "Inmobiliaria | Investments Paraguay",
+    description: "Landing de inmobiliaria en proceso de personalización.",
+    pathname: `/bienes-raices/inmobiliarias/${slug}`,
+    locale: "es",
+    noIndex: true,
+  });
+}
 
 export default function AgencyLandingPage() {
   const d = mockAgencyLanding;

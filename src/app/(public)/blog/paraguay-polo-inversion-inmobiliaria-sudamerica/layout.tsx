@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { buildMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
 
-export const metadata: Metadata = {
+const pathname = "/blog/paraguay-polo-inversion-inmobiliaria-sudamerica";
+
+const baseMetadata = buildMetadata({
   title:
     "Por qué invertir en Paraguay: el nuevo polo inmobiliario de Sudamérica | Investments Paraguay",
   description:
     "Paraguay gana atractivo para inversión inmobiliaria por estabilidad, inflación controlada e incentivos. Claves, riesgos y checklist para invertir mejor.",
+  pathname,
+  locale: "es",
+  image: "/images/logo.png",
   keywords: [
     "inversiones Paraguay",
     "inversión inmobiliaria Paraguay",
@@ -18,26 +24,15 @@ export const metadata: Metadata = {
     "Paraguay inversión extranjera",
     "ley 60/90 Paraguay",
   ],
+});
+
+export const metadata: Metadata = {
+  ...baseMetadata,
   openGraph: {
-    title: "Paraguay: nuevo polo de inversión inmobiliaria en Sudamérica",
-    description:
-      "Factores macro, incentivos y crecimiento urbano: por qué Paraguay atrae inversores inmobiliarios y qué mirar antes de comprar.",
-    url: "https://investmentsparaguay.com/blog/paraguay-polo-inversion-inmobiliaria-sudamerica",
-    siteName: "Investments Paraguay",
-    images: [
-      {
-        url: "https://investmentsparaguay.com/images/logo.png",
-        width: 350,
-        height: 110,
-      },
-    ],
+    ...baseMetadata.openGraph,
     type: "article",
-    tags: ["Paraguay", "Inversiones", "Inmobiliario", "Asunción"],
-  },
-  twitter: {
-    title: "Paraguay: nuevo polo de inversión inmobiliaria en Sudamérica",
-    description:
-      "Factores macro, incentivos y crecimiento urbano: por qué Paraguay atrae inversores inmobiliarios y qué mirar antes de comprar.",
+    url: `${SITE_URL}${pathname}`,
+    siteName: SITE_NAME,
   },
 };
 
