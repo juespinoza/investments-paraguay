@@ -1,5 +1,5 @@
 import { SectionTitle } from "@/components/landing/SectionTitle";
-import { Button } from "@/components/ui/Button";
+import { LeadCaptureForm } from "@/components/leads/LeadCaptureForm";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 
@@ -18,7 +18,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 }
 
-export default function LeadMagnetPage() {
+export default async function LeadMagnetPage({ params }: PageProps) {
+  const { slug } = await params;
   return (
     <div className="container-page py-6">
       <SectionTitle
@@ -27,15 +28,10 @@ export default function LeadMagnetPage() {
       />
 
       <div className="mt-10 max-w-xl rounded-sm border bg-white p-6">
-        <form className="grid gap-4">
-          <input className="h-11 rounded-sm border px-3" placeholder="Nombre" />
-          <input className="h-11 rounded-sm border px-3" placeholder="Email" />
-          <input
-            className="h-11 rounded-sm border px-3"
-            placeholder="WhatsApp"
-          />
-          <Button>Recibir guía</Button>
-        </form>
+        <LeadCaptureForm
+          sourcePage={`/bienes-raices/asesores/${slug}/lead-magnet`}
+          advisorSlug={slug}
+        />
       </div>
     </div>
   );

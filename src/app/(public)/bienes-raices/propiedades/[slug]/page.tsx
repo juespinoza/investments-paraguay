@@ -5,6 +5,7 @@ import { ImageCloudinary } from "@/components/ui/ImageCloudinary";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
+import { LeadCaptureForm } from "@/components/leads/LeadCaptureForm";
 
 export const revalidate = 120;
 
@@ -17,6 +18,9 @@ type PublicPropertyDetail = {
   gallery: string[];
   priceUsd: number | null;
   city: string | null;
+  mapQuery: string;
+  roiAnnualApproxPct: number;
+  appreciationAnnualApproxPct: number;
   advisor: {
     slug: string;
     fullName: string;
@@ -100,9 +104,58 @@ export default async function PropertyPage({ params }: PageProps) {
               {property.priceUsd ? <span>{property.priceUsd} USD</span> : null}
             </div>
 
+            <div className="mt-6 grid gap-3 text-sm md:grid-cols-2">
+              <div className="rounded-sm border bg-white p-3">
+                <div className="text-secondary">ROI anual aproximado</div>
+                <div className="text-xl font-semibold">
+                  {property.roiAnnualApproxPct.toFixed(1)}%
+                </div>
+              </div>
+              <div className="rounded-sm border bg-white p-3">
+                <div className="text-secondary">Plusvalía anual estimada</div>
+                <div className="text-xl font-semibold">
+                  {property.appreciationAnnualApproxPct.toFixed(1)}%
+                </div>
+              </div>
+            </div>
+
             {property.description ? (
               <p className="mt-6 text-secondary">{property.description}</p>
             ) : null}
+          </div>
+        </div>
+      </section>
+
+      <section className="container-page container-narrow py-2">
+        <h2 className="text-2xl font-semibold">Mapa de ubicación</h2>
+        <p className="mt-2 text-sm text-secondary">
+          Ubicación referencial para análisis de zona y conectividad.
+        </p>
+        <div className="mt-4 overflow-hidden rounded-xl border bg-white">
+          <iframe
+            title={`Mapa de ${property.title}`}
+            className="h-[320px] w-full"
+            src={`https://maps.google.com/maps?q=${encodeURIComponent(
+              property.mapQuery,
+            )}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
+            loading="lazy"
+          />
+        </div>
+      </section>
+
+      <section className="container-page container-narrow py-8">
+        <div className="max-w-2xl rounded-xl border bg-white p-6">
+          <h2 className="text-2xl font-semibold">Solicitar información</h2>
+          <p className="mt-2 text-sm text-secondary">
+            Recibí asesoría y detalles de esta oportunidad de inversión.
+          </p>
+          <div className="mt-4">
+            <LeadCaptureForm
+              compact
+              sourcePage={`/bienes-raices/propiedades/${property.slug}`}
+              propertySlug={property.slug}
+              advisorSlug={property.advisor?.slug}
+            />
           </div>
         </div>
       </section>

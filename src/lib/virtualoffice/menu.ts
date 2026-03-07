@@ -13,7 +13,11 @@ export const VIRTUALOFFICE_MENU: MenuItem[] = [
     roles: ["ADMIN", "INMOBILIARIA", "ASESOR", "BLOGUERO"],
   },
 
-  { label: "Usuarios", href: "/virtual-office/usuarios", roles: ["ADMIN"] },
+  {
+    label: "Leads",
+    href: "/virtual-office/usuarios",
+    roles: ["ADMIN", "INMOBILIARIA", "ASESOR"],
+  },
 
   {
     label: "Inmobiliarias",

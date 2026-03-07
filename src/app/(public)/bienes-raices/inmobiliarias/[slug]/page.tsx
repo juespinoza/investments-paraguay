@@ -1,73 +1,132 @@
 import { HeroSplit } from "@/components/landing/HeroSplit";
-import { TwoCol } from "@/components/landing/TwoCol";
-import { OfficesGrid } from "@/components/landing/OfficesGrid";
-import { CTAWide } from "@/components/landing/CTAWide";
-import { Testimonials } from "@/components/landing/Testimonials";
-import { SocialLinks } from "@/components/landing/SocialLinks";
-import { mockAgencyLanding } from "@/lib/mock/data";
+import { FeaturedGrid } from "@/components/landing/FeaturedGrid";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { buildMetadata } from "@/lib/seo";
+import { prisma } from "@/lib/prisma";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  const agency = await prisma.inmobiliaria.findUnique({
+    where: { slug },
+    select: { name: true, description: true, logoUrl: true },
+  });
+
+  if (!agency) {
+    return buildMetadata({
+      title: "Inmobiliaria | Investments Paraguay",
+      description: "Perfil de inmobiliaria no disponible.",
+      pathname: `/bienes-raices/inmobiliarias/${slug}`,
+      locale: "es",
+      noIndex: true,
+    });
+  }
+
   return buildMetadata({
-    title: "Inmobiliaria | Investments Paraguay",
-    description: "Landing de inmobiliaria en proceso de personalización.",
+    title: `${agency.name} | Inmobiliaria en Paraguay`,
+    description:
+      agency.description ??
+      `Conoce las propiedades y asesores de ${agency.name} en Paraguay.`,
     pathname: `/bienes-raices/inmobiliarias/${slug}`,
     locale: "es",
-    noIndex: true,
+    image: agency.logoUrl ?? "/images/logo.png",
   });
 }
 
-export default function AgencyLandingPage() {
-  const d = mockAgencyLanding;
+export const revalidate = 300;
+
+export default async function AgencyLandingPage({ params }: PageProps) {
+  const { slug } = await params;
+  const agency = await prisma.inmobiliaria.findUnique({
+    where: { slug, deletedAt: null },
+    select: {
+      name: true,
+      slug: true,
+      description: true,
+      logoUrl: true,
+      advisors: {
+        where: { deletedAt: null },
+        select: { id: true, fullName: true, slug: true, headline: true },
+        orderBy: { updatedAt: "desc" },
+      },
+      properties: {
+        where: { deletedAt: null },
+        select: {
+          slug: true,
+          title: true,
+          description: true,
+          coverImageUrl: true,
+          city: true,
+          featuredInLandings: { select: { id: true }, take: 1 },
+          updatedAt: true,
+        },
+        orderBy: { updatedAt: "desc" },
+      },
+    },
+  });
+
+  if (!agency) notFound();
+
+  const propertyItems = agency.properties
+    .map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      subtitle: p.description ?? p.city ?? "",
+      coverImageUrl: p.coverImageUrl ?? "intentoPortada_wku8ef",
+      href: `/bienes-raices/propiedades/${p.slug}`,
+      badge: p.featuredInLandings.length > 0 ? "Destacada" : "Venta",
+      updatedAt: p.updatedAt,
+      isFeatured: p.featuredInLandings.length > 0,
+    }))
+    .sort((a, b) => {
+      if (a.isFeatured !== b.isFeatured) return a.isFeatured ? -1 : 1;
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    });
 
   return (
     <>
       <HeroSplit
-        brandLeft="INVESTMENTS"
+        brandLeft="INMOBILIARIA"
         brandRight="PARAGUAY"
         menuActive="Bienes raíces"
-        title={d.heroTitle}
-        subtitle={d.heroSubtitle}
-        ctaLabel={d.heroCtaLabel}
-        ctaHref={d.heroCtaHref}
-        backgroundImageUrl={d.heroBg}
-        logoLeftUrl={d.logoUrl}
+        title={agency.name}
+        subtitle={
+          agency.description ??
+          "Especialistas en oportunidades inmobiliarias en Paraguay."
+        }
+        ctaLabel="Ver propiedades"
+        ctaHref="#propiedades"
+        backgroundImageUrl="/backgrounds/background.png"
+        logoLeftUrl={agency.logoUrl ?? undefined}
       />
 
-      <TwoCol
-        rightImageAlt={d.about.imageUrl}
-        rightImageUrl="SkyOne"
-        eyebrow="SkyOne Paraguay"
-        title={d.about.title}
-        // meta={[
-        //   { label: "Años en el mercado", value: d.about.years },
-        //   { label: "Operaciones", value: d.about.ops },
-        // ]}
-        paragraphs={d.about.paragraphs}
-        ctaLabel="Contactar"
-        ctaHref={d.heroCtaHref}
-      />
+      <section className="container-page container-narrow py-6">
+        <h2 className="text-3xl font-semibold">Equipo de asesores</h2>
+        <div className="mt-5 grid gap-4 md:grid-cols-2">
+          {agency.advisors.length === 0 ? (
+            <p className="text-secondary">Aún no hay asesores publicados.</p>
+          ) : (
+            agency.advisors.map((advisor) => (
+              <a
+                key={advisor.id}
+                href={`/bienes-raices/asesores/${advisor.slug}`}
+                className="rounded-lg border bg-white p-4 hover:bg-zinc-50"
+              >
+                <h3 className="font-semibold">{advisor.fullName}</h3>
+                <p className="mt-1 text-sm text-secondary">
+                  {advisor.headline ?? "Asesor inmobiliario"}
+                </p>
+              </a>
+            ))
+          )}
+        </div>
+      </section>
 
-      <OfficesGrid title="Nuestras oficinas" items={d.offices} />
-
-      {/* <ServicesSection
-        paragraphs={d.specialization}
-        ctaLabel="Contactar"
-        ctaHref={d.heroCtaHref}
-      /> */}
-
-      <CTAWide
-        line1="Obtenga las mejores opciones de inversión con la"
-        highlight="ayuda de nuestro grupo de asesores altamente experimentados."
-      />
-
-      <Testimonials title="Testimonios" items={d.testimonials} />
-
-      <SocialLinks title="Redes sociales" items={d.socialLinks} />
+      <section id="propiedades">
+        <FeaturedGrid title="Propiedades de la inmobiliaria" items={propertyItems} />
+      </section>
     </>
   );
 }

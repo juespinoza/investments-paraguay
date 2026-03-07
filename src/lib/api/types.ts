@@ -5,6 +5,10 @@ export type PublicPropertyListItem = {
   coverImageUrl: string | null;
   priceUsd: number | null;
   city: string | null;
+  isFeatured: boolean;
+  updatedAt: string;
+  roiAnnualApproxPct: number;
+  appreciationAnnualApproxPct: number;
   advisor: { slug: string; fullName: string } | null;
 };
 
@@ -17,6 +21,9 @@ export type PublicPropertyDetail = {
   gallery: string[];
   priceUsd: number | null;
   city: string | null;
+  mapQuery: string;
+  roiAnnualApproxPct: number;
+  appreciationAnnualApproxPct: number;
   advisor: {
     slug: string;
     fullName: string;
