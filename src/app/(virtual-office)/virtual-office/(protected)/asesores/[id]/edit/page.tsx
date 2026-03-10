@@ -7,7 +7,6 @@ type PageProps = { params: Promise<{ id: string }> };
 
 export default async function EditAdvisorPage({ params }: PageProps) {
   const { id } = await params;
-  console.log("Loading advisor edit page for id:", id);
 
   const advisor = await getAdvisorById(id);
   if (!advisor) return notFound();

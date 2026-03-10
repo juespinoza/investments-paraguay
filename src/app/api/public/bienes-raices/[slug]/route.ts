@@ -31,19 +31,6 @@ export async function GET(_req: Request, { params }: Params) {
     );
   }
 
-  const estimateMetrics = (priceUsd: number | null) => {
-    if (!priceUsd || priceUsd <= 0) {
-      return { roiAnnualApproxPct: 7.5, appreciationAnnualApproxPct: 5.2 };
-    }
-    if (priceUsd < 60000) {
-      return { roiAnnualApproxPct: 9.4, appreciationAnnualApproxPct: 6.1 };
-    }
-    if (priceUsd < 120000) {
-      return { roiAnnualApproxPct: 8.2, appreciationAnnualApproxPct: 5.7 };
-    }
-    return { roiAnnualApproxPct: 7.1, appreciationAnnualApproxPct: 5.1 };
-  };
-
   const response = {
     slug: property.slug,
     title: property.title,
@@ -53,8 +40,14 @@ export async function GET(_req: Request, { params }: Params) {
     gallery: property.gallery,
     priceUsd: property.priceUsd,
     city: property.city,
-    mapQuery: `${property.title}, ${property.city ?? "Paraguay"}`,
-    ...estimateMetrics(property.priceUsd),
+    neighborhood: property.neighborhood,
+    address: property.address,
+    latitude: property.latitude ? Number(property.latitude) : null,
+    longitude: property.longitude ? Number(property.longitude) : null,
+    roiAnnualPct: property.roiAnnualPct ? Number(property.roiAnnualPct) : null,
+    appreciationAnnualPct: property.appreciationAnnualPct
+      ? Number(property.appreciationAnnualPct)
+      : null,
 
     advisor: property.advisor
       ? {

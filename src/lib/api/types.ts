@@ -5,10 +5,14 @@ export type PublicPropertyListItem = {
   coverImageUrl: string | null;
   priceUsd: number | null;
   city: string | null;
+  neighborhood: string | null;
+  latitude: number | null;
+  longitude: number | null;
   isFeatured: boolean;
+  featuredOrder: number | null;
   updatedAt: string;
-  roiAnnualApproxPct: number;
-  appreciationAnnualApproxPct: number;
+  roiAnnualPct: number | null;
+  appreciationAnnualPct: number | null;
   advisor: { slug: string; fullName: string } | null;
 };
 
@@ -21,9 +25,12 @@ export type PublicPropertyDetail = {
   gallery: string[];
   priceUsd: number | null;
   city: string | null;
-  mapQuery: string;
-  roiAnnualApproxPct: number;
-  appreciationAnnualApproxPct: number;
+  neighborhood: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  roiAnnualPct: number | null;
+  appreciationAnnualPct: number | null;
   advisor: {
     slug: string;
     fullName: string;

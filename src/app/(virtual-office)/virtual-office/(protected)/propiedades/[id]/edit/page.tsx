@@ -23,6 +23,14 @@ export default async function EditPropertyPage({ params }: PageProps) {
       title: true,
       slug: true,
       city: true,
+      neighborhood: true,
+      address: true,
+      latitude: true,
+      longitude: true,
+      roiAnnualPct: true,
+      appreciationAnnualPct: true,
+      isFeatured: true,
+      featuredOrder: true,
       priceUsd: true,
       description: true,
       coverImageUrl: true,
@@ -49,6 +57,25 @@ export default async function EditPropertyPage({ params }: PageProps) {
               title: property.title,
               slug: property.slug,
               city: property.city ?? "",
+              neighborhood: property.neighborhood ?? "",
+              address: property.address ?? "",
+              latitude:
+                property.latitude !== null ? String(property.latitude) : "",
+              longitude:
+                property.longitude !== null ? String(property.longitude) : "",
+              roiAnnualPct:
+                property.roiAnnualPct !== null
+                  ? String(property.roiAnnualPct)
+                  : "",
+              appreciationAnnualPct:
+                property.appreciationAnnualPct !== null
+                  ? String(property.appreciationAnnualPct)
+                  : "",
+              isFeatured: property.isFeatured ? "true" : "false",
+              featuredOrder:
+                property.featuredOrder !== null
+                  ? String(property.featuredOrder)
+                  : "",
               priceUsd: property.priceUsd ? String(property.priceUsd) : "",
               description: property.description ?? "",
               coverImageUrl: property.coverImageUrl ?? "",

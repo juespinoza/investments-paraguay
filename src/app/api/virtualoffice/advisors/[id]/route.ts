@@ -86,7 +86,6 @@ export async function GET(_req: Request, { params }: Params) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  console.log("GET advisor by id", id);
 
   const scope = await assertScope(session, id);
   // console.log("scope", scope);
@@ -163,7 +162,6 @@ export async function GET(_req: Request, { params }: Params) {
 
 export async function PATCH(req: Request, { params }: Params) {
   const session = await getSession();
-  console.log("session in PATCH", session);
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

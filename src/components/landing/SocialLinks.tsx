@@ -57,8 +57,6 @@ export function SocialLinks({
 
   if (!validItems.length) return null;
 
-  console.log("Social links received:", validItems);
-
   return (
     <section className="container-page container-narrow py-6">
       <h2 className="text-4xl font-semibold">{title}</h2>

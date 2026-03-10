@@ -7,6 +7,14 @@ type PropertyFormValues = {
   title: string;
   slug: string;
   city: string;
+  neighborhood: string;
+  address: string;
+  latitude: string;
+  longitude: string;
+  roiAnnualPct: string;
+  appreciationAnnualPct: string;
+  isFeatured: string;
+  featuredOrder: string;
   priceUsd: string;
   description: string;
   coverImageUrl: string;
@@ -18,6 +26,14 @@ type PropertyPayload = {
   title: string;
   slug: string;
   city: string | null;
+  neighborhood: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  roiAnnualPct: number | null;
+  appreciationAnnualPct: number | null;
+  isFeatured: boolean;
+  featuredOrder: number | null;
   priceUsd: number | null;
   description: string | null;
   coverImageUrl: string | null;
@@ -29,6 +45,14 @@ const EMPTY_VALUES: PropertyFormValues = {
   title: "",
   slug: "",
   city: "",
+  neighborhood: "",
+  address: "",
+  latitude: "",
+  longitude: "",
+  roiAnnualPct: "",
+  appreciationAnnualPct: "",
+  isFeatured: "false",
+  featuredOrder: "",
   priceUsd: "",
   description: "",
   coverImageUrl: "",
@@ -53,11 +77,26 @@ function toPayload(values: PropertyFormValues): PropertyPayload {
     .filter(Boolean);
 
   const priceNum = Number(values.priceUsd);
+  const latitude = Number(values.latitude);
+  const longitude = Number(values.longitude);
+  const roiAnnualPct = Number(values.roiAnnualPct);
+  const appreciationAnnualPct = Number(values.appreciationAnnualPct);
+  const featuredOrder = Number(values.featuredOrder);
 
   return {
     title: values.title.trim(),
     slug: values.slug.trim(),
     city: values.city.trim() || null,
+    neighborhood: values.neighborhood.trim() || null,
+    address: values.address.trim() || null,
+    latitude: Number.isFinite(latitude) ? latitude : null,
+    longitude: Number.isFinite(longitude) ? longitude : null,
+    roiAnnualPct: Number.isFinite(roiAnnualPct) ? roiAnnualPct : null,
+    appreciationAnnualPct: Number.isFinite(appreciationAnnualPct)
+      ? appreciationAnnualPct
+      : null,
+    isFeatured: values.isFeatured === "true",
+    featuredOrder: Number.isFinite(featuredOrder) ? Math.floor(featuredOrder) : null,
     priceUsd:
       Number.isFinite(priceNum) && priceNum > 0 ? Math.floor(priceNum) : null,
     description: values.description.trim() || null,
@@ -159,7 +198,27 @@ export function PropertyForm({
             placeholder="Asunción"
           />
         </div>
+        <div>
+          <label className="text-sm text-secondary">Barrio</label>
+          <input
+            value={values.neighborhood}
+            onChange={(e) => update("neighborhood", e.target.value)}
+            className="mt-1 h-11 w-full rounded-md border px-3"
+            placeholder="Villa Morra"
+          />
+        </div>
+      </div>
 
+      <div className="grid gap-4 md:grid-cols-2">
+        <div>
+          <label className="text-sm text-secondary">Dirección exacta</label>
+          <input
+            value={values.address}
+            onChange={(e) => update("address", e.target.value)}
+            className="mt-1 h-11 w-full rounded-md border px-3"
+            placeholder="Av. Santa Teresa 1234"
+          />
+        </div>
         <div>
           <label className="text-sm text-secondary">Inversión (USD)</label>
           <input
@@ -168,6 +227,76 @@ export function PropertyForm({
             inputMode="numeric"
             className="mt-1 h-11 w-full rounded-md border px-3"
             placeholder="85000"
+          />
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <div>
+          <label className="text-sm text-secondary">Latitud</label>
+          <input
+            value={values.latitude}
+            onChange={(e) => update("latitude", e.target.value)}
+            inputMode="decimal"
+            className="mt-1 h-11 w-full rounded-md border px-3"
+            placeholder="-25.2867"
+          />
+        </div>
+        <div>
+          <label className="text-sm text-secondary">Longitud</label>
+          <input
+            value={values.longitude}
+            onChange={(e) => update("longitude", e.target.value)}
+            inputMode="decimal"
+            className="mt-1 h-11 w-full rounded-md border px-3"
+            placeholder="-57.5962"
+          />
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <div>
+          <label className="text-sm text-secondary">ROI anual (%)</label>
+          <input
+            value={values.roiAnnualPct}
+            onChange={(e) => update("roiAnnualPct", e.target.value)}
+            inputMode="decimal"
+            className="mt-1 h-11 w-full rounded-md border px-3"
+            placeholder="8.50"
+          />
+        </div>
+        <div>
+          <label className="text-sm text-secondary">Plusvalía anual (%)</label>
+          <input
+            value={values.appreciationAnnualPct}
+            onChange={(e) => update("appreciationAnnualPct", e.target.value)}
+            inputMode="decimal"
+            className="mt-1 h-11 w-full rounded-md border px-3"
+            placeholder="5.20"
+          />
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <div>
+          <label className="text-sm text-secondary">Destacada</label>
+          <select
+            value={values.isFeatured}
+            onChange={(e) => update("isFeatured", e.target.value)}
+            className="mt-1 h-11 w-full rounded-md border px-3"
+          >
+            <option value="false">No</option>
+            <option value="true">Sí</option>
+          </select>
+        </div>
+        <div>
+          <label className="text-sm text-secondary">Orden destacada</label>
+          <input
+            value={values.featuredOrder}
+            onChange={(e) => update("featuredOrder", e.target.value)}
+            inputMode="numeric"
+            className="mt-1 h-11 w-full rounded-md border px-3"
+            placeholder="1"
           />
         </div>
       </div>

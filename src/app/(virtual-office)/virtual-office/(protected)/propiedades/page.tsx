@@ -45,6 +45,9 @@ export default async function Page() {
       slug: true,
       city: true,
       priceUsd: true,
+      roiAnnualPct: true,
+      appreciationAnnualPct: true,
+      isFeatured: true,
       updatedAt: true,
       advisor: { select: { fullName: true } },
     },
@@ -75,6 +78,9 @@ export default async function Page() {
               <Th>Slug</Th>
               <Th>Ciudad</Th>
               <Th>Precio (USD)</Th>
+              <Th>ROI %</Th>
+              <Th>Plusvalía %</Th>
+              <Th>Destacada</Th>
               <Th>Asesor</Th>
               <Th>Actualizado</Th>
               <Th>Acciones</Th>
@@ -86,7 +92,7 @@ export default async function Page() {
               <tr>
                 <td
                   className="px-4 py-10 text-center text-sm text-zinc-600"
-                  colSpan={7}
+                  colSpan={10}
                 >
                   No hay propiedades todavía.
                 </td>
@@ -98,6 +104,15 @@ export default async function Page() {
                   <Td>{p.slug}</Td>
                   <Td>{p.city ?? "-"}</Td>
                   <Td>{p.priceUsd ? `${p.priceUsd}` : "-"}</Td>
+                  <Td>
+                    {p.roiAnnualPct !== null ? String(p.roiAnnualPct) : "-"}
+                  </Td>
+                  <Td>
+                    {p.appreciationAnnualPct !== null
+                      ? String(p.appreciationAnnualPct)
+                      : "-"}
+                  </Td>
+                  <Td>{p.isFeatured ? "Sí" : "No"}</Td>
                   <Td>{p.advisor?.fullName ?? "-"}</Td>
                   <Td>{new Date(p.updatedAt).toLocaleString()}</Td>
                   <Td>

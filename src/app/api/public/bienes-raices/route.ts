@@ -1,20 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-function estimateMetrics(priceUsd: number | null) {
-  if (!priceUsd || priceUsd <= 0) {
-    return { roiAnnualApproxPct: 7.5, appreciationAnnualApproxPct: 5.2 };
-  }
-
-  if (priceUsd < 60000) {
-    return { roiAnnualApproxPct: 9.4, appreciationAnnualApproxPct: 6.1 };
-  }
-  if (priceUsd < 120000) {
-    return { roiAnnualApproxPct: 8.2, appreciationAnnualApproxPct: 5.7 };
-  }
-  return { roiAnnualApproxPct: 7.1, appreciationAnnualApproxPct: 5.1 };
-}
-
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const q = (url.searchParams.get("q") ?? "").trim();
@@ -33,13 +19,18 @@ export async function GET(req: Request) {
             OR: [
               { title: { contains: q, mode: "insensitive" } },
               { city: { contains: q, mode: "insensitive" } },
+              { neighborhood: { contains: q, mode: "insensitive" } },
               { description: { contains: q, mode: "insensitive" } },
             ],
           }
         : {}),
       ...(Object.keys(priceFilter).length ? { priceUsd: priceFilter } : {}),
     },
-    orderBy: [{ updatedAt: "desc" }],
+    orderBy: [
+      { isFeatured: "desc" },
+      { featuredOrder: "asc" },
+      { updatedAt: "desc" },
+    ],
     select: {
       slug: true,
       title: true,
@@ -47,11 +38,14 @@ export async function GET(req: Request) {
       coverImageUrl: true,
       priceUsd: true,
       city: true,
+      neighborhood: true,
+      latitude: true,
+      longitude: true,
+      roiAnnualPct: true,
+      appreciationAnnualPct: true,
       updatedAt: true,
-      featuredInLandings: {
-        select: { id: true },
-        take: 1,
-      },
+      isFeatured: true,
+      featuredOrder: true,
       advisor: {
         select: {
           slug: true,
@@ -68,9 +62,16 @@ export async function GET(req: Request) {
     coverImageUrl: p.coverImageUrl,
     priceUsd: p.priceUsd,
     city: p.city,
+    neighborhood: p.neighborhood,
+    latitude: p.latitude ? Number(p.latitude) : null,
+    longitude: p.longitude ? Number(p.longitude) : null,
     updatedAt: p.updatedAt,
-    isFeatured: p.featuredInLandings.length > 0,
-    ...estimateMetrics(p.priceUsd),
+    isFeatured: p.isFeatured,
+    featuredOrder: p.featuredOrder,
+    roiAnnualPct: p.roiAnnualPct ? Number(p.roiAnnualPct) : null,
+    appreciationAnnualPct: p.appreciationAnnualPct
+      ? Number(p.appreciationAnnualPct)
+      : null,
     advisor: p.advisor
       ? {
           slug: p.advisor.slug,
@@ -81,6 +82,9 @@ export async function GET(req: Request) {
 
   response.sort((a, b) => {
     if (a.isFeatured !== b.isFeatured) return a.isFeatured ? -1 : 1;
+    const aOrder = a.featuredOrder ?? Number.MAX_SAFE_INTEGER;
+    const bOrder = b.featuredOrder ?? Number.MAX_SAFE_INTEGER;
+    if (aOrder !== bOrder) return aOrder - bOrder;
     return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
   });
 

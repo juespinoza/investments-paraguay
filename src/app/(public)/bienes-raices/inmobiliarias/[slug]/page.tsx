@@ -59,7 +59,8 @@ export default async function AgencyLandingPage({ params }: PageProps) {
           description: true,
           coverImageUrl: true,
           city: true,
-          featuredInLandings: { select: { id: true }, take: 1 },
+          isFeatured: true,
+          featuredOrder: true,
           updatedAt: true,
         },
         orderBy: { updatedAt: "desc" },
@@ -76,12 +77,16 @@ export default async function AgencyLandingPage({ params }: PageProps) {
       subtitle: p.description ?? p.city ?? "",
       coverImageUrl: p.coverImageUrl ?? "intentoPortada_wku8ef",
       href: `/bienes-raices/propiedades/${p.slug}`,
-      badge: p.featuredInLandings.length > 0 ? "Destacada" : "Venta",
+      badge: p.isFeatured ? "Destacada" : "Venta",
       updatedAt: p.updatedAt,
-      isFeatured: p.featuredInLandings.length > 0,
+      isFeatured: p.isFeatured,
+      featuredOrder: p.featuredOrder,
     }))
     .sort((a, b) => {
       if (a.isFeatured !== b.isFeatured) return a.isFeatured ? -1 : 1;
+      if ((a.featuredOrder ?? 9999) !== (b.featuredOrder ?? 9999)) {
+        return (a.featuredOrder ?? 9999) - (b.featuredOrder ?? 9999);
+      }
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
     });
 

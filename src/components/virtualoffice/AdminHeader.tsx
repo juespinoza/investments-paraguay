@@ -6,9 +6,6 @@ import { useAdminAuth } from "./AuthProvider";
 
 export default function AdminHeader() {
   const { user, isAuthenticated, isLoading } = useAdminAuth();
-
-  if (!user) return null;
-
   const router = useRouter();
 
   async function handleLogout() {
@@ -26,11 +23,16 @@ export default function AdminHeader() {
     return VIRTUALOFFICE_MENU.filter((i) => i.roles.includes(user.role));
   }, [isLoading, isAuthenticated, user]);
 
+  if (!user) return null;
+
   return (
     <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/85 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
-          <Link href="/admin" className="group inline-flex items-center gap-2">
+          <Link
+            href="/virtual-office"
+            className="group inline-flex items-center gap-2"
+          >
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-200 bg-white shadow-sm">
               <span className="text-sm font-semibold">IP</span>
             </span>

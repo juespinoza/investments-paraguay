@@ -18,9 +18,12 @@ type PublicPropertyDetail = {
   gallery: string[];
   priceUsd: number | null;
   city: string | null;
-  mapQuery: string;
-  roiAnnualApproxPct: number;
-  appreciationAnnualApproxPct: number;
+  neighborhood: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  roiAnnualPct: number | null;
+  appreciationAnnualPct: number | null;
   advisor: {
     slug: string;
     fullName: string;
@@ -101,20 +104,25 @@ export default async function PropertyPage({ params }: PageProps) {
 
             <div className="mt-4 flex gap-4 text-sm text-secondary">
               {property.city ? <span>{property.city}</span> : null}
+              {property.neighborhood ? <span>{property.neighborhood}</span> : null}
               {property.priceUsd ? <span>{property.priceUsd} USD</span> : null}
             </div>
 
             <div className="mt-6 grid gap-3 text-sm md:grid-cols-2">
               <div className="rounded-sm border bg-white p-3">
-                <div className="text-secondary">ROI anual aproximado</div>
+                <div className="text-secondary">ROI anual exacto</div>
                 <div className="text-xl font-semibold">
-                  {property.roiAnnualApproxPct.toFixed(1)}%
+                  {property.roiAnnualPct !== null
+                    ? `${property.roiAnnualPct.toFixed(2)}%`
+                    : "No cargado"}
                 </div>
               </div>
               <div className="rounded-sm border bg-white p-3">
-                <div className="text-secondary">Plusvalía anual estimada</div>
+                <div className="text-secondary">Plusvalía anual exacta</div>
                 <div className="text-xl font-semibold">
-                  {property.appreciationAnnualApproxPct.toFixed(1)}%
+                  {property.appreciationAnnualPct !== null
+                    ? `${property.appreciationAnnualPct.toFixed(2)}%`
+                    : "No cargado"}
                 </div>
               </div>
             </div>
@@ -129,18 +137,22 @@ export default async function PropertyPage({ params }: PageProps) {
       <section className="container-page container-narrow py-2">
         <h2 className="text-2xl font-semibold">Mapa de ubicación</h2>
         <p className="mt-2 text-sm text-secondary">
-          Ubicación referencial para análisis de zona y conectividad.
+          Ubicación exacta por coordenadas geográficas.
         </p>
-        <div className="mt-4 overflow-hidden rounded-xl border bg-white">
-          <iframe
-            title={`Mapa de ${property.title}`}
-            className="h-[320px] w-full"
-            src={`https://maps.google.com/maps?q=${encodeURIComponent(
-              property.mapQuery,
-            )}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
-            loading="lazy"
-          />
-        </div>
+        {property.latitude !== null && property.longitude !== null ? (
+          <div className="mt-4 overflow-hidden rounded-xl border bg-white">
+            <iframe
+              title={`Mapa de ${property.title}`}
+              className="h-[320px] w-full"
+              src={`https://maps.google.com/maps?q=${property.latitude},${property.longitude}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
+              loading="lazy"
+            />
+          </div>
+        ) : (
+          <div className="mt-4 rounded-xl border bg-white p-4 text-sm text-secondary">
+            Esta propiedad aún no tiene coordenadas exactas cargadas.
+          </div>
+        )}
       </section>
 
       <section className="container-page container-narrow py-8">

@@ -101,6 +101,14 @@ model Property {
   slug           String   @unique
   priceUsd       Int?
   city           String?
+  neighborhood   String?
+  address        String?
+  latitude       Decimal? @db.Decimal(9, 6)
+  longitude      Decimal? @db.Decimal(9, 6)
+  roiAnnualPct   Decimal? @db.Decimal(5, 2)
+  appreciationAnnualPct Decimal? @db.Decimal(5, 2)
+  isFeatured     Boolean  @default(false)
+  featuredOrder  Int?
   description    String?
   coverImageUrl  String?
   gallery        String[] // simple
@@ -112,6 +120,9 @@ model Property {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
+
+  @@index([city])
+  @@index([isFeatured, featuredOrder, updatedAt])
 }
 
 model BlogPost {

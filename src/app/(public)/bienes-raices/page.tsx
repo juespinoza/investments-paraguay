@@ -27,10 +27,14 @@ type PublicPropertyListItem = {
   coverImageUrl: string | null;
   priceUsd: number | null;
   city: string | null;
+  neighborhood: string | null;
+  latitude: number | null;
+  longitude: number | null;
   isFeatured: boolean;
+  featuredOrder: number | null;
   updatedAt: string;
-  roiAnnualApproxPct: number;
-  appreciationAnnualApproxPct: number;
+  roiAnnualPct: number | null;
+  appreciationAnnualPct: number | null;
   advisor: { slug: string; fullName: string } | null;
 };
 
@@ -68,9 +72,17 @@ export default async function BienesRaicesPage({ searchParams }: PageProps) {
       badge: p.isFeatured ? "Destacada" : "Venta",
     })) ?? [];
 
-  const mapQuery = encodeURIComponent(
-    q || properties?.[0]?.city || "Paraguay",
+  const firstWithCoordinates = properties?.find(
+    (property) =>
+      typeof property.latitude === "number" &&
+      typeof property.longitude === "number",
   );
+
+  const mapSrc = firstWithCoordinates
+    ? `https://maps.google.com/maps?q=${firstWithCoordinates.latitude},${firstWithCoordinates.longitude}&t=&z=12&ie=UTF8&iwloc=&output=embed`
+    : `https://maps.google.com/maps?q=${encodeURIComponent(
+        q || properties?.[0]?.city || "Paraguay",
+      )}&t=&z=12&ie=UTF8&iwloc=&output=embed`;
 
   return (
     <>
@@ -119,7 +131,7 @@ export default async function BienesRaicesPage({ searchParams }: PageProps) {
           <iframe
             title="Mapa de propiedades en Paraguay"
             className="h-[320px] w-full"
-            src={`https://maps.google.com/maps?q=${mapQuery}&t=&z=12&ie=UTF8&iwloc=&output=embed`}
+            src={mapSrc}
             loading="lazy"
           />
         </div>
