@@ -6,23 +6,24 @@ export function Testimonials({
   items: { name: string; text: string }[];
 }) {
   return (
-    <section className="relative overflow-hidden py-6">
-      <div className="absolute inset-0">
-        <div
-          className="h-full w-full bg-cover bg-center"
-          style={{ backgroundImage: `url('/backgrounds/background.png')` }}
-        />
-        <div className="absolute inset-0 bg-white/70" />
-      </div>
-      <div className="container-page container-narrow relative py-8">
-        <h2 className="text-4xl font-semibold">{title}</h2>
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
+    <section className="px-4 py-8 md:py-10">
+      <div className="container-page">
+        <div className="mb-8">
+          <h2 className="text-3xl font-semibold tracking-tight text-primary md:text-5xl">
+            {title}
+          </h2>
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
           {items.map((t) => (
-            <div key={t.name} className="rounded-sm bg-accent2 p-6">
-              <p className="text-primary font-playfair font-light italic">
+            <div
+              key={t.name}
+              className="surface-card rounded-[1.75rem] p-6 md:p-7"
+            >
+              <div className="mb-5 h-px w-14 bg-accent1" />
+              <p className="font-playfair text-xl font-light italic text-primary">
                 “{t.text}”
               </p>
-              <p className="mt-4 text-sm font-semibold text-accent1">
+              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.18em] text-accent1">
                 {t.name}
               </p>
             </div>

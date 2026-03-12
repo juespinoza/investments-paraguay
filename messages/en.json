@@ -98,6 +98,41 @@
     "eyebrow": "Insights",
     "title": "Blog",
     "subtitle": "Ideas, market context and practical guides to invest better in Paraguay.",
+    "featuredLabel": "Featured article",
+    "featuredExcerpt": "A clear analysis of why Paraguay is drawing regional attention and which variables matter before making a real estate investment decision.",
+    "sidebarLabel": "Upcoming publications",
+    "listLabel": "Library",
+    "listTitle": "Editorial content for investors who want context, not noise.",
+    "readArticle": "Read article",
+    "readMore": "Read more",
+    "comingSoon": "Coming soon",
+    "statusPublished": "Published",
+    "statusPipeline": "In progress",
+    "meta": {
+      "updated": "Updated: Jan 27, 2026",
+      "author": "Author: Investments Paraguay"
+    },
+    "highlights": {
+      "market": {
+        "label": "Market",
+        "value": "Readings on real estate dynamics, demand and macroeconomic signals."
+      },
+      "strategy": {
+        "label": "Strategy",
+        "value": "Comparisons and frameworks to decide between rental income, appreciation or early entry."
+      },
+      "guides": {
+        "label": "Guides",
+        "value": "Content for local and foreign investors who need operational clarity."
+      }
+    },
+    "excerpts": {
+      "paraguayPolo": "What is driving Paraguay's perception as a real estate destination and how to interpret those signals properly.",
+      "departamentosPozo": "How to evaluate risk, entry timing and appreciation potential in early-stage projects.",
+      "airbnbParaguay": "Which areas show more potential, which numbers matter and where investors usually misjudge the market.",
+      "terrenosVsDepartamento": "A practical comparison of liquidity, income, maintenance and exit horizon.",
+      "guiaInversores": "Legal, operational and strategic factors for foreign investors entering Paraguay."
+    },
     "posts": {
       "paraguayPolo": "Why Paraguay is emerging as a new real estate investment hub in South America",
       "departamentosPozo": "Off-plan apartments in Paraguay: real risks, advantages and how to evaluate them properly",

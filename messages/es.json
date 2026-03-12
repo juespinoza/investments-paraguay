@@ -98,6 +98,41 @@
     "eyebrow": "Análisis",
     "title": "Blog",
     "subtitle": "Ideas, mercado y guías para invertir mejor en Paraguay.",
+    "featuredLabel": "Artículo destacado",
+    "featuredExcerpt": "Un análisis claro sobre por qué Paraguay está captando atención regional y qué variables mirar antes de tomar una decisión de inversión inmobiliaria.",
+    "sidebarLabel": "Próximas publicaciones",
+    "listLabel": "Biblioteca",
+    "listTitle": "Contenido editorial para inversores que quieren contexto, no ruido.",
+    "readArticle": "Leer artículo",
+    "readMore": "Leer más",
+    "comingSoon": "Próximamente",
+    "statusPublished": "Publicado",
+    "statusPipeline": "En preparación",
+    "meta": {
+      "updated": "Actualizado: 27 Ene 2026",
+      "author": "Autor: Investments Paraguay"
+    },
+    "highlights": {
+      "market": {
+        "label": "Mercado",
+        "value": "Lecturas sobre dinámica inmobiliaria, demanda y señales macroeconómicas."
+      },
+      "strategy": {
+        "label": "Estrategia",
+        "value": "Comparativas y marcos para decidir entre renta, plusvalía o entrada temprana."
+      },
+      "guides": {
+        "label": "Guías",
+        "value": "Contenido orientado a inversores locales y extranjeros que necesitan claridad operativa."
+      }
+    },
+    "excerpts": {
+      "paraguayPolo": "Qué está impulsando la percepción de Paraguay como destino inmobiliario y cómo interpretar esas señales con criterio.",
+      "departamentosPozo": "Cómo evaluar riesgo, timing de entrada y potencial de apreciación en proyectos en etapa temprana.",
+      "airbnbParaguay": "Qué zonas muestran mayor potencial, qué números importan y dónde suelen equivocarse los inversores.",
+      "terrenosVsDepartamento": "Una comparación práctica entre liquidez, renta, mantenimiento y horizonte de salida.",
+      "guiaInversores": "Aspectos legales, operativos y estratégicos para invertir en Paraguay siendo extranjero."
+    },
     "posts": {
       "paraguayPolo": "Por qué Paraguay se está consolidando como un nuevo polo de inversión inmobiliaria en Sudamérica",
       "departamentosPozo": "Departamentos en pozo en Paraguay: riesgos reales, ventajas y cómo evaluarlos con criterio",

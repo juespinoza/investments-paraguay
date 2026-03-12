@@ -60,29 +60,29 @@ export function LeadCaptureForm({
         required
         value={fullName}
         onChange={(e) => setFullName(e.target.value)}
-        className="h-11 rounded-sm border px-3"
+        className="h-12 rounded-full border border-soft bg-white/80 px-4 outline-none"
         placeholder="Nombre"
       />
       <input
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="h-11 rounded-sm border px-3"
+        className="h-12 rounded-full border border-soft bg-white/80 px-4 outline-none"
         placeholder="Email"
       />
       <input
         value={whatsapp}
         onChange={(e) => setWhatsapp(e.target.value)}
-        className="h-11 rounded-sm border px-3"
+        className="h-12 rounded-full border border-soft bg-white/80 px-4 outline-none"
         placeholder="WhatsApp"
       />
 
       {error ? (
-        <div className="rounded-sm border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-[1rem] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       ) : null}
       {message ? (
-        <div className="rounded-sm border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+        <div className="rounded-[1rem] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
           {message}
         </div>
       ) : null}

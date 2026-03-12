@@ -97,6 +97,41 @@
     "eyebrow": "Análises",
     "title": "Blog",
     "subtitle": "Ideias, mercado e guias práticos para investir melhor no Paraguai.",
+    "featuredLabel": "Artigo em destaque",
+    "featuredExcerpt": "Uma análise clara sobre por que o Paraguai está atraindo atenção regional e quais variáveis observar antes de investir em imóveis.",
+    "sidebarLabel": "Próximas publicações",
+    "listLabel": "Biblioteca",
+    "listTitle": "Conteúdo editorial para investidores que querem contexto, não ruído.",
+    "readArticle": "Ler artigo",
+    "readMore": "Ler mais",
+    "comingSoon": "Em breve",
+    "statusPublished": "Publicado",
+    "statusPipeline": "Em preparação",
+    "meta": {
+      "updated": "Atualizado: 27 Jan 2026",
+      "author": "Autor: Investments Paraguay"
+    },
+    "highlights": {
+      "market": {
+        "label": "Mercado",
+        "value": "Leituras sobre dinâmica imobiliária, demanda e sinais macroeconômicos."
+      },
+      "strategy": {
+        "label": "Estratégia",
+        "value": "Comparações e critérios para decidir entre renda, valorização ou entrada antecipada."
+      },
+      "guides": {
+        "label": "Guias",
+        "value": "Conteúdo para investidores locais e estrangeiros que precisam de clareza operacional."
+      }
+    },
+    "excerpts": {
+      "paraguayPolo": "O que está impulsionando a percepção do Paraguai como destino imobiliário e como interpretar esses sinais.",
+      "departamentosPozo": "Como avaliar risco, momento de entrada e potencial de valorização em projetos em fase inicial.",
+      "airbnbParaguay": "Quais áreas mostram mais potencial, quais números importam e onde os investidores costumam errar.",
+      "terrenosVsDepartamento": "Uma comparação prática entre liquidez, renda, manutenção e horizonte de saída.",
+      "guiaInversores": "Aspectos legais, operacionais e estratégicos para investidores estrangeiros no Paraguai."
+    },
     "posts": {
       "paraguayPolo": "Por que o Paraguai está se consolidando como um novo polo de investimento imobiliário na América do Sul",
       "departamentosPozo": "Apartamentos na planta no Paraguai: riscos reais, vantagens e como avaliá-los com critério",

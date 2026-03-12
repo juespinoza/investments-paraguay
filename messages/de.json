@@ -98,6 +98,41 @@
     "eyebrow": "Einblicke",
     "title": "Blog",
     "subtitle": "Ideen, Marktüberblick und praktische Leitfäden für bessere Investitionen in Paraguay.",
+    "featuredLabel": "Hauptartikel",
+    "featuredExcerpt": "Eine klare Analyse dazu, warum Paraguay regionale Aufmerksamkeit gewinnt und welche Variablen vor einer Immobilieninvestition wichtig sind.",
+    "sidebarLabel": "Kommende Veröffentlichungen",
+    "listLabel": "Bibliothek",
+    "listTitle": "Redaktionelle Inhalte für Investoren, die Kontext statt Rauschen suchen.",
+    "readArticle": "Artikel lesen",
+    "readMore": "Mehr lesen",
+    "comingSoon": "Demnächst",
+    "statusPublished": "Veröffentlicht",
+    "statusPipeline": "In Vorbereitung",
+    "meta": {
+      "updated": "Aktualisiert: 27. Jan. 2026",
+      "author": "Autor: Investments Paraguay"
+    },
+    "highlights": {
+      "market": {
+        "label": "Markt",
+        "value": "Analysen zu Immobiliendynamik, Nachfrage und makroökonomischen Signalen."
+      },
+      "strategy": {
+        "label": "Strategie",
+        "value": "Vergleiche und Denkrahmen für Rendite, Wertsteigerung oder frühen Einstieg."
+      },
+      "guides": {
+        "label": "Leitfäden",
+        "value": "Inhalte für lokale und ausländische Investoren, die operative Klarheit brauchen."
+      }
+    },
+    "excerpts": {
+      "paraguayPolo": "Was Paraguays Wahrnehmung als Immobilienstandort antreibt und wie diese Signale fundiert zu lesen sind.",
+      "departamentosPozo": "Wie man Risiko, Einstiegszeitpunkt und Wertsteigerungspotenzial bei frühen Projekten bewertet.",
+      "airbnbParaguay": "Welche Lagen Potenzial haben, welche Kennzahlen zählen und wo Investoren den Markt oft falsch lesen.",
+      "terrenosVsDepartamento": "Ein praktischer Vergleich von Liquidität, Ertrag, Instandhaltung und Exit-Horizont.",
+      "guiaInversores": "Rechtliche, operative und strategische Faktoren für ausländische Investoren in Paraguay."
+    },
     "posts": {
       "paraguayPolo": "Warum Paraguay sich als neuer Standort für Immobilieninvestitionen in Südamerika etabliert",
       "departamentosPozo": "Wohnungen vom Plan in Paraguay: reale Risiken, Vorteile und wie man sie fundiert bewertet",

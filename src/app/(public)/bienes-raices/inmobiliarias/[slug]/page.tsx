@@ -1,5 +1,6 @@
 import { HeroSplit } from "@/components/landing/HeroSplit";
 import { FeaturedGrid } from "@/components/landing/FeaturedGrid";
+import { SectionTitle } from "@/components/landing/SectionTitle";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { buildMetadata } from "@/lib/seo";
@@ -107,30 +108,49 @@ export default async function AgencyLandingPage({ params }: PageProps) {
         logoLeftUrl={agency.logoUrl ?? undefined}
       />
 
-      <section className="container-page container-narrow py-6">
-        <h2 className="text-3xl font-semibold">Equipo de asesores</h2>
-        <div className="mt-5 grid gap-4 md:grid-cols-2">
-          {agency.advisors.length === 0 ? (
-            <p className="text-secondary">Aún no hay asesores publicados.</p>
-          ) : (
-            agency.advisors.map((advisor) => (
-              <a
-                key={advisor.id}
-                href={`/bienes-raices/asesores/${advisor.slug}`}
-                className="rounded-lg border bg-white p-4 hover:bg-zinc-50"
-              >
-                <h3 className="font-semibold">{advisor.fullName}</h3>
-                <p className="mt-1 text-sm text-secondary">
-                  {advisor.headline ?? "Asesor inmobiliario"}
-                </p>
-              </a>
-            ))
-          )}
+      <section className="px-4 py-8 md:py-10">
+        <div className="container-page">
+          <div className="mb-8">
+            <div className="eyebrow">Equipo</div>
+            <div className="mt-5">
+              <SectionTitle
+                title="Equipo de asesores"
+                subtitle="Conectá con profesionales que conocen el mercado, las zonas clave y las oportunidades activas de la inmobiliaria."
+                align="left"
+              />
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {agency.advisors.length === 0 ? (
+              <p className="text-secondary">Aún no hay asesores publicados.</p>
+            ) : (
+              agency.advisors.map((advisor) => (
+                <a
+                  key={advisor.id}
+                  href={`/bienes-raices/asesores/${advisor.slug}`}
+                  className="surface-card rounded-[1.75rem] p-5 hover:-translate-y-0.5"
+                >
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent1">
+                    Advisor
+                  </p>
+                  <h3 className="mt-3 text-2xl font-semibold text-primary">
+                    {advisor.fullName}
+                  </h3>
+                  <p className="mt-2 text-sm leading-7 text-secondary">
+                    {advisor.headline ?? "Asesor inmobiliario"}
+                  </p>
+                </a>
+              ))
+            )}
+          </div>
         </div>
       </section>
 
       <section id="propiedades">
-        <FeaturedGrid title="Propiedades de la inmobiliaria" items={propertyItems} />
+        <FeaturedGrid
+          title="Propiedades de la inmobiliaria"
+          items={propertyItems}
+        />
       </section>
     </>
   );

@@ -73,6 +73,15 @@ export default async function AdvisorLandingPage({ params }: PageProps) {
     badge: "Venta",
   }));
 
+  const aboutMeta = [
+    d.about.yearsExperience
+      ? { label: "Experiencia", value: d.about.yearsExperience }
+      : null,
+    d.about.companyName
+      ? { label: "Firma", value: d.about.companyName }
+      : null,
+  ].filter(Boolean) as { label: string; value: string }[];
+
   return (
     <>
       <HeroSplit
@@ -90,6 +99,7 @@ export default async function AdvisorLandingPage({ params }: PageProps) {
         leftImageAlt={d.fullName}
         eyebrow="Sobre mí"
         title={d.about.title}
+        meta={aboutMeta}
         paragraphs={[d.about.paragraphs[0], d.about.paragraphs[1]]}
         ctaLabel={d.ctaLabel ?? "Contactar"}
         ctaHref={d.ctaHref ?? "#"}

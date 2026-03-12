@@ -58,10 +58,13 @@ export function SocialLinks({
   if (!validItems.length) return null;
 
   return (
-    <section className="container-page container-narrow py-6">
-      <h2 className="text-4xl font-semibold">{title}</h2>
+    <section className="px-4 py-8 md:py-10">
+      <div className="container-page">
+        <h2 className="text-3xl font-semibold tracking-tight text-primary md:text-5xl">
+          {title}
+        </h2>
 
-      <div className="mt-8 flex flex-col gap-3 md:flex-row md:flex-wrap md:gap-4">
+        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {validItems.map((i, key) => {
           const Icon = ICONS[i.platform];
 
@@ -71,18 +74,24 @@ export function SocialLinks({
               href={i.href}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-3"
+              className="surface-card flex items-center gap-4 rounded-[1.5rem] p-4 hover:-translate-y-0.5"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent1 text-accent2">
-                <Icon size={16} />
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[linear-gradient(135deg,#b8914c_0%,#d8b26c_100%)] text-white">
+                <Icon size={17} />
               </span>
 
-              <span className="text-sm text-secondary hover:underline">
-                {i.value}
-              </span>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent1">
+                  {i.platform}
+                </p>
+                <span className="mt-1 block text-sm text-secondary">
+                  {i.value}
+                </span>
+              </div>
             </a>
           );
         })}
+        </div>
       </div>
     </section>
   );

@@ -9,7 +9,7 @@ export function SectionTitle({
 }) {
   return (
     <div className={align === "left" ? "text-left" : "text-center"}>
-      <h2 className="text-3xl font-semibold tracking-tight text-primary md:text-5xl">
+      <h2 className="text-3xl font-semibold tracking-tight text-light md:text-5xl">
         {title}
       </h2>
       {subtitle ? (
