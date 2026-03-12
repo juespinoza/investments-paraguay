@@ -1,75 +1,74 @@
-/* Tailwind 4: un solo import */
 @import "tailwindcss";
 
-/* ============================
-   COLORES LIGHT/DARK - SUMO
-   ============================ */
-
 :root {
-  --ip-primary: #0a1a2f; /* Azul dark */
-  --ip-primary-hover: #475569; /* Gris medio */
-  --ip-secondary: #1f3b58; /* Azul medio */
-  --ip-accent1: #d6a84e; /* Dorado */
-  --ip-accent2: #f4ede2; /* Beige claro */
+  --ip-primary: #0f1726;
+  --ip-primary-hover: #19263b;
+  --ip-secondary: #2b3f5b;
+  --ip-accent1: #c9a45c;
+  --ip-accent2: #efe4d2;
 
-  --ip-bg: #f4ede2; /* Background general */
-  --ip-surface: #ffffff; /* Cards, modals, etc. */
-  --ip-border: #e2e8f0; /* Bordes suaves */
+  --ip-bg: #f6f1e8;
+  --ip-surface: #fffdf9;
+  --ip-surface-strong: #ffffff;
+  --ip-border: rgba(15, 23, 38, 0.1);
 
-  --ip-text-primary: #0a1a2f; /* Texto principal */
-  --ip-text-secondary: #475569; /* Texto secundario */
-  --ip-text-muted: #94a3b8; /* Etiquetas, helpers */
+  --ip-text-primary: #142033;
+  --ip-text-secondary: #546173;
+  --ip-text-muted: #8a93a1;
   --ip-text-highlight: #d6a84e;
+  --ip-shadow: 0 24px 80px rgba(16, 24, 40, 0.12);
+  --ip-shadow-soft: 0 18px 48px rgba(16, 24, 40, 0.08);
 
-  --ip-danger: #ef4444; /* (opcional) errores */
-  --ip-success: #16a34a; /* (opcional) estados OK */
+  --ip-danger: #ef4444;
+  --ip-success: #16a34a;
 }
 
-/* Versión Dark de la misma paleta */
 :root.dark,
 .dark :root {
-  --ip-primary: #386294; /* Azul mar */
-  --ip-primary-hover: #93bceb; /* Azul celeste */
-  --ip-secondary: #7cd9df; /* Turquesa */
-  --ip-accent1: #d6a84e; /* Dorado */
-  --ip-accent2: #f4ede2; /* Beige claro */
+  --ip-primary: #d8e1ef;
+  --ip-primary-hover: #eef2f8;
+  --ip-secondary: #a9bad4;
+  --ip-accent1: #d6a84e;
+  --ip-accent2: #f4ede2;
 
-  --ip-bg: #0a1124; /* Background oscuro */
-  --ip-surface: #1e293b; /* Cards en dark */
-  --ip-border: #334155; /* Bordes más marcados */
-
+  --ip-bg: #0a1124;
+  --ip-surface: #132033;
+  --ip-surface-strong: #1c2b42;
+  --ip-border: rgba(255, 255, 255, 0.12);
   --ip-text-primary: #f8fafc;
   --ip-text-secondary: #cbd5e1;
   --ip-text-muted: #64748b;
-  --ip-text-highlight: #7cd9df;
+  --ip-text-highlight: #d6a84e;
+  --ip-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  --ip-shadow-soft: 0 18px 48px rgba(0, 0, 0, 0.24);
 
   --ip-danger: #fca5a5;
   --ip-success: #4ade80;
 }
 
-/* ============================
-   TIPOGRAFÍA – SUMO
-   ============================ */
-
 :root {
   --font-primary: var(--font-inter);
   --font-brand: var(--font-playfair);
-
-  /* Escala tipográfica recomendada */
-  --text-xs: 0.75rem; /* 12px */
-  --text-sm: 0.875rem; /* 14px */
-  --text-base: 1rem; /* 16px */
-  --text-lg: 1.125rem; /* 18px */
-  --text-xl: 1.25rem; /* 20px */
-  --text-2xl: 1.5rem; /* 24px */
-  --text-3xl: 1.875rem; /* 30px */
 }
 
-/* Fondo base y tipografía global */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background-color: var(--ip-surface);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(201, 164, 92, 0.2), transparent 28%),
+    radial-gradient(circle at top right, rgba(43, 63, 91, 0.08), transparent 28%),
+    linear-gradient(180deg, #fbf8f3 0%, #f3ede4 52%, #f7f3ec 100%);
   color: var(--ip-text-primary);
   font-family: var(--font-primary), sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1,
@@ -89,34 +88,25 @@ li {
 
 a {
   font-family: var(--font-inter), sans-serif;
-  font-size: 12px;
+  transition:
+    color 180ms ease,
+    opacity 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
 }
 
-a:hover {
-  text-decoration: underline;
+::selection {
+  background: rgba(201, 164, 92, 0.28);
 }
-
-/* @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-} */
-
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
 
 @layer utilities {
   .container-page {
-    @apply mx-auto max-w-6xl px-4;
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8;
   }
 
   .container-narrow {
-    @apply mx-auto px-4 md:px-8;
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-6 lg:px-8;
   }
 
   .font-inter {
@@ -137,6 +127,9 @@ a:hover {
   .bg-accent2 {
     background-color: var(--ip-accent2);
   }
+  .bg-surface {
+    background-color: var(--ip-surface);
+  }
 
   .text-primary {
     color: var(--ip-text-primary);
@@ -156,18 +149,46 @@ a:hover {
   .text-accent2 {
     color: var(--ip-accent2);
   }
+  .border-soft {
+    border-color: var(--ip-border);
+  }
+  .surface-card {
+    background-color: rgba(255, 253, 249, 0.78);
+    border: 1px solid var(--ip-border);
+    box-shadow: var(--ip-shadow-soft);
+    backdrop-filter: blur(18px);
+  }
+  .luxury-panel {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 250, 244, 0.78));
+    border: 1px solid rgba(201, 164, 92, 0.22);
+    box-shadow: var(--ip-shadow);
+    backdrop-filter: blur(20px);
+  }
+  .section-shell {
+    @apply relative overflow-hidden rounded-[2rem];
+  }
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.34em];
+    border-color: rgba(201, 164, 92, 0.34);
+    background: rgba(255, 255, 255, 0.64);
+    color: var(--ip-secondary);
+  }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-sm px-4 py-2 font-medium hover:opacity-90;
-    background-color: var(--ip-bg);
-    color: var(--ip-text-primary);
+    @apply inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold tracking-[0.18em] uppercase;
+    background: linear-gradient(135deg, #b8914c 0%, #d8b26c 100%);
+    color: #fffdf8;
+    box-shadow: 0 16px 36px rgba(185, 145, 76, 0.28);
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-sm px-4 py-2 font-medium border;
-    border-color: var(--ip-accent1);
+    @apply inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold tracking-[0.16em] uppercase border;
+    border-color: rgba(201, 164, 92, 0.46);
     color: var(--ip-text-primary);
+    background: rgba(255, 255, 255, 0.58);
   }
+  .btn-primary:hover,
   .btn-secondary:hover {
-    background-color: var(--ip-accent1);
+    transform: translateY(-1px);
   }
 }

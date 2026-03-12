@@ -9,13 +9,63 @@
     "legal": "Legal",
     "us": "Nosotros",
     "cookies": "Política de cookies",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "tagline": "Oportunidades seleccionadas, contexto local y una forma más clara de invertir en Paraguay con confianza."
   },
   "heroTitle": "Conoce Paraguay",
-  "heroDescription": "Un país donde las inversiones están en su punto mas rentable",
+  "heroDescription": "Descubra oportunidades inmobiliarias y de negocio con respaldo local, análisis claro y acompañamiento estratégico.",
   "heroCta": "Explorar Oportunidades",
+  "heroPortfolioCta": "Ver portafolio",
+  "heroFocusLabel": "Enfoque",
+  "heroFocusItems": {
+    "advisory": "Asesoría estratégica",
+    "realEstate": "Bienes raíces",
+    "business": "Negocios"
+  },
+  "heroPanel": {
+    "eyebrow": "Acceso estratégico",
+    "item1": {
+      "label": "Oportunidades curadas",
+      "value": "Activos con tesis de inversión clara"
+    },
+    "item2": {
+      "label": "Debida diligencia",
+      "value": "Proceso simple, ordenado y acompañado"
+    },
+    "item3": {
+      "label": "Soporte para inversores",
+      "value": "Acompañamiento local para cada decisión"
+    },
+    "link": "Explorar análisis del mercado"
+  },
   "bannerText": "Obtenga las mejores opciones de inversión con la",
   "bannerTextHighlight": "ayuda de nuestro grupo de asesores altamente experimentados.",
+  "common": {
+    "consult": "Consultar"
+  },
+  "home": {
+    "thesisEyebrow": "Tesis de inversión",
+    "thesisTitle": "Diseñamos una experiencia que explica mejor dónde invertir, por qué vale la pena y cómo avanzar con seguridad.",
+    "modelTags": {
+      "realEstate": "Bienes raíces",
+      "business": "Negocios"
+    },
+    "pillarsEyebrow": "Ventaja",
+    "pillars": {
+      "curation": {
+        "title": "Selección curada",
+        "description": "Presentamos oportunidades concretas, con menos ruido visual y una narrativa enfocada en valor real."
+      },
+      "localKnowledge": {
+        "title": "Contexto local",
+        "description": "Cada propuesta comunica conocimiento del mercado paraguayo, riesgos, ventajas y puntos de decisión."
+      },
+      "simpleProcess": {
+        "title": "Proceso simple",
+        "description": "La experiencia guía al usuario con claridad para pasar de la exploración a la conversación comercial."
+      }
+    }
+  },
   "bussinessModel_1": {
     "title": "Inversiones inmobiliarias en Paraguay",
     "description": "Descubre por qué es el destino favorito de los inversores extranjeros y cómo aprovechar sus oportunidades únicas."
@@ -23,5 +73,37 @@
   "bussinessModel_2": {
     "title": "Ideas de negocios en Paraguay",
     "description": "Desde startups tecnológicas hasta franquicias, conoce las industrias y negocios en los podes invertir con éxito en el mercado paraguayo."
+  },
+  "realEstate": {
+    "eyebrow": "Portafolio",
+    "title": "Inversiones inmobiliarias",
+    "description": "Explore propiedades seleccionadas para renta, apreciación de capital y resguardo patrimonial en Paraguay.",
+    "availableTitle": "Propiedades disponibles",
+    "filters": {
+      "location": "Zona, barrio o ciudad",
+      "min": "Inversión mínima (USD)",
+      "max": "Inversión máxima (USD)",
+      "apply": "Aplicar filtros"
+    },
+    "map": {
+      "title": "Mapa interactivo",
+      "description": "Visualice la ubicación de las propiedades según su zona de interés."
+    },
+    "badges": {
+      "featured": "Destacada",
+      "sale": "Venta"
+    }
+  },
+  "blog": {
+    "eyebrow": "Análisis",
+    "title": "Blog",
+    "subtitle": "Ideas, mercado y guías para invertir mejor en Paraguay.",
+    "posts": {
+      "paraguayPolo": "Por qué Paraguay se está consolidando como un nuevo polo de inversión inmobiliaria en Sudamérica",
+      "departamentosPozo": "Departamentos en pozo en Paraguay: riesgos reales, ventajas y cómo evaluarlos con criterio",
+      "airbnbParaguay": "Airbnb en Paraguay: zonas con potencial, números clave y errores frecuentes al invertir",
+      "terrenosVsDepartamento": "Terrenos o departamentos: cómo elegir el activo correcto según su estrategia de inversión",
+      "guiaInversores": "Guía para inversores extranjeros: cómo invertir legalmente en Paraguay paso a paso"
+    }
   }
 }

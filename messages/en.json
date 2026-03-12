@@ -9,13 +9,63 @@
     "legal": "Legal",
     "us": "About Us",
     "cookies": "Cookies Policy",
-    "contact": "Contact"
+    "contact": "Contact",
+    "tagline": "Curated opportunities, local context and a clearer way to invest in Paraguay with confidence."
   },
   "heroTitle": "Meet Paraguay",
-  "heroDescription": "A country where investments are at their most profitable point",
+  "heroDescription": "Discover real estate and business opportunities with local guidance, clear analysis and strategic support.",
   "heroCta": "Explore Opportunities",
+  "heroPortfolioCta": "View portfolio",
+  "heroFocusLabel": "Focus",
+  "heroFocusItems": {
+    "advisory": "Strategic advisory",
+    "realEstate": "Real estate",
+    "business": "Business"
+  },
+  "heroPanel": {
+    "eyebrow": "Strategic access",
+    "item1": {
+      "label": "Curated opportunities",
+      "value": "Assets with a clear investment thesis"
+    },
+    "item2": {
+      "label": "Due diligence",
+      "value": "A simple, structured and guided process"
+    },
+    "item3": {
+      "label": "Investor support",
+      "value": "Local guidance for every key decision"
+    },
+    "link": "Explore market analysis"
+  },
   "bannerText": "Get the best investment options with the",
   "bannerTextHighlight": "help of our highly experienced group of advisors.",
+  "common": {
+    "consult": "Inquire"
+  },
+  "home": {
+    "thesisEyebrow": "Investment thesis",
+    "thesisTitle": "We designed an experience that explains where to invest, why it matters and how to move forward with confidence.",
+    "modelTags": {
+      "realEstate": "Real estate",
+      "business": "Business"
+    },
+    "pillarsEyebrow": "Advantage",
+    "pillars": {
+      "curation": {
+        "title": "Curated selection",
+        "description": "We present concrete opportunities with less visual noise and a sharper value-driven narrative."
+      },
+      "localKnowledge": {
+        "title": "Local knowledge",
+        "description": "Every proposal reflects real understanding of the Paraguayan market, including risks, advantages and decision points."
+      },
+      "simpleProcess": {
+        "title": "Simple process",
+        "description": "The experience guides users clearly from discovery to a qualified commercial conversation."
+      }
+    }
+  },
   "bussinessModel_1": {
     "title": "Real estate investments in Paraguay",
     "description": "Discover why it's the favorite destination for foreign investors and how to take advantage of its unique opportunities."
@@ -23,5 +73,37 @@
   "bussinessModel_2": {
     "title": "Business ideas in Paraguay",
     "description": "From tech startups to franchises, learn about the industries and businesses you can successfully invest in the Paraguayan market."
+  },
+  "realEstate": {
+    "eyebrow": "Portfolio",
+    "title": "Real estate investments",
+    "description": "Explore selected properties for rental income, capital appreciation and wealth preservation in Paraguay.",
+    "availableTitle": "Available properties",
+    "filters": {
+      "location": "Area, neighborhood or city",
+      "min": "Minimum investment (USD)",
+      "max": "Maximum investment (USD)",
+      "apply": "Apply filters"
+    },
+    "map": {
+      "title": "Interactive map",
+      "description": "View property locations based on your target area."
+    },
+    "badges": {
+      "featured": "Featured",
+      "sale": "For sale"
+    }
+  },
+  "blog": {
+    "eyebrow": "Insights",
+    "title": "Blog",
+    "subtitle": "Ideas, market context and practical guides to invest better in Paraguay.",
+    "posts": {
+      "paraguayPolo": "Why Paraguay is emerging as a new real estate investment hub in South America",
+      "departamentosPozo": "Off-plan apartments in Paraguay: real risks, advantages and how to evaluate them properly",
+      "airbnbParaguay": "Airbnb in Paraguay: promising areas, key numbers and common investment mistakes",
+      "terrenosVsDepartamento": "Land or apartments: how to choose the right asset for your investment strategy",
+      "guiaInversores": "Guide for foreign investors: how to invest legally in Paraguay step by step"
+    }
   }
 }

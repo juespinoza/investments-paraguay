@@ -2,6 +2,7 @@ import { SectionTitle } from "@/components/landing/SectionTitle";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
+import { useTranslations } from "next-intl";
 
 export const metadata: Metadata = buildMetadata({
   title: "Investment Blog Paraguay | Real Estate, Business and Market Insights",
@@ -18,36 +19,40 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function BlogPage() {
+  const t = useTranslations();
+  const posts = [
+    "paraguayPolo",
+    "departamentosPozo",
+    "airbnbParaguay",
+    "terrenosVsDepartamento",
+    "guiaInversores",
+  ] as const;
+
   return (
-    <div className="container-page py-10">
-      <SectionTitle
-        title="Blog"
-        subtitle="Ideas, mercado y guías para invertir mejor."
-      />
-      <ul className="mt-8 text-secondary">
-        <li className="border border-gray-100 rounded p-2">
-          <Link href="/blog/paraguay-polo-inversion-inmobiliaria-sudamerica">
-            Por qué Paraguay se está convirtiendo en el nuevo polo de inversión
-            inmobiliaria en Sudamérica
-          </Link>
-        </li>
-        <li>
-          Inversión en departamentos en pozo en Paraguay: riesgos reales,
-          ventajas y cómo evaluarlos
-        </li>
-        <li>
-          Airbnb en Paraguay: números reales, zonas rentables y errores comunes
-          al invertir
-        </li>
-        <li>
-          Invertir en terrenos en Paraguay: cuándo conviene más que un
-          departamento
-        </li>
-        <li>
-          Guía para inversores extranjeros: cómo invertir legalmente en Paraguay
-          paso a paso
-        </li>
-      </ul>
+    <div className="px-4 py-10">
+      <div className="container-page">
+        <div className="eyebrow">{t("blog.eyebrow")}</div>
+        <div className="mt-5">
+          <SectionTitle
+            title={t("blog.title")}
+            subtitle={t("blog.subtitle")}
+            align="left"
+          />
+        </div>
+        <ul className="mt-8 grid gap-4 text-secondary">
+          {posts.map((post, index) => (
+            <li key={post} className="surface-card rounded-[1.5rem] p-5 text-base">
+              {index === 0 ? (
+                <Link href="/blog/paraguay-polo-inversion-inmobiliaria-sudamerica">
+                  {t(`blog.posts.${post}`)}
+                </Link>
+              ) : (
+                t(`blog.posts.${post}`)
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

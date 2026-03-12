@@ -6,15 +6,15 @@ export function CTAWide({
   highlight: string;
 }) {
   return (
-    <section className="relative overflow-hidden py-6">
-      {/* <div className="absolute inset-0">
-        <div className="h-full w-full bg-[radial-gradient(circle_at_center,rgba(10,26,47,0.06),transparent_60%)]" />
-      </div> */}
-
-      <div className="container-page container-narrow relative py-6 text-center">
-        <p className="text-2xl md:text-3xl font-semibold">
-          {line1} <span className="text-accent1">{highlight}</span>
-        </p>
+    <section className="px-4 py-6 md:py-8">
+      <div className="container-page">
+        <div className="section-shell bg-[linear-gradient(135deg,#0f1726_0%,#1f2f47_55%,#263754_100%)] px-6 py-8 text-center shadow-[0_24px_80px_rgba(15,23,38,0.2)] md:px-12 md:py-10">
+          <div className="mx-auto max-w-4xl">
+            <p className="text-2xl font-semibold leading-tight text-white md:text-4xl">
+              {line1} <span className="text-accent1">{highlight}</span>
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );

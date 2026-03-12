@@ -29,11 +29,12 @@ export function Button(props: ButtonProps) {
   const { variant = "primary", className, children, ...rest } = props;
 
   const base =
-    "inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition";
+    "inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] transition duration-200";
   const variants: Record<ButtonVariant, string> = {
     primary:
-      "bg-accent1 text-primary text-accent2  hover:opacity-90 hover:underline",
-    secondary: "border border-accent1 text-accent1 hover:underline",
+      "bg-[linear-gradient(135deg,#b8914c_0%,#d8b26c_100%)] text-white shadow-[0_16px_36px_rgba(185,145,76,0.28)] hover:-translate-y-0.5",
+    secondary:
+      "border border-[rgba(201,164,92,0.42)] bg-white/70 text-primary hover:-translate-y-0.5 hover:bg-white",
   };
 
   const cls = cn(base, variants[variant], className);

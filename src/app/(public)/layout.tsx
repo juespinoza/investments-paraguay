@@ -34,7 +34,7 @@ export default async function PublicLayout({
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <NavBar />
-      <main>{children}</main>
+      <main className="pb-8">{children}</main>
       <Footer />
     </NextIntlClientProvider>
   );

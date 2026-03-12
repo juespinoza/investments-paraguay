@@ -1,8 +1,5 @@
 import { HeroSplit } from "@/components/landing/HeroSplit";
-import { FeaturedGrid } from "@/components/landing/FeaturedGrid";
 import { CTAWide } from "@/components/landing/CTAWide";
-import { SocialLinks } from "@/components/landing/SocialLinks";
-import { mockAdvisorLanding } from "@/lib/mock/data";
 import { useTranslations } from "next-intl";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { SITE_URL } from "@/lib/seo";
@@ -35,8 +32,8 @@ const websiteJsonLd = {
 };
 
 export default function HomePage() {
-  const d = mockAdvisorLanding;
   const t = useTranslations();
+  const pillars = ["curation", "localKnowledge", "simpleProcess"] as const;
 
   return (
     <>
@@ -54,34 +51,67 @@ export default function HomePage() {
 
       <CTAWide line1={t("bannerText")} highlight={t("bannerTextHighlight")} />
 
-      {/* <FeaturedGrid title="Propiedades" items={d.featuredProperties} /> */}
+      <section className="px-4 py-8 md:py-12">
+        <div className="container-page">
+          <div className="mb-10">
+            <div className="eyebrow">{t("home.thesisEyebrow")}</div>
+            <h2 className="mt-5 max-w-3xl text-3xl font-semibold tracking-tight text-primary md:text-5xl">
+              {t("home.thesisTitle")}
+            </h2>
+          </div>
 
-      {/* <CTAWide
-        line1="Obtenga las mejores opciones de inversión con la"
-        highlight="ayuda de nuestro grupo de asesores altamente experimentados."
-      /> */}
-      <section className="relative overflow-hidden">
-        <div className="container-page container-narrow relative py-6">
-          <div className="flex flex-col gap-x-0 md:gap-x-6 gap-y-6 md:gap-y-0 text-center md:flex-row md:items-stretch">
-            <div className="w-full rounded-md bg-[#d3bf98] p-4 text-lg text-secondary md:w-1/2">
-              <h3 className="text-xl font-semibold">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <article className="surface-card rounded-4xl p-6 md:p-8">
+              <div className="mb-6 flex items-center gap-x-4">
+                <span className="eyebrow">01</span>
+                <span className="text-sm uppercase tracking-[0.22em] text-accent1">
+                  {t("home.modelTags.realEstate")}
+                </span>
+              </div>
+              <h3 className="text-2xl font-semibold text-primary md:text-3xl">
                 {t("bussinessModel_1.title")}
               </h3>
-              <p className="mt-4">{t("bussinessModel_1.description")}</p>
-            </div>
-            <div className="w-full rounded-md bg-[#d3bf98] p-4 text-lg text-secondary md:w-1/2">
-              <h3 className="text-xl font-semibold">
+              <p className="mt-4 max-w-xl text-base text-secondary md:text-lg">
+                {t("bussinessModel_1.description")}
+              </p>
+            </article>
+
+            <article className="surface-card rounded-4xl p-6 md:p-8">
+              <div className="mb-6 flex items-center gap-x-4">
+                <span className="eyebrow">02</span>
+                <span className="text-sm uppercase tracking-[0.22em] text-accent1">
+                  {t("home.modelTags.business")}
+                </span>
+              </div>
+              <h3 className="text-2xl font-semibold text-primary md:text-3xl">
                 {t("bussinessModel_2.title")}
               </h3>
-              <p className="mt-4">{t("bussinessModel_2.description")}</p>
-            </div>
+              <p className="mt-4 max-w-xl text-base text-secondary md:text-lg">
+                {t("bussinessModel_2.description")}
+              </p>
+            </article>
+          </div>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {pillars.map((item) => (
+              <div
+                key={item}
+                className="rounded-2xl border border-[rgba(20,32,51,0.08)] bg-[rgba(20,32,51,0.05)] p-5"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-accent1">
+                  {t("home.pillarsEyebrow")}
+                </p>
+                <h3 className="mt-3 text-xl font-semibold text-primary">
+                  {t(`home.pillars.${item}.title`)}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-secondary">
+                  {t(`home.pillars.${item}.description`)}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
-
-      {/* <FeaturedGrid title="Finanzas" items={d.featuredProperties} /> */}
-
-      {/* <SocialLinks title="Redes sociales" items={d.socialLinks} /> */}
     </>
   );
 }

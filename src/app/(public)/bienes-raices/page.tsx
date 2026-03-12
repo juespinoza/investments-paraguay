@@ -2,6 +2,7 @@ import { apiGet } from "@/lib/api/public";
 import { FeaturedGrid } from "@/components/landing/FeaturedGrid";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = buildMetadata({
   title: "Real Estate Investment in Paraguay | Apartments, Land and Projects",
@@ -47,6 +48,7 @@ type PageProps = {
 };
 
 export default async function BienesRaicesPage({ searchParams }: PageProps) {
+  const t = await getTranslations();
   const params = await searchParams;
   const q = params.q?.trim() ?? "";
   const min = params.min?.trim() ?? "";
@@ -69,7 +71,9 @@ export default async function BienesRaicesPage({ searchParams }: PageProps) {
       subtitle: p.subtitle ?? "",
       coverImageUrl: p.coverImageUrl ?? "intentoPortada_wku8ef",
       href: `/bienes-raices/propiedades/${p.slug}`,
-      badge: p.isFeatured ? "Destacada" : "Venta",
+      badge: p.isFeatured
+        ? t("realEstate.badges.featured")
+        : t("realEstate.badges.sale"),
     })) ?? [];
 
   const firstWithCoordinates = properties?.find(
@@ -86,58 +90,64 @@ export default async function BienesRaicesPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <section className="container-page container-narrow py-6">
-        <h1 className="text-3xl font-semibold">Inversiones inmobiliarias</h1>
-        <p className="mt-2 text-secondary">
-          Propiedades destacadas primero y luego por fecha de actualización.
-        </p>
+      <section className="px-4 py-8 md:py-10">
+        <div className="container-page">
+          <div className="eyebrow">{t("realEstate.eyebrow")}</div>
+          <h1 className="mt-5 text-4xl font-semibold tracking-tight text-primary md:text-6xl">
+            {t("realEstate.title")}
+          </h1>
+          <p className="mt-4 max-w-2xl text-base text-secondary md:text-lg">
+            {t("realEstate.description")}
+          </p>
 
-        <form className="mt-6 grid gap-3 rounded-xl border bg-white p-4 md:grid-cols-4">
-          <input
-            name="q"
-            defaultValue={q}
-            placeholder="Zona, barrio o ciudad"
-            className="h-11 rounded-sm border px-3 md:col-span-2"
-          />
-          <input
-            name="min"
-            defaultValue={min}
-            placeholder="Inversión mínima (USD)"
-            inputMode="numeric"
-            className="h-11 rounded-sm border px-3"
-          />
-          <input
-            name="max"
-            defaultValue={max}
-            placeholder="Inversión máxima (USD)"
-            inputMode="numeric"
-            className="h-11 rounded-sm border px-3"
-          />
-          <button
-            type="submit"
-            className="h-11 rounded-sm bg-secondary px-4 text-sm font-medium text-white md:col-span-4"
-          >
-            Aplicar filtros
-          </button>
-        </form>
-      </section>
-
-      <section className="container-page container-narrow pb-6">
-        <h2 className="text-xl font-semibold">Mapa interactivo</h2>
-        <p className="mt-2 text-sm text-secondary">
-          Vista geográfica por zona de búsqueda.
-        </p>
-        <div className="mt-4 overflow-hidden rounded-xl border bg-white">
-          <iframe
-            title="Mapa de propiedades en Paraguay"
-            className="h-[320px] w-full"
-            src={mapSrc}
-            loading="lazy"
-          />
+          <form className="surface-card mt-8 grid gap-3 rounded-[1.75rem] p-4 md:grid-cols-4 md:p-5">
+            <input
+              name="q"
+              defaultValue={q}
+              placeholder={t("realEstate.filters.location")}
+              className="h-12 rounded-full border border-soft bg-white/80 px-4 outline-none"
+            />
+            <input
+              name="min"
+              defaultValue={min}
+              placeholder={t("realEstate.filters.min")}
+              inputMode="numeric"
+              className="h-12 rounded-full border border-soft bg-white/80 px-4 outline-none"
+            />
+            <input
+              name="max"
+              defaultValue={max}
+              placeholder={t("realEstate.filters.max")}
+              inputMode="numeric"
+              className="h-12 rounded-full border border-soft bg-white/80 px-4 outline-none"
+            />
+            <button type="submit" className="btn-primary h-12">
+              {t("realEstate.filters.apply")}
+            </button>
+          </form>
         </div>
       </section>
 
-      <FeaturedGrid title="Propiedades disponibles" items={items} />
+      <section className="px-4 pb-4">
+        <div className="container-page section-shell surface-card p-4 md:p-6">
+          <h2 className="text-2xl font-semibold text-primary">
+            {t("realEstate.map.title")}
+          </h2>
+          <p className="mt-2 text-sm text-secondary">
+            {t("realEstate.map.description")}
+          </p>
+          <div className="mt-4 overflow-hidden rounded-[1.5rem] border border-soft bg-white">
+            <iframe
+              title="Mapa de propiedades en Paraguay"
+              className="h-[320px] w-full"
+              src={mapSrc}
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
+
+      <FeaturedGrid title={t("realEstate.availableTitle")} items={items} />
     </>
   );
 }

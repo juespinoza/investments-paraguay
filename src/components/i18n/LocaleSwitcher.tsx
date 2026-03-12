@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Globe } from "lucide-react";
 import { setLocale } from "@/app/actions/set-locate";
 
 type Locale = "en" | "es" | "pt" | "de";
@@ -83,14 +82,13 @@ export function LocaleSwitcher() {
         type="button"
         disabled={isPending}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-2 px-3 py-2 text-md disabled:opacity-60"
+        className="inline-flex h-11 items-center gap-2 rounded-full bg-white/70 px-3.5 text-sm font-medium text-primary disabled:opacity-60"
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="Select language"
       >
-        {/* <Globe size={16} /> */}
         <span className="text-base">{selectedLocale.icon}</span>
-        <span aria-hidden className="text-md">
+        <span aria-hidden className="text-xs text-secondary">
           ▾
         </span>
       </button>
@@ -99,7 +97,7 @@ export function LocaleSwitcher() {
         <div
           role="menu"
           aria-label="Select language"
-          className="absolute right-0 top-full z-50 mt-2 w-14 overflow-hidden rounded-md bg-white shadow-lg"
+          className="absolute right-0 top-full z-50 mt-2 w-16 overflow-hidden rounded-2xl border border-soft bg-[rgba(255,253,249,0.95)] shadow-[0_18px_48px_rgba(15,23,38,0.16)] backdrop-blur-xl"
         >
           {LOCALES.map((l) => {
             const active = l.value === selected;
@@ -110,14 +108,14 @@ export function LocaleSwitcher() {
                 role="menuitem"
                 onClick={() => pick(l.value)}
                 disabled={isPending}
-                className={`flex w-full items-center justify-between px-2.5 py-1 text-left text-md hover:bg-gray-50 disabled:opacity-60 ${
-                  active ? "bg-gray-100 text-green-500" : ""
+                className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-white disabled:opacity-60 ${
+                  active ? "bg-[#f5ecdd] text-primary" : "text-secondary"
                 }`}
                 aria-label={l.label}
               >
                 <span className="text-base">{l.icon}</span>
                 {active ? (
-                  <span className="text-2xl" aria-hidden>
+                  <span className="text-lg text-accent1" aria-hidden>
                     •
                   </span>
                 ) : null}

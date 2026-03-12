@@ -8,7 +8,12 @@ export function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn("overflow-hidden", className)}>
+    <div
+      className={cn(
+        "surface-card overflow-hidden rounded-[1.75rem]",
+        className,
+      )}
+    >
       {children}
     </div>
   );

@@ -9,13 +9,63 @@
     "legal": "Rechtliches",
     "us": "Über uns",
     "cookies": "Cookie-Richtlinie",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "tagline": "Ausgewählte Chancen, lokaler Kontext und ein klarerer Weg, mit Vertrauen in Paraguay zu investieren."
   },
   "heroTitle": "Lernen Sie Paraguay kennen",
-  "heroDescription": "Ein Land, in dem Investitionen am profitabelsten sind",
+  "heroDescription": "Entdecken Sie Immobilien- und Geschäftsmöglichkeiten mit lokaler Begleitung, klarer Analyse und strategischer Unterstützung.",
   "heroCta": "Chancen erkunden",
+  "heroPortfolioCta": "Portfolio ansehen",
+  "heroFocusLabel": "Fokus",
+  "heroFocusItems": {
+    "advisory": "Strategische Beratung",
+    "realEstate": "Immobilien",
+    "business": "Geschäft"
+  },
+  "heroPanel": {
+    "eyebrow": "Strategischer Zugang",
+    "item1": {
+      "label": "Kuratierten Chancen",
+      "value": "Assets mit klarer Investment-These"
+    },
+    "item2": {
+      "label": "Due Diligence",
+      "value": "Ein einfacher, strukturierter und begleiteter Prozess"
+    },
+    "item3": {
+      "label": "Investorensupport",
+      "value": "Lokale Begleitung bei jeder wichtigen Entscheidung"
+    },
+    "link": "Marktanalysen ansehen"
+  },
   "bannerText": "Erhalten Sie die besten Investitionsmöglichkeiten mit der",
   "bannerTextHighlight": "Hilfe unserer hochqualifizierten Beratergruppe.",
+  "common": {
+    "consult": "Anfragen"
+  },
+  "home": {
+    "thesisEyebrow": "Investment-These",
+    "thesisTitle": "Wir gestalten ein Erlebnis, das klar erklärt, wo sich Investitionen lohnen, warum sie relevant sind und wie man sicher vorgeht.",
+    "modelTags": {
+      "realEstate": "Immobilien",
+      "business": "Geschäft"
+    },
+    "pillarsEyebrow": "Vorteil",
+    "pillars": {
+      "curation": {
+        "title": "Kuratiertes Angebot",
+        "description": "Wir zeigen konkrete Chancen mit weniger visueller Ablenkung und einer klareren wertorientierten Erzählung."
+      },
+      "localKnowledge": {
+        "title": "Lokaler Kontext",
+        "description": "Jeder Vorschlag vermittelt echtes Verständnis für den paraguayischen Markt, seine Risiken, Vorteile und Entscheidungsfaktoren."
+      },
+      "simpleProcess": {
+        "title": "Einfacher Prozess",
+        "description": "Die Erfahrung führt Nutzer klar von der ersten Orientierung bis zum qualifizierten Geschäftsgespräch."
+      }
+    }
+  },
   "bussinessModel_1": {
     "title": "Immobilieninvestitionen in Paraguay",
     "description": "Entdecken Sie, warum es das Lieblingsziel für ausländische Investoren ist und wie Sie seine einzigartigen Möglichkeiten nutzen können."
@@ -23,5 +73,37 @@
   "bussinessModel_2": {
     "title": "Geschäftsideen in Paraguay",
     "description": "Von Tech-Startups bis hin zu Franchise-Unternehmen, erfahren Sie mehr über die Branchen und Unternehmen, in die Sie erfolgreich auf dem paraguayischen Markt investieren können."
+  },
+  "realEstate": {
+    "eyebrow": "Portfolio",
+    "title": "Immobilieninvestitionen",
+    "description": "Entdecken Sie ausgewählte Immobilien für Mieteinnahmen, Kapitalsteigerung und Vermögenssicherung in Paraguay.",
+    "availableTitle": "Verfügbare Immobilien",
+    "filters": {
+      "location": "Gebiet, Viertel oder Stadt",
+      "min": "Mindestinvestment (USD)",
+      "max": "Maximales Investment (USD)",
+      "apply": "Filter anwenden"
+    },
+    "map": {
+      "title": "Interaktive Karte",
+      "description": "Sehen Sie die Lage der Immobilien nach Ihrem Zielgebiet."
+    },
+    "badges": {
+      "featured": "Hervorgehoben",
+      "sale": "Verkauf"
+    }
+  },
+  "blog": {
+    "eyebrow": "Einblicke",
+    "title": "Blog",
+    "subtitle": "Ideen, Marktüberblick und praktische Leitfäden für bessere Investitionen in Paraguay.",
+    "posts": {
+      "paraguayPolo": "Warum Paraguay sich als neuer Standort für Immobilieninvestitionen in Südamerika etabliert",
+      "departamentosPozo": "Wohnungen vom Plan in Paraguay: reale Risiken, Vorteile und wie man sie fundiert bewertet",
+      "airbnbParaguay": "Airbnb in Paraguay: chancenreiche Lagen, wichtige Kennzahlen und häufige Investitionsfehler",
+      "terrenosVsDepartamento": "Grundstücke oder Wohnungen: wie Sie das richtige Asset für Ihre Anlagestrategie wählen",
+      "guiaInversores": "Leitfaden für ausländische Investoren: so investieren Sie Schritt für Schritt legal in Paraguay"
+    }
   }
 }

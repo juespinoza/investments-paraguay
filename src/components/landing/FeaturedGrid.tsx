@@ -2,6 +2,7 @@
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { CldImage } from "next-cloudinary";
+import { useTranslations } from "next-intl";
 
 export function FeaturedGrid({
   title,
@@ -10,17 +11,16 @@ export function FeaturedGrid({
   title: string;
   items: any[];
 }) {
+  const t = useTranslations();
+
   return (
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-0">
-        <div
-          className="h-full w-full bg-cover bg-center bg-accent2"
-          // style={{ backgroundImage: `url('/backgrounds/background.png')` }}
-        />
-        <div className="absolute inset-0 bg-white/70" />
-      </div>
-      <div className="container-page container-narrow relative py-4 md:py-8">
-        {title ? <h2 className="text-4xl font-semibold">{title}</h2> : null}
+    <section className="px-4 py-8 md:py-10">
+      <div className="container-page">
+        {title ? (
+          <h2 className="text-3xl font-semibold tracking-tight text-primary md:text-5xl">
+            {title}
+          </h2>
+        ) : null}
         <div
           className={`mt-8 grid gap-6 ${
             items.length >= 3 ? "md:grid-cols-3" : "md:grid-cols-2"
@@ -28,7 +28,7 @@ export function FeaturedGrid({
         >
           {items.map((p) => (
             <Card key={p.slug}>
-              <div className="relative">
+              <div className="relative overflow-hidden rounded-[1.3rem]">
                 <CldImage
                   src={p.coverImageUrl ?? "intentoPortada_wku8ef"}
                   width="400"
@@ -38,20 +38,21 @@ export function FeaturedGrid({
                     source: true,
                   }}
                   alt={p.title}
+                  className="h-72 w-full object-cover"
                 />
-                <span className="absolute right-0 top-3 bg-secondary px-3 py-1 text-xs text-white">
-                  {p.badge ?? "Venta"}
+                <span className="absolute left-4 top-4 rounded-full bg-[#142033]/78 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-sm">
+                  {p.badge ?? t("realEstate.badges.sale")}
                 </span>
               </div>
-              <div className="bottom-0 bg-white py-2 min-h-20">
-                <h3 className="text-lg font-semibold px-2">{p.title}</h3>
-                <p className="text-sm text-secondary px-2">{p.subtitle}</p>
+              <div className="min-h-28 px-5 py-5">
+                <h3 className="text-xl font-semibold text-primary">{p.title}</h3>
+                <p className="mt-2 text-sm text-secondary">{p.subtitle}</p>
               </div>
               <Button
                 href={p.href ?? `/bienes-raices/propiedades/${p.slug}`}
-                className="w-full"
+                className="mx-5 mb-5 w-[calc(100%-2.5rem)]"
               >
-                Consultar
+                {t("common.consult")}
               </Button>
             </Card>
           ))}
