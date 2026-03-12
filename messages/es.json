@@ -3,7 +3,16 @@
     "home": "Inicio",
     "realEstate": "Bienes raíces",
     "business": "Negocios",
-    "blog": "Blog"
+    "blog": "Blog",
+    "cta": "Hablar con un asesor",
+    "ctaLabel": "Contacto directo",
+    "tagline": "Estrategia local, oportunidades curadas y una experiencia clara desde el móvil.",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "mobileEyebrow": "Navegación",
+    "mobileDescription": "Explora inversiones, propiedades y análisis con una experiencia pensada primero para móvil.",
+    "localeLabel": "Idioma",
+    "localeDescription": "Selecciona cómo quieres navegar el sitio."
   },
   "footer": {
     "legal": "Legal",

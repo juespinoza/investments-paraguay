@@ -3,7 +3,16 @@
     "home": "Startseite",
     "realEstate": "Immobilien",
     "business": "Geschäft",
-    "blog": "Blog"
+    "blog": "Blog",
+    "cta": "Mit einem Berater sprechen",
+    "ctaLabel": "Direkter Kontakt",
+    "tagline": "Lokale Strategie, kuratierte Chancen und ein klares Erlebnis, das zuerst für mobile Geräte gedacht ist.",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "mobileEyebrow": "Navigation",
+    "mobileDescription": "Entdecken Sie Investments, Immobilien und Analysen in einer mobile-first Erfahrung.",
+    "localeLabel": "Sprache",
+    "localeDescription": "Wählen Sie, wie Sie die Website nutzen möchten."
   },
   "footer": {
     "legal": "Rechtliches",

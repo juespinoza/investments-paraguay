@@ -2,7 +2,16 @@
   "header": {
     "home": "Início",
     "realEstate": "Imóveis",
-    "blog": "Blog"
+    "blog": "Blog",
+    "cta": "Falar com um consultor",
+    "ctaLabel": "Contato direto",
+    "tagline": "Estratégia local, oportunidades curadas e uma experiência clara pensada primeiro para o celular.",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu",
+    "mobileEyebrow": "Navegação",
+    "mobileDescription": "Explore investimentos, propriedades e análises em uma experiência mobile first.",
+    "localeLabel": "Idioma",
+    "localeDescription": "Escolha como deseja navegar no site."
   },
   "footer": {
     "legal": "Legal",

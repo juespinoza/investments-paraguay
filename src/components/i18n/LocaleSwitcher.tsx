@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/cn";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { setLocale } from "@/app/actions/set-locate";
@@ -31,7 +32,13 @@ function readCookieLocale(): Locale {
         : "en";
 }
 
-export function LocaleSwitcher() {
+export function LocaleSwitcher({
+  showLabel = false,
+  className,
+}: {
+  showLabel?: boolean;
+  className?: string;
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -77,17 +84,22 @@ export function LocaleSwitcher() {
   }
 
   return (
-    <div ref={rootRef} className="relative inline-flex">
+    <div ref={rootRef} className={cn("relative inline-flex", className)}>
       <button
         type="button"
         disabled={isPending}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-11 items-center gap-2 rounded-full bg-white/70 px-3.5 text-sm font-medium text-primary disabled:opacity-60"
+        className="inline-flex h-10 items-center gap-2 rounded-lg border border-soft bg-white px-3 text-sm font-medium text-primary disabled:opacity-60"
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="Select language"
       >
         <span className="text-base">{selectedLocale.icon}</span>
+        {showLabel ? (
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
+            {selectedLocale.value}
+          </span>
+        ) : null}
         <span aria-hidden className="text-xs text-secondary">
           ▾
         </span>
@@ -97,7 +109,7 @@ export function LocaleSwitcher() {
         <div
           role="menu"
           aria-label="Select language"
-          className="absolute right-0 top-full z-50 mt-2 w-16 overflow-hidden rounded-2xl border border-soft bg-[rgba(255,253,249,0.95)] shadow-[0_18px_48px_rgba(15,23,38,0.16)] backdrop-blur-xl"
+          className="absolute right-0 top-full z-50 mt-2 w-16 overflow-hidden rounded-lg border border-soft bg-[rgba(255,253,249,0.98)] shadow-[0_18px_48px_rgba(15,23,38,0.16)] backdrop-blur-xl"
         >
           {LOCALES.map((l) => {
             const active = l.value === selected;

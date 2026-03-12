@@ -3,7 +3,16 @@
     "home": "Home",
     "realEstate": "Real Estate",
     "business": "Business",
-    "blog": "Blog"
+    "blog": "Blog",
+    "cta": "Talk to an advisor",
+    "ctaLabel": "Direct contact",
+    "tagline": "Local strategy, curated opportunities and a clear experience designed from mobile up.",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "mobileEyebrow": "Navigation",
+    "mobileDescription": "Explore investments, properties and analysis through a mobile-first experience.",
+    "localeLabel": "Language",
+    "localeDescription": "Choose how you want to browse the site."
   },
   "footer": {
     "legal": "Legal",
