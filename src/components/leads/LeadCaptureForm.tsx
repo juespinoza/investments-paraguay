@@ -8,11 +8,22 @@ export function LeadCaptureForm({
   advisorSlug,
   propertySlug,
   compact = false,
+  labels,
 }: {
   sourcePage: string;
   advisorSlug?: string;
   propertySlug?: string;
   compact?: boolean;
+  labels?: {
+    fullName: string;
+    email: string;
+    whatsapp: string;
+    sending: string;
+    send: string;
+    receiveGuide: string;
+    error: string;
+    success: string;
+  };
 }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -42,10 +53,12 @@ export function LeadCaptureForm({
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data?.error ?? "No se pudo enviar.");
+        setError(data?.error ?? labels?.error ?? "No se pudo enviar.");
         return;
       }
-      setMessage("Solicitud enviada. Te contactaremos en breve.");
+      setMessage(
+        labels?.success ?? "Solicitud enviada. Te contactaremos en breve.",
+      );
       setFullName("");
       setEmail("");
       setWhatsapp("");
@@ -61,19 +74,19 @@ export function LeadCaptureForm({
         value={fullName}
         onChange={(e) => setFullName(e.target.value)}
         className="h-12 rounded-full border border-soft bg-white/80 px-4 outline-none"
-        placeholder="Nombre"
+        placeholder={labels?.fullName ?? "Nombre"}
       />
       <input
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         className="h-12 rounded-full border border-soft bg-white/80 px-4 outline-none"
-        placeholder="Email"
+        placeholder={labels?.email ?? "Email"}
       />
       <input
         value={whatsapp}
         onChange={(e) => setWhatsapp(e.target.value)}
         className="h-12 rounded-full border border-soft bg-white/80 px-4 outline-none"
-        placeholder="WhatsApp"
+        placeholder={labels?.whatsapp ?? "WhatsApp"}
       />
 
       {error ? (
@@ -87,7 +100,13 @@ export function LeadCaptureForm({
         </div>
       ) : null}
 
-      <Button>{isLoading ? "Enviando..." : compact ? "Enviar" : "Recibir guía"}</Button>
+      <Button>
+        {isLoading
+          ? labels?.sending ?? "Enviando..."
+          : compact
+            ? labels?.send ?? "Enviar"
+            : labels?.receiveGuide ?? "Recibir guía"}
+      </Button>
     </form>
   );
 }

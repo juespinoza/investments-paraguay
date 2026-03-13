@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 export function Footer() {
@@ -25,18 +26,18 @@ export function Footer() {
 
             <div className="flex flex-col gap-5 md:items-end">
               <div className="flex flex-wrap gap-x-6 gap-y-3">
-                <a className="text-sm hover:text-accent1" href="legales">
+                <Link className="text-sm hover:text-accent1" href="/legales">
                   {t("footer.legal")}
-                </a>
-                <a className="text-sm hover:text-accent1" href="/nosotros">
+                </Link>
+                <Link className="text-sm hover:text-accent1" href="/nosotros">
                   {t("footer.us")}
-                </a>
-                <a className="text-sm hover:text-accent1" href="/cookies">
+                </Link>
+                <Link className="text-sm hover:text-accent1" href="/cookies">
                   {t("footer.cookies")}
-                </a>
-                <a className="text-sm hover:text-accent1" href="/contacto">
+                </Link>
+                <Link className="text-sm hover:text-accent1" href="/contacto">
                   {t("footer.contact")}
-                </a>
+                </Link>
               </div>
               <p className="text-xs uppercase tracking-[0.22em] text-white/42">
                 Investments Paraguay

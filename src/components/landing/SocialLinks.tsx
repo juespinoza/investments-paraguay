@@ -22,10 +22,13 @@ const SOCIAL_PLATFORM_ORDER: SocialPlatform[] = [
 ];
 
 const SOCIAL_PLATFORM_INDEX: Record<SocialPlatform, number> =
-  SOCIAL_PLATFORM_ORDER.reduce((acc, platform, index) => {
-    acc[platform] = index;
-    return acc;
-  }, {} as Record<SocialPlatform, number>);
+  SOCIAL_PLATFORM_ORDER.reduce(
+    (acc, platform, index) => {
+      acc[platform] = index;
+      return acc;
+    },
+    {} as Record<SocialPlatform, number>,
+  );
 
 const ICONS: Record<SocialPlatform, React.ComponentType<{ size?: number }>> = {
   WHATSAPP: FaWhatsapp,
@@ -64,33 +67,33 @@ export function SocialLinks({
           {title}
         </h2>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {validItems.map((i, key) => {
-          const Icon = ICONS[i.platform];
+        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {validItems.map((i, key) => {
+            const Icon = ICONS[i.platform];
 
-          return (
-            <a
-              key={`${i.platform}-${i.value}-${key}`}
-              href={i.href}
-              target="_blank"
-              rel="noreferrer"
-              className="surface-card flex items-center gap-4 rounded-[1.5rem] p-4 hover:-translate-y-0.5"
-            >
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[linear-gradient(135deg,#b8914c_0%,#d8b26c_100%)] text-white">
-                <Icon size={17} />
-              </span>
-
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent1">
-                  {i.platform}
-                </p>
-                <span className="mt-1 block text-sm text-secondary">
-                  {i.value}
+            return (
+              <a
+                key={`${i.platform}-${i.value}-${key}`}
+                href={i.href}
+                target="_blank"
+                rel="noreferrer"
+                className="surface-card flex items-center gap-4 rounded-3xl p-4 hover:-translate-y-0.5"
+              >
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[linear-gradient(135deg,#b8914c_0%,#d8b26c_100%)] text-white">
+                  <Icon size={17} />
                 </span>
-              </div>
-            </a>
-          );
-        })}
+
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent1">
+                    {i.platform}
+                  </p>
+                  <span className="mt-1 block text-sm text-secondary">
+                    {i.value}
+                  </span>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </div>
     </section>
