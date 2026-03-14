@@ -1,3 +1,4 @@
+// src/app/(public)/page.tsx
 import { HeroSplit } from "@/components/landing/HeroSplit";
 import { CTAWide } from "@/components/landing/CTAWide";
 import { useTranslations } from "next-intl";

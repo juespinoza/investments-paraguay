@@ -1,3 +1,4 @@
+// src/middleware.ts
 import createMiddleware from "next-intl/middleware";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/lib/i18n";
 
