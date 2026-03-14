@@ -86,9 +86,10 @@ export type PublicAdvisorLanding = {
     imageUrl: string;
     title: string;
     startDate: string;
-    company: string;
+    companyName: string;
     description: string | null;
     paragraphs: [string, string];
+    yearsExperience?: number;
   };
 
   services: {
