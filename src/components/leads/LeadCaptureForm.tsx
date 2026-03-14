@@ -90,22 +90,22 @@ export function LeadCaptureForm({
       />
 
       {error ? (
-        <div className="rounded-[1rem] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       ) : null}
       {message ? (
-        <div className="rounded-[1rem] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
           {message}
         </div>
       ) : null}
 
       <Button>
         {isLoading
-          ? labels?.sending ?? "Enviando..."
+          ? (labels?.sending ?? "Enviando...")
           : compact
-            ? labels?.send ?? "Enviar"
-            : labels?.receiveGuide ?? "Recibir guía"}
+            ? (labels?.send ?? "Enviar")
+            : (labels?.receiveGuide ?? "Recibir guía")}
       </Button>
     </form>
   );
