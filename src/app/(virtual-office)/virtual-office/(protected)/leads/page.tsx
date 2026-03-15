@@ -1,4 +1,3 @@
-import { requireSession } from "@/lib/auth/require-session";
 import { listLeads } from "@/lib/leads/repo";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/virtualoffice/Page";
@@ -10,11 +9,29 @@ import {
   Tr,
 } from "@/components/virtualoffice/Table";
 import LeadStatusSelect from "@/components/virtualoffice/leads/LeadStatusSelect";
+import { requireVirtualOfficeRoles } from "@/lib/auth/virtual-office";
 
 export const dynamic = "force-dynamic";
 
 export default async function LeadsPage() {
-  const session = await requireSession();
+  const access = await requireVirtualOfficeRoles([
+    "ADMIN",
+    "INMOBILIARIA",
+    "ASESOR",
+  ]);
+
+  if (!access.allowed) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-semibold">Leads</h1>
+        <p className="mt-2 text-secondary">
+          No tienes permisos para ver esta sección.
+        </p>
+      </div>
+    );
+  }
+
+  const session = access.session;
 
   let advisorSlugs: string[] | undefined;
   if (session.role !== "ADMIN") {

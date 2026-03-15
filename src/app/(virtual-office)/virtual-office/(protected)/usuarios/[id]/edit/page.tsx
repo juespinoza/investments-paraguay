@@ -1,21 +1,16 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Role } from "@/generated/prisma";
-import { PageHeader, Card, CardBody } from "@/components/virtualoffice/Page";
+import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
 import {
-  Table,
-  TableShell,
-  Td,
-  Th,
-  Tr,
-} from "@/components/virtualoffice/Table";
-import {
+  getUserById,
   listUserFormOptions,
-  listUsers,
   requireAdminSession,
 } from "@/lib/auth/users";
-import { createUserAction, deleteUserAction } from "./_actions";
-
-export const dynamic = "force-dynamic";
+import {
+  updateUserAction,
+  updateUserPasswordAction,
+} from "../../_actions";
 
 const ROLE_OPTIONS: Array<{ value: Role; label: string }> = [
   { value: Role.ADMIN, label: "Admin" },
@@ -24,50 +19,71 @@ const ROLE_OPTIONS: Array<{ value: Role; label: string }> = [
   { value: Role.BLOGUERO, label: "Bloguero" },
 ];
 
-type UsersPageProps = {
+type PageProps = {
+  params: Promise<{ id: string }>;
   searchParams: Promise<{ status?: string; error?: string }>;
 };
 
-export default async function UsersPage({ searchParams }: UsersPageProps) {
+export default async function EditUserPage({
+  params,
+  searchParams,
+}: PageProps) {
   await requireAdminSession();
-  const params = await searchParams;
+  const { id } = await params;
+  const query = await searchParams;
 
-  const [users, options] = await Promise.all([listUsers(), listUserFormOptions()]);
+  const [user, options] = await Promise.all([
+    getUserById(id),
+    listUserFormOptions(),
+  ]);
+
+  if (!user) return notFound();
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Usuarios"
-        description="Gestiona accesos al Virtual Office y define el rol de cada cuenta."
+        title="Editar usuario"
+        description="Actualiza rol, asignaciones y contraseña del usuario."
+        actions={
+          <Link
+            href="/virtual-office/usuarios"
+            className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+          >
+            Volver
+          </Link>
+        }
       />
 
-      {params.error ? (
+      {query.error ? (
         <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {params.error}
+          {query.error}
         </div>
       ) : null}
 
-      {params.status === "created" ? (
+      {query.status === "updated" ? (
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          Usuario creado correctamente.
+          Usuario actualizado correctamente.
         </div>
       ) : null}
 
-      {params.status === "deleted" ? (
+      {query.status === "password-updated" ? (
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          Usuario desactivado correctamente.
+          Contraseña actualizada correctamente.
         </div>
       ) : null}
 
       <Card>
         <CardBody>
-          <form action={createUserAction} className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <form
+            action={updateUserAction.bind(null, user.id)}
+            className="grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+          >
             <label className="space-y-2 text-sm">
               <span className="font-medium text-zinc-800">Nombre</span>
               <input
                 name="name"
+                defaultValue={user.name ?? ""}
                 className="w-full rounded-xl border border-zinc-200 px-3 py-2"
-                placeholder="Nombre visible"
               />
             </label>
 
@@ -77,20 +93,8 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
                 name="email"
                 type="email"
                 required
+                defaultValue={user.email}
                 className="w-full rounded-xl border border-zinc-200 px-3 py-2"
-                placeholder="admin@empresa.com"
-              />
-            </label>
-
-            <label className="space-y-2 text-sm">
-              <span className="font-medium text-zinc-800">Contraseña</span>
-              <input
-                name="password"
-                type="password"
-                required
-                minLength={8}
-                className="w-full rounded-xl border border-zinc-200 px-3 py-2"
-                placeholder="Min. 8 caracteres"
               />
             </label>
 
@@ -98,7 +102,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
               <span className="font-medium text-zinc-800">Rol</span>
               <select
                 name="role"
-                defaultValue={Role.ASESOR}
+                defaultValue={user.role}
                 className="w-full rounded-xl border border-zinc-200 px-3 py-2"
               >
                 {ROLE_OPTIONS.map((option) => (
@@ -113,7 +117,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
               <span className="font-medium text-zinc-800">Inmobiliaria</span>
               <select
                 name="inmobiliariaId"
-                defaultValue=""
+                defaultValue={user.inmobiliariaId ?? ""}
                 className="w-full rounded-xl border border-zinc-200 px-3 py-2"
               >
                 <option value="">Sin asignar</option>
@@ -129,7 +133,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
               <span className="font-medium text-zinc-800">Asesor</span>
               <select
                 name="advisorId"
-                defaultValue=""
+                defaultValue={user.advisorId ?? ""}
                 className="w-full rounded-xl border border-zinc-200 px-3 py-2"
               >
                 <option value="">Sin asignar</option>
@@ -146,70 +150,54 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
                 type="submit"
                 className="inline-flex w-full items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
               >
-                Crear usuario
+                Guardar cambios
               </button>
             </div>
           </form>
         </CardBody>
       </Card>
 
-      <TableShell>
-        <Table>
-          <thead>
-            <tr>
-              <Th>Nombre</Th>
-              <Th>Email</Th>
-              <Th>Rol</Th>
-              <Th>Inmobiliaria</Th>
-              <Th>Asesor</Th>
-              <Th>Creado</Th>
-              <Th>Acciones</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.length === 0 ? (
-              <tr>
-                <td
-                  className="px-4 py-10 text-center text-sm text-zinc-600"
-                  colSpan={7}
-                >
-                  No hay usuarios cargados todavía.
-                </td>
-              </tr>
-            ) : (
-              users.map((user) => (
-                <Tr key={user.id}>
-                  <Td className="font-medium">{user.name ?? "-"}</Td>
-                  <Td>{user.email}</Td>
-                  <Td>{user.role}</Td>
-                  <Td>{user.inmobiliariaName ?? "-"}</Td>
-                  <Td>{user.advisorName ?? "-"}</Td>
-                  <Td>{new Date(user.createdAt).toLocaleString()}</Td>
-                  <Td>
-                    <div className="flex items-center gap-2">
-                      <Link
-                        href={`/virtual-office/usuarios/${user.id}/edit`}
-                        className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-800 hover:bg-zinc-50"
-                      >
-                        Editar
-                      </Link>
-                      <form action={deleteUserAction}>
-                        <input type="hidden" name="id" value={user.id} />
-                        <button
-                          type="submit"
-                          className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50"
-                        >
-                          Desactivar
-                        </button>
-                      </form>
-                    </div>
-                  </Td>
-                </Tr>
-              ))
-            )}
-          </tbody>
-        </Table>
-      </TableShell>
+      <Card>
+        <CardBody>
+          <form
+            action={updateUserPasswordAction.bind(null, user.id)}
+            className="grid gap-4 md:grid-cols-2"
+          >
+            <label className="space-y-2 text-sm">
+              <span className="font-medium text-zinc-800">Nueva contraseña</span>
+              <input
+                name="password"
+                type="password"
+                required
+                minLength={8}
+                className="w-full rounded-xl border border-zinc-200 px-3 py-2"
+              />
+            </label>
+
+            <label className="space-y-2 text-sm">
+              <span className="font-medium text-zinc-800">
+                Confirmar contraseña
+              </span>
+              <input
+                name="confirmPassword"
+                type="password"
+                required
+                minLength={8}
+                className="w-full rounded-xl border border-zinc-200 px-3 py-2"
+              />
+            </label>
+
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+              >
+                Actualizar contraseña
+              </button>
+            </div>
+          </form>
+        </CardBody>
+      </Card>
     </div>
   );
 }

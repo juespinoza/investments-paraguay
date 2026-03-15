@@ -1,13 +1,9 @@
 "use client";
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import Link from "next/link";
 import AdminHeader from "./AdminHeader";
 import AdminFooter from "./AdminFooter";
-import { Role } from "@/lib/virtualoffice/menu";
 import { AdminAuthProvider, useAdminAuth } from "./AuthProvider";
-
-type MeResponse =
-  | { authenticated: false }
-  | { authenticated: true; user: { id: string; email: string; role: Role } };
 
 function AdminShellInner({ children }: { children: ReactNode }) {
   const { isLoading, isAuthenticated } = useAdminAuth();
@@ -25,12 +21,12 @@ function AdminShellInner({ children }: { children: ReactNode }) {
             <p className="mt-2 text-sm text-zinc-600">
               Iniciá sesión para acceder al panel.
             </p>
-            <a
-              href="/login"
+            <Link
+              href="/virtual-office/login"
               className="mt-4 inline-flex rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
             >
               Ir a login
-            </a>
+            </Link>
           </div>
         </div>
       </div>
