@@ -24,8 +24,11 @@ export async function POST(req: Request) {
 
   const email = parsed.data.email.toLowerCase().trim();
 
-  const user = await prisma.user.findUnique({
-    where: { email },
+  const user = await prisma.user.findFirst({
+    where: {
+      email,
+      deletedAt: null,
+    },
     select: {
       id: true,
       email: true,
