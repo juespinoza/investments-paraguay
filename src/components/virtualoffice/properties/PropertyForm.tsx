@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import FormMessage from "@/components/virtualoffice/FormMessage";
 
 type PropertyFormValues = {
   title: string;
@@ -20,6 +21,13 @@ type PropertyFormValues = {
   coverImageUrl: string;
   galleryCsv: string;
   advisorId: string;
+  inmobiliariaId: string;
+};
+
+type PropertyOption = {
+  id: string;
+  label: string;
+  inmobiliariaId?: string | null;
 };
 
 type PropertyPayload = {
@@ -39,6 +47,7 @@ type PropertyPayload = {
   coverImageUrl: string | null;
   gallery: string[];
   advisorId: string | null;
+  inmobiliariaId: string | null;
 };
 
 const EMPTY_VALUES: PropertyFormValues = {
@@ -58,6 +67,7 @@ const EMPTY_VALUES: PropertyFormValues = {
   coverImageUrl: "",
   galleryCsv: "",
   advisorId: "",
+  inmobiliariaId: "",
 };
 
 function toSlug(value: string) {
@@ -103,6 +113,7 @@ function toPayload(values: PropertyFormValues): PropertyPayload {
     coverImageUrl: values.coverImageUrl.trim() || null,
     gallery,
     advisorId: values.advisorId.trim() || null,
+    inmobiliariaId: values.inmobiliariaId.trim() || null,
   };
 }
 
@@ -110,14 +121,28 @@ export function PropertyForm({
   mode,
   propertyId,
   initialData,
+  canManageAssignments = false,
+  canManageFeatured = false,
+  advisors = [],
+  inmobiliarias = [],
+  lockedAdvisorId,
+  lockedInmobiliariaId,
 }: {
   mode: "create" | "edit";
   propertyId?: string;
   initialData?: Partial<PropertyFormValues>;
+  canManageAssignments?: boolean;
+  canManageFeatured?: boolean;
+  advisors?: PropertyOption[];
+  inmobiliarias?: PropertyOption[];
+  lockedAdvisorId?: string;
+  lockedInmobiliariaId?: string;
 }) {
   const router = useRouter();
   const [values, setValues] = useState<PropertyFormValues>({
     ...EMPTY_VALUES,
+    advisorId: lockedAdvisorId ?? EMPTY_VALUES.advisorId,
+    inmobiliariaId: lockedInmobiliariaId ?? EMPTY_VALUES.inmobiliariaId,
     ...initialData,
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -160,6 +185,8 @@ export function PropertyForm({
 
   return (
     <form onSubmit={onSubmit} className="grid gap-4">
+      {error ? <FormMessage type="error" message={error} /> : null}
+
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <label className="text-sm text-secondary">Título</label>
@@ -277,29 +304,31 @@ export function PropertyForm({
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <label className="text-sm text-secondary">Destacada</label>
-          <select
-            value={values.isFeatured}
-            onChange={(e) => update("isFeatured", e.target.value)}
-            className="mt-1 h-11 w-full rounded-md border px-3"
-          >
-            <option value="false">No</option>
-            <option value="true">Sí</option>
-          </select>
+      {canManageFeatured ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div>
+            <label className="text-sm text-secondary">Destacada</label>
+            <select
+              value={values.isFeatured}
+              onChange={(e) => update("isFeatured", e.target.value)}
+              className="mt-1 h-11 w-full rounded-md border px-3"
+            >
+              <option value="false">No</option>
+              <option value="true">Sí</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-sm text-secondary">Orden destacada</label>
+            <input
+              value={values.featuredOrder}
+              onChange={(e) => update("featuredOrder", e.target.value)}
+              inputMode="numeric"
+              className="mt-1 h-11 w-full rounded-md border px-3"
+              placeholder="1"
+            />
+          </div>
         </div>
-        <div>
-          <label className="text-sm text-secondary">Orden destacada</label>
-          <input
-            value={values.featuredOrder}
-            onChange={(e) => update("featuredOrder", e.target.value)}
-            inputMode="numeric"
-            className="mt-1 h-11 w-full rounded-md border px-3"
-            placeholder="1"
-          />
-        </div>
-      </div>
+      ) : null}
 
       <div>
         <label className="text-sm text-secondary">Descripción</label>
@@ -322,16 +351,91 @@ export function PropertyForm({
           />
         </div>
 
-        <div>
-          <label className="text-sm text-secondary">ID asesor (opcional)</label>
-          <input
-            value={values.advisorId}
-            onChange={(e) => update("advisorId", e.target.value)}
-            className="mt-1 h-11 w-full rounded-md border px-3"
-            placeholder="cuid..."
-          />
-        </div>
+        {canManageAssignments ? (
+          <div>
+            <label className="text-sm text-secondary">Asesor</label>
+            <select
+              value={values.advisorId}
+              onChange={(e) => update("advisorId", e.target.value)}
+              className="mt-1 h-11 w-full rounded-md border px-3"
+            >
+              <option value="">Sin asignar</option>
+              {advisors
+                .filter((advisor) => {
+                  if (!values.inmobiliariaId) return true;
+                  return (
+                    !advisor.inmobiliariaId ||
+                    advisor.inmobiliariaId === values.inmobiliariaId
+                  );
+                })
+                .map((advisor) => (
+                  <option key={advisor.id} value={advisor.id}>
+                    {advisor.label}
+                  </option>
+                ))}
+            </select>
+          </div>
+        ) : (
+          <div>
+            <label className="text-sm text-secondary">Asesor asignado</label>
+            <input
+              value={
+                advisors.find((advisor) => advisor.id === values.advisorId)?.label ??
+                "Mi perfil"
+              }
+              disabled
+              className="mt-1 h-11 w-full rounded-md border px-3 bg-zinc-50 text-zinc-500"
+            />
+          </div>
+        )}
       </div>
+
+      {(canManageAssignments || lockedInmobiliariaId) && (
+        <div>
+          <label className="text-sm text-secondary">Inmobiliaria</label>
+          {canManageAssignments ? (
+            <select
+              value={values.inmobiliariaId}
+              onChange={(e) => {
+                const nextInmobiliariaId = e.target.value;
+                update("inmobiliariaId", nextInmobiliariaId);
+
+                const advisorStillValid =
+                  !values.advisorId ||
+                  advisors.some(
+                    (advisor) =>
+                      advisor.id === values.advisorId &&
+                      (!nextInmobiliariaId ||
+                        !advisor.inmobiliariaId ||
+                        advisor.inmobiliariaId === nextInmobiliariaId),
+                  );
+
+                if (!advisorStillValid) {
+                  update("advisorId", "");
+                }
+              }}
+              className="mt-1 h-11 w-full rounded-md border px-3"
+            >
+              <option value="">Sin asignar</option>
+              {inmobiliarias.map((inmobiliaria) => (
+                <option key={inmobiliaria.id} value={inmobiliaria.id}>
+                  {inmobiliaria.label}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              value={
+                inmobiliarias.find(
+                  (inmobiliaria) => inmobiliaria.id === values.inmobiliariaId,
+                )?.label ?? "Inmobiliaria asignada"
+              }
+              disabled
+              className="mt-1 h-11 w-full rounded-md border px-3 bg-zinc-50 text-zinc-500"
+            />
+          )}
+        </div>
+      )}
 
       <div>
         <label className="text-sm text-secondary">Galería (CSV)</label>
@@ -342,12 +446,6 @@ export function PropertyForm({
           placeholder="img1,img2,img3"
         />
       </div>
-
-      {error ? (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {error}
-        </div>
-      ) : null}
 
       <button
         type="submit"

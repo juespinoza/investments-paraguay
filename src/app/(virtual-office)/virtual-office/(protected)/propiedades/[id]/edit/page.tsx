@@ -3,6 +3,12 @@ import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
 import { PropertyForm } from "@/components/virtualoffice/properties/PropertyForm";
 import { requireSession } from "@/lib/auth/require-session";
 import { prisma } from "@/lib/prisma";
+import {
+  assertPropertyScope,
+  canEditProperty,
+  getPropertyFormOptions,
+  PropertyRepoError,
+} from "@/lib/virtualoffice/properties";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -10,13 +16,42 @@ export default async function EditPropertyPage({ params }: PageProps) {
   const { id } = await params;
   const session = await requireSession();
 
+  if (!canEditProperty(session)) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-semibold">Editar propiedad</h1>
+        <p className="mt-2 text-secondary">
+          No tienes permisos para editar propiedades.
+        </p>
+      </div>
+    );
+  }
+
+  try {
+    await assertPropertyScope(session, id);
+  } catch (error) {
+    if (error instanceof PropertyRepoError && error.status === 404) {
+      return notFound();
+    }
+    if (error instanceof PropertyRepoError && error.status === 403) {
+      return (
+        <div className="p-6">
+          <h1 className="text-2xl font-semibold">Editar propiedad</h1>
+          <p className="mt-2 text-secondary">
+            No tienes permisos para editar esta propiedad.
+          </p>
+        </div>
+      );
+    }
+    throw error;
+  }
+
+  const options = await getPropertyFormOptions(session);
+
   const property = await prisma.property.findFirst({
     where: {
       id,
       deletedAt: null,
-      ...(session.role === "ADMIN"
-        ? {}
-        : { inmobiliariaId: session.inmobiliariaId ?? "__none__" }),
     },
     select: {
       id: true,
@@ -36,6 +71,7 @@ export default async function EditPropertyPage({ params }: PageProps) {
       coverImageUrl: true,
       gallery: true,
       advisorId: true,
+      inmobiliariaId: true,
     },
   });
 
@@ -81,7 +117,25 @@ export default async function EditPropertyPage({ params }: PageProps) {
               coverImageUrl: property.coverImageUrl ?? "",
               galleryCsv: property.gallery.join(","),
               advisorId: property.advisorId ?? "",
+              inmobiliariaId: property.inmobiliariaId ?? "",
             }}
+            canManageAssignments={session.role === "ADMIN" || session.role === "INMOBILIARIA"}
+            canManageFeatured={session.role === "ADMIN" || session.role === "INMOBILIARIA"}
+            advisors={options.advisors.map((advisor) => ({
+              id: advisor.id,
+              label: advisor.fullName,
+              inmobiliariaId: advisor.inmobiliariaId,
+            }))}
+            inmobiliarias={options.inmobiliarias.map((item) => ({
+              id: item.id,
+              label: item.name,
+            }))}
+            lockedAdvisorId={session.role === "ASESOR" ? session.advisorId ?? "" : undefined}
+            lockedInmobiliariaId={
+              session.role === "INMOBILIARIA" || session.role === "ASESOR"
+                ? session.inmobiliariaId ?? ""
+                : undefined
+            }
           />
         </CardBody>
       </Card>

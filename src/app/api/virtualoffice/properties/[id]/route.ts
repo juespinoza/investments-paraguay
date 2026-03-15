@@ -1,52 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth/session";
-import { z } from "zod";
-
-const PatchPropertySchema = z.object({
-  title: z.string().min(3),
-  slug: z.string().min(3),
-  city: z.string().nullable().optional(),
-  neighborhood: z.string().nullable().optional(),
-  address: z.string().nullable().optional(),
-  latitude: z.number().min(-90).max(90).nullable().optional(),
-  longitude: z.number().min(-180).max(180).nullable().optional(),
-  roiAnnualPct: z.number().min(0).max(100).nullable().optional(),
-  appreciationAnnualPct: z.number().min(0).max(100).nullable().optional(),
-  isFeatured: z.boolean().optional(),
-  featuredOrder: z.number().int().nullable().optional(),
-  priceUsd: z.number().int().positive().nullable().optional(),
-  description: z.string().nullable().optional(),
-  coverImageUrl: z.string().nullable().optional(),
-  gallery: z.array(z.string()).default([]),
-  advisorId: z.string().nullable().optional(),
-  inmobiliariaId: z.string().nullable().optional(),
-});
+import {
+  assertPropertyScope,
+  canDeleteProperty,
+  canEditProperty,
+  PropertyRepoError,
+  PropertyUpsertSchema,
+  resolvePropertyAssignments,
+} from "@/lib/virtualoffice/properties";
 
 type Params = { params: Promise<{ id: string }> };
-
-async function assertScope(
-  session: Awaited<ReturnType<typeof getSession>>,
-  propertyId: string,
-) {
-  const property = await prisma.property.findFirst({
-    where: { id: propertyId, deletedAt: null },
-    select: { id: true, inmobiliariaId: true },
-  });
-  if (!property) return null;
-  if (!session) return "forbidden";
-
-  if (session.role !== "ADMIN") {
-    if (
-      !session.inmobiliariaId ||
-      property.inmobiliariaId !== session.inmobiliariaId
-    ) {
-      return "forbidden";
-    }
-  }
-
-  return property;
-}
 
 export async function GET(_req: Request, { params }: Params) {
   const session = await getSession();
@@ -54,10 +18,14 @@ export async function GET(_req: Request, { params }: Params) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  const scope = await assertScope(session, id);
-  if (!scope) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (scope === "forbidden")
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  try {
+    await assertPropertyScope(session, id);
+  } catch (error) {
+    if (error instanceof PropertyRepoError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    return NextResponse.json({ error: "Get failed" }, { status: 500 });
+  }
 
   const property = await prisma.property.findUnique({
     where: { id },
@@ -83,7 +51,7 @@ export async function GET(_req: Request, { params }: Params) {
     },
   });
 
-  if (!property || property.id !== scope.id) {
+  if (!property) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
@@ -95,18 +63,23 @@ export async function PATCH(req: Request, { params }: Params) {
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (session.role !== "ADMIN" && session.role !== "INMOBILIARIA") {
+  if (!canEditProperty(session)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const { id } = await params;
-  const scope = await assertScope(session, id);
-  if (!scope) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (scope === "forbidden")
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  let scope;
+  try {
+    scope = await assertPropertyScope(session, id);
+  } catch (error) {
+    if (error instanceof PropertyRepoError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    return NextResponse.json({ error: "Update failed" }, { status: 500 });
+  }
 
   const body = await req.json().catch(() => null);
-  const parsed = PatchPropertySchema.safeParse(body);
+  const parsed = PropertyUpsertSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Invalid payload", details: parsed.error.flatten() },
@@ -115,12 +88,10 @@ export async function PATCH(req: Request, { params }: Params) {
   }
 
   const data = parsed.data;
-  const inmobiliariaId =
-    session.role === "ADMIN"
-      ? (data.inmobiliariaId ?? scope.inmobiliariaId)
-      : session.inmobiliariaId;
 
   try {
+    const assignments = await resolvePropertyAssignments(session, data, scope);
+
     await prisma.property.update({
       where: { id },
       data: {
@@ -133,14 +104,14 @@ export async function PATCH(req: Request, { params }: Params) {
         longitude: data.longitude ?? null,
         roiAnnualPct: data.roiAnnualPct ?? null,
         appreciationAnnualPct: data.appreciationAnnualPct ?? null,
-        isFeatured: data.isFeatured ?? false,
-        featuredOrder: data.featuredOrder ?? null,
+        isFeatured: assignments.isFeatured,
+        featuredOrder: assignments.featuredOrder,
         priceUsd: data.priceUsd ?? null,
         description: data.description ?? null,
         coverImageUrl: data.coverImageUrl ?? null,
         gallery: data.gallery,
-        advisorId: data.advisorId ?? null,
-        inmobiliariaId: inmobiliariaId ?? null,
+        advisorId: assignments.advisorId,
+        inmobiliariaId: assignments.inmobiliariaId,
       },
     });
     return NextResponse.json({ ok: true });
@@ -153,6 +124,9 @@ export async function PATCH(req: Request, { params }: Params) {
     ) {
       return NextResponse.json({ error: "Slug ya existe" }, { status: 409 });
     }
+    if (e instanceof PropertyRepoError) {
+      return NextResponse.json({ error: e.message }, { status: e.status });
+    }
     return NextResponse.json({ error: "Update failed" }, { status: 500 });
   }
 }
@@ -162,15 +136,19 @@ export async function DELETE(_req: Request, { params }: Params) {
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (session.role !== "ADMIN" && session.role !== "INMOBILIARIA") {
+  if (!canDeleteProperty(session)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const { id } = await params;
-  const scope = await assertScope(session, id);
-  if (!scope) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (scope === "forbidden")
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  try {
+    await assertPropertyScope(session, id);
+  } catch (error) {
+    if (error instanceof PropertyRepoError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    return NextResponse.json({ error: "Delete failed" }, { status: 500 });
+  }
 
   await prisma.property.update({
     where: { id },

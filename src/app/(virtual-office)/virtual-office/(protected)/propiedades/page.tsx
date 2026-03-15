@@ -10,6 +10,10 @@ import {
   Tr,
 } from "@/components/virtualoffice/Table";
 import DeletePropertyButton from "@/components/virtualoffice/properties/DeletePropertyButton";
+import {
+  canCreateProperty,
+  canDeleteProperty,
+} from "@/lib/virtualoffice/properties";
 
 export const dynamic = "force-dynamic";
 
@@ -59,7 +63,7 @@ export default async function Page() {
         title="Propiedades"
         description="Gestioná inmuebles y su información pública."
         actions={
-          session.role !== "ASESOR" && (
+          canCreateProperty(session) && (
             <Link
               href="/virtual-office/propiedades/new"
               className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
@@ -123,7 +127,9 @@ export default async function Page() {
                       >
                         Editar
                       </Link>
-                      <DeletePropertyButton id={p.id} />
+                      {canDeleteProperty(session) ? (
+                        <DeletePropertyButton id={p.id} />
+                      ) : null}
                     </div>
                   </Td>
                 </Tr>
