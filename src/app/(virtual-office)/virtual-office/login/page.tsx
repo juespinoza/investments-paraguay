@@ -10,17 +10,18 @@ export const metadata: Metadata = buildMetadata({
   noIndex: true,
 });
 
-type SearchParams = { [key: string]: string | string[] | undefined };
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
-export default function LoginPage({
+export default async function LoginPage({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
+  const resolvedSearchParams = await searchParams;
   const next =
-    typeof searchParams?.next === "string" &&
-    searchParams.next.trim().length > 0
-      ? searchParams.next
+    typeof resolvedSearchParams?.next === "string" &&
+    resolvedSearchParams.next.trim().length > 0
+      ? resolvedSearchParams.next
       : "/virtual-office";
 
   return <LoginClient nextUrl={next} />;

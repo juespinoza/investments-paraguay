@@ -75,7 +75,7 @@ export default async function AdvisorLandingPage({ params }: PageProps) {
 
   const aboutMeta = [
     d.about.yearsExperience
-      ? { label: "Experiencia", value: d.about.yearsExperience }
+      ? { label: "Experiencia", value: `${d.about.yearsExperience} años` }
       : null,
     d.about.companyName
       ? { label: "Firma", value: d.about.companyName }

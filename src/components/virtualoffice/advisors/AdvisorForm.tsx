@@ -26,7 +26,6 @@ import {
   createAdvisorAction,
   deleteAdvisorAction,
 } from "@/app/api/virtualoffice/advisors/actions";
-import { createAdvisor } from "@/app/api/virtualoffice/advisors/repo";
 
 export type AdvisorFormValues = z.input<typeof FormSchema>;
 export type AdvisorFormOutput = z.output<typeof FormSchema>;
@@ -239,7 +238,8 @@ export function AdvisorForm({
       });
 
       if (mode === "create") {
-        router.replace(`/virtual-office/asesores/${res.id}`);
+        router.replace(`/virtual-office/asesores/${res.id}/edit`);
+        return;
       }
       router.refresh();
     } catch (e: any) {
