@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
@@ -42,7 +43,13 @@ export function HeroSplit({
           <div className="max-w-3xl text-white">
             {logoLeftUrl ? (
               <div className="mb-6 flex items-center gap-3">
-                <img src={logoLeftUrl} alt="logo" className="h-8 w-auto" />
+                <Image
+                  src={logoLeftUrl}
+                  alt="logo"
+                  width={120}
+                  height={32}
+                  className="h-8 w-auto"
+                />
               </div>
             ) : null}
 
@@ -60,10 +67,24 @@ export function HeroSplit({
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button href={ctaHref} target="_blank">
+              <Button
+                href={ctaHref}
+                target="_blank"
+                data-analytics-event="cta_click"
+                data-analytics-category="hero"
+                data-analytics-label="primary_contact"
+                data-analytics-location="hero"
+              >
                 {ctaLabel}
               </Button>
-              <Button href="/bienes-raices" variant="secondary">
+              <Button
+                href="/bienes-raices"
+                variant="secondary"
+                data-analytics-event="cta_click"
+                data-analytics-category="hero"
+                data-analytics-label="portfolio"
+                data-analytics-location="hero"
+              >
                 {t("heroPortfolioCta")}
               </Button>
             </div>
@@ -125,6 +146,10 @@ export function HeroSplit({
               <Link
                 href="/blog"
                 className="mt-8 inline-flex text-sm font-medium uppercase tracking-[0.18em] text-[var(--ip-accent1)]"
+                data-analytics-event="cta_click"
+                data-analytics-category="hero"
+                data-analytics-label="blog_panel"
+                data-analytics-location="hero_panel"
               >
                 {t("heroPanel.link")}
               </Link>

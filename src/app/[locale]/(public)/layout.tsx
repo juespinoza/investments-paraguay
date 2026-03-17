@@ -6,6 +6,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import "@/app/globals.css";
 import { NavBar } from "@/components/landing/NavBar";
 import { Footer } from "@/components/landing/Footer";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 export const metadata: Metadata = buildMetadata({
   title:
@@ -33,6 +34,7 @@ export default async function PublicLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
+      <GoogleAnalytics locale={locale} />
       <NavBar />
       <main className="pb-8">{children}</main>
       <Footer />

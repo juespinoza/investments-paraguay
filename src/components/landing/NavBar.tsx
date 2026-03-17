@@ -52,6 +52,10 @@ export function NavBar() {
               href="/"
               className="flex min-w-0 items-center gap-3"
               onClick={close}
+              data-analytics-event="navigation_click"
+              data-analytics-category="header"
+              data-analytics-label="logo"
+              data-analytics-location="desktop"
             >
               <Image
                 src="/images/logo.png"
@@ -86,7 +90,11 @@ export function NavBar() {
                       ? "bg-primary text-white shadow-[0_12px_28px_rgba(15,23,38,0.18)]"
                       : "text-primary hover:bg-white",
                   )}
-                    href={link.href}
+                  href={link.href}
+                  data-analytics-event="navigation_click"
+                  data-analytics-category="header"
+                  data-analytics-label={link.href}
+                  data-analytics-location="desktop"
                   >
                     {link.label}
                   </Link>
@@ -99,6 +107,10 @@ export function NavBar() {
                 href="https://wa.me/595985444801"
                 target="_blank"
                 className="group inline-flex h-10 items-center gap-2 rounded-lg border border-[rgba(201,164,92,0.28)] bg-[linear-gradient(135deg,#fffdf8_0%,#f6ebdc_100%)] px-4"
+                data-analytics-event="cta_click"
+                data-analytics-category="header"
+                data-analytics-label="whatsapp_primary"
+                data-analytics-location="desktop"
               >
                 <span className="hidden text-[11px] font-semibold uppercase tracking-[0.18em] text-accent1 xl:block">
                   {t("header.ctaLabel")}
@@ -169,6 +181,10 @@ export function NavBar() {
                   )}
                   href={link.href}
                   onClick={close}
+                  data-analytics-event="navigation_click"
+                  data-analytics-category="header"
+                  data-analytics-label={link.href}
+                  data-analytics-location="mobile_menu"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-base font-medium text-primary">
@@ -186,6 +202,10 @@ export function NavBar() {
               href="https://wa.me/595985444801"
               target="_blank"
               className="btn-primary mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-lg"
+              data-analytics-event="cta_click"
+              data-analytics-category="header"
+              data-analytics-label="whatsapp_primary"
+              data-analytics-location="mobile_menu"
             >
               {t("header.cta")}
               <ArrowUpRight size={16} />

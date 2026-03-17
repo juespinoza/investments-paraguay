@@ -83,7 +83,14 @@ export default async function BlogPage() {
                 </span>
               </div>
               <div className="mt-8">
-                <Link href={`/blog/${featured.slug}`} className="btn-primary">
+                <Link
+                  href={`/blog/${featured.slug}`}
+                  className="btn-primary"
+                  data-analytics-event="blog_post_click"
+                  data-analytics-category="blog"
+                  data-analytics-label={featured.slug}
+                  data-analytics-location="featured"
+                >
                   {t("blog.readArticle")}
                 </Link>
               </div>
@@ -103,6 +110,10 @@ export default async function BlogPage() {
                       <Link
                         href={`/blog/${post.slug}`}
                         className="text-sm font-medium leading-7 text-primary hover:underline"
+                        data-analytics-event="blog_post_click"
+                        data-analytics-category="blog"
+                        data-analytics-label={post.slug}
+                        data-analytics-location="sidebar"
                       >
                         {post.title}
                       </Link>
@@ -165,7 +176,14 @@ export default async function BlogPage() {
                   </p>
 
                   <div className="mt-6">
-                    <Link href={`/blog/${post.slug}`} className="btn-secondary">
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="btn-secondary"
+                      data-analytics-event="blog_post_click"
+                      data-analytics-category="blog"
+                      data-analytics-label={post.slug}
+                      data-analytics-location="list"
+                    >
                       {t("blog.readMore")}
                     </Link>
                   </div>

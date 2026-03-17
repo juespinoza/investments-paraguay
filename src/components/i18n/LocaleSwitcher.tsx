@@ -4,6 +4,7 @@ import { cn } from "@/lib/cn";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { setLocale } from "@/app/actions/set-locate";
+import { isAnalyticsEnabled } from "@/lib/analytics";
 
 type Locale = "en" | "es" | "pt" | "de";
 
@@ -77,6 +78,13 @@ export function LocaleSwitcher({
     setOpen(false);
     setSelected(locale);
 
+    if (typeof window !== "undefined" && isAnalyticsEnabled() && window.gtag) {
+      window.gtag("event", "language_change", {
+        event_category: "i18n",
+        event_label: locale,
+      });
+    }
+
     startTransition(async () => {
       await setLocale(locale);
       router.refresh();
@@ -93,6 +101,9 @@ export function LocaleSwitcher({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="Select language"
+        data-analytics-event="locale_switcher_open"
+        data-analytics-category="i18n"
+        data-analytics-label={selectedLocale.value}
       >
         <span className="text-base">{selectedLocale.icon}</span>
         {showLabel ? (

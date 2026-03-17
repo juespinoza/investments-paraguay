@@ -21,7 +21,7 @@ type ButtonAsLink = Common & {
   target?: string;
   rel?: string;
   prefetch?: boolean;
-};
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
 type ButtonProps = ButtonAsButton | ButtonAsLink;
 
@@ -41,7 +41,7 @@ export function Button(props: ButtonProps) {
 
   // Si tiene href → Link interno (Next)
   if ("href" in props) {
-    const { href, target, rel, prefetch } = props as ButtonAsLink;
+    const { href, target, rel, prefetch, ...linkProps } = props as ButtonAsLink;
 
     // Si es URL externa, usamos <a> (porque next/link para externo no aporta)
     const isExternal =
@@ -50,14 +50,20 @@ export function Button(props: ButtonProps) {
       href.startsWith("tel:");
     if (isExternal) {
       return (
-        <a href={href} target={target} rel={rel} className={cls}>
+        <a
+          href={href}
+          target={target}
+          rel={rel}
+          className={cls}
+          {...linkProps}
+        >
           {children}
         </a>
       );
     }
 
     return (
-      <Link href={href} prefetch={prefetch} className={cls}>
+      <Link href={href} prefetch={prefetch} className={cls} {...linkProps}>
         {children}
       </Link>
     );
