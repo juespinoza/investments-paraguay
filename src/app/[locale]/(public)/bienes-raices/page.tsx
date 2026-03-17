@@ -129,20 +129,22 @@ export default async function BienesRaicesPage({ searchParams }: PageProps) {
       </section>
 
       <section className="px-4 pb-4">
-        <div className="container-page section-shell surface-card p-4 md:p-6">
-          <h2 className="text-2xl font-semibold text-primary">
-            {t("realEstate.map.title")}
-          </h2>
-          <p className="mt-2 text-sm text-secondary">
-            {t("realEstate.map.description")}
-          </p>
-          <div className="mt-4 overflow-hidden rounded-3xl border border-soft bg-white">
-            <iframe
-              title="Mapa de propiedades en Paraguay"
-              className="h-80 w-full"
-              src={mapSrc}
-              loading="lazy"
-            />
+        <div className="container-page">
+          <div className="section-shell surface-card p-4 md:p-6">
+            <h2 className="text-2xl font-semibold text-primary">
+              {t("realEstate.map.title")}
+            </h2>
+            <p className="mt-2 text-sm text-secondary">
+              {t("realEstate.map.description")}
+            </p>
+            <div className="mt-4 overflow-hidden rounded-3xl border border-soft bg-white">
+              <iframe
+                title="Mapa de propiedades en Paraguay"
+                className="h-80 w-full"
+                src={mapSrc}
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
       </section>

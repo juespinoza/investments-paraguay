@@ -3,10 +3,12 @@ import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+import { notFound } from "next/navigation";
 import "@/app/globals.css";
 import { NavBar } from "@/components/landing/NavBar";
 import { Footer } from "@/components/landing/Footer";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import { SUPPORTED_LOCALES, type AppLocale } from "@/lib/i18n";
 
 export const metadata: Metadata = buildMetadata({
   title:
@@ -26,9 +28,17 @@ export const metadata: Metadata = buildMetadata({
 
 export default async function PublicLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale: routeLocale } = await params;
+
+  if (!SUPPORTED_LOCALES.includes(routeLocale as AppLocale)) {
+    notFound();
+  }
+
   const locale = await getLocale();
   const messages = await getMessages();
 
