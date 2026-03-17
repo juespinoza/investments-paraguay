@@ -46,7 +46,7 @@ function AdminShellInner({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-dvh bg-[linear-gradient(180deg,#faf8f4_0%,#f4efe7_100%)] text-zinc-950">
-      <div className="relative mx-auto flex min-h-dvh w-full max-w-[1600px]">
+      <div className="relative mx-auto flex min-h-dvh w-full max-w-400">
         {navOpen ? (
           <button
             type="button"
@@ -58,7 +58,7 @@ function AdminShellInner({ children }: { children: ReactNode }) {
 
         <aside
           className={cn(
-            "fixed inset-y-0 left-0 z-40 flex w-[290px] flex-col border-r border-[rgba(24,39,63,0.08)] bg-[linear-gradient(180deg,#fffdfa_0%,#f7f1e8_100%)] px-4 py-4 shadow-[0_18px_80px_rgba(15,23,38,0.12)] transition-transform lg:sticky lg:translate-x-0 lg:shadow-none",
+            "fixed inset-y-0 left-0 z-40 flex w-72.5 flex-col border-r border-[rgba(24,39,63,0.08)] bg-[linear-gradient(180deg,#fffdfa_0%,#f7f1e8_100%)] px-4 py-4 shadow-[0_18px_80px_rgba(15,23,38,0.12)] transition-transform lg:sticky lg:translate-x-0 lg:shadow-none",
             navOpen ? "translate-x-0" : "-translate-x-full",
           )}
         >
@@ -89,7 +89,7 @@ function AdminShellInner({ children }: { children: ReactNode }) {
             </button>
           </div>
 
-          <div className="mt-5 rounded-[1.5rem] border border-[rgba(24,39,63,0.08)] bg-white/90 p-4 shadow-sm">
+          <div className="mt-5 rounded-3xl border border-[rgba(24,39,63,0.08)] bg-white/90 p-4 shadow-sm">
             <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
               Sesión activa
             </div>
@@ -125,7 +125,7 @@ function AdminShellInner({ children }: { children: ReactNode }) {
             })}
           </nav>
 
-          <div className="rounded-[1.5rem] border border-[rgba(24,39,63,0.08)] bg-white/90 p-4 text-sm text-zinc-600 shadow-sm">
+          <div className="rounded-3xl border border-[rgba(24,39,63,0.08)] bg-white/90 p-4 text-sm text-zinc-600 shadow-sm">
             Usa el panel para crear, editar y revisar solo la información que te corresponde.
           </div>
         </aside>

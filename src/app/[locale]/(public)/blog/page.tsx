@@ -21,7 +21,9 @@ export const metadata: Metadata = buildMetadata({
 
 export const revalidate = 60;
 
-function buildAuthor(post: Awaited<ReturnType<typeof listPublicBlogPosts>>[number]) {
+function buildAuthor(
+  post: Awaited<ReturnType<typeof listPublicBlogPosts>>[number],
+) {
   return post.advisor?.fullName ?? post.inmobiliaria?.name ?? post.authorRole;
 }
 
@@ -49,9 +51,9 @@ export default async function BlogPage() {
             {(["market", "strategy", "guides"] as const).map((item) => (
               <div
                 key={item}
-                className="rounded-[1.5rem] border border-white/10 bg-white/8 px-5 py-5 backdrop-blur-sm"
+                className="rounded-3xl border border-white/10 bg-white/8 px-5 py-5 backdrop-blur-sm"
               >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--ip-accent1)]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-(--ip-accent1)">
                   {t(`blog.highlights.${item}.label`)}
                 </p>
                 <p className="mt-3 text-base leading-7 text-white/78">
@@ -64,7 +66,7 @@ export default async function BlogPage() {
 
         {featured ? (
           <section className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
-            <article className="surface-card rounded-[2rem] p-6 md:p-8">
+            <article className="surface-card rounded-4xl p-6 md:p-8">
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent1">
                 {t("blog.featuredLabel")}
               </p>
@@ -96,7 +98,7 @@ export default async function BlogPage() {
               </div>
             </article>
 
-            <aside className="surface-card rounded-[2rem] p-6 md:p-8">
+            <aside className="surface-card rounded-4xl p-6 md:p-8">
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent1">
                 Últimos artículos
               </p>
@@ -131,7 +133,7 @@ export default async function BlogPage() {
             </aside>
           </section>
         ) : (
-          <section className="surface-card mt-8 rounded-[2rem] p-6 md:p-8">
+          <section className="surface-card mt-8 rounded-4xl p-6 md:p-8">
             <h2 className="text-2xl font-semibold tracking-tight text-primary">
               No hay artículos publicados todavía.
             </h2>

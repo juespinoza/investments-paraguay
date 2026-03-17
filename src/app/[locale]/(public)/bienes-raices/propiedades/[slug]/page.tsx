@@ -35,7 +35,9 @@ type PublicPropertyDetail = {
 
 type PageProps = { params: Promise<{ slug: string }> };
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const property = await apiGet<PublicPropertyDetail>(
     `/api/public/bienes-raices/${slug}`,
@@ -78,7 +80,7 @@ export default async function PropertyPage({ params }: PageProps) {
 
   const property = await apiGet<PublicPropertyDetail>(
     `/api/public/bienes-raices/${slug}`,
-    120
+    120,
   );
 
   if (!property) notFound();
@@ -88,14 +90,14 @@ export default async function PropertyPage({ params }: PageProps) {
       <section className="px-4 py-8 md:py-10">
         <div className="container-page">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
-            <div className="surface-card relative aspect-[16/10] overflow-hidden rounded-[2rem]">
+            <div className="surface-card relative aspect-16/10 overflow-hidden rounded-4xl">
               <ImageCloudinary
                 imageUrl={property.coverImageUrl ?? "intentoPortada_wku8ef"}
                 alt={property.title}
               />
             </div>
 
-            <div className="surface-card rounded-[2rem] p-6 md:p-8">
+            <div className="surface-card rounded-4xl p-6 md:p-8">
               <div className="eyebrow">Propiedad</div>
               <h1 className="mt-5 text-4xl font-semibold tracking-tight text-primary md:text-6xl">
                 {property.title}
@@ -125,7 +127,7 @@ export default async function PropertyPage({ params }: PageProps) {
               </div>
 
               <div className="mt-8 grid gap-4 md:grid-cols-2">
-                <div className="rounded-[1.5rem] border border-soft bg-white/65 p-4">
+                <div className="rounded-3xl border border-soft bg-white/65 p-4">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent1">
                     ROI anual exacto
                   </div>
@@ -135,7 +137,7 @@ export default async function PropertyPage({ params }: PageProps) {
                       : "No cargado"}
                   </div>
                 </div>
-                <div className="rounded-[1.5rem] border border-soft bg-white/65 p-4">
+                <div className="rounded-3xl border border-soft bg-white/65 p-4">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent1">
                     Plusvalía anual exacta
                   </div>
@@ -159,21 +161,23 @@ export default async function PropertyPage({ params }: PageProps) {
 
       <section className="px-4 pb-4">
         <div className="container-page section-shell surface-card p-4 md:p-6">
-          <h2 className="text-2xl font-semibold text-primary">Mapa de ubicación</h2>
+          <h2 className="text-2xl font-semibold text-primary">
+            Mapa de ubicación
+          </h2>
           <p className="mt-2 text-sm text-secondary">
             Ubicación exacta por coordenadas geográficas.
           </p>
           {property.latitude !== null && property.longitude !== null ? (
-            <div className="mt-4 overflow-hidden rounded-[1.5rem] border border-soft bg-white">
+            <div className="mt-4 overflow-hidden rounded-3xl border border-soft bg-white">
               <iframe
                 title={`Mapa de ${property.title}`}
-                className="h-[320px] w-full"
+                className="h-80 w-full"
                 src={`https://maps.google.com/maps?q=${property.latitude},${property.longitude}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
                 loading="lazy"
               />
             </div>
           ) : (
-            <div className="mt-4 rounded-[1.5rem] border border-soft bg-white/70 p-4 text-sm text-secondary">
+            <div className="mt-4 rounded-3xl border border-soft bg-white/70 p-4 text-sm text-secondary">
               Esta propiedad aún no tiene coordenadas exactas cargadas.
             </div>
           )}
@@ -182,7 +186,7 @@ export default async function PropertyPage({ params }: PageProps) {
 
       <section className="px-4 py-8">
         <div className="container-page">
-          <div className="max-w-2xl rounded-[2rem] border border-soft bg-[linear-gradient(180deg,#fffdf9_0%,#f5ede1_100%)] p-6 shadow-[0_18px_48px_rgba(15,23,38,0.1)] md:p-8">
+          <div className="max-w-2xl rounded-4xl border border-soft bg-[linear-gradient(180deg,#fffdf9_0%,#f5ede1_100%)] p-6 shadow-[0_18px_48px_rgba(15,23,38,0.1)] md:p-8">
             <div className="eyebrow">Contacto</div>
             <h2 className="mt-5 text-3xl font-semibold tracking-tight text-primary">
               Solicitar información
@@ -206,7 +210,7 @@ export default async function PropertyPage({ params }: PageProps) {
         <section className="px-4 py-8 md:py-10">
           <div className="container-page">
             <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_320px] md:items-center">
-              <div className="surface-card order-2 rounded-[2rem] p-6 md:order-1 md:p-8">
+              <div className="surface-card order-2 rounded-4xl p-6 md:order-1 md:p-8">
                 <div className="eyebrow">Asesor inmobiliario</div>
                 <div className="mt-5">
                   <SectionTitle
@@ -240,7 +244,7 @@ export default async function PropertyPage({ params }: PageProps) {
                 </div>
               </div>
 
-              <div className="surface-card relative order-1 aspect-[4/4.5] overflow-hidden rounded-[2rem] md:order-2">
+              <div className="surface-card relative order-1 aspect-[4/4.5] overflow-hidden rounded-4xl md:order-2">
                 <ImageCloudinary
                   imageUrl={property.advisor.photoUrl}
                   alt={property.advisor.fullName}

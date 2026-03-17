@@ -136,10 +136,10 @@ export default async function BienesRaicesPage({ searchParams }: PageProps) {
           <p className="mt-2 text-sm text-secondary">
             {t("realEstate.map.description")}
           </p>
-          <div className="mt-4 overflow-hidden rounded-[1.5rem] border border-soft bg-white">
+          <div className="mt-4 overflow-hidden rounded-3xl border border-soft bg-white">
             <iframe
               title="Mapa de propiedades en Paraguay"
-              className="h-[320px] w-full"
+              className="h-80 w-full"
               src={mapSrc}
               loading="lazy"
             />
