@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import ConfirmActionButton from "@/components/virtualoffice/ConfirmActionButton";
 
 export default function DeleteBlogPostButton({ id }: { id: string }) {
   const router = useRouter();
@@ -9,7 +10,6 @@ export default function DeleteBlogPostButton({ id }: { id: string }) {
   const [isLoading, setIsLoading] = useState(false);
 
   async function onDelete() {
-    if (!confirm("¿Seguro que querés borrar este post?")) return;
     setError(null);
     setIsLoading(true);
 
@@ -30,14 +30,12 @@ export default function DeleteBlogPostButton({ id }: { id: string }) {
 
   return (
     <div className="flex items-center gap-2">
-      <button
-        type="button"
-        disabled={isLoading}
-        onClick={onDelete}
-        className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-60"
-      >
-        Borrar
-      </button>
+      <ConfirmActionButton
+        label={isLoading ? "Borrando..." : "Borrar"}
+        pendingLabel="Borrando..."
+        confirmMessage="¿Seguro que querés borrar este post?"
+        onConfirm={onDelete}
+      />
       {error ? <span className="text-xs text-red-600">{error}</span> : null}
     </div>
   );

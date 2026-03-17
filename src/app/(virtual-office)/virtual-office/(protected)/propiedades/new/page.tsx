@@ -25,6 +25,7 @@ export default async function NewPropertyPage() {
   return (
     <div>
       <PageHeader
+        eyebrow="Portafolio"
         title="Nueva propiedad"
         description="Creá una propiedad para publicarla en el sitio."
       />

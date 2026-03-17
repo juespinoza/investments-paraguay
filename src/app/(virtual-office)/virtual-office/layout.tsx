@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Virtual Office | Investments Paraguay",
+  title: "Oficina virtual | Investments Paraguay",
   description: "Panel interno de gestión.",
   pathname: "/virtual-office",
   noIndex: true,

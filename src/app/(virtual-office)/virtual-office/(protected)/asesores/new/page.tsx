@@ -5,6 +5,7 @@ export default function NewAdvisorPage() {
   return (
     <div>
       <PageHeader
+        eyebrow="Gestión de perfiles"
         title="Nuevo asesor"
         description="Creá un asesor para mostrarlo en el sitio público."
       />

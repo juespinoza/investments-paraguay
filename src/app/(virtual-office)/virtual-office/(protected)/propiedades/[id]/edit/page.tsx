@@ -80,6 +80,7 @@ export default async function EditPropertyPage({ params }: PageProps) {
   return (
     <div>
       <PageHeader
+        eyebrow="Portafolio"
         title="Editar propiedad"
         description="Actualizá la información de la propiedad."
       />

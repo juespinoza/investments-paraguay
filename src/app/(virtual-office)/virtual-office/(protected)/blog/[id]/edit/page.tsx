@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
 import BlogPostForm from "@/components/virtualoffice/blog/BlogPostForm";
@@ -71,6 +72,15 @@ export default async function EditBlogPostPage({ params }: PageProps) {
       <PageHeader
         title="Editar post"
         description="Actualiza contenido, asignación y publicación del artículo."
+        eyebrow="Edicion de contenido"
+        actions={
+          <Link
+            href="/virtual-office/blog"
+            className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+          >
+            Volver al listado
+          </Link>
+        }
       />
 
       <Card>

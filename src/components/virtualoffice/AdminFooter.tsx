@@ -1,9 +1,9 @@
 export default function AdminFooter() {
   return (
-    <footer className="border-t border-zinc-200 bg-white">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 text-xs text-zinc-500 sm:px-6 lg:px-8">
+    <footer className="mt-8 border-t border-[rgba(24,39,63,0.08)] pt-5">
+      <div className="flex flex-col gap-2 text-xs text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
         <span>© {new Date().getFullYear()} Investments Paraguay</span>
-        <span className="hidden sm:inline">Admin UI • performance-first</span>
+        <span>Oficina virtual · Productividad premium · Permisos por rol activos</span>
       </div>
     </footer>
   );

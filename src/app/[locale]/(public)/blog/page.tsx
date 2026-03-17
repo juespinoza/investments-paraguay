@@ -136,7 +136,7 @@ export default async function BlogPage() {
               No hay artículos publicados todavía.
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-8 text-secondary">
-              Cuando el equipo publique contenido desde el Virtual Office, los
+              Cuando el equipo publique contenido desde la oficina virtual, los
               artículos aparecerán aquí automáticamente.
             </p>
           </section>

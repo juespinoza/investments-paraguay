@@ -1,8 +1,20 @@
 import type { ReactNode } from "react";
+import { cn } from "@/lib/cn";
 
-export function TableShell({ children }: { children: ReactNode }) {
+export function TableShell({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+    <div
+      className={cn(
+        "overflow-hidden rounded-[1.75rem] border border-[rgba(24,39,63,0.08)] bg-white shadow-[0_18px_60px_rgba(15,23,38,0.06)]",
+        className,
+      )}
+    >
       <div className="overflow-x-auto">{children}</div>
     </div>
   );
@@ -21,7 +33,10 @@ export function Th({
 }) {
   return (
     <th
-      className={`whitespace-nowrap border-b border-zinc-200 bg-zinc-50 px-4 py-3 text-left text-xs font-semibold text-zinc-700 ${className}`}
+      className={cn(
+        "whitespace-nowrap border-b border-[rgba(24,39,63,0.08)] bg-[linear-gradient(180deg,#fcfaf6_0%,#f7f3ed_100%)] px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-600",
+        className,
+      )}
     >
       {children}
     </th>
@@ -37,7 +52,10 @@ export function Td({
 }) {
   return (
     <td
-      className={`whitespace-nowrap border-b border-zinc-100 px-4 py-3 text-zinc-800 ${className}`}
+      className={cn(
+        "border-b border-zinc-100 px-4 py-4 align-top text-zinc-800",
+        className,
+      )}
     >
       {children}
     </td>
@@ -45,5 +63,5 @@ export function Td({
 }
 
 export function Tr({ children }: { children: ReactNode }) {
-  return <tr className="hover:bg-zinc-50/60">{children}</tr>;
+  return <tr className="transition hover:bg-[#fcfaf6]">{children}</tr>;
 }

@@ -1,5 +1,4 @@
 import AdminShell from "@/components/virtualoffice/AdminShell";
-import { VirtualOfficeMenu } from "@/components/virtualoffice/VirtualOfficeMenu";
 import { requireSession } from "@/lib/auth/require-session";
 
 export default async function VirtualOfficeLayout({

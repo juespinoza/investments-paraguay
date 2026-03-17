@@ -76,6 +76,7 @@ export default async function EditInmobiliariaPage({
   return (
     <div className="space-y-6">
       <PageHeader
+        eyebrow="Tenant management"
         title="Editar inmobiliaria"
         description="Actualiza la entidad principal y gestiona sus usuarios, asesores y relaciones activas."
         actions={

@@ -45,7 +45,7 @@ export default function LoginClient({ nextUrl }: { nextUrl: string }) {
         onSubmit={onSubmit}
         className="w-full max-w-sm rounded-xl bg-white p-6 shadow-sm border"
       >
-        <h1 className="text-2xl font-semibold text-primary">Virtual Office</h1>
+        <h1 className="text-2xl font-semibold text-primary">Oficina virtual</h1>
         <p className="mt-1 text-sm text-secondary">Iniciá sesión</p>
 
         <div className="mt-6 space-y-3">

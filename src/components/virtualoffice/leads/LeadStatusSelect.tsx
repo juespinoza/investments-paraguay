@@ -37,7 +37,7 @@ export default function LeadStatusSelect({
       value={status}
       disabled={isLoading}
       onChange={(e) => onChange(e.target.value as LeadStatus)}
-      className="h-8 rounded-sm border bg-white px-2 text-xs"
+      className="h-10 min-w-36 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-medium tracking-[0.08em] text-zinc-800 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100 disabled:opacity-60"
     >
       {STATUSES.map((s) => (
         <option key={s} value={s}>

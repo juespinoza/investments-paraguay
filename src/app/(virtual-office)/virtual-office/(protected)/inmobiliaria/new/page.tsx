@@ -19,6 +19,7 @@ export default async function NewInmobiliariaPage() {
   return (
     <div>
       <PageHeader
+        eyebrow="Tenant management"
         title="Nueva inmobiliaria"
         description="Crea una inmobiliaria para usarla en el panel y sitio público."
       />

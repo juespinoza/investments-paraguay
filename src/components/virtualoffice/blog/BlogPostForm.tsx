@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Role } from "@/generated/prisma";
 import { useRouter } from "next/navigation";
-import FormMessage from "@/components/virtualoffice/FormMessage";
+import {
+  Badge,
+  FormSection,
+  InlineAlert,
+} from "@/components/virtualoffice/Page";
 
 type Option = {
   id: string;
@@ -58,12 +62,24 @@ export default function BlogPostForm({
   advisors: Array<Option>;
 }) {
   const router = useRouter();
-  const [values, setValues] = useState<FormValues>({
-    ...EMPTY_VALUES,
-    ...initialData,
-  });
+  const initialValues = useMemo(
+    () => ({
+      ...EMPTY_VALUES,
+      ...initialData,
+    }),
+    [initialData],
+  );
+  const [values, setValues] = useState<FormValues>(initialValues);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isDirty = JSON.stringify(values) !== JSON.stringify(initialValues);
+
+  const advisorsForSelectedInmobiliaria =
+    values.authorRole === Role.ASESOR && values.inmobiliariaId
+      ? advisors.filter(
+          (item) => item.inmobiliariaId === values.inmobiliariaId,
+        )
+      : advisors;
 
   const update = (key: keyof FormValues, value: string) =>
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -114,121 +130,197 @@ export default function BlogPostForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-4">
-      {error ? <FormMessage type="error" message={error} /> : null}
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <label className="text-sm text-secondary">Título</label>
-          <input
-            required
-            value={values.title}
-            onChange={(e) => {
-              const nextTitle = e.target.value;
-              update("title", nextTitle);
-              if (!values.slug.trim()) update("slug", toSlug(nextTitle));
-            }}
-            className="mt-1 h-11 w-full rounded-md border px-3"
-            placeholder="Nuevo análisis del mercado"
-          />
-        </div>
-
-        <div>
-          <label className="text-sm text-secondary">Slug</label>
-          <input
-            required
-            value={values.slug}
-            onChange={(e) => update("slug", toSlug(e.target.value))}
-            className="mt-1 h-11 w-full rounded-md border px-3"
-            placeholder="nuevo-analisis-del-mercado"
-          />
+    <form onSubmit={onSubmit} className="space-y-6">
+      <div className="sticky top-0 z-20 -mx-4 rounded-b-[1.5rem] border-b border-[rgba(24,39,63,0.08)] bg-[rgba(255,253,250,0.9)] px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-zinc-950">
+              {mode === "create" ? "Nuevo artículo" : "Editar artículo"}
+            </h2>
+            <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-zinc-600">
+              <span>Título, autoría, contenido y portada.</span>
+              {isDirty ? <Badge tone="warning">Cambios sin guardar</Badge> : null}
+            </div>
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading || !isDirty}
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-zinc-900 px-5 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
+          >
+            {isLoading
+              ? "Guardando..."
+              : mode === "create"
+                ? "Crear post"
+                : "Guardar cambios"}
+          </button>
         </div>
       </div>
+
+      {error ? <InlineAlert type="error" message={error} /> : null}
+
+      <FormSection
+        title="Identidad editorial"
+        description="Define el título público y el slug con el que el post quedará expuesto."
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="block">
+            <div className="mb-1.5 text-sm font-medium text-zinc-800">Título</div>
+            <input
+              required
+              value={values.title}
+              onChange={(e) => {
+                const nextTitle = e.target.value;
+                update("title", nextTitle);
+                if (!values.slug.trim()) update("slug", toSlug(nextTitle));
+              }}
+              className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100"
+              placeholder="Nuevo análisis del mercado"
+            />
+          </label>
+
+          <label className="block">
+            <div className="mb-1.5 text-sm font-medium text-zinc-800">Slug</div>
+            <input
+              required
+              value={values.slug}
+              onChange={(e) => update("slug", toSlug(e.target.value))}
+              className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100"
+              placeholder="nuevo-analisis-del-mercado"
+            />
+          </label>
+        </div>
+      </FormSection>
+
+      <FormSection
+        title="Portada y presentación"
+        description="Usa una imagen clara y consistente para mejorar la lectura del índice del blog."
+      >
+        <label className="block">
+          <div className="mb-1.5 flex items-center justify-between gap-3">
+            <span className="text-sm font-medium text-zinc-800">
+              Cover Image URL
+            </span>
+            <span className="text-xs text-zinc-500">Opcional</span>
+          </div>
+          <input
+            value={values.coverImageUrl}
+            onChange={(e) => update("coverImageUrl", e.target.value)}
+            className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100"
+            placeholder="https://..."
+          />
+        </label>
+      </FormSection>
 
       {canManageAssignments ? (
-        <div className="grid gap-4 md:grid-cols-3">
-          <div>
-            <label className="text-sm text-secondary">Autor</label>
-            <select
-              value={values.authorRole}
-              onChange={(e) => update("authorRole", e.target.value)}
-              className="mt-1 h-11 w-full rounded-md border px-3"
-            >
-              <option value={Role.BLOGUERO}>Bloguero</option>
-              <option value={Role.ADMIN}>Admin</option>
-              <option value={Role.INMOBILIARIA}>Inmobiliaria</option>
-              <option value={Role.ASESOR}>Asesor</option>
-            </select>
-          </div>
+        <FormSection
+          title="Autoría y tenant"
+          description="La lógica del sistema no cambia: aquí solo haces más visible quién firma el contenido y bajo qué scope opera."
+        >
+          <div className="grid gap-4 md:grid-cols-3">
+            <label className="block">
+              <div className="mb-1.5 text-sm font-medium text-zinc-800">
+                Autor
+              </div>
+              <select
+                value={values.authorRole}
+                onChange={(e) => {
+                  const nextRole = e.target.value as Role;
+                  setValues((prev) => ({
+                    ...prev,
+                    authorRole: nextRole,
+                    advisorId: nextRole === Role.ASESOR ? prev.advisorId : "",
+                    inmobiliariaId:
+                      nextRole === Role.INMOBILIARIA || nextRole === Role.ASESOR
+                        ? prev.inmobiliariaId
+                        : "",
+                  }));
+                }}
+                className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100"
+              >
+                <option value={Role.BLOGUERO}>Bloguero</option>
+                <option value={Role.ADMIN}>Admin</option>
+                <option value={Role.INMOBILIARIA}>Inmobiliaria</option>
+                <option value={Role.ASESOR}>Asesor</option>
+              </select>
+            </label>
 
-          <div>
-            <label className="text-sm text-secondary">Inmobiliaria</label>
-            <select
-              value={values.inmobiliariaId}
-              onChange={(e) => update("inmobiliariaId", e.target.value)}
-              disabled={values.authorRole !== Role.INMOBILIARIA}
-              className="mt-1 h-11 w-full rounded-md border px-3 disabled:bg-zinc-100"
-            >
-              <option value="">Sin asignar</option>
-              {inmobiliarias.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-          </div>
+            <label className="block">
+              <div className="mb-1.5 text-sm font-medium text-zinc-800">
+                Inmobiliaria
+              </div>
+              <select
+                value={values.inmobiliariaId}
+                onChange={(e) => {
+                  const nextInmobiliariaId = e.target.value;
+                  setValues((prev) => ({
+                    ...prev,
+                    inmobiliariaId: nextInmobiliariaId,
+                    advisorId:
+                      prev.authorRole === Role.ASESOR &&
+                      nextInmobiliariaId &&
+                      advisors.some(
+                        (item) =>
+                          item.id === prev.advisorId &&
+                          item.inmobiliariaId === nextInmobiliariaId,
+                      )
+                        ? prev.advisorId
+                        : "",
+                  }));
+                }}
+                disabled={
+                  values.authorRole !== Role.INMOBILIARIA &&
+                  values.authorRole !== Role.ASESOR
+                }
+                className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100 disabled:bg-zinc-100"
+              >
+                <option value="">Sin asignar</option>
+                {inmobiliarias.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-          <div>
-            <label className="text-sm text-secondary">Asesor</label>
-            <select
-              value={values.advisorId}
-              onChange={(e) => update("advisorId", e.target.value)}
-              disabled={values.authorRole !== Role.ASESOR}
-              className="mt-1 h-11 w-full rounded-md border px-3 disabled:bg-zinc-100"
-            >
-              <option value="">Sin asignar</option>
-              {advisors.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.fullName}
-                </option>
-              ))}
-            </select>
+            <label className="block">
+              <div className="mb-1.5 text-sm font-medium text-zinc-800">
+                Asesor
+              </div>
+              <select
+                value={values.advisorId}
+                onChange={(e) => update("advisorId", e.target.value)}
+                disabled={values.authorRole !== Role.ASESOR}
+                className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100 disabled:bg-zinc-100"
+              >
+                <option value="">Sin asignar</option>
+                {advisorsForSelectedInmobiliaria.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.fullName}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
-        </div>
+        </FormSection>
       ) : null}
 
-      <div>
-        <label className="text-sm text-secondary">Cover Image URL</label>
-        <input
-          value={values.coverImageUrl}
-          onChange={(e) => update("coverImageUrl", e.target.value)}
-          className="mt-1 h-11 w-full rounded-md border px-3"
-          placeholder="https://..."
-        />
-      </div>
-
-      <div>
-        <label className="text-sm text-secondary">Contenido</label>
-        <textarea
-          required
-          value={values.content}
-          onChange={(e) => update("content", e.target.value)}
-          className="mt-1 min-h-80 w-full rounded-md border px-3 py-2"
-          placeholder="Escribe el artículo. Puedes separar párrafos con una línea en blanco."
-        />
-      </div>
-
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="h-11 rounded-md bg-zinc-900 px-4 text-sm font-medium text-white disabled:opacity-70"
+      <FormSection
+        title="Contenido"
+        description="Escribe el artículo completo. Mantén párrafos separados para mejorar legibilidad y publicación."
       >
-        {isLoading
-          ? "Guardando..."
-          : mode === "create"
-            ? "Crear post"
-            : "Guardar cambios"}
-      </button>
+        <label className="block">
+          <div className="mb-1.5 text-sm font-medium text-zinc-800">
+            Cuerpo del post
+          </div>
+          <textarea
+            required
+            value={values.content}
+            onChange={(e) => update("content", e.target.value)}
+            className="min-h-80 w-full rounded-xl border border-zinc-200 bg-white px-3 py-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100"
+            placeholder="Escribe el artículo. Puedes separar párrafos con una línea en blanco."
+          />
+        </label>
+      </FormSection>
     </form>
   );
 }
