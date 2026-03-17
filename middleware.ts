@@ -1,8 +1,9 @@
 // src/middleware.ts
 import createMiddleware from "next-intl/middleware";
+import { NextResponse, type NextRequest } from "next/server";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/lib/i18n";
 
-export default createMiddleware({
+const intlMiddleware = createMiddleware({
   locales: [...SUPPORTED_LOCALES],
   defaultLocale: DEFAULT_LOCALE,
 
@@ -19,6 +20,14 @@ export default createMiddleware({
   },
 });
 
+export default function middleware(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith("/virtual-office")) {
+    return NextResponse.next();
+  }
+
+  return intlMiddleware(request);
+}
+
 export const config = {
-  matcher: ["/virtual-office/:path*", "/((?!api|_next|.*\\..*).*)"],
+  matcher: ["/((?!api|_next|.*\\..*).*)"],
 };
