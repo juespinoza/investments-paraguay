@@ -6,6 +6,7 @@ import type { SessionPayload, PublicAdvisorLanding } from "@/lib/data/types";
 import { Prisma } from "@/generated/prisma";
 import { FormSchema } from "@/components/virtualoffice/advisors/schema";
 import type { z } from "zod";
+import { syncAdvisorTenantAssignments } from "@/lib/virtualoffice/assignment-sync";
 
 export class AdvisorRepoError extends Error {
   status: number;
@@ -590,6 +591,8 @@ export async function updateAdvisor(
           createdAt: true,
         },
       });
+
+      await syncAdvisorTenantAssignments(tx, id, inmobiliariaId);
 
       const landing = await tx.landingAdvisor.upsert({
         where: { advisorId: id },
