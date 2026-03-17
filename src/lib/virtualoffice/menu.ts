@@ -46,6 +46,6 @@ export const VIRTUALOFFICE_MENU: MenuItem[] = [
   {
     label: "Blog",
     href: "/virtual-office/blog",
-    roles: ["ADMIN", "BLOGUERO"],
+    roles: ["ADMIN", "INMOBILIARIA", "ASESOR", "BLOGUERO"],
   },
 ];
