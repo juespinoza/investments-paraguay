@@ -1,10 +1,21 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import {
   createInmobiliaria,
   InmobiliariaRepoError,
   InmobiliariaSchema,
   listInmobiliarias,
 } from "@/lib/virtualoffice/inmobiliarias";
+
+const InmobiliariaWorkflowSchema = InmobiliariaSchema.extend({
+  user: z
+    .object({
+      email: z.string().email(),
+      password: z.string().min(8),
+      name: z.string().trim().optional().nullable(),
+    })
+    .optional(),
+});
 
 export async function GET() {
   try {
@@ -20,7 +31,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
-  const parsed = InmobiliariaSchema.safeParse(body);
+  const parsed = InmobiliariaWorkflowSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json(
@@ -30,7 +41,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const created = await createInmobiliaria(parsed.data);
+    const created = await createInmobiliaria(parsed.data, parsed.data.user);
     return NextResponse.json({ id: created.id }, { status: 201 });
   } catch (error) {
     if (error instanceof InmobiliariaRepoError) {

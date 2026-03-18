@@ -27,7 +27,7 @@ export default async function NewInmobiliariaPage() {
 
       <Card>
         <CardBody>
-          <InmobiliariaForm mode="create" />
+          <InmobiliariaForm mode="create" allowUserBootstrap />
         </CardBody>
       </Card>
     </div>

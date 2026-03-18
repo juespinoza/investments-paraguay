@@ -29,6 +29,8 @@ type PageProps = {
 
 function renderStatus(status?: string) {
   switch (status) {
+    case "created":
+      return "Inmobiliaria creada correctamente.";
     case "user-assigned":
       return "Usuario vinculado correctamente.";
     case "user-unassigned":

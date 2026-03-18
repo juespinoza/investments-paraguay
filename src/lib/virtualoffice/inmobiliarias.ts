@@ -2,6 +2,7 @@ import "server-only";
 
 import { Role } from "@/generated/prisma";
 import { z } from "zod";
+import { hashPassword, normalizeEmail } from "@/lib/auth/user-bootstrap";
 import { prisma } from "@/lib/prisma";
 import {
   canAccessInmobiliarias,
@@ -35,6 +36,12 @@ export const InmobiliariaSchema = z.object({
 });
 
 export type InmobiliariaInput = z.output<typeof InmobiliariaSchema>;
+
+export type InmobiliariaWorkflowUserInput = {
+  email: string;
+  password: string;
+  name?: string | null;
+};
 
 export async function requireInmobiliariaRoles() {
   const session = await requireSession();
@@ -249,21 +256,68 @@ export async function getInmobiliariaById(id: string) {
   };
 }
 
-export async function createInmobiliaria(input: InmobiliariaInput) {
+function normalizeWorkflowUserInput(
+  user?: InmobiliariaWorkflowUserInput,
+): InmobiliariaWorkflowUserInput | null {
+  if (!user) return null;
+
+  const email = normalizeEmail(user.email);
+  if (!email) {
+    throw new InmobiliariaRepoError("El email del usuario es obligatorio.", 400);
+  }
+
+  if (user.password.trim().length < 8) {
+    throw new InmobiliariaRepoError(
+      "La contraseña del usuario debe tener al menos 8 caracteres.",
+      400,
+    );
+  }
+
+  return {
+    email,
+    password: user.password,
+    name: user.name?.trim() || null,
+  };
+}
+
+export async function createInmobiliaria(
+  input: InmobiliariaInput,
+  workflowUser?: InmobiliariaWorkflowUserInput,
+) {
   const session = await requireInmobiliariaRoles();
   if (!canCreateInmobiliaria(session)) {
     throw new InmobiliariaRepoError("Solo un admin puede crear inmobiliarias.", 403);
   }
 
+  const user = normalizeWorkflowUserInput(workflowUser);
+
   try {
-    return await prisma.inmobiliaria.create({
-      data: {
-        name: input.name,
-        slug: input.slug,
-        description: input.description ?? null,
-        logoUrl: input.logoUrl ?? null,
-      },
-      select: { id: true },
+    return await prisma.$transaction(async (tx) => {
+      const inmobiliaria = await tx.inmobiliaria.create({
+        data: {
+          name: input.name,
+          slug: input.slug,
+          description: input.description ?? null,
+          logoUrl: input.logoUrl ?? null,
+        },
+        select: { id: true },
+      });
+
+      if (user) {
+        await tx.user.create({
+          data: {
+            email: user.email,
+            name: user.name ?? null,
+            password: await hashPassword(user.password),
+            role: Role.INMOBILIARIA,
+            inmobiliariaId: inmobiliaria.id,
+            advisorId: null,
+          },
+          select: { id: true },
+        });
+      }
+
+      return inmobiliaria;
     });
   } catch (error: unknown) {
     if (
@@ -272,6 +326,20 @@ export async function createInmobiliaria(input: InmobiliariaInput) {
       "code" in error &&
       (error as { code?: string }).code === "P2002"
     ) {
+      const target =
+        "meta" in error &&
+        typeof (error as { meta?: { target?: unknown } }).meta?.target !==
+          "undefined"
+          ? String((error as { meta?: { target?: unknown } }).meta?.target)
+          : "";
+
+      if (target.includes("email")) {
+        throw new InmobiliariaRepoError(
+          "Ya existe un usuario con ese email.",
+          409,
+        );
+      }
+
       throw new InmobiliariaRepoError("El slug ya existe.", 409);
     }
     throw error;

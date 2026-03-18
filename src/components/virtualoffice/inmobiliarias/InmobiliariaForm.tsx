@@ -13,6 +13,10 @@ type FormValues = {
   slug: string;
   description: string;
   logoUrl: string;
+  createUser: boolean;
+  userName: string;
+  userEmail: string;
+  userPassword: string;
 };
 
 const EMPTY_VALUES: FormValues = {
@@ -20,6 +24,10 @@ const EMPTY_VALUES: FormValues = {
   slug: "",
   description: "",
   logoUrl: "",
+  createUser: false,
+  userName: "",
+  userEmail: "",
+  userPassword: "",
 };
 
 function toSlug(value: string) {
@@ -56,10 +64,12 @@ export function InmobiliariaForm({
   mode,
   inmobiliariaId,
   initialData,
+  allowUserBootstrap = false,
 }: {
   mode: "create" | "edit";
   inmobiliariaId?: string;
   initialData?: Partial<FormValues>;
+  allowUserBootstrap?: boolean;
 }) {
   const router = useRouter();
   const initialValues = useMemo(
@@ -75,7 +85,7 @@ export function InmobiliariaForm({
 
   const isDirty = JSON.stringify(values) !== JSON.stringify(initialValues);
 
-  const update = (key: keyof FormValues, value: string) =>
+  const update = (key: keyof FormValues, value: FormValues[keyof FormValues]) =>
     setValues((prev) => ({ ...prev, [key]: value }));
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -98,6 +108,14 @@ export function InmobiliariaForm({
           slug: values.slug.trim(),
           description: values.description.trim() || null,
           logoUrl: values.logoUrl.trim() || null,
+          user:
+            mode === "create" && allowUserBootstrap && values.createUser
+              ? {
+                  name: values.userName.trim() || null,
+                  email: values.userEmail.trim(),
+                  password: values.userPassword,
+                }
+              : undefined,
         }),
       });
 
@@ -107,7 +125,11 @@ export function InmobiliariaForm({
         return;
       }
 
-      router.push("/virtual-office/inmobiliaria");
+      router.push(
+        mode === "create"
+          ? `/virtual-office/inmobiliaria/${data.id}/edit?status=created`
+          : "/virtual-office/inmobiliaria",
+      );
       router.refresh();
     } finally {
       setIsLoading(false);
@@ -198,6 +220,59 @@ export function InmobiliariaForm({
           </Field>
         </div>
       </FormSection>
+
+      {mode === "create" && allowUserBootstrap ? (
+        <FormSection
+          title="Usuario inicial"
+          description="Opcionalmente crea en el mismo paso la cuenta operativa de la inmobiliaria."
+        >
+          <label className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-700">
+            <input
+              type="checkbox"
+              checked={values.createUser}
+              onChange={(e) => update("createUser", e.target.checked)}
+              className="h-4 w-4 rounded border-zinc-300"
+            />
+            Crear también el usuario principal de la inmobiliaria
+          </label>
+
+          {values.createUser ? (
+            <div className="mt-4 grid gap-4 md:grid-cols-3">
+              <Field label="Nombre del usuario">
+                <input
+                  value={values.userName}
+                  onChange={(e) => update("userName", e.target.value)}
+                  className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                  placeholder="Equipo SkyOne"
+                />
+              </Field>
+
+              <Field label="Email">
+                <input
+                  type="email"
+                  required={values.createUser}
+                  value={values.userEmail}
+                  onChange={(e) => update("userEmail", e.target.value)}
+                  className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                  placeholder="admin@skyone.com"
+                />
+              </Field>
+
+              <Field label="Contraseña" hint="Min. 8 caracteres">
+                <input
+                  type="password"
+                  required={values.createUser}
+                  minLength={8}
+                  value={values.userPassword}
+                  onChange={(e) => update("userPassword", e.target.value)}
+                  className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                  placeholder="********"
+                />
+              </Field>
+            </div>
+          ) : null}
+        </FormSection>
+      ) : null}
     </form>
   );
 }

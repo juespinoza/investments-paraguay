@@ -1,8 +1,9 @@
 "use server";
 import { FormSchema } from "@/components/virtualoffice/advisors/schema";
-import type { z } from "zod";
+import { z } from "zod";
 import {
   AdvisorRepoError,
+  type AdvisorWorkflowUserInput,
   createAdvisor,
   updateAdvisor,
   softDeleteAdvisor,
@@ -10,10 +11,40 @@ import {
 
 export type AdvisorPayload = z.output<typeof FormSchema>;
 
+const AdvisorWorkflowSchema = z.object({
+  advisor: FormSchema,
+  user: z
+    .object({
+      email: z.string().email(),
+      password: z.string().min(8),
+      name: z.string().trim().optional().nullable(),
+    })
+    .optional(),
+});
+
 export async function createAdvisorAction(payload: unknown) {
   try {
     const parsed = FormSchema.parse(payload);
     const created = await createAdvisor(parsed);
+    return { ok: true, id: created.id };
+  } catch (error) {
+    return {
+      ok: false,
+      error:
+        error instanceof AdvisorRepoError
+          ? error.message
+          : "Error al crear el asesor.",
+    };
+  }
+}
+
+export async function createAdvisorWorkflowAction(payload: unknown) {
+  try {
+    const parsed = AdvisorWorkflowSchema.parse(payload);
+    const created = await createAdvisor(
+      parsed.advisor,
+      parsed.user as AdvisorWorkflowUserInput | undefined,
+    );
     return { ok: true, id: created.id };
   } catch (error) {
     return {

@@ -24,6 +24,7 @@ import { StringArrayEditor } from "./StringArrayEditor";
 import {
   updateAdvisorAction,
   createAdvisorAction,
+  createAdvisorWorkflowAction,
   deleteAdvisorAction,
 } from "@/app/api/virtualoffice/advisors/actions";
 
@@ -35,6 +36,8 @@ type Props = {
   advisorId?: string;
   initialData?: Partial<AdvisorFormValues>;
   canEditInmobiliariaId?: boolean;
+  inmobiliariaOptions?: Array<{ id: string; label: string }>;
+  allowUserBootstrap?: boolean;
 };
 
 type Banner = { type: "success" | "error"; message: string } | null;
@@ -59,11 +62,17 @@ export function AdvisorForm({
   advisorId,
   initialData,
   canEditInmobiliariaId = false,
+  inmobiliariaOptions = [],
+  allowUserBootstrap = false,
 }: Props) {
   const router = useRouter();
 
   const [saving, setSaving] = useState(false);
   const [banner, setBanner] = useState<Banner>(null);
+  const [createLinkedUser, setCreateLinkedUser] = useState(false);
+  const [linkedUserName, setLinkedUserName] = useState("");
+  const [linkedUserEmail, setLinkedUserEmail] = useState("");
+  const [linkedUserPassword, setLinkedUserPassword] = useState("");
 
   // ========= Defaults (centralizados) =========
   const defaults: AdvisorFormValues = useMemo(
@@ -224,6 +233,16 @@ export function AdvisorForm({
       if (mode === "edit" && advisorId !== undefined) {
         res = await updateAdvisorAction(advisorId, parsed);
         if (!res.ok) throw new Error(res.error ?? "No se pudo guardar.");
+      } else if (allowUserBootstrap && createLinkedUser) {
+        res = await createAdvisorWorkflowAction({
+          advisor: parsed,
+          user: {
+            name: linkedUserName.trim() || null,
+            email: linkedUserEmail.trim(),
+            password: linkedUserPassword,
+          },
+        });
+        if (!res.ok) throw new Error(res.error ?? "No se pudo guardar.");
       } else {
         res = await createAdvisorAction(parsed);
         if (!res.ok) throw new Error(res.error ?? "No se pudo guardar.");
@@ -330,7 +349,68 @@ export function AdvisorForm({
           slugify={slugify}
           slugTouchedRef={slugTouchedRef}
           canEditInmobiliariaId={canEditInmobiliariaId}
+          inmobiliariaOptions={inmobiliariaOptions}
         />
+
+        {mode === "create" && allowUserBootstrap ? (
+          <section className="rounded-xl border border-accent2 bg-white p-4">
+            <h2 className="text-lg font-semibold">Usuario del asesor</h2>
+            <p className="mt-1 text-sm text-secondary">
+              Opcionalmente crea la cuenta de acceso del asesor en el mismo flujo.
+            </p>
+
+            <label className="mt-4 flex items-center gap-3 rounded-xl border border-accent2 px-4 py-3 text-sm text-secondary">
+              <input
+                type="checkbox"
+                checked={createLinkedUser}
+                onChange={(e) => setCreateLinkedUser(e.target.checked)}
+                className="h-4 w-4 rounded border-zinc-300"
+              />
+              Crear también el usuario del asesor
+            </label>
+
+            {createLinkedUser ? (
+              <div className="mt-4 grid gap-4 md:grid-cols-3">
+                <div>
+                  <label className="text-sm text-secondary">Nombre</label>
+                  <input
+                    value={linkedUserName}
+                    onChange={(e) => setLinkedUserName(e.target.value)}
+                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    placeholder="Julia Espinoza"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm text-secondary">Email</label>
+                  <input
+                    type="email"
+                    required={createLinkedUser}
+                    value={linkedUserEmail}
+                    onChange={(e) => setLinkedUserEmail(e.target.value)}
+                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    placeholder="asesor@empresa.com"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm text-secondary">
+                    Contraseña inicial
+                  </label>
+                  <input
+                    type="password"
+                    minLength={8}
+                    required={createLinkedUser}
+                    value={linkedUserPassword}
+                    onChange={(e) => setLinkedUserPassword(e.target.value)}
+                    className="mt-1 w-full rounded-md border px-3 py-2"
+                    placeholder="********"
+                  />
+                </div>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
         {/* Tip de UX: si querés mostrar error de slug/fullName arriba */}
         {(errors.fullName || errors.slug) && (
           <p className="mt-3 text-sm text-red-700">

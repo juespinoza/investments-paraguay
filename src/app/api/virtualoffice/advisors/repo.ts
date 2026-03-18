@@ -1,5 +1,7 @@
 import "server-only";
 
+import { Role, Prisma } from "@/generated/prisma";
+import { hashPassword, normalizeEmail } from "@/lib/auth/user-bootstrap";
 import { prisma } from "@/lib/prisma";
 import {
   canAccessAdvisors,
@@ -12,7 +14,6 @@ import {
 } from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import type { SessionPayload, PublicAdvisorLanding } from "@/lib/data/types";
-import { Prisma } from "@/generated/prisma";
 import { FormSchema } from "@/components/virtualoffice/advisors/schema";
 import type { z } from "zod";
 import { syncAdvisorTenantAssignments } from "@/lib/virtualoffice/assignment-sync";
@@ -29,6 +30,11 @@ export class AdvisorRepoError extends Error {
 
 export type AdvisorPayload = z.output<typeof FormSchema>;
 export type AdvisorFormData = z.input<typeof FormSchema>;
+export type AdvisorWorkflowUserInput = {
+  email: string;
+  password: string;
+  name?: string | null;
+};
 
 export type Advisor = {
   id: string;
@@ -340,6 +346,10 @@ function normalizeRepoError(error: unknown): never {
     error instanceof Prisma.PrismaClientKnownRequestError &&
     error.code === "P2002"
   ) {
+    const target = String(error.meta?.target ?? "");
+    if (target.includes("email")) {
+      throw new AdvisorRepoError("Ya existe un usuario con ese email.", 409);
+    }
     throw new AdvisorRepoError("Slug ya existe", 409);
   }
 
@@ -493,15 +503,50 @@ export async function softDeleteAdvisor(id: string): Promise<void> {
   }
 }
 
-export async function createAdvisor(data: AdvisorPayload): Promise<Advisor> {
+function normalizeWorkflowUserInput(
+  user?: AdvisorWorkflowUserInput,
+): AdvisorWorkflowUserInput | null {
+  if (!user) return null;
+
+  const email = normalizeEmail(user.email);
+  if (!email) {
+    throw new AdvisorRepoError("El email del usuario es obligatorio.", 400);
+  }
+
+  if (user.password.trim().length < 8) {
+    throw new AdvisorRepoError(
+      "La contraseña del usuario debe tener al menos 8 caracteres.",
+      400,
+    );
+  }
+
+  return {
+    email,
+    password: user.password,
+    name: user.name?.trim() || null,
+  };
+}
+
+export async function createAdvisor(
+  data: AdvisorPayload,
+  workflowUser?: AdvisorWorkflowUserInput,
+): Promise<Advisor> {
   const session = await requireAdvisorEditorSession();
   if (!canCreateAdvisor(session)) {
     throw new AdvisorRepoError("Forbidden", 403);
   }
+  const user = normalizeWorkflowUserInput(workflowUser);
   const inmobiliariaId =
     isAdmin(session)
       ? data.inmobiliariaId ?? null
       : session.inmobiliariaId ?? null;
+
+  if (user && !isAdmin(session)) {
+    throw new AdvisorRepoError(
+      "Solo un admin puede crear el usuario del asesor en este flujo.",
+      403,
+    );
+  }
 
   if (!isAdmin(session) && !inmobiliariaId) {
     throw new AdvisorRepoError("Missing inmobiliariaId in session", 403);
@@ -563,6 +608,20 @@ export async function createAdvisor(data: AdvisorPayload): Promise<Advisor> {
             propertyId,
             order: index + 1,
           })),
+        });
+      }
+
+      if (user) {
+        await tx.user.create({
+          data: {
+            email: user.email,
+            name: user.name ?? null,
+            password: await hashPassword(user.password),
+            role: Role.ASESOR,
+            inmobiliariaId,
+            advisorId: advisor.id,
+          },
+          select: { id: true },
         });
       }
 
