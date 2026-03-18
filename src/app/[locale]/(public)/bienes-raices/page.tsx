@@ -3,21 +3,84 @@ import { FeaturedGrid } from "@/components/landing/FeaturedGrid";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 import { getTranslations } from "next-intl/server";
+import { resolveLocale } from "@/lib/content/public-pages";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Real Estate Investment in Paraguay | Apartments, Land and Projects",
-  description:
-    "Find apartments, land, houses and investment projects in Paraguay with professional advisory for local and international buyers.",
-  pathname: "/bienes-raices",
-  locale: "es",
-  keywords: [
-    "inversion inmobiliaria paraguay",
-    "departamentos en paraguay",
-    "terrenos en paraguay",
-    "proyectos inmobiliarios paraguay",
-    "asesor inmobiliario paraguay",
-  ],
-});
+type PageProps = {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{
+    q?: string;
+    min?: string;
+    max?: string;
+  }>;
+};
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { locale: routeLocale } = await params;
+  const locale = resolveLocale(routeLocale);
+
+  const seoByLocale = {
+    en: {
+      title: "Real Estate Investment in Paraguay | Apartments, Land and Projects",
+      description:
+        "Find apartments, land, houses and investment projects in Paraguay with professional advisory for local and international buyers.",
+      keywords: [
+        "real estate investment paraguay",
+        "apartments in paraguay",
+        "land in paraguay",
+        "paraguay real estate projects",
+        "paraguay real estate advisor",
+      ],
+    },
+    es: {
+      title: "Inversión Inmobiliaria en Paraguay | Departamentos, terrenos y proyectos",
+      description:
+        "Encuentre departamentos, terrenos, casas y proyectos inmobiliarios en Paraguay con asesoría profesional para compradores locales e internacionales.",
+      keywords: [
+        "inversion inmobiliaria paraguay",
+        "departamentos en paraguay",
+        "terrenos en paraguay",
+        "proyectos inmobiliarios paraguay",
+        "asesor inmobiliario paraguay",
+      ],
+    },
+    pt: {
+      title: "Investimento Imobiliário no Paraguai | Apartamentos, terrenos e projetos",
+      description:
+        "Encontre apartamentos, terrenos, casas e projetos imobiliários no Paraguai com assessoria profissional para compradores locais e internacionais.",
+      keywords: [
+        "investimento imobiliario paraguai",
+        "apartamentos no paraguai",
+        "terrenos no paraguai",
+        "projetos imobiliarios paraguai",
+        "consultor imobiliario paraguai",
+      ],
+    },
+    de: {
+      title: "Immobilieninvestitionen in Paraguay | Wohnungen, Grundstücke und Projekte",
+      description:
+        "Finden Sie Wohnungen, Grundstücke, Häuser und Immobilienprojekte in Paraguay mit professioneller Beratung für lokale und internationale Käufer.",
+      keywords: [
+        "immobilien paraguay",
+        "wohnungen paraguay",
+        "grundstücke paraguay",
+        "immobilienprojekte paraguay",
+        "immobilienberater paraguay",
+      ],
+    },
+  } as const;
+
+  const seo = seoByLocale[locale];
+
+  return buildMetadata({
+    title: seo.title,
+    description: seo.description,
+    pathname: "/bienes-raices",
+    locale,
+    keywords: [...seo.keywords],
+  });
+}
 
 export const revalidate = 60;
 
@@ -37,14 +100,6 @@ type PublicPropertyListItem = {
   roiAnnualPct: number | null;
   appreciationAnnualPct: number | null;
   advisor: { slug: string; fullName: string } | null;
-};
-
-type PageProps = {
-  searchParams: Promise<{
-    q?: string;
-    min?: string;
-    max?: string;
-  }>;
 };
 
 export default async function BienesRaicesPage({ searchParams }: PageProps) {

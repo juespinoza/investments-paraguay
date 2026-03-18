@@ -5,11 +5,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { buildMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
+import { resolveLocale } from "@/lib/content/public-pages";
+import { Link } from "@/i18n/navigation";
 
-type PageProps = { params: Promise<{ slug: string }> };
+type PageProps = { params: Promise<{ locale: string; slug: string }> };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const resolvedLocale = resolveLocale(locale);
   const agency = await prisma.inmobiliaria.findUnique({
     where: { slug },
     select: { name: true, description: true, logoUrl: true },
@@ -20,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: "Inmobiliaria | Investments Paraguay",
       description: "Perfil de inmobiliaria no disponible.",
       pathname: `/bienes-raices/inmobiliarias/${slug}`,
-      locale: "es",
+      locale: resolvedLocale,
       noIndex: true,
     });
   }
@@ -31,7 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       agency.description ??
       `Conoce las propiedades y asesores de ${agency.name} en Paraguay.`,
     pathname: `/bienes-raices/inmobiliarias/${slug}`,
-    locale: "es",
+    locale: resolvedLocale,
     image: agency.logoUrl ?? "/images/logo.png",
   });
 }
@@ -125,7 +128,7 @@ export default async function AgencyLandingPage({ params }: PageProps) {
               <p className="text-secondary">Aún no hay asesores publicados.</p>
             ) : (
               agency.advisors.map((advisor) => (
-                <a
+                <Link
                   key={advisor.id}
                   href={`/bienes-raices/asesores/${advisor.slug}`}
                   className="surface-card rounded-[1.75rem] p-5 hover:-translate-y-0.5"
@@ -139,7 +142,7 @@ export default async function AgencyLandingPage({ params }: PageProps) {
                   <p className="mt-2 text-sm leading-7 text-secondary">
                     {advisor.headline ?? "Asesor inmobiliario"}
                   </p>
-                </a>
+                </Link>
               ))
             )}
           </div>

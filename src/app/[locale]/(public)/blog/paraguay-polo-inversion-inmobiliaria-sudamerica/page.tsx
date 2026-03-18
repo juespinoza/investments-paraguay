@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { SITE_URL } from "@/lib/seo";
+import { Link } from "@/i18n/navigation";
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
@@ -39,7 +39,7 @@ const articleJsonLd = {
       url: `${SITE_URL}/images/logo.png`,
     },
   },
-  mainEntityOfPage: `${SITE_URL}/blog/paraguay-polo-inversion-inmobiliaria-sudamerica`,
+  mainEntityOfPage: `${SITE_URL}/es/blog/paraguay-polo-inversion-inmobiliaria-sudamerica`,
 };
 
 export default function BlogPostPage() {

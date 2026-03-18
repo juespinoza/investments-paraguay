@@ -7,7 +7,7 @@ import { buildMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
 export const metadata: Metadata = {
   ...buildMetadata({
     title:
-      "Investments Paraguay | Real Estate & Business Opportunities in Paraguay",
+      "Real Estate & Business Opportunities in Paraguay | Investments Paraguay",
     description:
       "Explore real estate investment opportunities, business ideas and strategic advisory for investors in Paraguay.",
     pathname: "/",

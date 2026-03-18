@@ -6,6 +6,7 @@ import { SectionTitle } from "@/components/landing/SectionTitle";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 import { LeadCaptureForm } from "@/components/leads/LeadCaptureForm";
+import { resolveLocale } from "@/lib/content/public-pages";
 
 export const revalidate = 120;
 
@@ -33,12 +34,13 @@ type PublicPropertyDetail = {
   } | null;
 };
 
-type PageProps = { params: Promise<{ slug: string }> };
+type PageProps = { params: Promise<{ locale: string; slug: string }> };
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const resolvedLocale = resolveLocale(locale);
   const property = await apiGet<PublicPropertyDetail>(
     `/api/public/bienes-raices/${slug}`,
     revalidate,
@@ -50,7 +52,7 @@ export async function generateMetadata({
       description:
         "Explora oportunidades inmobiliarias en Paraguay con asesoría profesional.",
       pathname: `/bienes-raices/propiedades/${slug}`,
-      locale: "es",
+      locale: resolvedLocale,
       noIndex: true,
     });
   }
@@ -64,7 +66,7 @@ export async function generateMetadata({
     title: `${property.title} | Inversión inmobiliaria en Paraguay`,
     description,
     pathname: `/bienes-raices/propiedades/${slug}`,
-    locale: "es",
+    locale: resolvedLocale,
     image: property.coverImageUrl || "/images/logo.png",
     keywords: [
       property.title,

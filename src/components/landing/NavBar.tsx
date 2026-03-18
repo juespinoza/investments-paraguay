@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { LocaleSwitcher } from "../i18n/LocaleSwitcher";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, Menu, X } from "lucide-react";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
+import { Link, usePathname } from "@/i18n/navigation";
 
 export function NavBar() {
   const t = useTranslations();

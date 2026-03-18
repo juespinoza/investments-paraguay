@@ -2,22 +2,25 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 import { getPublicBlogPostBySlug } from "@/lib/virtualoffice/blog";
+import { resolveLocale } from "@/lib/content/public-pages";
 
 type PageProps = {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 };
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const post = await getPublicBlogPostBySlug(slug);
+  const resolvedLocale = resolveLocale(locale);
 
   if (!post) {
     return buildMetadata({
       title: "Blog | Investments Paraguay",
       description: "Artículo no encontrado.",
       pathname: `/blog/${slug}`,
+      locale: resolvedLocale,
       noIndex: true,
     });
   }
@@ -26,6 +29,7 @@ export async function generateMetadata({
     title: `${post.title} | Investments Paraguay`,
     description: post.content.replace(/\s+/g, " ").trim().slice(0, 160),
     pathname: `/blog/${slug}`,
+    locale: resolvedLocale,
     image: post.coverImageUrl ?? "/images/logo.png",
   });
 }

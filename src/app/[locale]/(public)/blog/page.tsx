@@ -1,23 +1,80 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { buildMetadata } from "@/lib/seo";
 import { listPublicBlogPosts } from "@/lib/virtualoffice/blog";
+import { Link } from "@/i18n/navigation";
+import { resolveLocale } from "@/lib/content/public-pages";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Investment Blog Paraguay | Real Estate, Business and Market Insights",
-  description:
-    "Read articles about investing in Paraguay, the local real estate market, business opportunities and guidance for foreign investors.",
-  pathname: "/blog",
-  locale: "en",
-  keywords: [
-    "Paraguay investment blog",
-    "Paraguay real estate blog",
-    "Paraguay market insights",
-    "invest in Paraguay blog",
-  ],
-});
+type PageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { locale: routeLocale } = await params;
+  const locale = resolveLocale(routeLocale);
+
+  const seoByLocale = {
+    en: {
+      title:
+        "Real Estate, Business and Market Insights | Paraguay Investment Blog",
+      description:
+        "Read articles about investing in Paraguay, the local real estate market, business opportunities and guidance for foreign investors.",
+      keywords: [
+        "Paraguay investment blog",
+        "Paraguay real estate blog",
+        "Paraguay market insights",
+        "invest in Paraguay blog",
+      ],
+    },
+    es: {
+      title: "Real Estate, negocios y mercado | Blog de Inversión en Paraguay",
+      description:
+        "Lea artículos sobre inversión en Paraguay, mercado inmobiliario local, negocios y oportunidades para inversores.",
+      keywords: [
+        "blog inversion paraguay",
+        "blog bienes raices paraguay",
+        "mercado inmobiliario paraguay",
+        "invertir en paraguay",
+      ],
+    },
+    pt: {
+      title: "Imóveis, negócios e mercado | Blog de Investimento no Paraguai",
+      description:
+        "Leia artigos sobre investimento no Paraguai, mercado imobiliário local, negócios e oportunidades para investidores.",
+      keywords: [
+        "blog investimento paraguai",
+        "blog imoveis paraguai",
+        "mercado imobiliario paraguai",
+        "investir no paraguai",
+      ],
+    },
+    de: {
+      title:
+        "Immobilien, Wirtschaft und Marktanalysen | Paraguay Investment Blog",
+      description:
+        "Lesen Sie Beiträge über Investitionen in Paraguay, den lokalen Immobilienmarkt, Geschäftschancen und Marktanalysen.",
+      keywords: [
+        "paraguay investment blog",
+        "paraguay immobilien blog",
+        "paraguay marktanalyse",
+        "in paraguay investieren",
+      ],
+    },
+  } as const;
+
+  const seo = seoByLocale[locale];
+
+  return buildMetadata({
+    title: seo.title,
+    description: seo.description,
+    pathname: "/blog",
+    locale,
+    keywords: [...seo.keywords],
+  });
+}
 
 export const revalidate = 60;
 

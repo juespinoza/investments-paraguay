@@ -23,15 +23,19 @@ function normalizeUrl(pathname = "") {
   return `${SITE_URL}${path === "/" ? "" : path}`;
 }
 
-function buildLanguageAlternates(pathname: string) {
+function withLocalePrefix(locale: AppLocale, pathname: string) {
   const canonicalPath = pathname.startsWith("/") ? pathname : `/${pathname}`;
-  const languages = Object.fromEntries(
-    SUPPORTED_LOCALES.map((locale) => [locale, canonicalPath]),
-  );
+  const path = canonicalPath === "/" ? "" : canonicalPath;
+  return `/${locale}${path}`;
+}
 
+function buildLanguageAlternates(pathname: string) {
+  const languages = Object.fromEntries(
+    SUPPORTED_LOCALES.map((locale) => [locale, withLocalePrefix(locale, pathname)]),
+  );
   return {
     ...languages,
-    "x-default": canonicalPath,
+    "x-default": withLocalePrefix(DEFAULT_LOCALE, pathname),
   };
 }
 
@@ -44,7 +48,8 @@ export function buildMetadata({
   noIndex = false,
   keywords = [],
 }: SeoInput): Metadata {
-  const url = normalizeUrl(pathname);
+  const localizedPath = withLocalePrefix(locale, pathname);
+  const url = normalizeUrl(localizedPath);
   const imageUrl = image.startsWith("http") ? image : `${SITE_URL}${image}`;
 
   return {

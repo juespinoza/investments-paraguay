@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { getLocale } from "next-intl/server";
 import { buildMetadata } from "@/lib/seo";
 import {
   legalPageContent,
@@ -11,8 +10,15 @@ import {
   InfoSection,
 } from "@/components/landing/InfoPage";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
+type PageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { locale: routeLocale } = await params;
+  const locale = resolveLocale(routeLocale);
   const c = legalPageContent[locale];
 
   return buildMetadata({
@@ -29,8 +35,9 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function LegalPage() {
-  const locale = resolveLocale(await getLocale());
+export default async function LegalPage({ params }: PageProps) {
+  const { locale: routeLocale } = await params;
+  const locale = resolveLocale(routeLocale);
   const c = legalPageContent[locale];
 
   return (
