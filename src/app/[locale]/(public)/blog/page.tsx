@@ -1,27 +1,86 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { SectionTitle } from "@/components/landing/SectionTitle";
 import { buildMetadata } from "@/lib/seo";
 import { listPublicBlogPosts } from "@/lib/virtualoffice/blog";
+import { Link } from "@/i18n/navigation";
+import { resolveLocale } from "@/lib/content/public-pages";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Investment Blog Paraguay | Real Estate, Business and Market Insights",
-  description:
-    "Read articles about investing in Paraguay, the local real estate market, business opportunities and guidance for foreign investors.",
-  pathname: "/blog",
-  locale: "en",
-  keywords: [
-    "Paraguay investment blog",
-    "Paraguay real estate blog",
-    "Paraguay market insights",
-    "invest in Paraguay blog",
-  ],
-});
+type PageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { locale: routeLocale } = await params;
+  const locale = resolveLocale(routeLocale);
+
+  const seoByLocale = {
+    en: {
+      title:
+        "Real Estate, Business and Market Insights | Paraguay Investment Blog",
+      description:
+        "Read articles about investing in Paraguay, the local real estate market, business opportunities and guidance for foreign investors.",
+      keywords: [
+        "Paraguay investment blog",
+        "Paraguay real estate blog",
+        "Paraguay market insights",
+        "invest in Paraguay blog",
+      ],
+    },
+    es: {
+      title: "Real Estate, negocios y mercado | Blog de Inversión en Paraguay",
+      description:
+        "Lea artículos sobre inversión en Paraguay, mercado inmobiliario local, negocios y oportunidades para inversores.",
+      keywords: [
+        "blog inversion paraguay",
+        "blog bienes raices paraguay",
+        "mercado inmobiliario paraguay",
+        "invertir en paraguay",
+      ],
+    },
+    pt: {
+      title: "Imóveis, negócios e mercado | Blog de Investimento no Paraguai",
+      description:
+        "Leia artigos sobre investimento no Paraguai, mercado imobiliário local, negócios e oportunidades para investidores.",
+      keywords: [
+        "blog investimento paraguai",
+        "blog imoveis paraguai",
+        "mercado imobiliario paraguai",
+        "investir no paraguai",
+      ],
+    },
+    de: {
+      title:
+        "Immobilien, Wirtschaft und Marktanalysen | Paraguay Investment Blog",
+      description:
+        "Lesen Sie Beiträge über Investitionen in Paraguay, den lokalen Immobilienmarkt, Geschäftschancen und Marktanalysen.",
+      keywords: [
+        "paraguay investment blog",
+        "paraguay immobilien blog",
+        "paraguay marktanalyse",
+        "in paraguay investieren",
+      ],
+    },
+  } as const;
+
+  const seo = seoByLocale[locale];
+
+  return buildMetadata({
+    title: seo.title,
+    description: seo.description,
+    pathname: "/blog",
+    locale,
+    keywords: [...seo.keywords],
+  });
+}
 
 export const revalidate = 60;
 
-function buildAuthor(post: Awaited<ReturnType<typeof listPublicBlogPosts>>[number]) {
+function buildAuthor(
+  post: Awaited<ReturnType<typeof listPublicBlogPosts>>[number],
+) {
   return post.advisor?.fullName ?? post.inmobiliaria?.name ?? post.authorRole;
 }
 
@@ -49,9 +108,9 @@ export default async function BlogPage() {
             {(["market", "strategy", "guides"] as const).map((item) => (
               <div
                 key={item}
-                className="rounded-[1.5rem] border border-white/10 bg-white/8 px-5 py-5 backdrop-blur-sm"
+                className="rounded-3xl border border-white/10 bg-white/8 px-5 py-5 backdrop-blur-sm"
               >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--ip-accent1)]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-(--ip-accent1)">
                   {t(`blog.highlights.${item}.label`)}
                 </p>
                 <p className="mt-3 text-base leading-7 text-white/78">
@@ -64,7 +123,7 @@ export default async function BlogPage() {
 
         {featured ? (
           <section className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
-            <article className="surface-card rounded-[2rem] p-6 md:p-8">
+            <article className="surface-card rounded-4xl p-6 md:p-8">
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent1">
                 {t("blog.featuredLabel")}
               </p>
@@ -96,7 +155,7 @@ export default async function BlogPage() {
               </div>
             </article>
 
-            <aside className="surface-card rounded-[2rem] p-6 md:p-8">
+            <aside className="surface-card rounded-4xl p-6 md:p-8">
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent1">
                 Últimos artículos
               </p>
@@ -131,7 +190,7 @@ export default async function BlogPage() {
             </aside>
           </section>
         ) : (
-          <section className="surface-card mt-8 rounded-[2rem] p-6 md:p-8">
+          <section className="surface-card mt-8 rounded-4xl p-6 md:p-8">
             <h2 className="text-2xl font-semibold tracking-tight text-primary">
               No hay artículos publicados todavía.
             </h2>

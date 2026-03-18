@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { getLocale } from "next-intl/server";
 import { buildMetadata } from "@/lib/seo";
 import { contactPageContent, resolveLocale } from "@/lib/content/public-pages";
 import {
@@ -9,9 +7,17 @@ import {
   InfoSection,
 } from "@/components/landing/InfoPage";
 import { LeadCaptureForm } from "@/components/leads/LeadCaptureForm";
+import { Link } from "@/i18n/navigation";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = resolveLocale(await getLocale());
+type PageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { locale: routeLocale } = await params;
+  const locale = resolveLocale(routeLocale);
   const c = contactPageContent[locale];
 
   return buildMetadata({
@@ -27,8 +33,9 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function ContactPage() {
-  const locale = resolveLocale(await getLocale());
+export default async function ContactPage({ params }: PageProps) {
+  const { locale: routeLocale } = await params;
+  const locale = resolveLocale(routeLocale);
   const c = contactPageContent[locale];
 
   return (

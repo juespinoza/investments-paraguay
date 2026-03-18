@@ -2,18 +2,20 @@ import { SectionTitle } from "@/components/landing/SectionTitle";
 import { LeadCaptureForm } from "@/components/leads/LeadCaptureForm";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
+import { resolveLocale } from "@/lib/content/public-pages";
 
-type PageProps = { params: Promise<{ slug: string }> };
+type PageProps = { params: Promise<{ locale: string; slug: string }> };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const resolvedLocale = resolveLocale(locale);
 
   return buildMetadata({
     title: "Guía para inversores | Investments Paraguay",
     description:
       "Solicita una guía gratuita para evaluar oportunidades de inversión en Paraguay.",
     pathname: `/bienes-raices/asesores/${slug}/lead-magnet`,
-    locale: "es",
+    locale: resolvedLocale,
     noIndex: true,
   });
 }

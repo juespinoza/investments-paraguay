@@ -3,21 +3,84 @@ import { FeaturedGrid } from "@/components/landing/FeaturedGrid";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 import { getTranslations } from "next-intl/server";
+import { resolveLocale } from "@/lib/content/public-pages";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Real Estate Investment in Paraguay | Apartments, Land and Projects",
-  description:
-    "Find apartments, land, houses and investment projects in Paraguay with professional advisory for local and international buyers.",
-  pathname: "/bienes-raices",
-  locale: "es",
-  keywords: [
-    "inversion inmobiliaria paraguay",
-    "departamentos en paraguay",
-    "terrenos en paraguay",
-    "proyectos inmobiliarios paraguay",
-    "asesor inmobiliario paraguay",
-  ],
-});
+type PageProps = {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{
+    q?: string;
+    min?: string;
+    max?: string;
+  }>;
+};
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { locale: routeLocale } = await params;
+  const locale = resolveLocale(routeLocale);
+
+  const seoByLocale = {
+    en: {
+      title: "Real Estate Investment in Paraguay | Apartments, Land and Projects",
+      description:
+        "Find apartments, land, houses and investment projects in Paraguay with professional advisory for local and international buyers.",
+      keywords: [
+        "real estate investment paraguay",
+        "apartments in paraguay",
+        "land in paraguay",
+        "paraguay real estate projects",
+        "paraguay real estate advisor",
+      ],
+    },
+    es: {
+      title: "Inversión Inmobiliaria en Paraguay | Departamentos, terrenos y proyectos",
+      description:
+        "Encuentre departamentos, terrenos, casas y proyectos inmobiliarios en Paraguay con asesoría profesional para compradores locales e internacionales.",
+      keywords: [
+        "inversion inmobiliaria paraguay",
+        "departamentos en paraguay",
+        "terrenos en paraguay",
+        "proyectos inmobiliarios paraguay",
+        "asesor inmobiliario paraguay",
+      ],
+    },
+    pt: {
+      title: "Investimento Imobiliário no Paraguai | Apartamentos, terrenos e projetos",
+      description:
+        "Encontre apartamentos, terrenos, casas e projetos imobiliários no Paraguai com assessoria profissional para compradores locais e internacionais.",
+      keywords: [
+        "investimento imobiliario paraguai",
+        "apartamentos no paraguai",
+        "terrenos no paraguai",
+        "projetos imobiliarios paraguai",
+        "consultor imobiliario paraguai",
+      ],
+    },
+    de: {
+      title: "Immobilieninvestitionen in Paraguay | Wohnungen, Grundstücke und Projekte",
+      description:
+        "Finden Sie Wohnungen, Grundstücke, Häuser und Immobilienprojekte in Paraguay mit professioneller Beratung für lokale und internationale Käufer.",
+      keywords: [
+        "immobilien paraguay",
+        "wohnungen paraguay",
+        "grundstücke paraguay",
+        "immobilienprojekte paraguay",
+        "immobilienberater paraguay",
+      ],
+    },
+  } as const;
+
+  const seo = seoByLocale[locale];
+
+  return buildMetadata({
+    title: seo.title,
+    description: seo.description,
+    pathname: "/bienes-raices",
+    locale,
+    keywords: [...seo.keywords],
+  });
+}
 
 export const revalidate = 60;
 
@@ -37,14 +100,6 @@ type PublicPropertyListItem = {
   roiAnnualPct: number | null;
   appreciationAnnualPct: number | null;
   advisor: { slug: string; fullName: string } | null;
-};
-
-type PageProps = {
-  searchParams: Promise<{
-    q?: string;
-    min?: string;
-    max?: string;
-  }>;
 };
 
 export default async function BienesRaicesPage({ searchParams }: PageProps) {
@@ -129,20 +184,22 @@ export default async function BienesRaicesPage({ searchParams }: PageProps) {
       </section>
 
       <section className="px-4 pb-4">
-        <div className="container-page section-shell surface-card p-4 md:p-6">
-          <h2 className="text-2xl font-semibold text-primary">
-            {t("realEstate.map.title")}
-          </h2>
-          <p className="mt-2 text-sm text-secondary">
-            {t("realEstate.map.description")}
-          </p>
-          <div className="mt-4 overflow-hidden rounded-[1.5rem] border border-soft bg-white">
-            <iframe
-              title="Mapa de propiedades en Paraguay"
-              className="h-[320px] w-full"
-              src={mapSrc}
-              loading="lazy"
-            />
+        <div className="container-page">
+          <div className="section-shell surface-card p-4 md:p-6">
+            <h2 className="text-2xl font-semibold text-primary">
+              {t("realEstate.map.title")}
+            </h2>
+            <p className="mt-2 text-sm text-secondary">
+              {t("realEstate.map.description")}
+            </p>
+            <div className="mt-4 overflow-hidden rounded-3xl border border-soft bg-white">
+              <iframe
+                title="Mapa de propiedades en Paraguay"
+                className="h-80 w-full"
+                src={mapSrc}
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
       </section>

@@ -11,13 +11,15 @@ import { CTAWide } from "@/components/landing/CTAWide";
 import { Testimonials } from "@/components/landing/Testimonials";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
+import { resolveLocale } from "@/lib/content/public-pages";
 
 export const revalidate = 300;
 
-type PageProps = { params: Promise<{ slug: string }> };
+type PageProps = { params: Promise<{ locale: string; slug: string }> };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const resolvedLocale = resolveLocale(locale);
   const advisor = await apiGet<PublicAdvisorLanding>(
     `/api/public/asesores/${slug}`,
     revalidate,
@@ -29,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description:
         "Conoce asesores inmobiliarios especializados en inversiones en Paraguay.",
       pathname: `/bienes-raices/asesores/${slug}`,
-      locale: "es",
+      locale: resolvedLocale,
       noIndex: true,
     });
   }
@@ -43,7 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${advisor.fullName} | Asesor Inmobiliario en Paraguay`,
     description,
     pathname: `/bienes-raices/asesores/${slug}`,
-    locale: "es",
+    locale: resolvedLocale,
     image: advisor.about.imageUrl || "/images/logo.png",
     keywords: [
       advisor.fullName,

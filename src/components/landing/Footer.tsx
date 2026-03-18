@@ -1,9 +1,11 @@
 import Image from "next/image";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { resolveLocale } from "@/lib/content/public-pages";
 
-export function Footer() {
-  const t = useTranslations();
+export async function Footer() {
+  const t = await getTranslations();
+  const locale = resolveLocale(await getLocale());
 
   return (
     <footer className="px-4 pb-6 pt-8">
@@ -26,16 +28,32 @@ export function Footer() {
 
             <div className="flex flex-col gap-5 md:items-end">
               <div className="flex flex-wrap gap-x-6 gap-y-3">
-                <Link className="text-sm hover:text-accent1" href="/legales">
+                <Link
+                  className="text-sm hover:text-accent1"
+                  href="/legales"
+                  locale={locale}
+                >
                   {t("footer.legal")}
                 </Link>
-                <Link className="text-sm hover:text-accent1" href="/nosotros">
+                <Link
+                  className="text-sm hover:text-accent1"
+                  href="/nosotros"
+                  locale={locale}
+                >
                   {t("footer.us")}
                 </Link>
-                <Link className="text-sm hover:text-accent1" href="/cookies">
+                <Link
+                  className="text-sm hover:text-accent1"
+                  href="/cookies"
+                  locale={locale}
+                >
                   {t("footer.cookies")}
                 </Link>
-                <Link className="text-sm hover:text-accent1" href="/contacto">
+                <Link
+                  className="text-sm hover:text-accent1"
+                  href="/contacto"
+                  locale={locale}
+                >
                   {t("footer.contact")}
                 </Link>
               </div>

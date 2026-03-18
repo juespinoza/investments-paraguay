@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   openGraph: {
     ...baseMetadata.openGraph,
     type: "article",
-    url: `${SITE_URL}${pathname}`,
+    url: `${SITE_URL}/es${pathname}`,
     siteName: SITE_NAME,
   },
 };

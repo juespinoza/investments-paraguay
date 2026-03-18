@@ -2,9 +2,9 @@
 
 import { cn } from "@/lib/cn";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { setLocale } from "@/app/actions/set-locate";
+import { useSearchParams } from "next/navigation";
 import { isAnalyticsEnabled } from "@/lib/analytics";
+import { usePathname, useRouter } from "@/i18n/navigation";
 
 type Locale = "en" | "es" | "pt" | "de";
 
@@ -41,6 +41,8 @@ export function LocaleSwitcher({
   className?: string;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
   const [open, setOpen] = useState(false);
@@ -86,8 +88,9 @@ export function LocaleSwitcher({
     }
 
     startTransition(async () => {
-      await setLocale(locale);
-      router.refresh();
+      const query = searchParams.toString();
+      const nextPath = query ? `${pathname}?${query}` : pathname;
+      router.replace(nextPath, { locale });
     });
   }
 
