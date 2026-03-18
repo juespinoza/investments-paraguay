@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
-import { Menu, PanelLeftOpen, ShieldCheck, Sparkles } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { Menu, ShieldCheck, Sparkles } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { VIRTUALOFFICE_MENU } from "@/lib/virtualoffice/menu";
 import { Badge } from "@/components/virtualoffice/Page";
 import { useAdminAuth } from "./AuthProvider";
@@ -28,7 +28,6 @@ export default function AdminHeader({
 }) {
   const { user } = useAdminAuth();
   const pathname = usePathname();
-  const router = useRouter();
 
   const currentItem = useMemo(
     () =>
@@ -50,15 +49,6 @@ export default function AdminHeader({
 
     return crumbs;
   }, [pathname]);
-
-  async function handleLogout() {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } finally {
-      router.replace("/virtual-office/login");
-      router.refresh();
-    }
-  }
 
   if (!user) return null;
 
@@ -123,14 +113,6 @@ export default function AdminHeader({
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
-          >
-            <PanelLeftOpen size={16} />
-            Salir
-          </button>
         </div>
       </div>
     </header>

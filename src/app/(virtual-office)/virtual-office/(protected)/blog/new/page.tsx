@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
 import BlogPostForm from "@/components/virtualoffice/blog/BlogPostForm";
+import { canManageBlogAssignments } from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import {
   canCreateBlogPost,
@@ -43,11 +44,13 @@ export default async function NewBlogPostPage() {
         <CardBody>
           <BlogPostForm
             mode="create"
-            canManageAssignments={session.role === "ADMIN"}
+            canManageAssignments={canManageBlogAssignments(session)}
             inmobiliarias={options.inmobiliarias}
             advisors={options.advisors}
             initialData={{
-              authorRole: session.role === "ADMIN" ? undefined : session.role,
+              authorRole: canManageBlogAssignments(session)
+                ? undefined
+                : session.role,
             }}
           />
         </CardBody>

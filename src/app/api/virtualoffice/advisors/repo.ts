@@ -1,6 +1,15 @@
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
+import {
+  canAccessAdvisors,
+  canCreateAdvisor,
+  canDeleteAdvisor,
+  canEditAdvisor,
+  isAdmin,
+  isAdvisor,
+  isInmobiliaria,
+} from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import type { SessionPayload, PublicAdvisorLanding } from "@/lib/data/types";
 import { Prisma } from "@/generated/prisma";
@@ -76,9 +85,13 @@ type AdvisorWithPublicLanding = Prisma.AdvisorGetPayload<{
 function buildScopedWhere(session: SessionPayload) {
   const where: Prisma.AdvisorWhereInput = { deletedAt: null };
 
-  if (session.role === "ADMIN") return where;
+  if (!canAccessAdvisors(session)) {
+    throw new AdvisorRepoError("Forbidden", 403);
+  }
 
-  if (session.role === "INMOBILIARIA") {
+  if (isAdmin(session)) return where;
+
+  if (isInmobiliaria(session)) {
     if (!session.inmobiliariaId) {
       throw new AdvisorRepoError("Missing inmobiliaria scope", 403);
     }
@@ -86,7 +99,7 @@ function buildScopedWhere(session: SessionPayload) {
     return where;
   }
 
-  if (session.role === "ASESOR") {
+  if (isAdvisor(session)) {
     if (!session.advisorId) {
       throw new AdvisorRepoError("Missing advisor scope", 403);
     }
@@ -99,7 +112,7 @@ function buildScopedWhere(session: SessionPayload) {
 
 async function requireAdvisorEditorSession() {
   const session = await requireSession();
-  if (session.role !== "ADMIN" && session.role !== "INMOBILIARIA") {
+  if (!canEditAdvisor(session)) {
     throw new AdvisorRepoError("Forbidden", 403);
   }
   return session;
@@ -197,7 +210,7 @@ async function validateFeaturedProperties(
     }
   }
 
-  if (session.role !== "ADMIN") {
+  if (!isAdmin(session)) {
     for (const property of found) {
       if (property.inmobiliariaId !== inmobiliariaId) {
         throw new AdvisorRepoError("Featured property outside scope", 403);
@@ -465,6 +478,9 @@ export async function deleteAdvisorById(
 
 export async function softDeleteAdvisor(id: string): Promise<void> {
   const session = await requireAdvisorEditorSession();
+  if (!canDeleteAdvisor(session)) {
+    throw new AdvisorRepoError("Forbidden", 403);
+  }
 
   try {
     await findScopedAdvisorOrThrow(session, id);
@@ -479,12 +495,15 @@ export async function softDeleteAdvisor(id: string): Promise<void> {
 
 export async function createAdvisor(data: AdvisorPayload): Promise<Advisor> {
   const session = await requireAdvisorEditorSession();
+  if (!canCreateAdvisor(session)) {
+    throw new AdvisorRepoError("Forbidden", 403);
+  }
   const inmobiliariaId =
-    session.role === "ADMIN"
+    isAdmin(session)
       ? data.inmobiliariaId ?? null
       : session.inmobiliariaId ?? null;
 
-  if (session.role !== "ADMIN" && !inmobiliariaId) {
+  if (!isAdmin(session) && !inmobiliariaId) {
     throw new AdvisorRepoError("Missing inmobiliariaId in session", 403);
   }
 
@@ -563,7 +582,7 @@ export async function updateAdvisor(
   const session = await requireAdvisorEditorSession();
   const scopedAdvisor = await findScopedAdvisorOrThrow(session, id);
   const inmobiliariaId =
-    session.role === "ADMIN"
+    isAdmin(session)
       ? data.inmobiliariaId ?? scopedAdvisor.inmobiliariaId ?? null
       : session.inmobiliariaId ?? null;
 

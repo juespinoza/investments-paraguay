@@ -1,6 +1,7 @@
 import Link from "next/link";
 import PaginationBar from "@/components/virtualoffice/PaginationBar";
 import DeleteInmobiliariaButton from "@/components/virtualoffice/inmobiliarias/DeleteInmobiliariaButton";
+import { canCreateInmobiliaria } from "@/lib/auth/permissions";
 import {
   Badge,
   EmptyState,
@@ -30,6 +31,7 @@ type PageProps = {
 
 export default async function Page({ searchParams }: PageProps) {
   const session = await requireInmobiliariaRoles();
+  const canCreate = canCreateInmobiliaria(session);
   const params = await searchParams;
   const q = params.q?.trim().toLowerCase() ?? "";
   const allItems = await listInmobiliarias();
@@ -56,7 +58,7 @@ export default async function Page({ searchParams }: PageProps) {
         title="Inmobiliarias"
         description="Gestiona la identidad del tenant, sus relaciones activas y el volumen operativo asociado."
         actions={
-          session.role === "ADMIN" ? (
+          canCreate ? (
             <Link
               href="/virtual-office/inmobiliaria/new"
               className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
@@ -121,7 +123,7 @@ export default async function Page({ searchParams }: PageProps) {
               : "Aquí aparecerán los tenants con su estructura y relaciones activas."
           }
           action={
-            session.role === "ADMIN" ? (
+            canCreate ? (
               <Link
                 href="/virtual-office/inmobiliaria/new"
                 className="inline-flex rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
@@ -176,7 +178,7 @@ export default async function Page({ searchParams }: PageProps) {
                       >
                         Editar
                       </Link>
-                      {session.role === "ADMIN" ? (
+                      {canCreate ? (
                         <DeleteInmobiliariaButton id={item.id} />
                       ) : null}
                     </div>

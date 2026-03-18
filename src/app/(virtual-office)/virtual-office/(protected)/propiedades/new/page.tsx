@@ -1,5 +1,9 @@
 import { PropertyForm } from "@/components/virtualoffice/properties/PropertyForm";
 import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
+import {
+  canManagePropertyAssignments,
+  canManagePropertyFeatured,
+} from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import {
   canCreateProperty,
@@ -34,8 +38,8 @@ export default async function NewPropertyPage() {
         <CardBody>
           <PropertyForm
             mode="create"
-            canManageAssignments={session.role === "ADMIN" || session.role === "INMOBILIARIA"}
-            canManageFeatured={session.role === "ADMIN" || session.role === "INMOBILIARIA"}
+            canManageAssignments={canManagePropertyAssignments(session)}
+            canManageFeatured={canManagePropertyFeatured(session)}
             advisors={options.advisors.map((advisor) => ({
               id: advisor.id,
               label: advisor.fullName,

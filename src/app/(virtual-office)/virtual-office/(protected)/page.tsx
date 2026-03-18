@@ -1,4 +1,11 @@
 import Link from "next/link";
+import {
+  canAccessAdvisors,
+  canAccessBlog,
+  canAccessInmobiliarias,
+  canAccessProperties,
+  canCreateInmobiliaria,
+} from "@/lib/auth/permissions";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/require-session";
 import {
@@ -22,6 +29,11 @@ const onboardingByRole = {
 
 export default async function AdminHome() {
   const session = await requireSession();
+  const canSeeAdvisors = canAccessAdvisors(session);
+  const canSeeProperties = canAccessProperties(session);
+  const canSeeInmobiliarias = canAccessInmobiliarias(session);
+  const canCreateTenant = canCreateInmobiliaria(session);
+  const canSeeBlog = canAccessBlog(session);
 
   const [advisorCount, propertyCount, inmobiliariaCount, blogCount] =
     await Promise.all([
@@ -78,34 +90,28 @@ export default async function AdminHome() {
       label: "Asesores",
       description: "Perfiles públicos, bios, landing y propiedades destacadas.",
       href: "/virtual-office/asesores",
-      enabled:
-        session.role === "ADMIN" ||
-        session.role === "INMOBILIARIA" ||
-        session.role === "ASESOR",
+      enabled: canSeeAdvisors,
       count: advisorCount,
     },
     {
       label: "Propiedades",
       description: "Alta, edición y curación del portafolio público.",
       href: "/virtual-office/propiedades",
-      enabled:
-        session.role === "ADMIN" ||
-        session.role === "INMOBILIARIA" ||
-        session.role === "ASESOR",
+      enabled: canSeeProperties,
       count: propertyCount,
     },
     {
       label: "Inmobiliarias",
       description: "Gestión del tenant, relaciones y estructura operativa.",
       href: "/virtual-office/inmobiliaria",
-      enabled: session.role === "ADMIN" || session.role === "INMOBILIARIA",
+      enabled: canSeeInmobiliarias,
       count: inmobiliariaCount,
     },
     {
       label: "Blog",
       description: "Artículos y visibilidad editorial por autor o tenant.",
       href: "/virtual-office/blog",
-      enabled: true,
+      enabled: canSeeBlog,
       count: blogCount,
     },
   ].filter((module) => module.enabled);
@@ -129,7 +135,7 @@ export default async function AdminHome() {
           value={propertyCount}
           hint="Inventario disponible para gestión."
         />
-        {(session.role === "ADMIN" || session.role === "INMOBILIARIA") && (
+        {canSeeInmobiliarias && (
           <StatCard
             label="Inmobiliarias"
             value={inmobiliariaCount}
@@ -181,6 +187,25 @@ export default async function AdminHome() {
                   </div>
                 </CardSection>
               ))}
+              {canCreateTenant ? (
+                <CardSection
+                  title="Alta operativa"
+                  description="Crea la estructura inicial de una nueva inmobiliaria y ordénala desde el panel."
+                  className="h-full"
+                >
+                  <div className="flex items-end justify-between gap-4">
+                    <div className="text-sm text-zinc-500">
+                      Disponible solo para administración central.
+                    </div>
+                    <Link
+                      className="inline-flex rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+                      href="/virtual-office/inmobiliaria/new"
+                    >
+                      Crear tenant
+                    </Link>
+                  </div>
+                </CardSection>
+              ) : null}
             </div>
           </CardBody>
         </Card>

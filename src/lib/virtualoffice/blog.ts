@@ -3,6 +3,13 @@ import "server-only";
 import { Prisma, Role } from "@/generated/prisma";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import {
+  canAccessBlog,
+  isAdmin,
+  isAdvisor,
+  isBloguero,
+  isInmobiliaria,
+} from "@/lib/auth/permissions";
 import type { SessionPayload } from "@/lib/data/types";
 
 export class BlogRepoError extends Error {
@@ -34,42 +41,37 @@ type ScopedBlogPost = {
   inmobiliariaId: string | null;
 };
 
-function hasBlogAccess(role: SessionPayload["role"]) {
-  return (
-    role === "ADMIN" ||
-    role === "BLOGUERO" ||
-    role === "INMOBILIARIA" ||
-    role === "ASESOR"
-  );
+function hasBlogAccess(session: SessionPayload) {
+  return canAccessBlog(session);
 }
 
 export function canCreateBlogPost(session: SessionPayload) {
-  return hasBlogAccess(session.role);
+  return hasBlogAccess(session);
 }
 
 export function canDeleteBlogPost(session: SessionPayload) {
-  return hasBlogAccess(session.role);
+  return hasBlogAccess(session);
 }
 
 export function canEditBlogPost(session: SessionPayload) {
-  return hasBlogAccess(session.role);
+  return hasBlogAccess(session);
 }
 
 export function buildBlogListWhere(
   session: SessionPayload,
   query?: { q?: string },
 ): Prisma.BlogPostWhereInput {
-  if (!hasBlogAccess(session.role)) {
+  if (!hasBlogAccess(session)) {
     throw new BlogRepoError("Forbidden", 403);
   }
 
   const where: Prisma.BlogPostWhereInput = { deletedAt: null };
 
-  if (session.role === "BLOGUERO") {
+  if (isBloguero(session)) {
     where.authorRole = Role.BLOGUERO;
-  } else if (session.role === "INMOBILIARIA") {
+  } else if (isInmobiliaria(session)) {
     where.inmobiliariaId = session.inmobiliariaId ?? "__none__";
-  } else if (session.role === "ASESOR") {
+  } else if (isAdvisor(session)) {
     where.advisorId = session.advisorId ?? "__none__";
   }
 
@@ -99,12 +101,12 @@ async function getAdvisorIfValid(advisorId: string) {
 }
 
 export async function getBlogFormOptions(session: SessionPayload) {
-  if (!hasBlogAccess(session.role)) {
+  if (!hasBlogAccess(session)) {
     throw new BlogRepoError("Forbidden", 403);
   }
 
   const [inmobiliarias, advisors] = await Promise.all([
-    session.role === "ADMIN"
+    isAdmin(session)
       ? prisma.inmobiliaria.findMany({
           where: { deletedAt: null },
           orderBy: { name: "asc" },
@@ -114,11 +116,11 @@ export async function getBlogFormOptions(session: SessionPayload) {
     prisma.advisor.findMany({
       where: {
         deletedAt: null,
-        ...(session.role === "ADMIN"
+        ...(isAdmin(session)
           ? {}
-          : session.role === "INMOBILIARIA"
+          : isInmobiliaria(session)
             ? { inmobiliariaId: session.inmobiliariaId ?? "__none__" }
-            : session.role === "ASESOR"
+            : isAdvisor(session)
               ? { id: session.advisorId ?? "__none__" }
               : {}),
       },
@@ -134,7 +136,7 @@ export async function assertBlogPostScope(
   session: SessionPayload,
   postId: string,
 ): Promise<ScopedBlogPost> {
-  if (!hasBlogAccess(session.role)) {
+  if (!hasBlogAccess(session)) {
     throw new BlogRepoError("Forbidden", 403);
   }
 
@@ -152,16 +154,16 @@ export async function assertBlogPostScope(
     throw new BlogRepoError("Not found", 404);
   }
 
-  if (session.role === "ADMIN") return post;
+  if (isAdmin(session)) return post;
 
-  if (session.role === "BLOGUERO") {
+  if (isBloguero(session)) {
     if (post.authorRole !== Role.BLOGUERO) {
       throw new BlogRepoError("Forbidden", 403);
     }
     return post;
   }
 
-  if (session.role === "INMOBILIARIA") {
+  if (isInmobiliaria(session)) {
     if (
       !session.inmobiliariaId ||
       post.inmobiliariaId !== session.inmobiliariaId
@@ -171,7 +173,7 @@ export async function assertBlogPostScope(
     return post;
   }
 
-  if (session.role === "ASESOR") {
+  if (isAdvisor(session)) {
     if (!session.advisorId || post.advisorId !== session.advisorId) {
       throw new BlogRepoError("Forbidden", 403);
     }
@@ -186,7 +188,7 @@ export async function resolveBlogAssignments(
   data: BlogUpsertInput,
   current?: ScopedBlogPost,
 ) {
-  if (session.role === "BLOGUERO") {
+  if (isBloguero(session)) {
     return {
       authorRole: Role.BLOGUERO,
       advisorId: null,
@@ -194,7 +196,7 @@ export async function resolveBlogAssignments(
     };
   }
 
-  if (session.role === "INMOBILIARIA") {
+  if (isInmobiliaria(session)) {
     if (!session.inmobiliariaId) {
       throw new BlogRepoError("Missing inmobiliaria scope", 403);
     }
@@ -206,7 +208,7 @@ export async function resolveBlogAssignments(
     };
   }
 
-  if (session.role === "ASESOR") {
+  if (isAdvisor(session)) {
     if (!session.advisorId) {
       throw new BlogRepoError("Missing advisor scope", 403);
     }

@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
 import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
 import { PropertyForm } from "@/components/virtualoffice/properties/PropertyForm";
+import {
+  canManagePropertyAssignments,
+  canManagePropertyFeatured,
+} from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import { prisma } from "@/lib/prisma";
 import {
@@ -120,8 +124,8 @@ export default async function EditPropertyPage({ params }: PageProps) {
               advisorId: property.advisorId ?? "",
               inmobiliariaId: property.inmobiliariaId ?? "",
             }}
-            canManageAssignments={session.role === "ADMIN" || session.role === "INMOBILIARIA"}
-            canManageFeatured={session.role === "ADMIN" || session.role === "INMOBILIARIA"}
+            canManageAssignments={canManagePropertyAssignments(session)}
+            canManageFeatured={canManagePropertyFeatured(session)}
             advisors={options.advisors.map((advisor) => ({
               id: advisor.id,
               label: advisor.fullName,

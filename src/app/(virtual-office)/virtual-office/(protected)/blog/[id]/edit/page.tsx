@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
 import BlogPostForm from "@/components/virtualoffice/blog/BlogPostForm";
+import { canManageBlogAssignments } from "@/lib/auth/permissions";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/require-session";
 import {
@@ -88,7 +89,7 @@ export default async function EditBlogPostPage({ params }: PageProps) {
           <BlogPostForm
             mode="edit"
             postId={id}
-            canManageAssignments={session.role === "ADMIN"}
+            canManageAssignments={canManageBlogAssignments(session)}
             inmobiliarias={options.inmobiliarias}
             advisors={options.advisors}
             initialData={{

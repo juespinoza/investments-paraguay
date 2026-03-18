@@ -1,11 +1,12 @@
 import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
 import { InmobiliariaForm } from "@/components/virtualoffice/inmobiliarias/InmobiliariaForm";
+import { canCreateInmobiliaria } from "@/lib/auth/permissions";
 import { requireInmobiliariaRoles } from "@/lib/virtualoffice/inmobiliarias";
 
 export default async function NewInmobiliariaPage() {
   const session = await requireInmobiliariaRoles();
 
-  if (session.role !== "ADMIN") {
+  if (!canCreateInmobiliaria(session)) {
     return (
       <div className="p-6">
         <h1 className="text-2xl font-semibold">Nueva inmobiliaria</h1>

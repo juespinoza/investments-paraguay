@@ -3,6 +3,13 @@ import "server-only";
 import { Role } from "@/generated/prisma";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import {
+  canAccessInmobiliarias,
+  canCreateInmobiliaria,
+  canManageInmobiliariaAssignments,
+  isAdmin,
+  isInmobiliaria,
+} from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import type { SessionPayload } from "@/lib/data/types";
 import {
@@ -32,7 +39,7 @@ export type InmobiliariaInput = z.output<typeof InmobiliariaSchema>;
 export async function requireInmobiliariaRoles() {
   const session = await requireSession();
 
-  if (session.role !== "ADMIN" && session.role !== "INMOBILIARIA") {
+  if (!canAccessInmobiliarias(session)) {
     throw new InmobiliariaRepoError("Forbidden", 403);
   }
 
@@ -42,7 +49,7 @@ export async function requireInmobiliariaRoles() {
 async function requireAdminInmobiliariaSession() {
   const session = await requireInmobiliariaRoles();
 
-  if (session.role !== "ADMIN") {
+  if (!canManageInmobiliariaAssignments(session)) {
     throw new InmobiliariaRepoError(
       "Solo un admin puede gestionar asignaciones.",
       403,
@@ -68,7 +75,7 @@ async function assertInmobiliariaExists(id: string) {
 async function assertInmobiliariaScope(session: SessionPayload, id: string) {
   const agency = await assertInmobiliariaExists(id);
 
-  if (session.role === "INMOBILIARIA" && session.inmobiliariaId !== id) {
+  if (isInmobiliaria(session) && session.inmobiliariaId !== id) {
     throw new InmobiliariaRepoError("Forbidden", 403);
   }
 
@@ -81,7 +88,7 @@ export async function listInmobiliarias() {
   return prisma.inmobiliaria.findMany({
     where: {
       deletedAt: null,
-      ...(session.role === "ADMIN" ? {} : { id: session.inmobiliariaId ?? "__none__" }),
+      ...(isAdmin(session) ? {} : { id: session.inmobiliariaId ?? "__none__" }),
     },
     orderBy: { updatedAt: "desc" },
     select: {
@@ -174,7 +181,7 @@ export async function getInmobiliariaById(id: string) {
           },
         },
       }),
-      session.role === "ADMIN"
+      isAdmin(session)
         ? prisma.user.findMany({
             where: {
               deletedAt: null,
@@ -189,7 +196,7 @@ export async function getInmobiliariaById(id: string) {
             },
           })
         : Promise.resolve([]),
-      session.role === "ADMIN"
+      isAdmin(session)
         ? prisma.advisor.findMany({
             where: { deletedAt: null },
             orderBy: { fullName: "asc" },
@@ -244,7 +251,7 @@ export async function getInmobiliariaById(id: string) {
 
 export async function createInmobiliaria(input: InmobiliariaInput) {
   const session = await requireInmobiliariaRoles();
-  if (session.role !== "ADMIN") {
+  if (!canCreateInmobiliaria(session)) {
     throw new InmobiliariaRepoError("Solo un admin puede crear inmobiliarias.", 403);
   }
 
@@ -301,7 +308,7 @@ export async function updateInmobiliaria(id: string, input: InmobiliariaInput) {
 
 export async function softDeleteInmobiliaria(id: string) {
   const session = await requireInmobiliariaRoles();
-  if (session.role !== "ADMIN") {
+  if (!isAdmin(session)) {
     throw new InmobiliariaRepoError(
       "Solo un admin puede desactivar inmobiliarias.",
       403,

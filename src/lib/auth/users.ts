@@ -1,4 +1,5 @@
 import { Prisma, Role } from "@/generated/prisma";
+import { canManageUsers } from "@/lib/auth/permissions";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/require-session";
 import { hashPassword, normalizeEmail } from "@/lib/auth/user-bootstrap";
@@ -108,7 +109,7 @@ async function resolveAssignments({
 
 export async function requireAdminSession() {
   const session = await requireSession();
-  if (session.role !== "ADMIN") {
+  if (!canManageUsers(session)) {
     throw new UserRepoError("Forbidden", 403);
   }
   return session;

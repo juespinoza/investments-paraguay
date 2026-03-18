@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
+import { canManageInmobiliariaAssignments } from "@/lib/auth/permissions";
 import {
   Table,
   TableShell,
@@ -46,6 +47,7 @@ export default async function EditInmobiliariaPage({
   searchParams,
 }: PageProps) {
   const session = await requireInmobiliariaRoles();
+  const canManageAssignments = canManageInmobiliariaAssignments(session);
   const { id } = await params;
   const query = await searchParams;
 
@@ -165,7 +167,7 @@ export default async function EditInmobiliariaPage({
             </p>
           </div>
 
-          {session.role === "ADMIN" ? (
+          {canManageAssignments ? (
             <form
               action={assignInmobiliariaUserAction.bind(null, id)}
               className="mt-4 flex flex-col gap-3 md:flex-row"
@@ -245,7 +247,7 @@ export default async function EditInmobiliariaPage({
                             >
                               Editar usuario
                             </Link>
-                            {session.role === "ADMIN" && user.role === "INMOBILIARIA" ? (
+                            {canManageAssignments && user.role === "INMOBILIARIA" ? (
                               <form
                                 action={unassignInmobiliariaUserAction.bind(null, id)}
                               >
@@ -281,7 +283,7 @@ export default async function EditInmobiliariaPage({
             </p>
           </div>
 
-          {session.role === "ADMIN" ? (
+          {canManageAssignments ? (
             <form
               action={assignAdvisorToInmobiliariaAction.bind(null, id)}
               className="mt-4 flex flex-col gap-3 md:flex-row"
@@ -363,7 +365,7 @@ export default async function EditInmobiliariaPage({
                             >
                               Editar asesor
                             </Link>
-                            {session.role === "ADMIN" ? (
+                            {canManageAssignments ? (
                               <form
                                 action={unassignAdvisorFromInmobiliariaAction.bind(
                                   null,
