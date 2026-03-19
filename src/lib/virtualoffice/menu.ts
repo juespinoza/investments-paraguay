@@ -44,6 +44,12 @@ export const VIRTUALOFFICE_MENU: MenuItem[] = [
   },
 
   {
+    label: "Mi landing",
+    href: "/virtual-office/mi-landing",
+    roles: ["ASESOR"],
+  },
+
+  {
     label: "Propiedades",
     href: "/virtual-office/propiedades",
     roles: ["ADMIN", "INMOBILIARIA", "ASESOR"],

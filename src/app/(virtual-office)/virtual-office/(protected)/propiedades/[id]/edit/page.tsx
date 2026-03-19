@@ -93,8 +93,12 @@ export default async function EditPropertyPage({
     <div>
       <PageHeader
         eyebrow="Portafolio"
-        title="Editar propiedad"
-        description="Actualizá la información de la propiedad."
+        title={isAdvisor(session) ? "Mi propiedad" : "Editar propiedad"}
+        description={
+          isAdvisor(session)
+            ? "Actualiza únicamente la información de una propiedad dentro de tu propio alcance."
+            : "Actualizá la información de la propiedad."
+        }
       />
 
       {query.status === "created" ? (

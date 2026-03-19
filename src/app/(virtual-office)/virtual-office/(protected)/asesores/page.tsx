@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { canAccessAdvisors, canCreateAdvisor } from "@/lib/auth/permissions";
+import {
+  canAccessAdvisors,
+  canCreateAdvisor,
+  isAdvisor,
+} from "@/lib/auth/permissions";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/require-session";
 import DeleteButton from "@/components/virtualoffice/DeleteButton";
@@ -31,6 +35,7 @@ type PageProps = {
 
 export default async function AdvisorsPage({ searchParams }: PageProps) {
   const session = await requireSession();
+  const isAdvisorUser = isAdvisor(session);
   const params = await searchParams;
   const q = params.q?.trim() ?? "";
   const canCreate = canCreateAdvisor(session);
@@ -102,8 +107,12 @@ export default async function AdvisorsPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Gestión de perfiles"
-        title="Asesores"
-        description="Gestiona los perfiles públicos, su tenant y el contenido asociado que aparece en el sitio."
+        title={isAdvisorUser ? "Mi perfil público" : "Asesores"}
+        description={
+          isAdvisorUser
+            ? "Revisa tu landing, tu propuesta pública y el contenido vinculado a tu perfil."
+            : "Gestiona los perfiles públicos, su tenant y el contenido asociado que aparece en el sitio."
+        }
         actions={
           canCreate ? (
             <Link
@@ -111,6 +120,13 @@ export default async function AdvisorsPage({ searchParams }: PageProps) {
               className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
             >
               + Nuevo asesor
+            </Link>
+          ) : isAdvisorUser && session.advisorId ? (
+            <Link
+              href={`/virtual-office/asesores/${session.advisorId}/edit`}
+              className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+            >
+              Editar mi landing
             </Link>
           ) : null
         }

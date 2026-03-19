@@ -40,7 +40,11 @@ export default async function NewPropertyPage({
       <PageHeader
         eyebrow="Portafolio"
         title="Nueva propiedad"
-        description="Creá una propiedad y asígnala al asesor o tenant correcto desde el mismo flujo."
+        description={
+          isAdvisor(session)
+            ? "Crea una propiedad dentro de tu propio alcance. La asignación al asesor y la inmobiliaria derivada se resolverán automáticamente."
+            : "Creá una propiedad y asígnala al asesor o tenant correcto desde el mismo flujo."
+        }
       />
 
       <Card>

@@ -22,6 +22,7 @@ import {
   canCreateProperty,
   canDeleteProperty,
 } from "@/lib/virtualoffice/properties";
+import { isAdvisor } from "@/lib/auth/permissions";
 import {
   paginateItems,
   resolvePagination,
@@ -82,8 +83,12 @@ export default async function Page({ searchParams }: PageProps) {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Portafolio"
-        title="Propiedades"
-        description="Gestiona inmuebles, rentabilidad, medios y asignaciones sin salir del panel."
+        title={isAdvisor(session) ? "Mis propiedades" : "Propiedades"}
+        description={
+          isAdvisor(session)
+            ? "Gestiona solo tus propiedades, su contenido comercial y el material que verá el público."
+            : "Gestiona inmuebles, rentabilidad, medios y asignaciones sin salir del panel."
+        }
         actions={
           canCreateProperty(session) ? (
             <Link

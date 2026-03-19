@@ -40,14 +40,14 @@ const PERMISSION_MATRIX: Record<
   advisors: {
     read: [Role.ADMIN, Role.INMOBILIARIA, Role.ASESOR],
     create: [Role.ADMIN, Role.INMOBILIARIA],
-    update: [Role.ADMIN, Role.INMOBILIARIA],
+    update: [Role.ADMIN, Role.INMOBILIARIA, Role.ASESOR],
     delete: [Role.ADMIN, Role.INMOBILIARIA],
   },
   properties: {
     read: [Role.ADMIN, Role.INMOBILIARIA, Role.ASESOR],
-    create: [Role.ADMIN, Role.INMOBILIARIA],
+    create: [Role.ADMIN, Role.INMOBILIARIA, Role.ASESOR],
     update: [Role.ADMIN, Role.INMOBILIARIA, Role.ASESOR],
-    delete: [Role.ADMIN, Role.INMOBILIARIA],
+    delete: [Role.ADMIN, Role.INMOBILIARIA, Role.ASESOR],
   },
   propertyAssignments: {
     manage: [Role.ADMIN, Role.INMOBILIARIA],

@@ -87,9 +87,12 @@ export default async function AdminHome() {
 
   const modules = [
     {
-      label: "Asesores",
-      description: "Perfiles públicos, bios, landing y propiedades destacadas.",
-      href: "/virtual-office/asesores",
+      label: session.role === "ASESOR" ? "Mi landing" : "Asesores",
+      description:
+        session.role === "ASESOR"
+          ? "Edita tu perfil público, propuesta de valor y propiedades destacadas."
+          : "Perfiles públicos, bios, landing y propiedades destacadas.",
+      href: session.role === "ASESOR" ? "/virtual-office/mi-landing" : "/virtual-office/asesores",
       enabled: canSeeAdvisors,
       count: advisorCount,
     },

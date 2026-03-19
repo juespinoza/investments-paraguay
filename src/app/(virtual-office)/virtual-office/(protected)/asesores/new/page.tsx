@@ -1,6 +1,10 @@
 import { AdvisorForm } from "@/components/virtualoffice/advisors/AdvisorForm";
 import { PageHeader, Card, CardBody } from "@/components/virtualoffice/Page";
-import { isAdmin, isInmobiliaria } from "@/lib/auth/permissions";
+import {
+  canCreateAdvisor,
+  isAdmin,
+  isInmobiliaria,
+} from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import { listUserFormOptions } from "@/lib/auth/users";
 
@@ -12,6 +16,17 @@ export default async function NewAdvisorPage({
   searchParams,
 }: NewAdvisorPageProps) {
   const session = await requireSession();
+  if (!canCreateAdvisor(session)) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-semibold">Nuevo asesor</h1>
+        <p className="mt-2 text-secondary">
+          No tienes permisos para crear asesores.
+        </p>
+      </div>
+    );
+  }
+
   const isAdminUser = isAdmin(session);
   const isInmobiliariaUser = isInmobiliaria(session);
   const options = isAdminUser ? await listUserFormOptions() : null;
