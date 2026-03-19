@@ -161,7 +161,30 @@ export default async function EditInmobiliariaPage({
               slug: inmobiliaria.slug,
               description: inmobiliaria.description ?? "",
               logoUrl: inmobiliaria.logoUrl ?? "",
+              heroTitle: inmobiliaria.landingTheme?.heroTitle ?? "",
+              heroSubtitle: inmobiliaria.landingTheme?.heroSubtitle ?? "",
+              heroCtaLabel: inmobiliaria.landingTheme?.heroCtaLabel ?? "",
+              heroCtaHref: inmobiliaria.landingTheme?.heroCtaHref ?? "",
+              heroBackgroundUrl:
+                inmobiliaria.landingTheme?.heroBackgroundUrl ?? "",
+              contactTitle: inmobiliaria.landingTheme?.contactTitle ?? "",
+              contactEmail: inmobiliaria.landingTheme?.contactEmail ?? "",
+              contactPhone: inmobiliaria.landingTheme?.contactPhone ?? "",
+              contactWhatsapp:
+                inmobiliaria.landingTheme?.contactWhatsapp ?? "",
+              contactWebsite: inmobiliaria.landingTheme?.contactWebsite ?? "",
+              contactAddress: inmobiliaria.landingTheme?.contactAddress ?? "",
+              advisorsTitle: inmobiliaria.landingTheme?.advisorsTitle ?? "",
+              advisorsSubtitle:
+                inmobiliaria.landingTheme?.advisorsSubtitle ?? "",
+              propertiesTitle:
+                inmobiliaria.landingTheme?.propertiesTitle ?? "",
+              propertiesSubtitle:
+                inmobiliaria.landingTheme?.propertiesSubtitle ?? "",
+              featuredPropertyIds:
+                inmobiliaria.landingTheme?.featuredPropertyIds ?? [],
             }}
+            propertyOptions={inmobiliaria.properties}
           />
         </CardBody>
       </Card>

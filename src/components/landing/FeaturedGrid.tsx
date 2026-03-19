@@ -6,9 +6,11 @@ import { useTranslations } from "next-intl";
 
 export function FeaturedGrid({
   title,
+  subtitle,
   items,
 }: {
   title: string;
+  subtitle?: string;
   items: any[];
 }) {
   const t = useTranslations();
@@ -17,9 +19,16 @@ export function FeaturedGrid({
     <section className="px-4 py-8 md:py-10">
       <div className="container-page">
         {title ? (
-          <h2 className="text-3xl font-semibold tracking-tight text-primary md:text-5xl">
-            {title}
-          </h2>
+          <div>
+            <h2 className="text-3xl font-semibold tracking-tight text-primary md:text-5xl">
+              {title}
+            </h2>
+            {subtitle ? (
+              <p className="mt-3 max-w-3xl text-base leading-7 text-secondary md:text-lg">
+                {subtitle}
+              </p>
+            ) : null}
+          </div>
         ) : null}
         <div
           className={`mt-8 grid gap-6 ${

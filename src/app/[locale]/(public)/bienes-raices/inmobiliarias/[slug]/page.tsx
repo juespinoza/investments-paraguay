@@ -7,6 +7,7 @@ import { buildMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
 import { resolveLocale } from "@/lib/content/public-pages";
 import { Link } from "@/i18n/navigation";
+import { parseInmobiliariaLandingTheme } from "@/lib/virtualoffice/inmobiliarias";
 
 type PageProps = { params: Promise<{ locale: string; slug: string }> };
 
@@ -50,6 +51,7 @@ export default async function AgencyLandingPage({ params }: PageProps) {
       slug: true,
       description: true,
       logoUrl: true,
+      themeJson: true,
       advisors: {
         where: { deletedAt: null },
         select: { id: true, fullName: true, slug: true, headline: true },
@@ -74,8 +76,11 @@ export default async function AgencyLandingPage({ params }: PageProps) {
 
   if (!agency) notFound();
 
-  const propertyItems = agency.properties
+  const landingTheme = parseInmobiliariaLandingTheme(agency.themeJson);
+
+  const allPropertyItems = agency.properties
     .map((p) => ({
+      id: p.slug,
       slug: p.slug,
       title: p.title,
       subtitle: p.description ?? p.city ?? "",
@@ -94,20 +99,73 @@ export default async function AgencyLandingPage({ params }: PageProps) {
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
     });
 
+  const featuredIds = landingTheme?.featuredPropertyIds ?? [];
+  const propertyItems =
+    featuredIds.length > 0
+      ? allPropertyItems
+          .filter((item) => featuredIds.includes(item.id))
+          .sort(
+            (a, b) => featuredIds.indexOf(a.id) - featuredIds.indexOf(b.id),
+          )
+      : allPropertyItems;
+
+  const contactItems = [
+    landingTheme?.contactEmail
+      ? {
+          label: "Email",
+          value: landingTheme.contactEmail,
+          href: `mailto:${landingTheme.contactEmail}`,
+        }
+      : null,
+    landingTheme?.contactPhone
+      ? {
+          label: "Teléfono",
+          value: landingTheme.contactPhone,
+          href: `tel:${landingTheme.contactPhone}`,
+        }
+      : null,
+    landingTheme?.contactWhatsapp
+      ? {
+          label: "WhatsApp",
+          value: landingTheme.contactWhatsapp,
+          href: `https://wa.me/${landingTheme.contactWhatsapp.replace(/\D/g, "")}`,
+        }
+      : null,
+    landingTheme?.contactWebsite
+      ? {
+          label: "Web",
+          value: landingTheme.contactWebsite,
+          href: landingTheme.contactWebsite,
+        }
+      : null,
+    landingTheme?.contactAddress
+      ? {
+          label: "Dirección",
+          value: landingTheme.contactAddress,
+          href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            landingTheme.contactAddress,
+          )}`,
+        }
+      : null,
+  ].filter(Boolean) as Array<{ label: string; value: string; href: string }>;
+
   return (
     <>
       <HeroSplit
         brandLeft="INMOBILIARIA"
         brandRight="PARAGUAY"
         menuActive="Bienes raíces"
-        title={agency.name}
+        title={landingTheme?.heroTitle ?? agency.name}
         subtitle={
+          landingTheme?.heroSubtitle ??
           agency.description ??
           "Especialistas en oportunidades inmobiliarias en Paraguay."
         }
-        ctaLabel="Ver propiedades"
-        ctaHref="#propiedades"
-        backgroundImageUrl="/backgrounds/background.png"
+        ctaLabel={landingTheme?.heroCtaLabel ?? "Ver propiedades"}
+        ctaHref={landingTheme?.heroCtaHref ?? "#propiedades"}
+        backgroundImageUrl={
+          landingTheme?.heroBackgroundUrl ?? "/backgrounds/background.png"
+        }
         logoLeftUrl={agency.logoUrl ?? undefined}
       />
 
@@ -117,8 +175,11 @@ export default async function AgencyLandingPage({ params }: PageProps) {
             <div className="eyebrow">Equipo</div>
             <div className="mt-5">
               <SectionTitle
-                title="Equipo de asesores"
-                subtitle="Conectá con profesionales que conocen el mercado, las zonas clave y las oportunidades activas de la inmobiliaria."
+                title={landingTheme?.advisorsTitle ?? "Equipo de asesores"}
+                subtitle={
+                  landingTheme?.advisorsSubtitle ??
+                  "Conectá con profesionales que conocen el mercado, las zonas clave y las oportunidades activas de la inmobiliaria."
+                }
                 align="left"
               />
             </div>
@@ -149,9 +210,44 @@ export default async function AgencyLandingPage({ params }: PageProps) {
         </div>
       </section>
 
+      {contactItems.length ? (
+        <section className="px-4 py-8 md:py-10">
+          <div className="container-page">
+            <div className="rounded-[1.9rem] border border-[rgba(24,39,63,0.08)] bg-white p-6 shadow-[0_18px_60px_rgba(15,23,38,0.06)]">
+              <SectionTitle
+                title={landingTheme?.contactTitle ?? "Contacto de la inmobiliaria"}
+                subtitle="Canales directos para consultas comerciales, coordinación de visitas y seguimiento."
+                align="left"
+              />
+              <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {contactItems.map((item) => (
+                  <a
+                    key={`${item.label}-${item.value}`}
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-[1.4rem] border border-[rgba(24,39,63,0.08)] bg-[linear-gradient(180deg,#ffffff_0%,#fcfaf6_100%)] px-5 py-4 hover:-translate-y-0.5"
+                  >
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent1">
+                      {item.label}
+                    </div>
+                    <div className="mt-2 text-sm leading-6 text-secondary">
+                      {item.value}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       <section id="propiedades">
         <FeaturedGrid
-          title="Propiedades de la inmobiliaria"
+          title={
+            landingTheme?.propertiesTitle ?? "Propiedades de la inmobiliaria"
+          }
+          subtitle={landingTheme?.propertiesSubtitle ?? undefined}
           items={propertyItems}
         />
       </section>

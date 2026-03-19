@@ -1,6 +1,6 @@
 import { AdvisorForm } from "@/components/virtualoffice/advisors/AdvisorForm";
 import { PageHeader, Card, CardBody } from "@/components/virtualoffice/Page";
-import { isAdmin } from "@/lib/auth/permissions";
+import { isAdmin, isInmobiliaria } from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import { listUserFormOptions } from "@/lib/auth/users";
 
@@ -13,6 +13,7 @@ export default async function NewAdvisorPage({
 }: NewAdvisorPageProps) {
   const session = await requireSession();
   const isAdminUser = isAdmin(session);
+  const isInmobiliariaUser = isInmobiliaria(session);
   const options = isAdminUser ? await listUserFormOptions() : null;
   const params = await searchParams;
 
@@ -21,7 +22,11 @@ export default async function NewAdvisorPage({
       <PageHeader
         eyebrow="Gestión de perfiles"
         title="Nuevo asesor"
-        description="Creá un asesor, asígnalo a una inmobiliaria si corresponde y opcionalmente genera su usuario de acceso."
+        description={
+          isInmobiliariaUser
+            ? "Creá un asesor dentro de tu tenant. La asociación con tu inmobiliaria se aplicará automáticamente."
+            : "Creá un asesor, asígnalo a una inmobiliaria si corresponde y opcionalmente genera su usuario de acceso."
+        }
       />
 
       <Card>
