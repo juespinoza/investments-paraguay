@@ -38,6 +38,8 @@ type Props = {
   canEditInmobiliariaId?: boolean;
   inmobiliariaOptions?: Array<{ id: string; label: string }>;
   allowUserBootstrap?: boolean;
+  redirectOnSuccess?: boolean;
+  onSuccess?: (result: { id: string; values: AdvisorFormOutput }) => void;
 };
 
 type Banner = { type: "success" | "error"; message: string } | null;
@@ -64,6 +66,8 @@ export function AdvisorForm({
   canEditInmobiliariaId = false,
   inmobiliariaOptions = [],
   allowUserBootstrap = false,
+  redirectOnSuccess = true,
+  onSuccess,
 }: Props) {
   const router = useRouter();
 
@@ -256,11 +260,22 @@ export function AdvisorForm({
             : "Cambios guardados.",
       });
 
+      const nextAdvisorId = res.id ?? advisorId;
+      if (!nextAdvisorId) {
+        throw new Error("No se pudo resolver el asesor guardado.");
+      }
+
+      onSuccess?.({ id: nextAdvisorId, values: parsed });
+
       if (mode === "create") {
-        router.replace(`/virtual-office/asesores/${res.id}/edit`);
+        if (redirectOnSuccess) {
+          router.replace(`/virtual-office/asesores/${nextAdvisorId}/edit`);
+        }
         return;
       }
-      router.refresh();
+      if (redirectOnSuccess) {
+        router.refresh();
+      }
     } catch (e: any) {
       setBanner({ type: "error", message: e?.message ?? "Error" });
       focusFirstError();

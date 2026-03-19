@@ -84,12 +84,20 @@ export default async function EditInmobiliariaPage({
         title="Editar inmobiliaria"
         description="Actualiza la entidad principal y gestiona sus usuarios, asesores y relaciones activas."
         actions={
-          <Link
-            href="/virtual-office/inmobiliaria"
-            className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
-          >
-            Volver
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={`/virtual-office/asesores/new?inmobiliariaId=${id}`}
+              className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+            >
+              Crear asesor para este tenant
+            </Link>
+            <Link
+              href="/virtual-office/inmobiliaria"
+              className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+            >
+              Volver
+            </Link>
+          </div>
         }
       />
 

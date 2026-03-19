@@ -4,10 +4,17 @@ import { isAdmin } from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import { listUserFormOptions } from "@/lib/auth/users";
 
-export default async function NewAdvisorPage() {
+type NewAdvisorPageProps = {
+  searchParams: Promise<{ inmobiliariaId?: string }>;
+};
+
+export default async function NewAdvisorPage({
+  searchParams,
+}: NewAdvisorPageProps) {
   const session = await requireSession();
   const isAdminUser = isAdmin(session);
   const options = isAdminUser ? await listUserFormOptions() : null;
+  const params = await searchParams;
 
   return (
     <div>
@@ -23,6 +30,9 @@ export default async function NewAdvisorPage() {
             mode="create"
             canEditInmobiliariaId={isAdminUser}
             allowUserBootstrap={isAdminUser}
+            initialData={{
+              inmobiliariaId: params.inmobiliariaId?.trim() || null,
+            }}
             inmobiliariaOptions={
               options?.inmobiliarias.map((item) => ({
                 id: item.id,

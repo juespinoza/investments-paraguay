@@ -26,6 +26,12 @@ export const VIRTUALOFFICE_MENU: MenuItem[] = [
   },
 
   {
+    label: "Workflow Admin",
+    href: "/virtual-office/workflow",
+    roles: ["ADMIN"],
+  },
+
+  {
     label: "Inmobiliarias",
     href: "/virtual-office/inmobiliaria",
     roles: ["ADMIN", "INMOBILIARIA"],

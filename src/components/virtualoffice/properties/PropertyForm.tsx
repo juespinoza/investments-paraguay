@@ -25,7 +25,6 @@ type PropertyFormValues = {
   coverImageUrl: string;
   galleryCsv: string;
   advisorId: string;
-  inmobiliariaId: string;
 };
 
 type PropertyOption = {
@@ -51,7 +50,6 @@ type PropertyPayload = {
   coverImageUrl: string | null;
   gallery: string[];
   advisorId: string | null;
-  inmobiliariaId: string | null;
 };
 
 const EMPTY_VALUES: PropertyFormValues = {
@@ -71,7 +69,6 @@ const EMPTY_VALUES: PropertyFormValues = {
   coverImageUrl: "",
   galleryCsv: "",
   advisorId: "",
-  inmobiliariaId: "",
 };
 
 function toSlug(value: string) {
@@ -117,7 +114,6 @@ function toPayload(values: PropertyFormValues): PropertyPayload {
     coverImageUrl: values.coverImageUrl.trim() || null,
     gallery,
     advisorId: values.advisorId.trim() || null,
-    inmobiliariaId: values.inmobiliariaId.trim() || null,
   };
 }
 
@@ -150,7 +146,8 @@ export function PropertyForm({
   advisors = [],
   inmobiliarias = [],
   lockedAdvisorId,
-  lockedInmobiliariaId,
+  redirectOnSuccess = true,
+  onSuccess,
 }: {
   mode: "create" | "edit";
   propertyId?: string;
@@ -160,22 +157,30 @@ export function PropertyForm({
   advisors?: PropertyOption[];
   inmobiliarias?: PropertyOption[];
   lockedAdvisorId?: string;
-  lockedInmobiliariaId?: string;
+  redirectOnSuccess?: boolean;
+  onSuccess?: (result: { id: string; values: PropertyFormValues }) => void;
 }) {
   const router = useRouter();
   const initialValues = useMemo(
     () => ({
       ...EMPTY_VALUES,
       advisorId: lockedAdvisorId ?? EMPTY_VALUES.advisorId,
-      inmobiliariaId: lockedInmobiliariaId ?? EMPTY_VALUES.inmobiliariaId,
       ...initialData,
     }),
-    [initialData, lockedAdvisorId, lockedInmobiliariaId],
+    [initialData, lockedAdvisorId],
   );
 
   const [values, setValues] = useState<PropertyFormValues>(initialValues);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const selectedAdvisor =
+    advisors.find((advisor) => advisor.id === values.advisorId) ?? null;
+  const derivedInmobiliariaLabel =
+    selectedAdvisor?.inmobiliariaId
+      ? inmobiliarias.find(
+          (inmobiliaria) => inmobiliaria.id === selectedAdvisor.inmobiliariaId,
+        )?.label ?? "Inmobiliaria asignada por asesor"
+      : "Propiedad independiente / sin inmobiliaria";
 
   const isDirty =
     JSON.stringify(values) !== JSON.stringify(initialValues);
@@ -208,8 +213,16 @@ export function PropertyForm({
         return;
       }
 
-      router.push("/virtual-office/propiedades");
-      router.refresh();
+      onSuccess?.({ id: data.id, values });
+
+      if (redirectOnSuccess) {
+        router.push(
+          mode === "create"
+            ? `/virtual-office/propiedades/${data.id}/edit?status=created`
+            : "/virtual-office/propiedades",
+        );
+        router.refresh();
+      }
     } finally {
       setIsLoading(false);
     }
@@ -424,12 +437,9 @@ export function PropertyForm({
 
       <FormSection
         title="Asignaciones"
-        description="Haz visible el alcance real de la propiedad sin cambiar las reglas de permisos del sistema."
+        description="El asesor responsable define automáticamente la inmobiliaria de la propiedad."
       >
         <div className="mb-4 flex flex-wrap gap-2">
-          {lockedInmobiliariaId ? (
-            <Badge tone="info">Inmobiliaria fijada por tu rol</Badge>
-          ) : null}
           {lockedAdvisorId ? (
             <Badge tone="warning">Asesor fijado por tu rol</Badge>
           ) : null}
@@ -439,52 +449,6 @@ export function PropertyForm({
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          {(canManageAssignments || lockedInmobiliariaId) && (
-            <Field label="Inmobiliaria">
-              {canManageAssignments ? (
-                <select
-                  value={values.inmobiliariaId}
-                  onChange={(e) => {
-                    const nextInmobiliariaId = e.target.value;
-                    update("inmobiliariaId", nextInmobiliariaId);
-
-                    const advisorStillValid =
-                      !values.advisorId ||
-                      advisors.some(
-                        (advisor) =>
-                          advisor.id === values.advisorId &&
-                          (!nextInmobiliariaId ||
-                            !advisor.inmobiliariaId ||
-                            advisor.inmobiliariaId === nextInmobiliariaId),
-                      );
-
-                    if (!advisorStillValid) {
-                      update("advisorId", "");
-                    }
-                  }}
-                  className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-                >
-                  <option value="">Sin asignar</option>
-                  {inmobiliarias.map((inmobiliaria) => (
-                    <option key={inmobiliaria.id} value={inmobiliaria.id}>
-                      {inmobiliaria.label}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  value={
-                    inmobiliarias.find(
-                      (inmobiliaria) => inmobiliaria.id === values.inmobiliariaId,
-                    )?.label ?? "Inmobiliaria asignada"
-                  }
-                  disabled
-                  className="h-11 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-zinc-500"
-                />
-              )}
-            </Field>
-          )}
-
           <Field label={canManageAssignments ? "Asesor" : "Asesor asignado"}>
             {canManageAssignments ? (
               <select
@@ -493,19 +457,11 @@ export function PropertyForm({
                 className="h-11 w-full rounded-xl border border-zinc-200 px-3"
               >
                 <option value="">Sin asignar</option>
-                {advisors
-                  .filter((advisor) => {
-                    if (!values.inmobiliariaId) return true;
-                    return (
-                      !advisor.inmobiliariaId ||
-                      advisor.inmobiliariaId === values.inmobiliariaId
-                    );
-                  })
-                  .map((advisor) => (
-                    <option key={advisor.id} value={advisor.id}>
-                      {advisor.label}
-                    </option>
-                  ))}
+                {advisors.map((advisor) => (
+                  <option key={advisor.id} value={advisor.id}>
+                    {advisor.label}
+                  </option>
+                ))}
               </select>
             ) : (
               <input
@@ -517,6 +473,14 @@ export function PropertyForm({
                 className="h-11 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-zinc-500"
               />
             )}
+          </Field>
+
+          <Field label="Inmobiliaria derivada">
+            <input
+              value={derivedInmobiliariaLabel}
+              disabled
+              className="h-11 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-zinc-500"
+            />
           </Field>
         </div>
       </FormSection>

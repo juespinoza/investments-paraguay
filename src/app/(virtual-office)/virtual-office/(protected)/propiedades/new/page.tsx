@@ -3,6 +3,7 @@ import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
 import {
   canManagePropertyAssignments,
   canManagePropertyFeatured,
+  isAdvisor,
 } from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import {
@@ -10,8 +11,15 @@ import {
   getPropertyFormOptions,
 } from "@/lib/virtualoffice/properties";
 
-export default async function NewPropertyPage() {
+type NewPropertyPageProps = {
+  searchParams: Promise<{ advisorId?: string }>;
+};
+
+export default async function NewPropertyPage({
+  searchParams,
+}: NewPropertyPageProps) {
   const session = await requireSession();
+  const params = await searchParams;
 
   if (!canCreateProperty(session)) {
     return (
@@ -25,13 +33,14 @@ export default async function NewPropertyPage() {
   }
 
   const options = await getPropertyFormOptions(session);
+  const defaultAdvisorId = params.advisorId?.trim() || "";
 
   return (
     <div>
       <PageHeader
         eyebrow="Portafolio"
         title="Nueva propiedad"
-        description="Creá una propiedad para publicarla en el sitio."
+        description="Creá una propiedad y asígnala al asesor o tenant correcto desde el mismo flujo."
       />
 
       <Card>
@@ -49,12 +58,10 @@ export default async function NewPropertyPage() {
               id: item.id,
               label: item.name,
             }))}
-            lockedAdvisorId={session.role === "ASESOR" ? session.advisorId ?? "" : undefined}
-            lockedInmobiliariaId={
-              session.role === "INMOBILIARIA" || session.role === "ASESOR"
-                ? session.inmobiliariaId ?? ""
-                : undefined
-            }
+            initialData={{
+              advisorId: defaultAdvisorId,
+            }}
+            lockedAdvisorId={isAdvisor(session) ? session.advisorId ?? "" : undefined}
           />
         </CardBody>
       </Card>

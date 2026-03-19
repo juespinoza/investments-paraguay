@@ -65,11 +65,15 @@ export function InmobiliariaForm({
   inmobiliariaId,
   initialData,
   allowUserBootstrap = false,
+  redirectOnSuccess = true,
+  onSuccess,
 }: {
   mode: "create" | "edit";
   inmobiliariaId?: string;
   initialData?: Partial<FormValues>;
   allowUserBootstrap?: boolean;
+  redirectOnSuccess?: boolean;
+  onSuccess?: (result: { id: string; values: FormValues }) => void;
 }) {
   const router = useRouter();
   const initialValues = useMemo(
@@ -125,12 +129,16 @@ export function InmobiliariaForm({
         return;
       }
 
-      router.push(
-        mode === "create"
-          ? `/virtual-office/inmobiliaria/${data.id}/edit?status=created`
-          : "/virtual-office/inmobiliaria",
-      );
-      router.refresh();
+      onSuccess?.({ id: data.id, values });
+
+      if (redirectOnSuccess) {
+        router.push(
+          mode === "create"
+            ? `/virtual-office/inmobiliaria/${data.id}/edit?status=created`
+            : "/virtual-office/inmobiliaria",
+        );
+        router.refresh();
+      }
     } finally {
       setIsLoading(false);
     }

@@ -150,52 +150,25 @@ export async function resolvePropertyAssignments(
   data: PropertyUpsertInput,
   current?: ScopedProperty,
 ) {
-  if (isAdvisor(session)) {
-    if (!session.advisorId) {
-      throw new PropertyRepoError("Missing advisor scope", 403);
-    }
+  const advisorId = isAdvisor(session)
+    ? session.advisorId ?? null
+    : data.advisorId ?? null;
 
-    const advisor = await getAdvisorIfValid(session.advisorId);
-
-    return {
-      advisorId: advisor.id,
-      inmobiliariaId:
-        advisor.inmobiliariaId ?? current?.inmobiliariaId ?? session.inmobiliariaId ?? null,
-      isFeatured: current?.isFeatured ?? false,
-      featuredOrder: current?.featuredOrder ?? null,
-    };
-  }
-
-  let inmobiliariaId =
-    isAdmin(session)
-      ? data.inmobiliariaId ?? current?.inmobiliariaId ?? null
-      : session.inmobiliariaId ?? null;
-
-  if (!isAdmin(session) && !inmobiliariaId) {
-    throw new PropertyRepoError("Missing inmobiliaria scope", 403);
-  }
-
-  const advisorId = data.advisorId ?? null;
+  let inmobiliariaId: string | null = null;
   if (advisorId) {
     const advisor = await getAdvisorIfValid(advisorId);
-
-    if (inmobiliariaId && advisor.inmobiliariaId !== inmobiliariaId) {
-      throw new PropertyRepoError(
-        "El asesor no pertenece a la inmobiliaria seleccionada.",
-        400,
-      );
-    }
-
-    if (!inmobiliariaId && advisor.inmobiliariaId) {
-      inmobiliariaId = advisor.inmobiliariaId;
-    }
+    inmobiliariaId = advisor.inmobiliariaId ?? null;
   }
 
   return {
     advisorId,
     inmobiliariaId,
-    isFeatured: data.isFeatured ?? false,
-    featuredOrder: data.featuredOrder ?? null,
+    isFeatured: isAdvisor(session)
+      ? current?.isFeatured ?? false
+      : data.isFeatured ?? false,
+    featuredOrder: isAdvisor(session)
+      ? current?.featuredOrder ?? null
+      : data.featuredOrder ?? null,
   };
 }
 
