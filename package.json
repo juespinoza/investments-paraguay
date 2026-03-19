@@ -12,7 +12,11 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
-    "bootstrap:admin": "node --env-file=.env scripts/bootstrap-admin.cjs"
+    "test:qa": "node --test tests/**/*.test.mjs",
+    "test:integration": "node --env-file=.env scripts/virtual-office-smoke.mjs",
+    "test:e2e": "node --env-file=.env ./node_modules/@playwright/test/cli.js test",
+    "bootstrap:admin": "node --env-file=.env scripts/bootstrap-admin.cjs",
+    "bootstrap:qa": "node --env-file=.env scripts/bootstrap-qa-users.cjs"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -41,6 +45,7 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22",
     "@types/react": "^19",

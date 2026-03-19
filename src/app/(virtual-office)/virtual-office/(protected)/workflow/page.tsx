@@ -1,14 +1,30 @@
 import { prisma } from "@/lib/prisma";
-import { requireAdminSession } from "@/lib/auth/users";
-import { listUserFormOptions } from "@/lib/auth/users";
-import {
-  PageHeader,
-  StatCard,
-} from "@/components/virtualoffice/Page";
+import { InlineAlert, PageHeader, StatCard } from "@/components/virtualoffice/Page";
+import { UserRepoError, listUserFormOptions, requireAdminSession } from "@/lib/auth/users";
 import { SuperAdminWizard } from "@/components/virtualoffice/workflow/SuperAdminWizard";
 
 export default async function SuperAdminWorkflowPage() {
-  await requireAdminSession();
+  try {
+    await requireAdminSession();
+  } catch (error) {
+    if (error instanceof UserRepoError && error.status === 403) {
+      return (
+        <div className="space-y-6">
+          <PageHeader
+            eyebrow="Workflow fuerte"
+            title="Super Admin"
+            description="Este flujo operativo está reservado para administradores."
+          />
+          <InlineAlert
+            type="error"
+            message="No tienes permisos para acceder al workflow de Super Admin."
+          />
+        </div>
+      );
+    }
+
+    throw error;
+  }
 
   const [inmobiliarias, advisors, properties, users, options] = await Promise.all([
     prisma.inmobiliaria.count({ where: { deletedAt: null } }),

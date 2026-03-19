@@ -24,6 +24,7 @@ import {
 import {
   listUserFormOptions,
   listUsers,
+  UserRepoError,
   requireAdminSession,
 } from "@/lib/auth/users";
 import {
@@ -53,7 +54,28 @@ type UsersPageProps = {
 };
 
 export default async function UsersPage({ searchParams }: UsersPageProps) {
-  await requireAdminSession();
+  try {
+    await requireAdminSession();
+  } catch (error) {
+    if (error instanceof UserRepoError && error.status === 403) {
+      return (
+        <div className="space-y-6">
+          <PageHeader
+            title="Usuarios"
+            description="Gestiona accesos a la Oficina virtual y define el rol de cada cuenta."
+            eyebrow="Administración de usuarios"
+          />
+          <InlineAlert
+            type="error"
+            message="No tienes permisos para ver esta sección."
+          />
+        </div>
+      );
+    }
+
+    throw error;
+  }
+
   const params = await searchParams;
 
   const [users, options] = await Promise.all([

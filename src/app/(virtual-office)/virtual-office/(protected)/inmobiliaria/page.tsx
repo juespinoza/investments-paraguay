@@ -18,6 +18,7 @@ import {
 } from "@/components/virtualoffice/Table";
 import {
   listInmobiliarias,
+  InmobiliariaRepoError,
   requireInmobiliariaRoles,
 } from "@/lib/virtualoffice/inmobiliarias";
 import {
@@ -30,7 +31,29 @@ type PageProps = {
 };
 
 export default async function Page({ searchParams }: PageProps) {
-  const session = await requireInmobiliariaRoles();
+  let session;
+  try {
+    session = await requireInmobiliariaRoles();
+  } catch (error) {
+    if (error instanceof InmobiliariaRepoError && error.status === 403) {
+      return (
+        <div className="space-y-6">
+          <PageHeader
+            eyebrow="Tenant management"
+            title="Inmobiliarias"
+            description="Gestiona la identidad del tenant, sus relaciones activas y el volumen operativo asociado."
+          />
+          <EmptyState
+            title="No tienes permisos para ver esta sección"
+            description="Esta vista está disponible solo para administradores e inmobiliarias."
+          />
+        </div>
+      );
+    }
+
+    throw error;
+  }
+
   const canCreate = canCreateInmobiliaria(session);
   const params = await searchParams;
   const q = params.q?.trim().toLowerCase() ?? "";
