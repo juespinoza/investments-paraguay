@@ -2,6 +2,13 @@ import "server-only";
 
 import { Role } from "@/generated/prisma";
 import type { SessionPayload } from "@/lib/data/types";
+import {
+  can as canV2,
+  scopeFor as scopeForV2,
+  type PermissionActionV2,
+  type PermissionResourceV2,
+  type PermissionScopeV2,
+} from "@/lib/auth/policy-v2";
 
 export type PermissionResource =
   | "users"
@@ -97,15 +104,37 @@ export function isBloguero(session: SessionPayload) {
   return session.role === Role.BLOGUERO;
 }
 
+// v2 policy exports
+export type { PermissionActionV2, PermissionResourceV2, PermissionScopeV2 };
+
+export function can(
+  session: SessionPayload,
+  resource: PermissionResourceV2,
+  action: PermissionActionV2,
+) {
+  return canV2(session, resource, action);
+}
+
+export function scopeFor(
+  session: SessionPayload,
+  resource: PermissionResourceV2,
+  action: PermissionActionV2,
+) {
+  return scopeForV2(session, resource, action);
+}
+
 export function canManageUsers(session: SessionPayload) {
+  // Legacy behavior preserved until phase 3 migration of users.
   return hasPermission(session, "users", "read");
 }
 
 export function canAccessInmobiliarias(session: SessionPayload) {
+  // Legacy facade preserved until inmobiliaria_core / inmobiliaria_landing split.
   return hasPermission(session, "inmobiliarias", "read");
 }
 
 export function canCreateInmobiliaria(session: SessionPayload) {
+  // Legacy behavior preserved for existing Super Admin workflow.
   return hasPermission(session, "inmobiliarias", "create");
 }
 
@@ -114,34 +143,42 @@ export function canManageInmobiliariaAssignments(session: SessionPayload) {
 }
 
 export function canAccessAdvisors(session: SessionPayload) {
+  // Legacy advisor access remains on advisor core + landing combined resource for now.
   return hasPermission(session, "advisors", "read");
 }
 
 export function canCreateAdvisor(session: SessionPayload) {
+  // Legacy behavior preserved until advisor_core / advisor_landing split.
   return hasPermission(session, "advisors", "create");
 }
 
 export function canEditAdvisor(session: SessionPayload) {
+  // Legacy behavior preserved until advisor_core / advisor_landing split.
   return hasPermission(session, "advisors", "update");
 }
 
 export function canDeleteAdvisor(session: SessionPayload) {
+  // Legacy behavior preserved until advisor_core / advisor_landing split.
   return hasPermission(session, "advisors", "delete");
 }
 
 export function canAccessProperties(session: SessionPayload) {
+  // Legacy behavior preserved until properties module is migrated to v2 scopes.
   return hasPermission(session, "properties", "read");
 }
 
 export function canCreateProperty(session: SessionPayload) {
+  // Legacy behavior preserved for P1 workflow; v2 matrix is not active here yet.
   return hasPermission(session, "properties", "create");
 }
 
 export function canEditProperty(session: SessionPayload) {
+  // Legacy behavior preserved until properties module migration.
   return hasPermission(session, "properties", "update");
 }
 
 export function canDeleteProperty(session: SessionPayload) {
+  // Legacy behavior preserved until properties module migration.
   return hasPermission(session, "properties", "delete");
 }
 
@@ -154,6 +191,7 @@ export function canManagePropertyFeatured(session: SessionPayload) {
 }
 
 export function canAccessBlog(session: SessionPayload) {
+  // Legacy behavior preserved until blogs migrate to owner_type / owner_id.
   return hasPermission(session, "blog", "read");
 }
 
