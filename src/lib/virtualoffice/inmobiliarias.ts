@@ -1,6 +1,6 @@
 import "server-only";
 
-import { Prisma, Role } from "@/generated/prisma";
+import { Role } from "@/generated/prisma";
 import { z } from "zod";
 import { hashPassword, normalizeEmail } from "@/lib/auth/user-bootstrap";
 import { prisma } from "@/lib/prisma";
@@ -17,6 +17,18 @@ import {
   countInmobiliariaDependencies,
   syncAdvisorTenantAssignments,
 } from "@/lib/virtualoffice/assignment-sync";
+import {
+  buildInmobiliariaCoreCreateData,
+  buildInmobiliariaCoreUpdateData,
+  InmobiliariaCoreSchema,
+  type InmobiliariaCoreInput,
+} from "@/lib/virtualoffice/inmobiliaria-core";
+import {
+  buildInmobiliariaLandingJson,
+  InmobiliariaLandingThemeSchema,
+  parseInmobiliariaLandingTheme,
+} from "@/lib/virtualoffice/inmobiliaria-landing";
+export { parseInmobiliariaLandingTheme } from "@/lib/virtualoffice/inmobiliaria-landing";
 
 export class InmobiliariaRepoError extends Error {
   status: number;
@@ -28,37 +40,12 @@ export class InmobiliariaRepoError extends Error {
   }
 }
 
-export const InmobiliariaLandingThemeSchema = z.object({
-  heroTitle: z.string().trim().nullable().optional(),
-  heroSubtitle: z.string().trim().nullable().optional(),
-  heroCtaLabel: z.string().trim().nullable().optional(),
-  heroCtaHref: z.string().trim().nullable().optional(),
-  heroBackgroundUrl: z.string().trim().nullable().optional(),
-  contactTitle: z.string().trim().nullable().optional(),
-  contactEmail: z.string().trim().nullable().optional(),
-  contactPhone: z.string().trim().nullable().optional(),
-  contactWhatsapp: z.string().trim().nullable().optional(),
-  contactWebsite: z.string().trim().nullable().optional(),
-  contactAddress: z.string().trim().nullable().optional(),
-  advisorsTitle: z.string().trim().nullable().optional(),
-  advisorsSubtitle: z.string().trim().nullable().optional(),
-  propertiesTitle: z.string().trim().nullable().optional(),
-  propertiesSubtitle: z.string().trim().nullable().optional(),
-  featuredPropertyIds: z.array(z.string().trim()).max(6).optional().default([]),
-});
-
 export const InmobiliariaSchema = z.object({
-  name: z.string().trim().min(2),
-  slug: z.string().trim().min(2),
-  description: z.string().trim().nullable().optional(),
-  logoUrl: z.string().trim().nullable().optional(),
+  ...InmobiliariaCoreSchema.shape,
   landing: InmobiliariaLandingThemeSchema.optional(),
 });
 
 export type InmobiliariaInput = z.output<typeof InmobiliariaSchema>;
-export type InmobiliariaLandingTheme = z.output<
-  typeof InmobiliariaLandingThemeSchema
->;
 
 export type InmobiliariaWorkflowUserInput = {
   email: string;
@@ -137,13 +124,6 @@ export async function listInmobiliarias() {
       },
     },
   });
-}
-
-export function parseInmobiliariaLandingTheme(
-  value: unknown,
-): InmobiliariaLandingTheme | null {
-  const parsed = InmobiliariaLandingThemeSchema.safeParse(value);
-  return parsed.success ? parsed.data : null;
 }
 
 async function validateFeaturedPropertyIds(
@@ -363,11 +343,8 @@ export async function createInmobiliaria(
     return await prisma.$transaction(async (tx) => {
       const inmobiliaria = await tx.inmobiliaria.create({
         data: {
-          name: input.name,
-          slug: input.slug,
-          description: input.description ?? null,
-          logoUrl: input.logoUrl ?? null,
-          themeJson: input.landing ?? Prisma.JsonNull,
+          ...buildInmobiliariaCoreCreateData(input as InmobiliariaCoreInput),
+          themeJson: buildInmobiliariaLandingJson(input.landing),
         },
         select: { id: true },
       });
@@ -427,16 +404,11 @@ export async function updateInmobiliaria(id: string, input: InmobiliariaInput) {
     return await prisma.inmobiliaria.update({
       where: { id },
       data: {
-        name: input.name,
-        slug: input.slug,
-        description: input.description ?? null,
-        logoUrl: input.logoUrl ?? null,
-        themeJson: input.landing
-          ? {
-              ...input.landing,
-              featuredPropertyIds,
-            }
-          : Prisma.JsonNull,
+        ...buildInmobiliariaCoreUpdateData(input as InmobiliariaCoreInput),
+        themeJson: buildInmobiliariaLandingJson(
+          input.landing,
+          featuredPropertyIds,
+        ),
       },
       select: { id: true },
     });

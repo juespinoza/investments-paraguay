@@ -17,6 +17,17 @@ import type { SessionPayload, PublicAdvisorLanding } from "@/lib/data/types";
 import { FormSchema } from "@/components/virtualoffice/advisors/schema";
 import type { z } from "zod";
 import { syncAdvisorTenantAssignments } from "@/lib/virtualoffice/assignment-sync";
+import {
+  buildAdvisorCoreCreateData,
+  buildAdvisorCoreUpdateData,
+} from "@/lib/virtualoffice/advisor-core";
+import {
+  buildAdvisorLandingCreateData,
+  buildAdvisorLandingUpdateData,
+  mapAdvisorLandingToFormData,
+  mapAdvisorToPublicLanding,
+  replaceAdvisorLandingCollections,
+} from "@/lib/virtualoffice/advisor-landing";
 
 export class AdvisorRepoError extends Error {
   status: number;
@@ -84,10 +95,6 @@ type AdvisorWithDetail = Prisma.AdvisorGetPayload<{
   include: typeof advisorDetailInclude;
 }>;
 
-type AdvisorWithPublicLanding = Prisma.AdvisorGetPayload<{
-  include: typeof publicAdvisorInclude;
-}>;
-
 function buildScopedWhere(session: SessionPayload) {
   const where: Prisma.AdvisorWhereInput = { deletedAt: null };
 
@@ -140,61 +147,6 @@ async function findScopedAdvisorOrThrow(session: SessionPayload, id: string) {
   return advisor;
 }
 
-async function replaceLandingCollections(
-  tx: Prisma.TransactionClient,
-  landingId: string,
-  data: AdvisorPayload["landing"],
-) {
-  await tx.landingAdvisorPropertyType.deleteMany({ where: { landingId } });
-  await tx.landingAdvisorClientType.deleteMany({ where: { landingId } });
-  await tx.landingAdvisorArea.deleteMany({ where: { landingId } });
-  await tx.landingAdvisorServiceItem.deleteMany({ where: { landingId } });
-  await tx.advisorTestimonial.deleteMany({ where: { landingId } });
-  await tx.advisorSocialLink.deleteMany({ where: { landingId } });
-  await tx.landingAdvisorFeaturedProperty.deleteMany({ where: { landingId } });
-
-  if (data.propertyTypes.length) {
-    await tx.landingAdvisorPropertyType.createMany({
-      data: data.propertyTypes.map((value) => ({ landingId, value })),
-    });
-  }
-  if (data.clientTypes.length) {
-    await tx.landingAdvisorClientType.createMany({
-      data: data.clientTypes.map((value) => ({ landingId, value })),
-    });
-  }
-  if (data.areas.length) {
-    await tx.landingAdvisorArea.createMany({
-      data: data.areas.map((value) => ({ landingId, value })),
-    });
-  }
-  if (data.serviceList.length) {
-    await tx.landingAdvisorServiceItem.createMany({
-      data: data.serviceList.map((value) => ({ landingId, value })),
-    });
-  }
-  if (data.testimonies.length) {
-    await tx.advisorTestimonial.createMany({
-      data: data.testimonies.map((item) => ({
-        landingId,
-        name: item.name,
-        text: item.text,
-      })),
-    });
-  }
-  if (data.socialMedia.length) {
-    await tx.advisorSocialLink.createMany({
-      data: data.socialMedia.map((item) => ({
-        landingId,
-        platform: item.platform,
-        label: item.label,
-        value: item.value,
-        href: item.href,
-      })),
-    });
-  }
-}
-
 async function validateFeaturedProperties(
   tx: Prisma.TransactionClient,
   propertyIds: string[],
@@ -236,106 +188,7 @@ function mapAdvisorToFormData(advisor: AdvisorWithDetail): AdvisorFormData {
     ctaLabel: advisor.ctaLabel ?? null,
     ctaHref: advisor.ctaHref ?? null,
     inmobiliariaId: advisor.inmobiliariaId ?? null,
-    landing: {
-      aboutImageUrl: advisor.landing?.aboutImageUrl ?? advisor.photoUrl ?? null,
-      aboutTitle: advisor.landing?.aboutTitle ?? "",
-      startDate: advisor.landing
-        ? new Date(advisor.landing.startDate).toISOString().slice(0, 10)
-        : "",
-      company: advisor.landing?.company ?? "",
-      aboutDescription: advisor.landing?.aboutDescription ?? null,
-      aboutParagraph1: advisor.landing?.aboutParagraph1 ?? "",
-      aboutParagraph2: advisor.landing?.aboutParagraph2 ?? "",
-      servicesParagraph1: advisor.landing?.servicesParagraph1 ?? "",
-      servicesParagraph2: advisor.landing?.servicesParagraph2 ?? "",
-      propertyTypes: advisor.landing?.propertyTypes.map((item) => item.value) ?? [],
-      clientTypes: advisor.landing?.clientTypes.map((item) => item.value) ?? [],
-      areas: advisor.landing?.areas.map((item) => item.value) ?? [],
-      serviceList: advisor.landing?.serviceList.map((item) => item.value) ?? [],
-      testimonies:
-        advisor.landing?.testimonies.map((item) => ({
-          name: item.name,
-          text: item.text,
-        })) ?? [],
-      socialMedia:
-        advisor.landing?.socialMedia.map((item) => ({
-          platform: item.platform,
-          label: item.label,
-          value: item.value,
-          href: item.href,
-        })) ?? [],
-      featuredPropertyIds:
-        advisor.landing?.featuredProperties.map((item) => item.propertyId) ?? [],
-    },
-  };
-}
-
-function calculateYearsExperience(startDate: Date) {
-  const now = new Date();
-  let years = now.getUTCFullYear() - startDate.getUTCFullYear();
-  const monthDelta = now.getUTCMonth() - startDate.getUTCMonth();
-  const dayDelta = now.getUTCDate() - startDate.getUTCDate();
-
-  if (monthDelta < 0 || (monthDelta === 0 && dayDelta < 0)) {
-    years -= 1;
-  }
-
-  return Math.max(0, years);
-}
-
-function mapAdvisorToPublicLanding(
-  advisor: AdvisorWithPublicLanding,
-): PublicAdvisorLanding {
-  if (!advisor.landing) {
-    throw new AdvisorRepoError("Asesor no encontrado", 404);
-  }
-
-  return {
-    slug: advisor.slug,
-    fullName: advisor.fullName,
-    headline: advisor.headline ?? null,
-    heroBgUrl: advisor.heroBgUrl ?? null,
-    ctaLabel: advisor.ctaLabel ?? null,
-    ctaHref: advisor.ctaHref ?? null,
-    about: {
-      imageUrl: advisor.landing.aboutImageUrl || advisor.photoUrl || "",
-      title: advisor.landing.aboutTitle,
-      startDate: advisor.landing.startDate.toISOString(),
-      companyName: advisor.landing.company,
-      description: advisor.landing.aboutDescription ?? null,
-      paragraphs: [
-        advisor.landing.aboutParagraph1,
-        advisor.landing.aboutParagraph2,
-      ],
-      yearsExperience: calculateYearsExperience(advisor.landing.startDate),
-    },
-    services: {
-      propertyTypes: advisor.landing.propertyTypes.map((item) => item.value),
-      clientTypes: advisor.landing.clientTypes.map((item) => item.value),
-      areas: advisor.landing.areas.map((item) => item.value),
-      serviceList: advisor.landing.serviceList.map((item) => item.value),
-      paragraphs: [
-        advisor.landing.servicesParagraph1,
-        advisor.landing.servicesParagraph2,
-      ],
-    },
-    featuredProperties: advisor.landing.featuredProperties.map((item) => ({
-      slug: item.property.slug,
-      title: item.property.title,
-      coverImageUrl: item.property.coverImageUrl ?? null,
-      priceUsd: item.property.priceUsd ?? null,
-      city: item.property.city ?? null,
-    })),
-    testimonies: advisor.landing.testimonies.map((item) => ({
-      name: item.name,
-      text: item.text,
-    })),
-    socialMedia: advisor.landing.socialMedia.map((item) => ({
-      label: item.label,
-      value: item.value,
-      href: item.href,
-      platform: item.platform,
-    })),
+    landing: mapAdvisorLandingToFormData(advisor),
   };
 }
 
@@ -555,15 +408,15 @@ export async function createAdvisor(
   try {
     const created = await prisma.$transaction(async (tx) => {
       const advisor = await tx.advisor.create({
-        data: {
+        data: buildAdvisorCoreCreateData({
           fullName: data.fullName,
           slug: data.slug,
-          headline: data.headline ?? null,
-          heroBgUrl: data.heroBgUrl ?? null,
-          ctaLabel: data.ctaLabel ?? "Contactar",
-          ctaHref: data.ctaHref ?? "#",
+          headline: data.headline,
+          heroBgUrl: data.heroBgUrl,
+          ctaLabel: data.ctaLabel,
+          ctaHref: data.ctaHref,
           inmobiliariaId,
-        },
+        }),
         select: {
           id: true,
           fullName: true,
@@ -579,20 +432,12 @@ export async function createAdvisor(
       const landing = await tx.landingAdvisor.create({
         data: {
           advisorId: advisor.id,
-          aboutImageUrl: data.landing.aboutImageUrl ?? "",
-          aboutTitle: data.landing.aboutTitle,
-          startDate: new Date(data.landing.startDate),
-          company: data.landing.company,
-          aboutDescription: data.landing.aboutDescription ?? null,
-          aboutParagraph1: data.landing.aboutParagraph1,
-          aboutParagraph2: data.landing.aboutParagraph2,
-          servicesParagraph1: data.landing.servicesParagraph1,
-          servicesParagraph2: data.landing.servicesParagraph2,
+          ...buildAdvisorLandingCreateData(data.landing),
         },
         select: { id: true },
       });
 
-      await replaceLandingCollections(tx, landing.id, data.landing);
+      await replaceAdvisorLandingCollections(tx, landing.id, data.landing);
 
       const featuredIds = await validateFeaturedProperties(
         tx,
@@ -649,15 +494,15 @@ export async function updateAdvisor(
     const updated = await prisma.$transaction(async (tx) => {
       const advisor = await tx.advisor.update({
         where: { id },
-        data: {
+        data: buildAdvisorCoreUpdateData({
           fullName: data.fullName,
           slug: data.slug,
-          headline: data.headline ?? null,
-          heroBgUrl: data.heroBgUrl ?? null,
-          ctaLabel: data.ctaLabel ?? null,
-          ctaHref: data.ctaHref ?? null,
+          headline: data.headline,
+          heroBgUrl: data.heroBgUrl,
+          ctaLabel: data.ctaLabel,
+          ctaHref: data.ctaHref,
           inmobiliariaId,
-        },
+        }),
         select: {
           id: true,
           fullName: true,
@@ -676,31 +521,13 @@ export async function updateAdvisor(
         where: { advisorId: id },
         create: {
           advisorId: id,
-          aboutImageUrl: data.landing.aboutImageUrl ?? "",
-          aboutTitle: data.landing.aboutTitle,
-          startDate: new Date(data.landing.startDate),
-          company: data.landing.company,
-          aboutDescription: data.landing.aboutDescription ?? null,
-          aboutParagraph1: data.landing.aboutParagraph1,
-          aboutParagraph2: data.landing.aboutParagraph2,
-          servicesParagraph1: data.landing.servicesParagraph1,
-          servicesParagraph2: data.landing.servicesParagraph2,
+          ...buildAdvisorLandingCreateData(data.landing),
         },
-        update: {
-          aboutImageUrl: data.landing.aboutImageUrl ?? "",
-          aboutTitle: data.landing.aboutTitle,
-          startDate: new Date(data.landing.startDate),
-          company: data.landing.company,
-          aboutDescription: data.landing.aboutDescription ?? null,
-          aboutParagraph1: data.landing.aboutParagraph1,
-          aboutParagraph2: data.landing.aboutParagraph2,
-          servicesParagraph1: data.landing.servicesParagraph1,
-          servicesParagraph2: data.landing.servicesParagraph2,
-        },
+        update: buildAdvisorLandingUpdateData(data.landing),
         select: { id: true },
       });
 
-      await replaceLandingCollections(tx, landing.id, data.landing);
+      await replaceAdvisorLandingCollections(tx, landing.id, data.landing);
 
       const featuredIds = await validateFeaturedProperties(
         tx,
