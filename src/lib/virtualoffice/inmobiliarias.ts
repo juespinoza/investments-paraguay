@@ -3,13 +3,12 @@ import "server-only";
 import { Role } from "@/generated/prisma";
 import { z } from "zod";
 import { hashPassword, normalizeEmail } from "@/lib/auth/user-bootstrap";
+import { can, scopeFor } from "@/lib/auth/permissions";
 import { prisma } from "@/lib/prisma";
 import {
-  canAccessInmobiliarias,
   canCreateInmobiliaria,
   canManageInmobiliariaAssignments,
   isAdmin,
-  isInmobiliaria,
 } from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import type { SessionPayload } from "@/lib/data/types";
@@ -46,6 +45,9 @@ export const InmobiliariaSchema = z.object({
 });
 
 export type InmobiliariaInput = z.output<typeof InmobiliariaSchema>;
+export type InmobiliariaLandingInput = z.output<
+  typeof InmobiliariaLandingThemeSchema
+>;
 
 export type InmobiliariaWorkflowUserInput = {
   email: string;
@@ -56,10 +58,33 @@ export type InmobiliariaWorkflowUserInput = {
 export async function requireInmobiliariaRoles() {
   const session = await requireSession();
 
-  if (!canAccessInmobiliarias(session)) {
+  if (
+    !can(session, "inmobiliaria_core", "read") &&
+    !can(session, "inmobiliaria_landing", "read")
+  ) {
     throw new InmobiliariaRepoError("Forbidden", 403);
   }
 
+  return session;
+}
+
+async function requireInmobiliariaCoreSession(
+  action: "read" | "update" | "delete_soft",
+) {
+  const session = await requireSession();
+  if (!can(session, "inmobiliaria_core", action)) {
+    throw new InmobiliariaRepoError("Forbidden", 403);
+  }
+  return session;
+}
+
+async function requireInmobiliariaLandingSession(
+  action: "read" | "update" | "delete_soft",
+) {
+  const session = await requireSession();
+  if (!can(session, "inmobiliaria_landing", action)) {
+    throw new InmobiliariaRepoError("Forbidden", 403);
+  }
   return session;
 }
 
@@ -89,23 +114,29 @@ async function assertInmobiliariaExists(id: string) {
   return agency;
 }
 
-async function assertInmobiliariaScope(session: SessionPayload, id: string) {
+async function assertScopedInmobiliariaAccess(
+  session: SessionPayload,
+  resource: "inmobiliaria_core" | "inmobiliaria_landing",
+  action: "read" | "update" | "delete_soft",
+  id: string,
+) {
   const agency = await assertInmobiliariaExists(id);
+  const scope = scopeFor(session, resource, action);
 
-  if (isInmobiliaria(session) && session.inmobiliariaId !== id) {
-    throw new InmobiliariaRepoError("Forbidden", 403);
-  }
+  if (scope === "all") return agency;
+  if (scope === "own" && session.inmobiliariaId === id) return agency;
 
-  return agency;
+  throw new InmobiliariaRepoError("Forbidden", 403);
 }
 
 export async function listInmobiliarias() {
-  const session = await requireInmobiliariaRoles();
+  const session = await requireInmobiliariaCoreSession("read");
+  const scope = scopeFor(session, "inmobiliaria_core", "read");
 
   return prisma.inmobiliaria.findMany({
     where: {
       deletedAt: null,
-      ...(isAdmin(session) ? {} : { id: session.inmobiliariaId ?? "__none__" }),
+      ...(scope === "all" ? {} : { id: session.inmobiliariaId ?? "__none__" }),
     },
     orderBy: { updatedAt: "desc" },
     select: {
@@ -153,8 +184,8 @@ async function validateFeaturedPropertyIds(
 }
 
 export async function getInmobiliariaById(id: string) {
-  const session = await requireInmobiliariaRoles();
-  await assertInmobiliariaScope(session, id);
+  const session = await requireInmobiliariaCoreSession("read");
+  await assertScopedInmobiliariaAccess(session, "inmobiliaria_core", "read", id);
 
   const inmobiliaria = await prisma.inmobiliaria.findUnique({
     where: { id },
@@ -393,22 +424,62 @@ export async function createInmobiliaria(
 }
 
 export async function updateInmobiliaria(id: string, input: InmobiliariaInput) {
-  const session = await requireInmobiliariaRoles();
-  await assertInmobiliariaScope(session, id);
+  await updateInmobiliariaCore(id, input as InmobiliariaCoreInput);
+  return updateInmobiliariaLanding(id, input.landing);
+}
+
+export async function updateInmobiliariaCore(
+  id: string,
+  input: InmobiliariaCoreInput,
+) {
+  const session = await requireInmobiliariaCoreSession("update");
+  await assertScopedInmobiliariaAccess(
+    session,
+    "inmobiliaria_core",
+    "update",
+    id,
+  );
+
+  try {
+    return await prisma.inmobiliaria.update({
+      where: { id },
+      data: buildInmobiliariaCoreUpdateData(input),
+      select: { id: true },
+    });
+  } catch (error: unknown) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "P2002"
+    ) {
+      throw new InmobiliariaRepoError("El slug ya existe.", 409);
+    }
+    throw error;
+  }
+}
+
+export async function updateInmobiliariaLanding(
+  id: string,
+  input?: InmobiliariaLandingInput,
+) {
+  const session = await requireInmobiliariaLandingSession("update");
+  await assertScopedInmobiliariaAccess(
+    session,
+    "inmobiliaria_landing",
+    "update",
+    id,
+  );
   const featuredPropertyIds = await validateFeaturedPropertyIds(
     id,
-    input.landing?.featuredPropertyIds,
+    input?.featuredPropertyIds,
   );
 
   try {
     return await prisma.inmobiliaria.update({
       where: { id },
       data: {
-        ...buildInmobiliariaCoreUpdateData(input as InmobiliariaCoreInput),
-        themeJson: buildInmobiliariaLandingJson(
-          input.landing,
-          featuredPropertyIds,
-        ),
+        themeJson: buildInmobiliariaLandingJson(input, featuredPropertyIds),
       },
       select: { id: true },
     });
@@ -426,7 +497,7 @@ export async function updateInmobiliaria(id: string, input: InmobiliariaInput) {
 }
 
 export async function softDeleteInmobiliaria(id: string) {
-  const session = await requireInmobiliariaRoles();
+  const session = await requireInmobiliariaCoreSession("delete_soft");
   if (!isAdmin(session)) {
     throw new InmobiliariaRepoError(
       "Solo un admin puede desactivar inmobiliarias.",
@@ -434,7 +505,12 @@ export async function softDeleteInmobiliaria(id: string) {
     );
   }
 
-  await assertInmobiliariaScope(session, id);
+  await assertScopedInmobiliariaAccess(
+    session,
+    "inmobiliaria_core",
+    "delete_soft",
+    id,
+  );
 
   const dependencies = await countInmobiliariaDependencies(prisma, id);
   if (

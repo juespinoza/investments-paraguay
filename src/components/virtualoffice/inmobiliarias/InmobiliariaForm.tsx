@@ -94,6 +94,7 @@ function Field({
 
 export function InmobiliariaForm({
   mode,
+  section = "full",
   inmobiliariaId,
   initialData,
   allowUserBootstrap = false,
@@ -102,6 +103,7 @@ export function InmobiliariaForm({
   onSuccess,
 }: {
   mode: "create" | "edit";
+  section?: "full" | "core" | "landing";
   inmobiliariaId?: string;
   initialData?: Partial<FormValues>;
   allowUserBootstrap?: boolean;
@@ -122,6 +124,23 @@ export function InmobiliariaForm({
   const [error, setError] = useState<string | null>(null);
 
   const isDirty = JSON.stringify(values) !== JSON.stringify(initialValues);
+  const showCore = section !== "landing";
+  const showLanding = section !== "core";
+  const isFull = section === "full";
+  const formTitle =
+    mode === "create"
+      ? "Nueva inmobiliaria"
+      : section === "core"
+        ? "Datos operativos del tenant"
+        : section === "landing"
+          ? "Landing pública"
+          : "Editar inmobiliaria";
+  const formDescription =
+    section === "core"
+      ? "Nombre, slug y presentación base de la entidad operativa."
+      : section === "landing"
+        ? "Hero, contacto, destacados y contenido visible al público."
+        : "Identidad pública y estructura base del tenant.";
 
   const update = (key: keyof FormValues, value: FormValues[keyof FormValues]) =>
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -148,38 +167,70 @@ export function InmobiliariaForm({
       const res = await fetch(endpoint, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: values.name.trim(),
-          slug: values.slug.trim(),
-          description: values.description.trim() || null,
-          logoUrl: values.logoUrl.trim() || null,
-          landing: {
-            heroTitle: values.heroTitle.trim() || null,
-            heroSubtitle: values.heroSubtitle.trim() || null,
-            heroCtaLabel: values.heroCtaLabel.trim() || null,
-            heroCtaHref: values.heroCtaHref.trim() || null,
-            heroBackgroundUrl: values.heroBackgroundUrl.trim() || null,
-            contactTitle: values.contactTitle.trim() || null,
-            contactEmail: values.contactEmail.trim() || null,
-            contactPhone: values.contactPhone.trim() || null,
-            contactWhatsapp: values.contactWhatsapp.trim() || null,
-            contactWebsite: values.contactWebsite.trim() || null,
-            contactAddress: values.contactAddress.trim() || null,
-            advisorsTitle: values.advisorsTitle.trim() || null,
-            advisorsSubtitle: values.advisorsSubtitle.trim() || null,
-            propertiesTitle: values.propertiesTitle.trim() || null,
-            propertiesSubtitle: values.propertiesSubtitle.trim() || null,
-            featuredPropertyIds: values.featuredPropertyIds,
-          },
-          user:
-            mode === "create" && allowUserBootstrap && values.createUser
+        body: JSON.stringify(
+          isFull
+            ? {
+                name: values.name.trim(),
+                slug: values.slug.trim(),
+                description: values.description.trim() || null,
+                logoUrl: values.logoUrl.trim() || null,
+                landing: {
+                  heroTitle: values.heroTitle.trim() || null,
+                  heroSubtitle: values.heroSubtitle.trim() || null,
+                  heroCtaLabel: values.heroCtaLabel.trim() || null,
+                  heroCtaHref: values.heroCtaHref.trim() || null,
+                  heroBackgroundUrl: values.heroBackgroundUrl.trim() || null,
+                  contactTitle: values.contactTitle.trim() || null,
+                  contactEmail: values.contactEmail.trim() || null,
+                  contactPhone: values.contactPhone.trim() || null,
+                  contactWhatsapp: values.contactWhatsapp.trim() || null,
+                  contactWebsite: values.contactWebsite.trim() || null,
+                  contactAddress: values.contactAddress.trim() || null,
+                  advisorsTitle: values.advisorsTitle.trim() || null,
+                  advisorsSubtitle: values.advisorsSubtitle.trim() || null,
+                  propertiesTitle: values.propertiesTitle.trim() || null,
+                  propertiesSubtitle: values.propertiesSubtitle.trim() || null,
+                  featuredPropertyIds: values.featuredPropertyIds,
+                },
+                user:
+                  mode === "create" && allowUserBootstrap && values.createUser
+                    ? {
+                        name: values.userName.trim() || null,
+                        email: values.userEmail.trim(),
+                        password: values.userPassword,
+                      }
+                    : undefined,
+              }
+            : section === "core"
               ? {
-                  name: values.userName.trim() || null,
-                  email: values.userEmail.trim(),
-                  password: values.userPassword,
+                  mode: "core",
+                  name: values.name.trim(),
+                  slug: values.slug.trim(),
+                  description: values.description.trim() || null,
+                  logoUrl: values.logoUrl.trim() || null,
                 }
-              : undefined,
-        }),
+              : {
+                  mode: "landing",
+                  landing: {
+                    heroTitle: values.heroTitle.trim() || null,
+                    heroSubtitle: values.heroSubtitle.trim() || null,
+                    heroCtaLabel: values.heroCtaLabel.trim() || null,
+                    heroCtaHref: values.heroCtaHref.trim() || null,
+                    heroBackgroundUrl: values.heroBackgroundUrl.trim() || null,
+                    contactTitle: values.contactTitle.trim() || null,
+                    contactEmail: values.contactEmail.trim() || null,
+                    contactPhone: values.contactPhone.trim() || null,
+                    contactWhatsapp: values.contactWhatsapp.trim() || null,
+                    contactWebsite: values.contactWebsite.trim() || null,
+                    contactAddress: values.contactAddress.trim() || null,
+                    advisorsTitle: values.advisorsTitle.trim() || null,
+                    advisorsSubtitle: values.advisorsSubtitle.trim() || null,
+                    propertiesTitle: values.propertiesTitle.trim() || null,
+                    propertiesSubtitle: values.propertiesSubtitle.trim() || null,
+                    featuredPropertyIds: values.featuredPropertyIds,
+                  },
+                },
+        ),
       });
 
       const data = await res.json().catch(() => ({}));
@@ -194,7 +245,13 @@ export function InmobiliariaForm({
         router.push(
           mode === "create"
             ? `/virtual-office/inmobiliaria/${data.id}/edit?status=created`
-            : "/virtual-office/inmobiliaria",
+            : `/virtual-office/inmobiliaria/${inmobiliariaId}/edit?status=${
+                section === "core"
+                  ? "core-updated"
+                  : section === "landing"
+                    ? "landing-updated"
+                    : "updated"
+              }`,
         );
         router.refresh();
       }
@@ -209,10 +266,10 @@ export function InmobiliariaForm({
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-lg font-semibold text-zinc-950">
-              {mode === "create" ? "Nueva inmobiliaria" : "Editar inmobiliaria"}
+              {formTitle}
             </h2>
             <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-zinc-600">
-              <span>Identidad pública y estructura base del tenant.</span>
+              <span>{formDescription}</span>
               {isDirty ? <Badge tone="warning">Cambios sin guardar</Badge> : null}
             </div>
           </div>
@@ -225,13 +282,18 @@ export function InmobiliariaForm({
               ? "Guardando..."
               : mode === "create"
                 ? "Crear inmobiliaria"
-                : "Guardar cambios"}
+                : section === "core"
+                  ? "Guardar datos operativos"
+                  : section === "landing"
+                    ? "Guardar landing"
+                    : "Guardar cambios"}
           </button>
         </div>
       </div>
 
       {error ? <InlineAlert type="error" message={error} /> : null}
 
+      {showCore ? (
       <FormSection
         title="Identidad"
         description="Configura el nombre visible y el slug que servirá como base pública del tenant."
@@ -262,7 +324,9 @@ export function InmobiliariaForm({
           </Field>
         </div>
       </FormSection>
+      ) : null}
 
+      {showCore ? (
       <FormSection
         title="Presentación"
         description="Estos campos ayudan a que la inmobiliaria se entienda rápido cuando se vea desde el panel o el sitio."
@@ -287,7 +351,9 @@ export function InmobiliariaForm({
           </Field>
         </div>
       </FormSection>
+      ) : null}
 
+      {showLanding ? (
       <FormSection
         title="Landing pública"
         description="Controla el mensaje principal y los títulos visibles en la página pública de la inmobiliaria."
@@ -381,7 +447,9 @@ export function InmobiliariaForm({
           </div>
         </div>
       </FormSection>
+      ) : null}
 
+      {showLanding ? (
       <FormSection
         title="Contacto público"
         description="Estos datos se mostrarán al público para facilitar consultas comerciales y coordinación de visitas."
@@ -442,8 +510,9 @@ export function InmobiliariaForm({
           </Field>
         </div>
       </FormSection>
+      ) : null}
 
-      {mode === "edit" ? (
+      {showLanding && mode === "edit" ? (
         <FormSection
           title="Propiedades destacadas"
           description="Selecciona hasta 6 propiedades activas del tenant para priorizarlas en la landing pública."
@@ -484,7 +553,7 @@ export function InmobiliariaForm({
         </FormSection>
       ) : null}
 
-      {mode === "create" && allowUserBootstrap ? (
+      {isFull && mode === "create" && allowUserBootstrap ? (
         <FormSection
           title="Usuario inicial"
           description="Opcionalmente crea en el mismo paso la cuenta operativa de la inmobiliaria."

@@ -31,6 +31,12 @@ function renderStatus(status?: string) {
   switch (status) {
     case "created":
       return "Inmobiliaria creada correctamente.";
+    case "core-updated":
+      return "Datos operativos actualizados correctamente.";
+    case "landing-updated":
+      return "Landing pública actualizada correctamente.";
+    case "updated":
+      return "Inmobiliaria actualizada correctamente.";
     case "user-assigned":
       return "Usuario vinculado correctamente.";
     case "user-unassigned":
@@ -155,12 +161,25 @@ export default async function EditInmobiliariaPage({
         <CardBody>
           <InmobiliariaForm
             mode="edit"
+            section="core"
             inmobiliariaId={id}
             initialData={{
               name: inmobiliaria.name,
               slug: inmobiliaria.slug,
               description: inmobiliaria.description ?? "",
               logoUrl: inmobiliaria.logoUrl ?? "",
+            }}
+          />
+        </CardBody>
+      </Card>
+
+      <Card>
+        <CardBody>
+          <InmobiliariaForm
+            mode="edit"
+            section="landing"
+            inmobiliariaId={id}
+            initialData={{
               heroTitle: inmobiliaria.landingTheme?.heroTitle ?? "",
               heroSubtitle: inmobiliaria.landingTheme?.heroSubtitle ?? "",
               heroCtaLabel: inmobiliaria.landingTheme?.heroCtaLabel ?? "",
