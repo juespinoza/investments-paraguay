@@ -14,6 +14,7 @@ export default async function EditAdvisorPage({ params }: PageProps) {
   const session = await requireSession();
   const isAdminUser = isAdmin(session);
   const isAdvisorSelf = isAdvisor(session) && session.advisorId === id;
+  const canEditLanding = isAdminUser || isAdvisorSelf;
   const options = isAdminUser ? await listUserFormOptions() : null;
 
   const advisor = await getAdvisorById(id);
@@ -43,6 +44,7 @@ export default async function EditAdvisorPage({ params }: PageProps) {
           <AdvisorForm
             mode="edit"
             advisorId={id}
+            section="core"
             initialData={advisor}
             canEditInmobiliariaId={isAdminUser}
             inmobiliariaOptions={
@@ -51,9 +53,26 @@ export default async function EditAdvisorPage({ params }: PageProps) {
                 label: item.name,
               })) ?? []
             }
+            showDeleteButton={!isAdvisorSelf}
           />
         </CardBody>
       </Card>
+
+      {canEditLanding ? (
+        <Card>
+          <CardBody>
+            <AdvisorForm
+              mode="edit"
+              advisorId={id}
+              section="landing"
+              initialData={advisor}
+              canEditInmobiliariaId={false}
+              inmobiliariaOptions={[]}
+              showDeleteButton={false}
+            />
+          </CardBody>
+        </Card>
+      ) : null}
     </div>
   );
 }

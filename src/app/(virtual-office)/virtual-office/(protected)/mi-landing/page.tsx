@@ -38,9 +38,11 @@ export default async function AdvisorSelfServiceLandingPage() {
           <AdvisorForm
             mode="edit"
             advisorId={session.advisorId}
+            section="landing"
             initialData={advisor}
             canEditInmobiliariaId={false}
             inmobiliariaOptions={[]}
+            showDeleteButton={false}
           />
         </CardBody>
       </Card>

@@ -8,6 +8,7 @@ import {
   canCreateAdvisor,
   canDeleteAdvisor,
   canEditAdvisor,
+  can,
   isAdmin,
   isAdvisor,
   isInmobiliaria,
@@ -95,6 +96,38 @@ type AdvisorWithDetail = Prisma.AdvisorGetPayload<{
   include: typeof advisorDetailInclude;
 }>;
 
+function getAdvisorScopeWhere(
+  session: SessionPayload,
+  resource: "advisor_core" | "advisor_landing",
+  action: "read" | "update",
+) {
+  const where: Prisma.AdvisorWhereInput = { deletedAt: null };
+
+  if (!can(session, resource, action)) {
+    throw new AdvisorRepoError("Forbidden", 403);
+  }
+
+  if (isAdmin(session)) return where;
+
+  if (resource === "advisor_core" && isInmobiliaria(session)) {
+    if (!session.inmobiliariaId) {
+      throw new AdvisorRepoError("Missing inmobiliaria scope", 403);
+    }
+    where.inmobiliariaId = session.inmobiliariaId;
+    return where;
+  }
+
+  if (isAdvisor(session)) {
+    if (!session.advisorId) {
+      throw new AdvisorRepoError("Missing advisor scope", 403);
+    }
+    where.id = session.advisorId;
+    return where;
+  }
+
+  throw new AdvisorRepoError("Forbidden", 403);
+}
+
 function buildScopedWhere(session: SessionPayload) {
   const where: Prisma.AdvisorWhereInput = { deletedAt: null };
 
@@ -126,6 +159,22 @@ function buildScopedWhere(session: SessionPayload) {
 async function requireAdvisorEditorSession() {
   const session = await requireSession();
   if (!canEditAdvisor(session)) {
+    throw new AdvisorRepoError("Forbidden", 403);
+  }
+  return session;
+}
+
+async function requireAdvisorCoreSession(action: "read" | "update") {
+  const session = await requireSession();
+  if (!can(session, "advisor_core", action)) {
+    throw new AdvisorRepoError("Forbidden", 403);
+  }
+  return session;
+}
+
+async function requireAdvisorLandingSession(action: "read" | "update") {
+  const session = await requireSession();
+  if (!can(session, "advisor_landing", action)) {
     throw new AdvisorRepoError("Forbidden", 403);
   }
   return session;
@@ -192,6 +241,36 @@ function mapAdvisorToFormData(advisor: AdvisorWithDetail): AdvisorFormData {
   };
 }
 
+function mapAdvisorCoreToFormData(advisor: AdvisorWithDetail): AdvisorFormData {
+  return {
+    fullName: advisor.fullName,
+    slug: advisor.slug,
+    headline: advisor.headline ?? null,
+    heroBgUrl: advisor.heroBgUrl ?? null,
+    ctaLabel: advisor.ctaLabel ?? null,
+    ctaHref: advisor.ctaHref ?? null,
+    inmobiliariaId: advisor.inmobiliariaId ?? null,
+    landing: {
+      aboutImageUrl: null,
+      aboutTitle: "",
+      startDate: "",
+      company: "",
+      aboutDescription: null,
+      aboutParagraph1: "",
+      aboutParagraph2: "",
+      servicesParagraph1: "",
+      servicesParagraph2: "",
+      propertyTypes: [],
+      clientTypes: [],
+      areas: [],
+      serviceList: [],
+      testimonies: [],
+      socialMedia: [],
+      featuredPropertyIds: [],
+    },
+  };
+}
+
 function normalizeRepoError(error: unknown): never {
   if (error instanceof AdvisorRepoError) throw error;
 
@@ -249,10 +328,20 @@ export async function listAdvisors(params?: {
 }
 
 export async function getAdvisorById(id: string): Promise<AdvisorFormData | null> {
-  const session = await requireSession();
+  const session = await requireAdvisorCoreSession("read");
 
   try {
-    await findScopedAdvisorOrThrow(session, id);
+    const scopedAdvisor = await prisma.advisor.findFirst({
+      where: {
+        id,
+        ...getAdvisorScopeWhere(session, "advisor_core", "read"),
+      },
+      select: { id: true },
+    });
+
+    if (!scopedAdvisor) {
+      return null;
+    }
 
     const advisor = await prisma.advisor.findUnique({
       where: { id },
@@ -263,7 +352,9 @@ export async function getAdvisorById(id: string): Promise<AdvisorFormData | null
       return null;
     }
 
-    return mapAdvisorToFormData(advisor);
+    return can(session, "advisor_landing", "read")
+      ? mapAdvisorToFormData(advisor)
+      : mapAdvisorCoreToFormData(advisor);
   } catch (error) {
     if (error instanceof AdvisorRepoError && error.status === 404) {
       return null;
@@ -483,12 +574,50 @@ export async function updateAdvisor(
   id: string,
   data: AdvisorPayload,
 ): Promise<Advisor> {
-  const session = await requireAdvisorEditorSession();
-  const scopedAdvisor = await findScopedAdvisorOrThrow(session, id);
+  await updateAdvisorCore(id, {
+    fullName: data.fullName,
+    slug: data.slug,
+    headline: data.headline,
+    heroBgUrl: data.heroBgUrl,
+    ctaLabel: data.ctaLabel,
+    ctaHref: data.ctaHref,
+    inmobiliariaId: data.inmobiliariaId ?? null,
+  });
+
+  return updateAdvisorLanding(id, data.landing);
+}
+
+export async function updateAdvisorCore(
+  id: string,
+  data: {
+    fullName: string;
+    slug: string;
+    headline?: string | null;
+    heroBgUrl?: string | null;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+    inmobiliariaId?: string | null;
+  },
+): Promise<Advisor> {
+  const session = await requireAdvisorCoreSession("update");
+  const scopedAdvisor = await prisma.advisor.findFirst({
+    where: {
+      id,
+      ...getAdvisorScopeWhere(session, "advisor_core", "update"),
+    },
+    select: { id: true, inmobiliariaId: true },
+  });
+
+  if (!scopedAdvisor) {
+    throw new AdvisorRepoError("Asesor no encontrado", 404);
+  }
+
   const inmobiliariaId =
     isAdmin(session)
       ? data.inmobiliariaId ?? scopedAdvisor.inmobiliariaId ?? null
-      : session.inmobiliariaId ?? null;
+      : isInmobiliaria(session)
+        ? session.inmobiliariaId ?? null
+        : scopedAdvisor.inmobiliariaId ?? null;
 
   try {
     const updated = await prisma.$transaction(async (tx) => {
@@ -517,21 +646,65 @@ export async function updateAdvisor(
 
       await syncAdvisorTenantAssignments(tx, id, inmobiliariaId);
 
+      return advisor;
+    });
+
+    return updated;
+  } catch (error) {
+    normalizeRepoError(error);
+  }
+}
+
+export async function updateAdvisorLanding(
+  id: string,
+  data: AdvisorPayload["landing"],
+): Promise<Advisor> {
+  const session = await requireAdvisorLandingSession("update");
+  const scopedAdvisor = await prisma.advisor.findFirst({
+    where: {
+      id,
+      ...getAdvisorScopeWhere(session, "advisor_landing", "update"),
+    },
+    select: { id: true, inmobiliariaId: true },
+  });
+
+  if (!scopedAdvisor) {
+    throw new AdvisorRepoError("Asesor no encontrado", 404);
+  }
+
+  const inmobiliariaId = scopedAdvisor.inmobiliariaId ?? null;
+
+  try {
+    const updated = await prisma.$transaction(async (tx) => {
+      const advisor = await tx.advisor.findUniqueOrThrow({
+        where: { id },
+        select: {
+          id: true,
+          fullName: true,
+          slug: true,
+          phone: true,
+          whatsapp: true,
+          instagram: true,
+          headline: true,
+          createdAt: true,
+        },
+      });
+
       const landing = await tx.landingAdvisor.upsert({
         where: { advisorId: id },
         create: {
           advisorId: id,
-          ...buildAdvisorLandingCreateData(data.landing),
+          ...buildAdvisorLandingCreateData(data),
         },
-        update: buildAdvisorLandingUpdateData(data.landing),
+        update: buildAdvisorLandingUpdateData(data),
         select: { id: true },
       });
 
-      await replaceAdvisorLandingCollections(tx, landing.id, data.landing);
+      await replaceAdvisorLandingCollections(tx, landing.id, data);
 
       const featuredIds = await validateFeaturedProperties(
         tx,
-        data.landing.featuredPropertyIds,
+        data.featuredPropertyIds,
         session,
         inmobiliariaId,
       );

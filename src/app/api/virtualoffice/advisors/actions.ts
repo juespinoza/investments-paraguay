@@ -1,11 +1,17 @@
 "use server";
-import { FormSchema } from "@/components/virtualoffice/advisors/schema";
+import {
+  AdvisorCoreFormSchema,
+  AdvisorLandingFormSchema,
+  FormSchema,
+} from "@/components/virtualoffice/advisors/schema";
 import { z } from "zod";
 import {
   AdvisorRepoError,
   type AdvisorWorkflowUserInput,
   createAdvisor,
   updateAdvisor,
+  updateAdvisorCore,
+  updateAdvisorLanding,
   softDeleteAdvisor,
 } from "./repo";
 
@@ -69,6 +75,44 @@ export async function updateAdvisorAction(advisorId: string, payload: unknown) {
         error instanceof AdvisorRepoError
           ? error.message
           : "Error al actualizar el asesor.",
+    };
+  }
+}
+
+export async function updateAdvisorCoreAction(
+  advisorId: string,
+  payload: unknown,
+) {
+  try {
+    const parsed = AdvisorCoreFormSchema.parse(payload);
+    const updated = await updateAdvisorCore(advisorId, parsed);
+    return { ok: true, id: updated.id };
+  } catch (error) {
+    return {
+      ok: false,
+      error:
+        error instanceof AdvisorRepoError
+          ? error.message
+          : "Error al actualizar los datos base del asesor.",
+    };
+  }
+}
+
+export async function updateAdvisorLandingAction(
+  advisorId: string,
+  payload: unknown,
+) {
+  try {
+    const parsed = AdvisorLandingFormSchema.parse(payload);
+    const updated = await updateAdvisorLanding(advisorId, parsed);
+    return { ok: true, id: updated.id };
+  } catch (error) {
+    return {
+      ok: false,
+      error:
+        error instanceof AdvisorRepoError
+          ? error.message
+          : "Error al actualizar la landing del asesor.",
     };
   }
 }

@@ -23,6 +23,8 @@ import { FeaturedPicker } from "./FeaturedPicker";
 import { StringArrayEditor } from "./StringArrayEditor";
 import {
   updateAdvisorAction,
+  updateAdvisorCoreAction,
+  updateAdvisorLandingAction,
   createAdvisorAction,
   createAdvisorWorkflowAction,
   deleteAdvisorAction,
@@ -33,6 +35,7 @@ export type AdvisorFormOutput = z.output<typeof FormSchema>;
 
 type Props = {
   mode: "create" | "edit";
+  section?: "full" | "core" | "landing";
   advisorId?: string;
   initialData?: Partial<AdvisorFormValues>;
   canEditInmobiliariaId?: boolean;
@@ -40,6 +43,7 @@ type Props = {
   allowUserBootstrap?: boolean;
   redirectOnSuccess?: boolean;
   onSuccess?: (result: { id: string; values: AdvisorFormOutput }) => void;
+  showDeleteButton?: boolean;
 };
 
 type Banner = { type: "success" | "error"; message: string } | null;
@@ -61,6 +65,7 @@ function BannerMessage({ banner }: { banner: Banner }) {
 
 export function AdvisorForm({
   mode,
+  section = "full",
   advisorId,
   initialData,
   canEditInmobiliariaId = false,
@@ -68,6 +73,7 @@ export function AdvisorForm({
   allowUserBootstrap = false,
   redirectOnSuccess = true,
   onSuccess,
+  showDeleteButton = mode === "edit",
 }: Props) {
   const router = useRouter();
 
@@ -77,6 +83,9 @@ export function AdvisorForm({
   const [linkedUserName, setLinkedUserName] = useState("");
   const [linkedUserEmail, setLinkedUserEmail] = useState("");
   const [linkedUserPassword, setLinkedUserPassword] = useState("");
+  const showCore = section !== "landing";
+  const showLanding = section !== "core";
+  const isFull = section === "full";
 
   // ========= Defaults (centralizados) =========
   const defaults: AdvisorFormValues = useMemo(
@@ -235,7 +244,21 @@ export function AdvisorForm({
 
       let res = null;
       if (mode === "edit" && advisorId !== undefined) {
-        res = await updateAdvisorAction(advisorId, parsed);
+        if (section === "core") {
+          res = await updateAdvisorCoreAction(advisorId, {
+            fullName: parsed.fullName,
+            slug: parsed.slug,
+            headline: parsed.headline,
+            heroBgUrl: parsed.heroBgUrl,
+            ctaLabel: parsed.ctaLabel,
+            ctaHref: parsed.ctaHref,
+            inmobiliariaId: parsed.inmobiliariaId,
+          });
+        } else if (section === "landing") {
+          res = await updateAdvisorLandingAction(advisorId, parsed.landing);
+        } else {
+          res = await updateAdvisorAction(advisorId, parsed);
+        }
         if (!res.ok) throw new Error(res.error ?? "No se pudo guardar.");
       } else if (allowUserBootstrap && createLinkedUser) {
         res = await createAdvisorWorkflowAction({
@@ -257,7 +280,11 @@ export function AdvisorForm({
         message:
           mode === "create"
             ? "Asesor creado correctamente."
-            : "Cambios guardados.",
+            : section === "core"
+              ? "Datos base actualizados."
+              : section === "landing"
+                ? "Landing actualizada."
+                : "Cambios guardados.",
       });
 
       const nextAdvisorId = res.id ?? advisorId;
@@ -318,10 +345,20 @@ export function AdvisorForm({
         <div className="mx-auto flex w-full max-w-6xl items-start justify-between gap-4">
           <div>
             <h1 className="text-xl font-semibold tracking-tight">
-              {mode === "create" ? "Nuevo asesor" : "Editar asesor"}
+              {mode === "create"
+                ? "Nuevo asesor"
+                : section === "core"
+                  ? "Datos base del asesor"
+                  : section === "landing"
+                    ? "Landing pública del asesor"
+                    : "Editar asesor"}
             </h1>
             <p className="mt-1 text-sm text-zinc-600">
-              Landing · redes · testimonios · destacadas (máx 3)
+              {section === "core"
+                ? "Identidad operativa, slug, CTA y asignación de inmobiliaria."
+                : section === "landing"
+                  ? "About, servicios, testimonios, redes y destacadas."
+                  : "Landing · redes · testimonios · destacadas (máx 3)"}
               {isDirty ? (
                 <span className="ml-2 font-medium text-zinc-900">
                   • Cambios sin guardar
@@ -331,7 +368,7 @@ export function AdvisorForm({
           </div>
 
           <div className="flex items-center gap-2">
-            {mode === "edit" ? (
+            {mode === "edit" && showDeleteButton ? (
               <button
                 type="button"
                 onClick={onDelete}
@@ -356,6 +393,7 @@ export function AdvisorForm({
       <BannerMessage banner={banner} />
 
       {/* Base */}
+      {showCore ? (
       <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
         <BaseSection
           register={register}
@@ -368,6 +406,7 @@ export function AdvisorForm({
         />
 
         {mode === "create" && allowUserBootstrap ? (
+          isFull ? (
           <section className="rounded-xl border border-accent2 bg-white p-4">
             <h2 className="text-lg font-semibold">Usuario del asesor</h2>
             <p className="mt-1 text-sm text-secondary">
@@ -425,6 +464,7 @@ export function AdvisorForm({
               </div>
             ) : null}
           </section>
+          ) : null
         ) : null}
         {/* Tip de UX: si querés mostrar error de slug/fullName arriba */}
         {(errors.fullName || errors.slug) && (
@@ -433,8 +473,10 @@ export function AdvisorForm({
           </p>
         )}
       </section>
+      ) : null}
 
       {/* About */}
+      {showLanding ? (
       <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
         <h2 className="text-base font-semibold">About (Landing)</h2>
 
@@ -499,8 +541,10 @@ export function AdvisorForm({
           </Field>
         </div>
       </section>
+      ) : null}
 
       {/* Services */}
+      {showLanding ? (
       <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
         <h2 className="text-base font-semibold">Servicios (Landing)</h2>
 
@@ -550,8 +594,10 @@ export function AdvisorForm({
           />
         </div>
       </section>
+      ) : null}
 
       {/* Featured properties */}
+      {showLanding ? (
       <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
         <h2 className="text-base font-semibold">
           Propiedades destacadas (máx 3)
@@ -574,8 +620,10 @@ export function AdvisorForm({
           />
         </div>
       </section>
+      ) : null}
 
       {/* Testimonials */}
+      {showLanding ? (
       <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
         <h2 className="text-base font-semibold">Testimonios</h2>
 
@@ -622,8 +670,10 @@ export function AdvisorForm({
           </button>
         </div>
       </section>
+      ) : null}
 
       {/* Social links */}
+      {showLanding ? (
       <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5">
         <h2 className="text-base font-semibold">Redes sociales</h2>
 
@@ -699,6 +749,7 @@ export function AdvisorForm({
           </button>
         </div>
       </section>
+      ) : null}
 
       {/* util: clases locales */}
       <style jsx global>{`
