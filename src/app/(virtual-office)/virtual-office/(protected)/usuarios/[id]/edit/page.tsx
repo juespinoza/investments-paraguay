@@ -13,7 +13,8 @@ import {
 import {
   getUserById,
   listUserFormOptions,
-  requireAdminSession,
+  requireUsersSession,
+  UserRepoError,
 } from "@/lib/auth/users";
 import {
   updateUserAction,
@@ -36,7 +37,27 @@ export default async function EditUserPage({
   params,
   searchParams,
 }: PageProps) {
-  await requireAdminSession();
+  try {
+    await requireUsersSession("read");
+  } catch (error) {
+    if (error instanceof UserRepoError && error.status === 403) {
+      return (
+        <div className="space-y-6">
+          <PageHeader
+            title="Editar usuario"
+            description="Actualiza rol, asignaciones y contraseña del usuario."
+            eyebrow="Edición de usuarios"
+          />
+          <InlineAlert
+            type="error"
+            message="No tienes permisos para ver esta sección."
+          />
+        </div>
+      );
+    }
+
+    throw error;
+  }
   const { id } = await params;
   const query = await searchParams;
 
@@ -49,6 +70,10 @@ export default async function EditUserPage({
 
   const inputClassName =
     "h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100";
+  const isAdvisorUsersScope = options.scope === "advisor_users";
+  const roleOptions = ROLE_OPTIONS.filter((option) =>
+    options.availableRoles.includes(option.value),
+  );
 
   return (
     <div className="space-y-6">
@@ -96,7 +121,11 @@ export default async function EditUserPage({
           >
             <FormSection
               title="Identidad"
-              description="Mantén la cuenta alineada con el rol correcto y un email vigente para el acceso al panel."
+              description={
+                isAdvisorUsersScope
+                  ? "Desde este scope solo puedes mantener cuentas de asesores de tu inmobiliaria."
+                  : "Mantén la cuenta alineada con el rol correcto y un email vigente para el acceso al panel."
+              }
             >
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 <label className="space-y-2 text-sm">
@@ -119,20 +148,32 @@ export default async function EditUserPage({
                   />
                 </label>
 
-                <label className="space-y-2 text-sm">
-                  <span className="font-medium text-zinc-800">Rol</span>
-                  <select
-                    name="role"
-                    defaultValue={user.role}
-                    className={inputClassName}
-                  >
-                    {ROLE_OPTIONS.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                {isAdvisorUsersScope ? (
+                  <>
+                    <input type="hidden" name="role" value={Role.ASESOR} />
+                    <div className="space-y-2 text-sm">
+                      <span className="font-medium text-zinc-800">Rol</span>
+                      <div className="flex h-11 items-center rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-sm text-zinc-700">
+                        Asesor
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <label className="space-y-2 text-sm">
+                    <span className="font-medium text-zinc-800">Rol</span>
+                    <select
+                      name="role"
+                      defaultValue={user.role}
+                      className={inputClassName}
+                    >
+                      {roleOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
               </div>
             </FormSection>
 
@@ -141,23 +182,34 @@ export default async function EditUserPage({
               description="Haz explícito el tenant y el asesor atados a la cuenta para evitar permisos inconsistentes."
             >
               <div className="grid gap-4 md:grid-cols-2">
-                <label className="space-y-2 text-sm">
-                  <span className="font-medium text-zinc-800">
-                    Inmobiliaria
-                  </span>
-                  <select
-                    name="inmobiliariaId"
-                    defaultValue={user.inmobiliariaId ?? ""}
-                    className={inputClassName}
-                  >
-                    <option value="">Sin asignar</option>
-                    {options.inmobiliarias.map((item) => (
-                      <option key={item.id} value={item.id}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                {isAdvisorUsersScope ? (
+                  <div className="space-y-2 text-sm">
+                    <span className="font-medium text-zinc-800">
+                      Inmobiliaria
+                    </span>
+                    <div className="flex h-11 items-center rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-sm text-zinc-700">
+                      {options.inmobiliarias[0]?.name ?? "Tu inmobiliaria"}
+                    </div>
+                  </div>
+                ) : (
+                  <label className="space-y-2 text-sm">
+                    <span className="font-medium text-zinc-800">
+                      Inmobiliaria
+                    </span>
+                    <select
+                      name="inmobiliariaId"
+                      defaultValue={user.inmobiliariaId ?? ""}
+                      className={inputClassName}
+                    >
+                      <option value="">Sin asignar</option>
+                      {options.inmobiliarias.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
 
                 <label className="space-y-2 text-sm">
                   <span className="font-medium text-zinc-800">Asesor</span>
@@ -179,9 +231,9 @@ export default async function EditUserPage({
 
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-dashed border-zinc-200 bg-[#fcfaf6] px-4 py-3 text-sm text-zinc-600">
               <p>
-                Si cambias el rol, respeta las mismas reglas operativas del
-                sistema: `INMOBILIARIA` requiere tenant y `ASESOR` requiere
-                asesor vinculado.
+                {isAdvisorUsersScope
+                  ? "En este scope solo puedes mantener usuarios tipo asesor pertenecientes a tu inmobiliaria."
+                  : "Si cambias el rol, respeta las mismas reglas operativas del sistema: `INMOBILIARIA` requiere tenant y `ASESOR` requiere asesor vinculado."}
               </p>
               <FormSubmitButton
                 idleLabel="Guardar cambios"

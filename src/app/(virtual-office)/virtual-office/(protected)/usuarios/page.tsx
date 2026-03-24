@@ -24,8 +24,8 @@ import {
 import {
   listUserFormOptions,
   listUsers,
+  requireUsersSession,
   UserRepoError,
-  requireAdminSession,
 } from "@/lib/auth/users";
 import {
   paginateItems,
@@ -55,7 +55,7 @@ type UsersPageProps = {
 
 export default async function UsersPage({ searchParams }: UsersPageProps) {
   try {
-    await requireAdminSession();
+    await requireUsersSession("read");
   } catch (error) {
     if (error instanceof UserRepoError && error.status === 403) {
       return (
@@ -115,6 +115,10 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
 
   const inputClassName =
     "h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100";
+  const isAdvisorUsersScope = options.scope === "advisor_users";
+  const roleOptions = ROLE_OPTIONS.filter((option) =>
+    options.availableRoles.includes(option.value),
+  );
 
   return (
     <div className="space-y-6">
@@ -203,7 +207,11 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
         <CardBody className="space-y-5">
           <CardSection
             title="Crear usuario"
-            description="Da de alta nuevos accesos con el rol y la asignación correcta desde una sola pantalla."
+            description={
+              isAdvisorUsersScope
+                ? "Crea accesos solo para asesores que pertenezcan a tu inmobiliaria. La relación con la inmobiliaria se deriva automáticamente desde el asesor."
+                : "Da de alta nuevos accesos con el rol y la asignación correcta desde una sola pantalla."
+            }
           >
             <form action={createUserAction} className="space-y-5">
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -242,41 +250,67 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
 
               <FormSection
                 title="Rol y asignaciones"
-                description="La lógica de permisos se mantiene igual. Aquí solo haces visibles las relaciones necesarias para cada cuenta."
+                description={
+                  isAdvisorUsersScope
+                    ? "En este scope solo puedes administrar cuentas de asesores de tu tenant."
+                    : "La lógica de permisos se mantiene igual. Aquí solo haces visibles las relaciones necesarias para cada cuenta."
+                }
               >
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  <label className="space-y-2 text-sm">
-                    <span className="font-medium text-zinc-800">Rol</span>
-                    <select
-                      name="role"
-                      defaultValue={Role.ASESOR}
-                      className={inputClassName}
-                    >
-                      {ROLE_OPTIONS.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  {isAdvisorUsersScope ? (
+                    <>
+                      <input type="hidden" name="role" value={Role.ASESOR} />
+                      <div className="space-y-2 text-sm">
+                        <span className="font-medium text-zinc-800">Rol</span>
+                        <div className="flex h-11 items-center rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-sm text-zinc-700">
+                          Asesor
+                        </div>
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <span className="font-medium text-zinc-800">
+                          Inmobiliaria
+                        </span>
+                        <div className="flex h-11 items-center rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-sm text-zinc-700">
+                          {options.inmobiliarias[0]?.name ?? "Tu inmobiliaria"}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <label className="space-y-2 text-sm">
+                        <span className="font-medium text-zinc-800">Rol</span>
+                        <select
+                          name="role"
+                          defaultValue={Role.ASESOR}
+                          className={inputClassName}
+                        >
+                          {roleOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
 
-                  <label className="space-y-2 text-sm">
-                    <span className="font-medium text-zinc-800">
-                      Inmobiliaria
-                    </span>
-                    <select
-                      name="inmobiliariaId"
-                      defaultValue=""
-                      className={inputClassName}
-                    >
-                      <option value="">Sin asignar</option>
-                      {options.inmobiliarias.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                      <label className="space-y-2 text-sm">
+                        <span className="font-medium text-zinc-800">
+                          Inmobiliaria
+                        </span>
+                        <select
+                          name="inmobiliariaId"
+                          defaultValue=""
+                          className={inputClassName}
+                        >
+                          <option value="">Sin asignar</option>
+                          {options.inmobiliarias.map((item) => (
+                            <option key={item.id} value={item.id}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </>
+                  )}
 
                   <label className="space-y-2 text-sm">
                     <span className="font-medium text-zinc-800">Asesor</span>
@@ -298,8 +332,9 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
 
               <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-dashed border-zinc-200 bg-[#fcfaf6] px-4 py-3 text-sm text-zinc-600">
                 <p>
-                  `ADMIN` y `BLOGUERO` no requieren tenant. `INMOBILIARIA`
-                  requiere inmobiliaria. `ASESOR` requiere asesor asignado.
+                  {isAdvisorUsersScope
+                    ? "Solo puedes crear usuarios de asesores vinculados a tu inmobiliaria."
+                    : "La inmobiliaria y los asesores necesitan usuarios para ser visibles en el panel, pero no es necesario asignarlos al crear la cuenta. ADMIN y BLOGUERO no requieren asignaciones."}
                 </p>
                 <FormSubmitButton
                   idleLabel="Crear usuario"

@@ -1,7 +1,8 @@
 import { Prisma, Role } from "@/generated/prisma";
-import { canManageUsers } from "@/lib/auth/permissions";
-import { prisma } from "@/lib/prisma";
+import { can, scopeFor } from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
+import type { SessionPayload } from "@/lib/data/types";
+import { prisma } from "@/lib/prisma";
 import { hashPassword, normalizeEmail } from "@/lib/auth/user-bootstrap";
 
 export class UserRepoError extends Error {
@@ -30,11 +31,120 @@ type ResolvedAssignments = {
   advisorId: string | null;
 };
 
-async function resolveAssignments({
-  role,
-  inmobiliariaId,
-  advisorId,
-}: Pick<UserInput, "role" | "inmobiliariaId" | "advisorId">): Promise<ResolvedAssignments> {
+type UserAction = "create" | "read" | "update" | "delete_soft";
+
+type UserFormOptions = {
+  scope: "all" | "advisor_users";
+  availableRoles: Role[];
+  inmobiliarias: Array<{ id: string; name: string }>;
+  advisors: Array<{ id: string; fullName: string; inmobiliariaId: string | null }>;
+  lockedInmobiliariaId: string | null;
+};
+
+function getUserScope(session: SessionPayload, action: UserAction) {
+  return scopeFor(session, "users", action);
+}
+
+async function buildScopedUserWhere(
+  session: SessionPayload,
+  action: UserAction,
+): Promise<Prisma.UserWhereInput> {
+  const scope = getUserScope(session, action);
+
+  if (scope === "all") {
+    return { deletedAt: null } satisfies Prisma.UserWhereInput;
+  }
+
+  if (scope === "advisor_users") {
+    if (!session.inmobiliariaId) {
+      throw new UserRepoError(
+        "Tu sesión no tiene una inmobiliaria válida para operar usuarios.",
+        403,
+      );
+    }
+
+    const advisors = await prisma.advisor.findMany({
+      where: {
+        deletedAt: null,
+        inmobiliariaId: session.inmobiliariaId,
+      },
+      select: { id: true },
+    });
+
+    return {
+      deletedAt: null,
+      role: Role.ASESOR,
+      advisorId: { in: advisors.map((advisor) => advisor.id) },
+    } satisfies Prisma.UserWhereInput;
+  }
+
+  throw new UserRepoError("Forbidden", 403);
+}
+
+async function findAdvisorForAssignments(
+  advisorId: string,
+  session: SessionPayload,
+  action: UserAction,
+) {
+  const scope = getUserScope(session, action);
+  const advisor = await prisma.advisor.findFirst({
+    where: {
+      id: advisorId,
+      deletedAt: null,
+      ...(scope === "advisor_users" && session.inmobiliariaId
+        ? { inmobiliariaId: session.inmobiliariaId }
+        : {}),
+    },
+    select: { id: true, inmobiliariaId: true },
+  });
+
+  if (!advisor) {
+    throw new UserRepoError("El asesor seleccionado no existe.", 400);
+  }
+
+  return advisor;
+}
+
+async function resolveAssignmentsForSession(
+  session: SessionPayload,
+  action: UserAction,
+  {
+    role,
+    inmobiliariaId,
+    advisorId,
+  }: Pick<UserInput, "role" | "inmobiliariaId" | "advisorId">,
+): Promise<ResolvedAssignments> {
+  const scope = getUserScope(session, action);
+
+  if (scope === "advisor_users") {
+    if (role !== Role.ASESOR) {
+      throw new UserRepoError(
+        "Las inmobiliarias solo pueden gestionar usuarios de asesores de su tenant.",
+        403,
+      );
+    }
+
+    if (!advisorId) {
+      throw new UserRepoError(
+        "Debes seleccionar un asesor de tu inmobiliaria.",
+        400,
+      );
+    }
+
+    const advisor = await findAdvisorForAssignments(advisorId, session, action);
+    if (!advisor.inmobiliariaId) {
+      throw new UserRepoError(
+        "El asesor seleccionado no pertenece a una inmobiliaria válida.",
+        400,
+      );
+    }
+
+    return {
+      advisorId: advisor.id,
+      inmobiliariaId: advisor.inmobiliariaId,
+    };
+  }
+
   if (role === Role.ADMIN || role === Role.BLOGUERO) {
     return { inmobiliariaId: null, advisorId: null };
   }
@@ -109,17 +219,25 @@ async function resolveAssignments({
 
 export async function requireAdminSession() {
   const session = await requireSession();
-  if (!canManageUsers(session)) {
+  if (session.role !== Role.ADMIN) {
+    throw new UserRepoError("Forbidden", 403);
+  }
+  return session;
+}
+
+export async function requireUsersSession(action: UserAction = "read") {
+  const session = await requireSession();
+  if (!can(session, "users", action)) {
     throw new UserRepoError("Forbidden", 403);
   }
   return session;
 }
 
 export async function listUsers() {
-  await requireAdminSession();
+  const session = await requireUsersSession("read");
 
   const users = await prisma.user.findMany({
-    where: { deletedAt: null },
+    where: await buildScopedUserWhere(session, "read"),
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
@@ -169,10 +287,13 @@ export async function listUsers() {
 }
 
 export async function getUserById(id: string) {
-  await requireAdminSession();
+  const session = await requireUsersSession("read");
 
   return prisma.user.findFirst({
-    where: { id, deletedAt: null },
+    where: {
+      ...(await buildScopedUserWhere(session, "read")),
+      id,
+    },
     select: {
       id: true,
       email: true,
@@ -187,9 +308,9 @@ export async function getUserById(id: string) {
 }
 
 export async function createUser(input: UserInput) {
-  await requireAdminSession();
-
+  const session = await requireUsersSession("create");
   const email = normalizeEmail(input.email);
+
   if (!email) {
     throw new UserRepoError("El email es obligatorio.", 400);
   }
@@ -200,7 +321,7 @@ export async function createUser(input: UserInput) {
     );
   }
 
-  const assignments = await resolveAssignments(input);
+  const assignments = await resolveAssignmentsForSession(session, "create", input);
 
   try {
     return await prisma.user.create({
@@ -208,7 +329,10 @@ export async function createUser(input: UserInput) {
         email,
         name: input.name?.trim() || null,
         password: await hashPassword(input.password),
-        role: input.role,
+        role:
+          getUserScope(session, "create") === "advisor_users"
+            ? Role.ASESOR
+            : input.role,
         inmobiliariaId: assignments.inmobiliariaId,
         advisorId: assignments.advisorId,
       },
@@ -226,14 +350,17 @@ export async function createUser(input: UserInput) {
 }
 
 export async function softDeleteUser(id: string) {
-  const session = await requireAdminSession();
+  const session = await requireUsersSession("delete_soft");
 
   if (session.id === id || session.sub === id) {
     throw new UserRepoError("No puedes desactivar tu propio usuario.", 400);
   }
 
   const user = await prisma.user.findFirst({
-    where: { id, deletedAt: null },
+    where: {
+      ...(await buildScopedUserWhere(session, "delete_soft")),
+      id,
+    },
     select: { id: true },
   });
 
@@ -248,7 +375,7 @@ export async function softDeleteUser(id: string) {
 }
 
 export async function updateUser(id: string, input: UserUpdateInput) {
-  const session = await requireAdminSession();
+  const session = await requireUsersSession("update");
   const email = normalizeEmail(input.email);
 
   if (!email) {
@@ -256,7 +383,10 @@ export async function updateUser(id: string, input: UserUpdateInput) {
   }
 
   const existing = await prisma.user.findFirst({
-    where: { id, deletedAt: null },
+    where: {
+      ...(await buildScopedUserWhere(session, "update")),
+      id,
+    },
     select: { id: true },
   });
 
@@ -264,14 +394,14 @@ export async function updateUser(id: string, input: UserUpdateInput) {
     throw new UserRepoError("Usuario no encontrado.", 404);
   }
 
-  if (session.id === id && input.role !== Role.ADMIN) {
+  if (session.role === Role.ADMIN && session.id === id && input.role !== Role.ADMIN) {
     throw new UserRepoError(
       "No puedes quitarte a ti mismo el rol de admin.",
       400,
     );
   }
 
-  const assignments = await resolveAssignments(input);
+  const assignments = await resolveAssignmentsForSession(session, "update", input);
 
   try {
     return await prisma.user.update({
@@ -279,7 +409,10 @@ export async function updateUser(id: string, input: UserUpdateInput) {
       data: {
         email,
         name: input.name?.trim() || null,
-        role: input.role,
+        role:
+          getUserScope(session, "update") === "advisor_users"
+            ? Role.ASESOR
+            : input.role,
         inmobiliariaId: assignments.inmobiliariaId,
         advisorId: assignments.advisorId,
       },
@@ -297,7 +430,7 @@ export async function updateUser(id: string, input: UserUpdateInput) {
 }
 
 export async function updateUserPassword(id: string, password: string) {
-  await requireAdminSession();
+  const session = await requireUsersSession("update");
 
   if (password.trim().length < 8) {
     throw new UserRepoError(
@@ -307,7 +440,10 @@ export async function updateUserPassword(id: string, password: string) {
   }
 
   const user = await prisma.user.findFirst({
-    where: { id, deletedAt: null },
+    where: {
+      ...(await buildScopedUserWhere(session, "update")),
+      id,
+    },
     select: { id: true },
   });
 
@@ -321,21 +457,42 @@ export async function updateUserPassword(id: string, password: string) {
   });
 }
 
-export async function listUserFormOptions() {
-  await requireAdminSession();
+export async function listUserFormOptions(): Promise<UserFormOptions> {
+  const session = await requireUsersSession("read");
+  const scope = getUserScope(session, "read");
 
   const [inmobiliarias, advisors] = await Promise.all([
-    prisma.inmobiliaria.findMany({
-      where: { deletedAt: null },
-      orderBy: { name: "asc" },
-      select: { id: true, name: true },
-    }),
+    scope === "all"
+      ? prisma.inmobiliaria.findMany({
+          where: { deletedAt: null },
+          orderBy: { name: "asc" },
+          select: { id: true, name: true },
+        })
+      : session.inmobiliariaId
+        ? prisma.inmobiliaria.findMany({
+            where: { id: session.inmobiliariaId, deletedAt: null },
+            orderBy: { name: "asc" },
+            select: { id: true, name: true },
+          })
+        : Promise.resolve([]),
     prisma.advisor.findMany({
-      where: { deletedAt: null },
+      where: {
+        deletedAt: null,
+        ...(scope === "advisor_users" && session.inmobiliariaId
+          ? { inmobiliariaId: session.inmobiliariaId }
+          : {}),
+      },
       orderBy: { fullName: "asc" },
       select: { id: true, fullName: true, inmobiliariaId: true },
     }),
   ]);
 
-  return { inmobiliarias, advisors };
+  return {
+    scope: scope === "advisor_users" ? "advisor_users" : "all",
+    availableRoles: scope === "advisor_users" ? [Role.ASESOR] : Object.values(Role),
+    inmobiliarias,
+    advisors,
+    lockedInmobiliariaId:
+      scope === "advisor_users" ? session.inmobiliariaId ?? null : null,
+  };
 }
