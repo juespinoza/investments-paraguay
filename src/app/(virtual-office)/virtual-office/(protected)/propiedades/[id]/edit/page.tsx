@@ -40,7 +40,7 @@ export default async function EditPropertyPage({
   }
 
   try {
-    await assertPropertyScope(session, id);
+    await assertPropertyScope(session, id, "update");
   } catch (error) {
     if (error instanceof PropertyRepoError && error.status === 404) {
       return notFound();

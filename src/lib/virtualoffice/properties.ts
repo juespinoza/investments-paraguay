@@ -5,9 +5,8 @@ import { prisma } from "@/lib/prisma";
 import type { SessionPayload } from "@/lib/data/types";
 import { Prisma } from "@/generated/prisma";
 import {
-  canCreateProperty as hasPropertyCreateAccess,
-  canDeleteProperty as hasPropertyDeleteAccess,
-  canEditProperty as hasPropertyEditAccess,
+  can,
+  scopeFor,
   isAdmin,
   isAdvisor,
   isInmobiliaria,
@@ -54,15 +53,15 @@ type ScopedProperty = {
 };
 
 export function canCreateProperty(session: SessionPayload) {
-  return hasPropertyCreateAccess(session);
+  return can(session, "properties", "create");
 }
 
 export function canDeleteProperty(session: SessionPayload) {
-  return hasPropertyDeleteAccess(session);
+  return can(session, "properties", "delete_soft");
 }
 
 export function canEditProperty(session: SessionPayload) {
-  return hasPropertyEditAccess(session);
+  return can(session, "properties", "update");
 }
 
 export async function getPropertyFormOptions(session: SessionPayload) {
@@ -94,7 +93,12 @@ export async function getPropertyFormOptions(session: SessionPayload) {
 export async function assertPropertyScope(
   session: SessionPayload,
   propertyId: string,
+  action: "read" | "update" | "delete_soft" = "read",
 ): Promise<ScopedProperty> {
+  if (!can(session, "properties", action)) {
+    throw new PropertyRepoError("Forbidden", 403);
+  }
+
   const property = await prisma.property.findFirst({
     where: { id: propertyId, deletedAt: null },
     select: {
@@ -110,9 +114,10 @@ export async function assertPropertyScope(
     throw new PropertyRepoError("Not found", 404);
   }
 
-  if (isAdmin(session)) return property;
+  const scope = scopeFor(session, "properties", action);
+  if (scope === "all") return property;
 
-  if (isInmobiliaria(session)) {
+  if (scope === "advisor_properties") {
     if (
       !session.inmobiliariaId ||
       property.inmobiliariaId !== session.inmobiliariaId
@@ -122,7 +127,7 @@ export async function assertPropertyScope(
     return property;
   }
 
-  if (isAdvisor(session)) {
+  if (scope === "self") {
     if (!session.advisorId || property.advisorId !== session.advisorId) {
       throw new PropertyRepoError("Forbidden", 403);
     }
@@ -150,6 +155,11 @@ export async function resolvePropertyAssignments(
   data: PropertyUpsertInput,
   current?: ScopedProperty,
 ) {
+  const propertyScope = scopeFor(
+    session,
+    "properties",
+    current ? "update" : "create",
+  );
   const advisorId = isAdvisor(session)
     ? session.advisorId ?? null
     : data.advisorId ?? null;
@@ -157,6 +167,15 @@ export async function resolvePropertyAssignments(
   let inmobiliariaId: string | null = null;
   if (advisorId) {
     const advisor = await getAdvisorIfValid(advisorId);
+    if (
+      propertyScope === "advisor_properties" &&
+      advisor.inmobiliariaId !== (session.inmobiliariaId ?? null)
+    ) {
+      throw new PropertyRepoError(
+        "Solo puedes asignar propiedades a asesores de tu inmobiliaria.",
+        403,
+      );
+    }
     inmobiliariaId = advisor.inmobiliariaId ?? null;
   }
 
@@ -176,17 +195,22 @@ export function buildPropertyListWhere(
   session: SessionPayload,
   query?: { q?: string; advisorId?: string },
 ): Prisma.PropertyWhereInput {
-  const where: Prisma.PropertyWhereInput = { deletedAt: null };
-
-  if (isInmobiliaria(session)) {
-    where.inmobiliariaId = session.inmobiliariaId ?? "__none__";
-  } else if (isAdvisor(session)) {
-    where.advisorId = session.advisorId ?? "__none__";
-  } else if (!isAdmin(session)) {
+  if (!can(session, "properties", "read")) {
     throw new PropertyRepoError("Forbidden", 403);
   }
 
-  if (query?.advisorId && !isAdvisor(session)) {
+  const where: Prisma.PropertyWhereInput = { deletedAt: null };
+  const scope = scopeFor(session, "properties", "read");
+
+  if (scope === "advisor_properties") {
+    where.inmobiliariaId = session.inmobiliariaId ?? "__none__";
+  } else if (scope === "self") {
+    where.advisorId = session.advisorId ?? "__none__";
+  } else if (scope !== "all") {
+    throw new PropertyRepoError("Forbidden", 403);
+  }
+
+  if (query?.advisorId && scope !== "self") {
     where.advisorId = query.advisorId;
   }
 

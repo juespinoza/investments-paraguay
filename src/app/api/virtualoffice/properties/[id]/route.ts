@@ -19,7 +19,7 @@ export async function GET(_req: Request, { params }: Params) {
 
   const { id } = await params;
   try {
-    await assertPropertyScope(session, id);
+    await assertPropertyScope(session, id, "read");
   } catch (error) {
     if (error instanceof PropertyRepoError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
@@ -70,7 +70,7 @@ export async function PATCH(req: Request, { params }: Params) {
   const { id } = await params;
   let scope;
   try {
-    scope = await assertPropertyScope(session, id);
+    scope = await assertPropertyScope(session, id, "update");
   } catch (error) {
     if (error instanceof PropertyRepoError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
@@ -142,7 +142,7 @@ export async function DELETE(_req: Request, { params }: Params) {
 
   const { id } = await params;
   try {
-    await assertPropertyScope(session, id);
+    await assertPropertyScope(session, id, "delete_soft");
   } catch (error) {
     if (error instanceof PropertyRepoError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
