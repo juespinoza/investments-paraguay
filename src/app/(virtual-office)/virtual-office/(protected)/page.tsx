@@ -36,6 +36,19 @@ export default async function AdminHome() {
   const canCreateTenant = canCreateInmobiliaria(session);
   const canSeeBlog = can(session, "blogs", "read");
 
+  const advisorIdsForScopedUsers =
+    session.role === Role.INMOBILIARIA && session.inmobiliariaId
+      ? (
+          await prisma.advisor.findMany({
+            where: {
+              deletedAt: null,
+              inmobiliariaId: session.inmobiliariaId,
+            },
+            select: { id: true },
+          })
+        ).map((advisor) => advisor.id)
+      : [];
+
   const [userCount, advisorCount, propertyCount, inmobiliariaCount, blogCount] =
     await Promise.all([
       canSeeUsers
@@ -47,11 +60,10 @@ export default async function AdminHome() {
                 : session.role === Role.INMOBILIARIA
                   ? {
                       role: Role.ASESOR,
-                      advisor: {
-                        is: {
-                          deletedAt: null,
-                          inmobiliariaId: session.inmobiliariaId ?? "__none__",
-                        },
+                      advisorId: {
+                        in: advisorIdsForScopedUsers.length
+                          ? advisorIdsForScopedUsers
+                          : ["__none__"],
                       },
                     }
                   : { id: "__none__" }),

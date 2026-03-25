@@ -25,49 +25,34 @@ export type PermissionResource =
 
 export type PermissionAction = "read" | "create" | "update" | "delete" | "manage";
 
+const LEGACY_RESOURCE_TO_V2: Partial<
+  Record<PermissionResource, PermissionResourceV2>
+> = {
+  users: "users",
+  inmobiliarias: "inmobiliaria_core",
+  advisors: "advisor_core",
+  properties: "properties",
+  blog: "blogs",
+} as const;
+
 const PERMISSION_MATRIX: Record<
   PermissionResource,
   Partial<Record<PermissionAction, readonly Role[]>>
 > = {
-  users: {
-    read: [Role.ADMIN],
-    create: [Role.ADMIN],
-    update: [Role.ADMIN],
-    delete: [Role.ADMIN],
-  },
-  inmobiliarias: {
-    read: [Role.ADMIN, Role.INMOBILIARIA],
-    create: [Role.ADMIN],
-    update: [Role.ADMIN, Role.INMOBILIARIA],
-    delete: [Role.ADMIN],
-  },
+  users: {},
+  inmobiliarias: {},
   inmobiliariaAssignments: {
     manage: [Role.ADMIN],
   },
-  advisors: {
-    read: [Role.ADMIN, Role.INMOBILIARIA, Role.ASESOR],
-    create: [Role.ADMIN, Role.INMOBILIARIA],
-    update: [Role.ADMIN, Role.INMOBILIARIA, Role.ASESOR],
-    delete: [Role.ADMIN, Role.INMOBILIARIA],
-  },
-  properties: {
-    read: [Role.ADMIN, Role.INMOBILIARIA, Role.ASESOR],
-    create: [Role.ADMIN, Role.INMOBILIARIA, Role.ASESOR],
-    update: [Role.ADMIN, Role.INMOBILIARIA, Role.ASESOR],
-    delete: [Role.ADMIN, Role.INMOBILIARIA, Role.ASESOR],
-  },
+  advisors: {},
+  properties: {},
   propertyAssignments: {
     manage: [Role.ADMIN, Role.INMOBILIARIA],
   },
   propertyFeatured: {
     manage: [Role.ADMIN, Role.INMOBILIARIA],
   },
-  blog: {
-    read: [Role.ADMIN, Role.BLOGUERO, Role.INMOBILIARIA, Role.ASESOR],
-    create: [Role.ADMIN, Role.BLOGUERO, Role.INMOBILIARIA, Role.ASESOR],
-    update: [Role.ADMIN, Role.BLOGUERO, Role.INMOBILIARIA, Role.ASESOR],
-    delete: [Role.ADMIN, Role.BLOGUERO, Role.INMOBILIARIA, Role.ASESOR],
-  },
+  blog: {},
   blogAssignments: {
     manage: [Role.ADMIN],
   },
@@ -84,6 +69,21 @@ export function hasPermission(
   resource: PermissionResource,
   action: PermissionAction,
 ) {
+  const mappedResource = LEGACY_RESOURCE_TO_V2[resource];
+  if (mappedResource) {
+    const mappedAction =
+      action === "delete" ? "delete_soft" : action;
+
+    if (
+      mappedAction === "create" ||
+      mappedAction === "read" ||
+      mappedAction === "update" ||
+      mappedAction === "delete_soft"
+    ) {
+      return canV2(session, mappedResource, mappedAction);
+    }
+  }
+
   const allowedRoles = PERMISSION_MATRIX[resource][action];
   return allowedRoles?.includes(session.role as Role) ?? false;
 }
@@ -124,18 +124,18 @@ export function scopeFor(
 }
 
 export function canManageUsers(session: SessionPayload) {
-  // Legacy behavior preserved until phase 3 migration of users.
-  return hasPermission(session, "users", "read");
+  return canV2(session, "users", "read");
 }
 
 export function canAccessInmobiliarias(session: SessionPayload) {
-  // Legacy facade preserved until inmobiliaria_core / inmobiliaria_landing split.
-  return hasPermission(session, "inmobiliarias", "read");
+  return (
+    canV2(session, "inmobiliaria_core", "read") ||
+    canV2(session, "inmobiliaria_landing", "read")
+  );
 }
 
 export function canCreateInmobiliaria(session: SessionPayload) {
-  // Legacy behavior preserved for existing Super Admin workflow.
-  return hasPermission(session, "inmobiliarias", "create");
+  return scopeForV2(session, "inmobiliaria_core", "create") === "all";
 }
 
 export function canManageInmobiliariaAssignments(session: SessionPayload) {
@@ -143,43 +143,41 @@ export function canManageInmobiliariaAssignments(session: SessionPayload) {
 }
 
 export function canAccessAdvisors(session: SessionPayload) {
-  // Legacy advisor access remains on advisor core + landing combined resource for now.
-  return hasPermission(session, "advisors", "read");
+  return (
+    canV2(session, "advisor_core", "read") ||
+    canV2(session, "advisor_landing", "read")
+  );
 }
 
 export function canCreateAdvisor(session: SessionPayload) {
-  // Legacy behavior preserved until advisor_core / advisor_landing split.
-  return hasPermission(session, "advisors", "create");
+  return canV2(session, "advisor_core", "create");
 }
 
 export function canEditAdvisor(session: SessionPayload) {
-  // Legacy behavior preserved until advisor_core / advisor_landing split.
-  return hasPermission(session, "advisors", "update");
+  return (
+    canV2(session, "advisor_core", "update") ||
+    canV2(session, "advisor_landing", "update")
+  );
 }
 
 export function canDeleteAdvisor(session: SessionPayload) {
-  // Legacy behavior preserved until advisor_core / advisor_landing split.
-  return hasPermission(session, "advisors", "delete");
+  return canV2(session, "advisor_core", "delete_soft");
 }
 
 export function canAccessProperties(session: SessionPayload) {
-  // Legacy behavior preserved until properties module is migrated to v2 scopes.
-  return hasPermission(session, "properties", "read");
+  return canV2(session, "properties", "read");
 }
 
 export function canCreateProperty(session: SessionPayload) {
-  // Legacy behavior preserved for P1 workflow; v2 matrix is not active here yet.
-  return hasPermission(session, "properties", "create");
+  return canV2(session, "properties", "create");
 }
 
 export function canEditProperty(session: SessionPayload) {
-  // Legacy behavior preserved until properties module migration.
-  return hasPermission(session, "properties", "update");
+  return canV2(session, "properties", "update");
 }
 
 export function canDeleteProperty(session: SessionPayload) {
-  // Legacy behavior preserved until properties module migration.
-  return hasPermission(session, "properties", "delete");
+  return canV2(session, "properties", "delete_soft");
 }
 
 export function canManagePropertyAssignments(session: SessionPayload) {
@@ -191,8 +189,7 @@ export function canManagePropertyFeatured(session: SessionPayload) {
 }
 
 export function canAccessBlog(session: SessionPayload) {
-  // Legacy behavior preserved until blogs migrate to owner_type / owner_id.
-  return hasPermission(session, "blog", "read");
+  return canV2(session, "blogs", "read");
 }
 
 export function canManageBlogAssignments(session: SessionPayload) {
