@@ -48,9 +48,21 @@ export default async function NewBlogPostPage() {
             inmobiliarias={options.inmobiliarias}
             advisors={options.advisors}
             initialData={{
-              authorRole: canManageBlogAssignments(session)
+              ownerType: canManageBlogAssignments(session)
                 ? undefined
-                : session.role,
+                : session.role === "INMOBILIARIA"
+                  ? "inmobiliaria"
+                  : session.role === "ASESOR"
+                    ? "advisor"
+                    : session.role === "ADMIN"
+                      ? "admin"
+                      : "blogger",
+              ownerId:
+                session.role === "INMOBILIARIA"
+                  ? session.inmobiliariaId ?? ""
+                  : session.role === "ASESOR"
+                    ? session.advisorId ?? ""
+                    : "",
             }}
           />
         </CardBody>

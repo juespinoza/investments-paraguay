@@ -5,7 +5,8 @@ import {
   BlogRepoError,
   BlogUpsertSchema,
   buildBlogListWhere,
-  resolveBlogAssignments,
+  deriveBlogOwnershipFromRecord,
+  resolveBlogOwnership,
 } from "@/lib/virtualoffice/blog";
 
 export async function GET(req: Request) {
@@ -22,13 +23,20 @@ export async function GET(req: Request) {
         title: true,
         slug: true,
         authorRole: true,
+        advisorId: true,
+        inmobiliariaId: true,
         updatedAt: true,
         advisor: { select: { fullName: true } },
         inmobiliaria: { select: { name: true } },
       },
     });
 
-    return NextResponse.json({ items });
+    return NextResponse.json({
+      items: items.map((item) => ({
+        ...item,
+        ...deriveBlogOwnershipFromRecord(item),
+      })),
+    });
   } catch (error) {
     if (error instanceof BlogRepoError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
@@ -51,7 +59,7 @@ export async function POST(req: Request) {
 
   try {
     const session = await requireSession();
-    const assignments = await resolveBlogAssignments(session, parsed.data);
+    const ownership = await resolveBlogOwnership(session, parsed.data);
 
     const created = await prisma.blogPost.create({
       data: {
@@ -59,9 +67,9 @@ export async function POST(req: Request) {
         slug: parsed.data.slug,
         content: parsed.data.content,
         coverImageUrl: parsed.data.coverImageUrl ?? null,
-        authorRole: assignments.authorRole,
-        advisorId: assignments.advisorId,
-        inmobiliariaId: assignments.inmobiliariaId,
+        authorRole: ownership.authorRole,
+        advisorId: ownership.advisorId,
+        inmobiliariaId: ownership.inmobiliariaId,
       },
       select: { id: true },
     });

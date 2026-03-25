@@ -1,13 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Role } from "@/generated/prisma";
 import { useRouter } from "next/navigation";
 import {
   Badge,
   FormSection,
   InlineAlert,
 } from "@/components/virtualoffice/Page";
+import type { BlogOwnerType } from "@/lib/virtualoffice/blog";
 
 type Option = {
   id: string;
@@ -21,9 +21,8 @@ type FormValues = {
   slug: string;
   content: string;
   coverImageUrl: string;
-  authorRole: Role;
-  advisorId: string;
-  inmobiliariaId: string;
+  ownerType: BlogOwnerType;
+  ownerId: string;
 };
 
 const EMPTY_VALUES: FormValues = {
@@ -31,9 +30,8 @@ const EMPTY_VALUES: FormValues = {
   slug: "",
   content: "",
   coverImageUrl: "",
-  authorRole: Role.BLOGUERO,
-  advisorId: "",
-  inmobiliariaId: "",
+  ownerType: "blogger",
+  ownerId: "",
 };
 
 function toSlug(value: string) {
@@ -74,12 +72,7 @@ export default function BlogPostForm({
   const [error, setError] = useState<string | null>(null);
   const isDirty = JSON.stringify(values) !== JSON.stringify(initialValues);
 
-  const advisorsForSelectedInmobiliaria =
-    values.authorRole === Role.ASESOR && values.inmobiliariaId
-      ? advisors.filter(
-          (item) => item.inmobiliariaId === values.inmobiliariaId,
-        )
-      : advisors;
+  const advisorsForSelectedInmobiliaria = advisors;
 
   const update = (key: keyof FormValues, value: string) =>
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -104,15 +97,8 @@ export default function BlogPostForm({
           slug: values.slug.trim(),
           content: values.content.trim(),
           coverImageUrl: values.coverImageUrl.trim() || null,
-          authorRole: canManageAssignments ? values.authorRole : undefined,
-          advisorId:
-            canManageAssignments && values.authorRole === Role.ASESOR
-              ? values.advisorId || null
-              : null,
-          inmobiliariaId:
-            canManageAssignments && values.authorRole === Role.INMOBILIARIA
-              ? values.inmobiliariaId || null
-              : null,
+          ownerType: canManageAssignments ? values.ownerType : undefined,
+          ownerId: canManageAssignments ? values.ownerId || null : null,
         }),
       });
 
@@ -222,55 +208,38 @@ export default function BlogPostForm({
                 Autor
               </div>
               <select
-                value={values.authorRole}
+                value={values.ownerType}
                 onChange={(e) => {
-                  const nextRole = e.target.value as Role;
+                  const nextOwnerType = e.target.value as BlogOwnerType;
                   setValues((prev) => ({
                     ...prev,
-                    authorRole: nextRole,
-                    advisorId: nextRole === Role.ASESOR ? prev.advisorId : "",
-                    inmobiliariaId:
-                      nextRole === Role.INMOBILIARIA || nextRole === Role.ASESOR
-                        ? prev.inmobiliariaId
-                        : "",
+                    ownerType: nextOwnerType,
+                    ownerId: "",
                   }));
                 }}
                 className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100"
               >
-                <option value={Role.BLOGUERO}>Bloguero</option>
-                <option value={Role.ADMIN}>Admin</option>
-                <option value={Role.INMOBILIARIA}>Inmobiliaria</option>
-                <option value={Role.ASESOR}>Asesor</option>
+                <option value="blogger">Bloguero</option>
+                <option value="admin">Admin</option>
+                <option value="inmobiliaria">Inmobiliaria</option>
+                <option value="advisor">Asesor</option>
               </select>
             </label>
 
             <label className="block">
               <div className="mb-1.5 text-sm font-medium text-zinc-800">
-                Inmobiliaria
+                Owner / entidad
               </div>
               <select
-                value={values.inmobiliariaId}
+                value={values.ownerType === "inmobiliaria" ? values.ownerId : ""}
                 onChange={(e) => {
-                  const nextInmobiliariaId = e.target.value;
+                  const nextOwnerId = e.target.value;
                   setValues((prev) => ({
                     ...prev,
-                    inmobiliariaId: nextInmobiliariaId,
-                    advisorId:
-                      prev.authorRole === Role.ASESOR &&
-                      nextInmobiliariaId &&
-                      advisors.some(
-                        (item) =>
-                          item.id === prev.advisorId &&
-                          item.inmobiliariaId === nextInmobiliariaId,
-                      )
-                        ? prev.advisorId
-                        : "",
+                    ownerId: nextOwnerId,
                   }));
                 }}
-                disabled={
-                  values.authorRole !== Role.INMOBILIARIA &&
-                  values.authorRole !== Role.ASESOR
-                }
+                disabled={values.ownerType !== "inmobiliaria"}
                 className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100 disabled:bg-zinc-100"
               >
                 <option value="">Sin asignar</option>
@@ -284,12 +253,12 @@ export default function BlogPostForm({
 
             <label className="block">
               <div className="mb-1.5 text-sm font-medium text-zinc-800">
-                Asesor
+                Asesor owner
               </div>
               <select
-                value={values.advisorId}
-                onChange={(e) => update("advisorId", e.target.value)}
-                disabled={values.authorRole !== Role.ASESOR}
+                value={values.ownerType === "advisor" ? values.ownerId : ""}
+                onChange={(e) => update("ownerId", e.target.value)}
+                disabled={values.ownerType !== "advisor"}
                 className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100 disabled:bg-zinc-100"
               >
                 <option value="">Sin asignar</option>

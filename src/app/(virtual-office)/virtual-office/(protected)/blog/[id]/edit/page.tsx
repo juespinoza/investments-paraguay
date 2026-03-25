@@ -97,9 +97,15 @@ export default async function EditBlogPostPage({ params }: PageProps) {
               slug: post.slug,
               content: post.content,
               coverImageUrl: post.coverImageUrl ?? "",
-              authorRole: post.authorRole,
-              advisorId: post.advisorId ?? "",
-              inmobiliariaId: post.inmobiliariaId ?? "",
+              ownerType:
+                post.authorRole === "INMOBILIARIA"
+                  ? "inmobiliaria"
+                  : post.authorRole === "ASESOR"
+                    ? "advisor"
+                    : post.authorRole === "ADMIN"
+                      ? "admin"
+                      : "blogger",
+              ownerId: post.advisorId ?? post.inmobiliariaId ?? "",
             }}
           />
         </CardBody>
