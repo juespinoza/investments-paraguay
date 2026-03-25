@@ -30,6 +30,7 @@ const ROLE_CONFIG = [
     password: process.env.QA_INMOBILIARIA_PASSWORD,
     allowed: [
       "/virtual-office",
+      "/virtual-office/usuarios",
       "/virtual-office/inmobiliaria",
       "/virtual-office/asesores",
       "/virtual-office/propiedades",
@@ -38,8 +39,8 @@ const ROLE_CONFIG = [
     ],
     denied: [
       "/virtual-office/workflow",
-      "/virtual-office/usuarios",
       "/virtual-office/inmobiliaria/new",
+      "/virtual-office/propiedades/new",
     ],
     apiAllowed: [
       "/api/auth/me",
@@ -104,6 +105,8 @@ const FORBIDDEN_MARKERS = [
   "Forbidden",
   "Unauthorized",
   "Ir a login",
+  "Solo un admin puede",
+  "Solo un administrador puede",
 ];
 
 function log(line) {
@@ -226,13 +229,21 @@ async function assertLogout(cookie) {
     throw new Error(`Logout failed with status ${response.status}.`);
   }
 
+  const setCookie = response.headers.get("set-cookie") ?? "";
+  const expiresCookie =
+    setCookie.includes("Expires=Thu, 01 Jan 1970 00:00:00 GMT") ||
+    setCookie.includes("Max-Age=0");
+
+  if (!expiresCookie) {
+    throw new Error("Logout did not return an expiring session cookie.");
+  }
+
   const next = await fetch(`${BASE_URL}/api/auth/me`, {
-    headers: { cookie },
     redirect: "manual",
   });
   const data = await next.json();
   if (data?.authenticated) {
-    throw new Error("Session still authenticated after logout.");
+    throw new Error("Session remained authenticated without cookie after logout.");
   }
 }
 

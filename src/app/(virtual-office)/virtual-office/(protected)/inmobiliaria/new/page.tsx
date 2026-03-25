@@ -11,7 +11,7 @@ export default async function NewInmobiliariaPage() {
       <div className="p-6">
         <h1 className="text-2xl font-semibold">Nueva inmobiliaria</h1>
         <p className="mt-2 text-secondary">
-          Solo un admin puede crear inmobiliarias.
+          No tienes permisos para crear inmobiliarias. Solo un admin puede crear inmobiliarias.
         </p>
       </div>
     );

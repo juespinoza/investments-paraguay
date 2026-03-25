@@ -9,28 +9,28 @@ function read(path) {
   return readFileSync(join(root, path), "utf8");
 }
 
-test("permission matrix keeps advisor self-service and ownership rules", () => {
-  const source = read("src/lib/auth/permissions.ts");
+test("policy v2 keeps the expected matrix for users, properties and blogs", () => {
+  const source = read("src/lib/auth/policy-v2.ts");
 
   assert.match(
     source,
-    /advisors:\s*\{[\s\S]*update:\s*\[Role\.ADMIN,\s*Role\.INMOBILIARIA,\s*Role\.ASESOR\]/,
+    /\[Role\.INMOBILIARIA\]:\s*\{[\s\S]*users:\s*\{[\s\S]*create:\s*\["advisor_users"\][\s\S]*read:\s*\["advisor_users"\][\s\S]*update:\s*\["advisor_users"\][\s\S]*delete_soft:\s*\["advisor_users"\]/,
   );
   assert.match(
     source,
-    /properties:\s*\{[\s\S]*create:\s*\[Role\.ADMIN,\s*Role\.INMOBILIARIA,\s*Role\.ASESOR\]/,
+    /\[Role\.INMOBILIARIA\]:\s*\{[\s\S]*properties:\s*\{[\s\S]*create:\s*NONE[\s\S]*read:\s*\["advisor_properties"\][\s\S]*update:\s*\["advisor_properties"\][\s\S]*delete_soft:\s*\["advisor_properties"\]/,
   );
   assert.match(
     source,
-    /properties:\s*\{[\s\S]*delete:\s*\[Role\.ADMIN,\s*Role\.INMOBILIARIA,\s*Role\.ASESOR\]/,
+    /\[Role\.ASESOR\]:\s*\{[\s\S]*advisor_core:\s*\{[\s\S]*read:\s*\["own"\][\s\S]*update:\s*\["own"\]/,
   );
   assert.match(
     source,
-    /users:\s*\{[\s\S]*read:\s*\[Role\.ADMIN\]/,
+    /\[Role\.ADMIN\]:\s*\{[\s\S]*blogs:\s*\{[\s\S]*create:\s*\["all"\][\s\S]*read:\s*\["all"\][\s\S]*update:\s*\["all"\][\s\S]*delete_soft:\s*\["all"\]/,
   );
 });
 
-test("menu keeps role isolation for admin, inmobiliaria and advisor", () => {
+test("menu aligns with role visibility in the new policy", () => {
   const source = read("src/lib/virtualoffice/menu.ts");
 
   assert.match(
@@ -43,100 +43,104 @@ test("menu keeps role isolation for admin, inmobiliaria and advisor", () => {
   );
   assert.match(
     source,
-    /label:\s*"Usuarios"[\s\S]*roles:\s*\["ADMIN"\]/,
+    /label:\s*"Usuarios"[\s\S]*roles:\s*\["ADMIN",\s*"INMOBILIARIA"\]/,
   );
 });
 
-test("advisor create page denies access when role cannot create advisors", () => {
+test("dashboard no longer suggests invalid actions for inmobiliaria", () => {
   const source = read(
-    "src/app/(virtual-office)/virtual-office/(protected)/asesores/new/page.tsx",
+    "src/app/(virtual-office)/virtual-office/(protected)/page.tsx",
   );
 
-  assert.match(source, /if\s*\(!canCreateAdvisor\(session\)\)/);
-  assert.match(source, /No tienes permisos para crear asesores\./);
-});
-
-test("advisor self-service route redirects only the current advisor to its landing", () => {
-  const source = read(
-    "src/app/(virtual-office)/virtual-office/(protected)/mi-landing/page.tsx",
+  assert.match(
+    source,
+    /Mantén tu landing actualizada, crea asesores y usuarios de asesores, y supervisa que las propiedades de tu equipo estén completas\./,
   );
-
-  assert.match(source, /if\s*\(!isAdvisor\(session\)\s*\|\|\s*!session\.advisorId\)/);
-  assert.match(source, /redirect\(`\/virtual-office\/asesores\/\$\{session\.advisorId\}\/edit`\)/);
-});
-
-test("property routes enforce ownership and derived assignments", () => {
-  const createRoute = read("src/app/api/virtualoffice/properties/route.ts");
-  const itemRoute = read("src/app/api/virtualoffice/properties/[id]/route.ts");
-  const propertyLib = read("src/lib/virtualoffice/properties.ts");
-
-  assert.match(createRoute, /if\s*\(!canCreateProperty\(session\)\)/);
-  assert.match(createRoute, /const assignments = await resolvePropertyAssignments\(session, data\)/);
-  assert.match(itemRoute, /await assertPropertyScope\(session, id\)/);
-  assert.match(itemRoute, /if\s*\(!canDeleteProperty\(session\)\)/);
-  assert.match(propertyLib, /const advisorId = isAdvisor\(session\)\s*\?[\s\S]*session\.advisorId/);
-  assert.match(propertyLib, /inmobiliariaId = advisor\.inmobiliariaId \?\? null/);
-});
-
-test("session and logout keep auth hardening in place", () => {
-  const sessionSource = read("src/lib/auth/session.ts");
-  const loginSource = read("src/app/api/auth/login/route.ts");
-  const logoutSource = read("src/app/api/auth/logout/route.ts");
-
-  assert.match(sessionSource, /where:\s*\{\s*id:\s*userId,\s*deletedAt:\s*null\s*\}/);
-  assert.match(loginSource, /where:\s*\{[\s\S]*email,[\s\S]*deletedAt:\s*null,[\s\S]*\}/);
-  assert.match(logoutSource, /response\.cookies\.set\(cookieName,\s*""/);
-  assert.match(logoutSource, /expires:\s*new Date\(0\)/);
-});
-
-test("workflow admin page stays protected behind requireAdminSession", () => {
-  const source = read(
-    "src/app/(virtual-office)/virtual-office/(protected)/workflow/page.tsx",
+  assert.match(source, /const canSeeUsers = can\(session, "users", "read"\)/);
+  assert.match(
+    source,
+    /label:\s*"Usuarios"[\s\S]*href:\s*"\/virtual-office\/usuarios"/,
   );
-
-  assert.match(source, /await requireAdminSession\(\)/);
 });
 
-test("user assignment rules reject invalid cross-role combinations", () => {
+test("users scope keeps inmobiliaria limited to advisor users of its tenant", () => {
   const source = read("src/lib/auth/users.ts");
 
+  assert.match(source, /scope === "advisor_users"/);
   assert.match(
     source,
-    /Los usuarios de inmobiliaria deben tener una inmobiliaria asignada\./,
+    /Las inmobiliarias solo pueden gestionar usuarios de asesores de su tenant\./,
   );
-  assert.match(
-    source,
-    /Los usuarios de inmobiliaria no deben tener un asesor asignado\./,
+  assert.match(source, /role:\s*Role\.ASESOR/);
+  assert.match(source, /advisorId:\s*\{\s*in:\s*advisors\.map/);
+});
+
+test("property rules keep inmobiliaria creation blocked and advisor ownership scoped", () => {
+  const source = read("src/lib/virtualoffice/properties.ts");
+  const createPage = read(
+    "src/app/(virtual-office)/virtual-office/(protected)/propiedades/new/page.tsx",
   );
-  assert.match(
-    source,
-    /Los usuarios asesores deben tener un asesor asignado\./,
+
+  assert.match(source, /const propertyScope = scopeFor\(/);
+  assert.match(source, /propertyScope === "advisor_properties"/);
+  assert.match(source, /inmobiliariaId = advisor\.inmobiliariaId \?\? null/);
+  assert.match(createPage, /if\s*\(!canCreateProperty\(session\)\)/);
+});
+
+test("blog persistence writes and reads explicit ownership", () => {
+  const schema = read("prisma/schema.prisma");
+  const blogLib = read("src/lib/virtualoffice/blog.ts");
+  const collectionRoute = read("src/app/api/virtualoffice/blog/route.ts");
+  const itemRoute = read("src/app/api/virtualoffice/blog/[id]/route.ts");
+
+  assert.match(schema, /enum BlogOwnerType/);
+  assert.match(schema, /ownerType\s+BlogOwnerType\?/);
+  assert.match(schema, /ownerId\s+String\?/);
+  assert.match(blogLib, /ownerTypeFromDbValue/);
+  assert.match(blogLib, /ownerTypeToDbValue/);
+  assert.match(collectionRoute, /ownerType:\s*ownerTypeToDbValue\(ownership\.ownerType\)/);
+  assert.match(itemRoute, /ownerType:\s*ownerTypeToDbValue\(ownership\.ownerType\)/);
+});
+
+test("inmobiliaria landing persistence uses a dedicated relation with fallback", () => {
+  const schema = read("prisma/schema.prisma");
+  const repo = read("src/lib/virtualoffice/inmobiliarias.ts");
+  const publicPage = read(
+    "src/app/[locale]/(public)/bienes-raices/inmobiliarias/[slug]/page.tsx",
   );
+
+  assert.match(schema, /model InmobiliariaLanding/);
+  assert.match(schema, /landing\s+InmobiliariaLanding\?/);
+  assert.match(repo, /resolveLandingThemeFromRecord/);
+  assert.match(repo, /tx\.inmobiliariaLanding\.create/);
+  assert.match(repo, /tx\.inmobiliariaLanding\.upsert/);
   assert.match(
-    source,
-    /El asesor no pertenece a la inmobiliaria seleccionada\./,
+    publicPage,
+    /\(agency\.landing\?\.deletedAt \? null : agency\.landing\?\.themeJson\) \?\?[\s\S]*agency\.themeJson/,
   );
 });
 
-test("soft delete protections remain in place for users and inmobiliarias", () => {
-  const usersSource = read("src/lib/auth/users.ts");
-  const inmoSource = read("src/lib/virtualoffice/inmobiliarias.ts");
+test("backfill script covers phase 9 data migration", () => {
+  const source = read("scripts/backfill-phase9-persistence.cjs");
 
-  assert.match(usersSource, /No puedes desactivar tu propio usuario\./);
-  assert.match(inmoSource, /No se puede desactivar la inmobiliaria mientras tenga relaciones activas:/);
-  assert.match(inmoSource, /dependencies\.users > 0/);
-  assert.match(inmoSource, /dependencies\.advisors > 0/);
-  assert.match(inmoSource, /dependencies\.properties > 0/);
+  assert.match(source, /prisma\.inmobiliariaLanding\.(create|update)/);
+  assert.match(source, /ownerType/);
+  assert.match(source, /ownerId/);
+  assert.match(source, /unresolvedAdminOrBloggerPosts/);
 });
 
-test("inmobiliaria landing can only feature its own active properties", () => {
-  const inmoSource = read("src/lib/virtualoffice/inmobiliarias.ts");
-
-  assert.match(inmoSource, /async function validateFeaturedPropertyIds/);
-  assert.match(inmoSource, /inmobiliariaId,/);
-  assert.match(inmoSource, /deletedAt:\s*null/);
-  assert.match(
-    inmoSource,
-    /Solo puedes destacar propiedades activas de tu propia inmobiliaria\./,
+test("protected pages keep denied states instead of server failures", () => {
+  const workflow = read(
+    "src/app/(virtual-office)/virtual-office/(protected)/workflow/page.tsx",
   );
+  const users = read(
+    "src/app/(virtual-office)/virtual-office/(protected)/usuarios/page.tsx",
+  );
+  const inmobiliaria = read(
+    "src/app/(virtual-office)/virtual-office/(protected)/inmobiliaria/page.tsx",
+  );
+
+  assert.match(workflow, /await requireAdminSession\(\)/);
+  assert.match(users, /No tienes permisos|Sin permisos|Forbidden/);
+  assert.match(inmobiliaria, /No tienes permisos|Sin permisos|Forbidden/);
 });

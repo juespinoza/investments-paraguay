@@ -20,6 +20,7 @@ const CASES: Array<{
       "/virtual-office/inmobiliaria",
       "/virtual-office/asesores",
       "/virtual-office/propiedades",
+      "/virtual-office/blog",
     ],
     denied: [],
   },
@@ -27,13 +28,16 @@ const CASES: Array<{
     role: "INMOBILIARIA",
     allowed: [
       "/virtual-office",
+      "/virtual-office/usuarios",
       "/virtual-office/inmobiliaria",
       "/virtual-office/asesores",
       "/virtual-office/propiedades",
+      "/virtual-office/blog",
     ],
     denied: [
       "/virtual-office/workflow",
-      "/virtual-office/usuarios",
+      "/virtual-office/inmobiliaria/new",
+      "/virtual-office/propiedades/new",
     ],
   },
   {
@@ -43,6 +47,7 @@ const CASES: Array<{
       "/virtual-office/mi-landing",
       "/virtual-office/asesores",
       "/virtual-office/propiedades",
+      "/virtual-office/blog",
     ],
     denied: [
       "/virtual-office/workflow",
@@ -59,6 +64,7 @@ const CASES: Array<{
       "/virtual-office/usuarios",
       "/virtual-office/propiedades",
       "/virtual-office/inmobiliaria",
+      "/virtual-office/asesores",
     ],
   },
 ];
