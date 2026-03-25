@@ -52,6 +52,9 @@ export default async function AgencyLandingPage({ params }: PageProps) {
       description: true,
       logoUrl: true,
       themeJson: true,
+      landing: {
+        select: { themeJson: true, deletedAt: true },
+      },
       advisors: {
         where: { deletedAt: null },
         select: { id: true, fullName: true, slug: true, headline: true },
@@ -76,7 +79,10 @@ export default async function AgencyLandingPage({ params }: PageProps) {
 
   if (!agency) notFound();
 
-  const landingTheme = parseInmobiliariaLandingTheme(agency.themeJson);
+  const landingTheme = parseInmobiliariaLandingTheme(
+    (agency.landing?.deletedAt ? null : agency.landing?.themeJson) ??
+      agency.themeJson,
+  );
 
   const allPropertyItems = agency.properties
     .map((p) => ({

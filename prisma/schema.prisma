@@ -21,6 +21,13 @@ enum Role {
   BLOGUERO
 }
 
+enum BlogOwnerType {
+  ADMIN
+  INMOBILIARIA
+  ADVISOR
+  BLOGGER
+}
+
 enum SocialPlatform {
   WHATSAPP
   EMAIL
@@ -55,6 +62,7 @@ model Inmobiliaria {
   logoUrl     String?
   themeJson   Json?
 
+  landing     InmobiliariaLanding?
   blogs       BlogPost[]
   properties  Property[]
   advisors    Advisor[]
@@ -131,6 +139,8 @@ model BlogPost {
   slug           String   @unique
   content        String
   coverImageUrl  String?
+  ownerType      BlogOwnerType?
+  ownerId        String?
 
   inmobiliariaId String?
   inmobiliaria   Inmobiliaria? @relation(fields: [inmobiliariaId], references: [id])
@@ -139,6 +149,20 @@ model BlogPost {
   advisor         Advisor? @relation(fields: [advisorId], references: [id])
 
   authorRole     Role
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  @@index([ownerType, ownerId])
+  @@index([authorRole])
+}
+
+model InmobiliariaLanding {
+  id             String   @id @default(cuid())
+  inmobiliariaId String   @unique
+  inmobiliaria   Inmobiliaria @relation(fields: [inmobiliariaId], references: [id], onDelete: Cascade)
+  themeJson      Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

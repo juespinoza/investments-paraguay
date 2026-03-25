@@ -90,11 +90,51 @@ function ownerTypeFromRole(role: Role): BlogOwnerType {
   }
 }
 
+export function ownerTypeToDbValue(ownerType: BlogOwnerType) {
+  switch (ownerType) {
+    case "admin":
+      return "ADMIN" as const;
+    case "inmobiliaria":
+      return "INMOBILIARIA" as const;
+    case "advisor":
+      return "ADVISOR" as const;
+    case "blogger":
+      return "BLOGGER" as const;
+  }
+}
+
+function ownerTypeFromDbValue(
+  ownerType: "ADMIN" | "INMOBILIARIA" | "ADVISOR" | "BLOGGER" | null | undefined,
+): BlogOwnerType | null {
+  switch (ownerType) {
+    case "ADMIN":
+      return "admin";
+    case "INMOBILIARIA":
+      return "inmobiliaria";
+    case "ADVISOR":
+      return "advisor";
+    case "BLOGGER":
+      return "blogger";
+    default:
+      return null;
+  }
+}
+
 export function deriveBlogOwnershipFromRecord(post: {
+  ownerType?: "ADMIN" | "INMOBILIARIA" | "ADVISOR" | "BLOGGER" | null;
+  ownerId?: string | null;
   authorRole: Role;
   advisorId: string | null;
   inmobiliariaId: string | null;
 }): Pick<BlogOwnership, "ownerType" | "ownerId"> {
+  const explicitOwnerType = ownerTypeFromDbValue(post.ownerType);
+  if (explicitOwnerType) {
+    return {
+      ownerType: explicitOwnerType,
+      ownerId: post.ownerId ?? null,
+    };
+  }
+
   const ownerType = ownerTypeFromRole(post.authorRole);
   const ownerId =
     ownerType === "advisor"
@@ -117,13 +157,34 @@ export function buildBlogListWhere(
   const where: Prisma.BlogPostWhereInput = { deletedAt: null };
 
   if (isBloguero(session)) {
-    where.authorRole = Role.BLOGUERO;
+    where.OR = [
+      { ownerType: "BLOGGER", ownerId: session.id },
+      { ownerType: null, authorRole: Role.BLOGUERO },
+    ];
   } else if (isInmobiliaria(session)) {
-    where.authorRole = Role.INMOBILIARIA;
-    where.inmobiliariaId = session.inmobiliariaId ?? "__none__";
+    where.OR = [
+      {
+        ownerType: "INMOBILIARIA",
+        ownerId: session.inmobiliariaId ?? "__none__",
+      },
+      {
+        ownerType: null,
+        authorRole: Role.INMOBILIARIA,
+        inmobiliariaId: session.inmobiliariaId ?? "__none__",
+      },
+    ];
   } else if (isAdvisor(session)) {
-    where.authorRole = Role.ASESOR;
-    where.advisorId = session.advisorId ?? "__none__";
+    where.OR = [
+      {
+        ownerType: "ADVISOR",
+        ownerId: session.advisorId ?? "__none__",
+      },
+      {
+        ownerType: null,
+        authorRole: Role.ASESOR,
+        advisorId: session.advisorId ?? "__none__",
+      },
+    ];
   } else if (!isAdmin(session)) {
     throw new BlogRepoError("Forbidden", 403);
   }
@@ -329,6 +390,8 @@ export async function assertBlogPostScope(
     where: { id: postId, deletedAt: null },
     select: {
       id: true,
+      ownerType: true,
+      ownerId: true,
       authorRole: true,
       advisorId: true,
       inmobiliariaId: true,
@@ -345,7 +408,10 @@ export async function assertBlogPostScope(
   if (isAdmin(session)) return scopedPost;
 
   if (isBloguero(session)) {
-    if (post.authorRole !== Role.BLOGUERO) {
+    if (ownership.ownerType !== "blogger") {
+      throw new BlogRepoError("Forbidden", 403);
+    }
+    if (ownership.ownerId && ownership.ownerId !== session.id) {
       throw new BlogRepoError("Forbidden", 403);
     }
     return scopedPost;
@@ -354,8 +420,8 @@ export async function assertBlogPostScope(
   if (isInmobiliaria(session)) {
     if (
       !session.inmobiliariaId ||
-      post.authorRole !== Role.INMOBILIARIA ||
-      post.inmobiliariaId !== session.inmobiliariaId
+      ownership.ownerType !== "inmobiliaria" ||
+      ownership.ownerId !== session.inmobiliariaId
     ) {
       throw new BlogRepoError("Forbidden", 403);
     }
@@ -365,8 +431,8 @@ export async function assertBlogPostScope(
   if (isAdvisor(session)) {
     if (
       !session.advisorId ||
-      post.authorRole !== Role.ASESOR ||
-      post.advisorId !== session.advisorId
+      ownership.ownerType !== "advisor" ||
+      ownership.ownerId !== session.advisorId
     ) {
       throw new BlogRepoError("Forbidden", 403);
     }
@@ -386,6 +452,8 @@ export async function listPublicBlogPosts() {
       slug: true,
       content: true,
       coverImageUrl: true,
+      ownerType: true,
+      ownerId: true,
       authorRole: true,
       advisorId: true,
       inmobiliariaId: true,
@@ -417,6 +485,8 @@ export async function getPublicBlogPostBySlug(slug: string) {
       slug: true,
       content: true,
       coverImageUrl: true,
+      ownerType: true,
+      ownerId: true,
       authorRole: true,
       updatedAt: true,
       createdAt: true,

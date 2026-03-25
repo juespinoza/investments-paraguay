@@ -6,6 +6,7 @@ import {
   BlogUpsertSchema,
   buildBlogListWhere,
   deriveBlogOwnershipFromRecord,
+  ownerTypeToDbValue,
   resolveBlogOwnership,
 } from "@/lib/virtualoffice/blog";
 
@@ -22,6 +23,8 @@ export async function GET(req: Request) {
         id: true,
         title: true,
         slug: true,
+        ownerType: true,
+        ownerId: true,
         authorRole: true,
         advisorId: true,
         inmobiliariaId: true,
@@ -67,6 +70,8 @@ export async function POST(req: Request) {
         slug: parsed.data.slug,
         content: parsed.data.content,
         coverImageUrl: parsed.data.coverImageUrl ?? null,
+        ownerType: ownerTypeToDbValue(ownership.ownerType),
+        ownerId: ownership.ownerId,
         authorRole: ownership.authorRole,
         advisorId: ownership.advisorId,
         inmobiliariaId: ownership.inmobiliariaId,

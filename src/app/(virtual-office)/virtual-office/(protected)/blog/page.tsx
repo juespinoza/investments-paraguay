@@ -59,6 +59,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       id: true,
       title: true,
       slug: true,
+      ownerType: true,
+      ownerId: true,
       authorRole: true,
       advisorId: true,
       inmobiliariaId: true,

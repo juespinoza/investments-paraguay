@@ -6,6 +6,7 @@ import {
   BlogRepoError,
   BlogUpsertSchema,
   deriveBlogOwnershipFromRecord,
+  ownerTypeToDbValue,
   resolveBlogOwnership,
 } from "@/lib/virtualoffice/blog";
 
@@ -26,6 +27,8 @@ export async function GET(_req: Request, { params }: Params) {
         slug: true,
         content: true,
         coverImageUrl: true,
+        ownerType: true,
+        ownerId: true,
         authorRole: true,
         advisorId: true,
         inmobiliariaId: true,
@@ -74,6 +77,8 @@ export async function PATCH(req: Request, { params }: Params) {
         slug: parsed.data.slug,
         content: parsed.data.content,
         coverImageUrl: parsed.data.coverImageUrl ?? null,
+        ownerType: ownerTypeToDbValue(ownership.ownerType),
+        ownerId: ownership.ownerId,
         authorRole: ownership.authorRole,
         advisorId: ownership.advisorId,
         inmobiliariaId: ownership.inmobiliariaId,

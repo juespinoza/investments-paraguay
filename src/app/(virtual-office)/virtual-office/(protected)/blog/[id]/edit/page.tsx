@@ -9,6 +9,7 @@ import {
   assertBlogPostScope,
   BlogRepoError,
   canEditBlogPost,
+  deriveBlogOwnershipFromRecord,
   getBlogFormOptions,
 } from "@/lib/virtualoffice/blog";
 
@@ -56,6 +57,8 @@ export default async function EditBlogPostPage({ params }: PageProps) {
         slug: true,
         content: true,
         coverImageUrl: true,
+        ownerType: true,
+        ownerId: true,
         authorRole: true,
         advisorId: true,
         inmobiliariaId: true,
@@ -67,6 +70,8 @@ export default async function EditBlogPostPage({ params }: PageProps) {
   if (!post) {
     return notFound();
   }
+
+  const ownership = deriveBlogOwnershipFromRecord(post);
 
   return (
     <div>
@@ -97,15 +102,8 @@ export default async function EditBlogPostPage({ params }: PageProps) {
               slug: post.slug,
               content: post.content,
               coverImageUrl: post.coverImageUrl ?? "",
-              ownerType:
-                post.authorRole === "INMOBILIARIA"
-                  ? "inmobiliaria"
-                  : post.authorRole === "ASESOR"
-                    ? "advisor"
-                    : post.authorRole === "ADMIN"
-                      ? "admin"
-                      : "blogger",
-              ownerId: post.advisorId ?? post.inmobiliariaId ?? "",
+              ownerType: ownership.ownerType,
+              ownerId: ownership.ownerId ?? "",
             }}
           />
         </CardBody>

@@ -55,6 +55,16 @@ export type InmobiliariaWorkflowUserInput = {
   name?: string | null;
 };
 
+function resolveLandingThemeFromRecord(record: {
+  themeJson?: unknown;
+  landing?: { themeJson: unknown; deletedAt: Date | null } | null;
+}) {
+  return parseInmobiliariaLandingTheme(
+    (record.landing?.deletedAt ? null : record.landing?.themeJson) ??
+      record.themeJson,
+  );
+}
+
 export async function requireInmobiliariaRoles() {
   const session = await requireSession();
 
@@ -196,6 +206,9 @@ export async function getInmobiliariaById(id: string) {
       description: true,
       logoUrl: true,
       themeJson: true,
+      landing: {
+        select: { themeJson: true, deletedAt: true },
+      },
       updatedAt: true,
       createdAt: true,
       _count: {
@@ -314,7 +327,7 @@ export async function getInmobiliariaById(id: string) {
 
   return {
     ...inmobiliaria,
-    landingTheme: parseInmobiliariaLandingTheme(inmobiliaria.themeJson),
+    landingTheme: resolveLandingThemeFromRecord(inmobiliaria),
     users,
     advisors: advisors.map((advisor) => ({
       ...advisor,
@@ -379,6 +392,16 @@ export async function createInmobiliaria(
         },
         select: { id: true },
       });
+
+      if (input.landing) {
+        await tx.inmobiliariaLanding.create({
+          data: {
+            inmobiliariaId: inmobiliaria.id,
+            themeJson: buildInmobiliariaLandingJson(input.landing),
+          },
+          select: { id: true },
+        });
+      }
 
       if (user) {
         await tx.user.create({
@@ -476,12 +499,31 @@ export async function updateInmobiliariaLanding(
   );
 
   try {
-    return await prisma.inmobiliaria.update({
-      where: { id },
-      data: {
-        themeJson: buildInmobiliariaLandingJson(input, featuredPropertyIds),
-      },
-      select: { id: true },
+    const landingJson = buildInmobiliariaLandingJson(input, featuredPropertyIds);
+
+    return await prisma.$transaction(async (tx) => {
+      const updated = await tx.inmobiliaria.update({
+        where: { id },
+        data: {
+          themeJson: landingJson,
+        },
+        select: { id: true },
+      });
+
+      await tx.inmobiliariaLanding.upsert({
+        where: { inmobiliariaId: id },
+        create: {
+          inmobiliariaId: id,
+          themeJson: landingJson,
+        },
+        update: {
+          themeJson: landingJson,
+          deletedAt: null,
+        },
+        select: { id: true },
+      });
+
+      return updated;
     });
   } catch (error: unknown) {
     if (

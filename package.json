@@ -16,7 +16,8 @@
     "test:integration": "node --env-file=.env scripts/virtual-office-smoke.mjs",
     "test:e2e": "node --env-file=.env ./node_modules/@playwright/test/cli.js test",
     "bootstrap:admin": "node --env-file=.env scripts/bootstrap-admin.cjs",
-    "bootstrap:qa": "node --env-file=.env scripts/bootstrap-qa-users.cjs"
+    "bootstrap:qa": "node --env-file=.env scripts/bootstrap-qa-users.cjs",
+    "backfill:phase9": "node --env-file=.env scripts/backfill-phase9-persistence.cjs"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
