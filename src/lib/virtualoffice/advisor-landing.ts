@@ -2,6 +2,46 @@ import "server-only";
 
 import { Prisma, SocialPlatform } from "@/generated/prisma";
 import type { PublicAdvisorLanding } from "@/lib/data/types";
+import { z } from "zod";
+
+export const ADVISOR_LANDING_LEGACY_FIELDS = [
+  "headline",
+  "heroBgUrl",
+  "aboutDescription",
+  "aboutParagraph1",
+  "aboutParagraph2",
+  "servicesParagraph1",
+  "servicesParagraph2",
+  "propertyTypes",
+  "clientTypes",
+  "areas",
+  "serviceList",
+  "company",
+  "startDate",
+  "testimonies",
+  "socialMedia",
+] as const;
+
+export const AdvisorLandingV2SocialLinkSchema = z.object({
+  platform: z.string().trim().min(1),
+  url: z.string().trim().min(1),
+});
+
+export const AdvisorLandingV2Schema = z.object({
+  heroTitle: z.string().trim().nullable().optional(),
+  heroSubtitle: z.string().trim().nullable().optional(),
+  heroImageUrl: z.string().trim().nullable().optional(),
+  ctaLabel: z.string().trim().nullable().optional(),
+  ctaHref: z.string().trim().nullable().optional(),
+  aboutTitle: z.string().trim().nullable().optional(),
+  aboutBody: z.string().trim().nullable().optional(),
+  servicesTitle: z.string().trim().nullable().optional(),
+  servicesBody: z.string().trim().nullable().optional(),
+  featuredPropertyIds: z.array(z.string().trim()).default([]),
+  socialLinks: z.array(AdvisorLandingV2SocialLinkSchema).default([]),
+});
+
+export type AdvisorLandingV2 = z.output<typeof AdvisorLandingV2Schema>;
 
 export type AdvisorLandingInput = {
   aboutImageUrl?: string | null;
@@ -26,6 +66,44 @@ export type AdvisorLandingInput = {
   }>;
   featuredPropertyIds: string[];
 };
+
+export function normalizeAdvisorLandingToV2(
+  input: Partial<AdvisorLandingInput> & {
+    fullName?: string | null;
+    headline?: string | null;
+    heroBgUrl?: string | null;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+  },
+): AdvisorLandingV2 {
+  const aboutBody = [input.aboutDescription, input.aboutParagraph1, input.aboutParagraph2]
+    .map((value) => value?.trim())
+    .filter(Boolean)
+    .join("\n\n");
+
+  const servicesBody = [input.servicesParagraph1, input.servicesParagraph2]
+    .map((value) => value?.trim())
+    .filter(Boolean)
+    .join("\n\n");
+
+  return AdvisorLandingV2Schema.parse({
+    heroTitle: input.fullName?.trim() || null,
+    heroSubtitle: input.headline?.trim() || null,
+    heroImageUrl: input.heroBgUrl?.trim() || input.aboutImageUrl?.trim() || null,
+    ctaLabel: input.ctaLabel?.trim() || null,
+    ctaHref: input.ctaHref?.trim() || null,
+    aboutTitle: input.aboutTitle?.trim() || "Sobre mi",
+    aboutBody: aboutBody || null,
+    servicesTitle: "Servicios",
+    servicesBody: servicesBody || null,
+    featuredPropertyIds: input.featuredPropertyIds ?? [],
+    socialLinks:
+      input.socialMedia?.map((item) => ({
+        platform: item.platform,
+        url: item.href,
+      })) ?? [],
+  });
+}
 
 type AdvisorWithDetail = Prisma.AdvisorGetPayload<{
   include: {
@@ -168,6 +246,32 @@ export function mapAdvisorLandingToFormData(advisor: AdvisorWithDetail) {
     featuredPropertyIds:
       advisor.landing?.featuredProperties.map((item) => item.propertyId) ?? [],
   };
+}
+
+export function mapAdvisorLandingToV2(advisor: AdvisorWithDetail) {
+  return normalizeAdvisorLandingToV2({
+    fullName: advisor.fullName,
+    headline: advisor.headline,
+    heroBgUrl: advisor.heroBgUrl,
+    ctaLabel: advisor.ctaLabel,
+    ctaHref: advisor.ctaHref,
+    aboutImageUrl: advisor.landing?.aboutImageUrl ?? advisor.photoUrl ?? null,
+    aboutTitle: advisor.landing?.aboutTitle ?? "",
+    aboutDescription: advisor.landing?.aboutDescription ?? null,
+    aboutParagraph1: advisor.landing?.aboutParagraph1 ?? "",
+    aboutParagraph2: advisor.landing?.aboutParagraph2 ?? "",
+    servicesParagraph1: advisor.landing?.servicesParagraph1 ?? "",
+    servicesParagraph2: advisor.landing?.servicesParagraph2 ?? "",
+    socialMedia:
+      advisor.landing?.socialMedia.map((item) => ({
+        platform: item.platform,
+        label: item.label,
+        value: item.value,
+        href: item.href,
+      })) ?? [],
+    featuredPropertyIds:
+      advisor.landing?.featuredProperties.map((item) => item.propertyId) ?? [],
+  });
 }
 
 function calculateYearsExperience(startDate: Date) {
