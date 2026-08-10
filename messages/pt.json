@@ -89,8 +89,8 @@
     "availableTitle": "Propriedades disponíveis",
     "filters": {
       "location": "Zona, bairro ou cidade",
-      "min": "Investimento mínimo (USD)",
-      "max": "Investimento máximo (USD)",
+      "min": "Investimento Min (USD)",
+      "max": "Investimento Max (USD)",
       "apply": "Aplicar filtros"
     },
     "map": {

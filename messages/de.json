@@ -90,8 +90,8 @@
     "availableTitle": "Verfügbare Immobilien",
     "filters": {
       "location": "Gebiet, Viertel oder Stadt",
-      "min": "Mindestinvestment (USD)",
-      "max": "Maximales Investment (USD)",
+      "min": "Min Investment (USD)",
+      "max": "Max Investment (USD)",
       "apply": "Filter anwenden"
     },
     "map": {

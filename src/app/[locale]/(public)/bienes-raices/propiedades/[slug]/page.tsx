@@ -122,7 +122,7 @@ export default async function PropertyPage({ params }: PageProps) {
                   </span>
                 ) : null}
                 {property.priceUsd ? (
-                  <span className="rounded-full border border-[rgba(201,164,92,0.32)] bg-[#f7efdf] px-4 py-2 font-semibold text-primary">
+                  <span className="rounded-full border border-[var(--line)] bg-[var(--stone)] px-4 py-2 font-semibold text-primary">
                     USD {property.priceUsd.toLocaleString("en-US")}
                   </span>
                 ) : null}
@@ -188,7 +188,7 @@ export default async function PropertyPage({ params }: PageProps) {
 
       <section className="px-4 py-8">
         <div className="container-page">
-          <div className="max-w-2xl rounded-4xl border border-soft bg-[linear-gradient(180deg,#fffdf9_0%,#f5ede1_100%)] p-6 shadow-[0_18px_48px_rgba(15,23,38,0.1)] md:p-8">
+          <div className="max-w-2xl rounded-4xl border border-soft bg-[linear-gradient(180deg,var(--ivory)_0%,var(--stone)_100%)] p-6 shadow-[0_18px_48px_rgba(10,10,10,0.1)] md:p-8">
             <div className="eyebrow">Contacto</div>
             <h2 className="mt-5 text-3xl font-semibold tracking-tight text-primary">
               Solicitar información

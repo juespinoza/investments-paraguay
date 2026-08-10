@@ -1,6 +1,7 @@
 import "server-only";
 
 import { Prisma } from "@/generated/prisma";
+import type { PublicInmobiliariaLandingV2 } from "@/lib/data/types";
 import { z } from "zod";
 
 export const INMOBILIARIA_LANDING_LEGACY_FIELDS = [
@@ -32,6 +33,7 @@ export const InmobiliariaLandingV2Schema = z.object({
 export type InmobiliariaLandingV2 = z.output<
   typeof InmobiliariaLandingV2Schema
 >;
+export type InmobiliariaLandingV2FormData = InmobiliariaLandingV2;
 
 export const InmobiliariaLandingThemeSchema = z.object({
   heroTitle: z.string().trim().nullable().optional(),
@@ -65,6 +67,8 @@ export function parseInmobiliariaLandingTheme(
 
 export function normalizeInmobiliariaLandingToV2(input: {
   name?: string | null;
+  slug?: string | null;
+  logoUrl?: string | null;
   description?: string | null;
   landing?: InmobiliariaLandingTheme | null;
 }): InmobiliariaLandingV2 {
@@ -87,6 +91,43 @@ export function normalizeInmobiliariaLandingToV2(input: {
     propertiesIntro: landing?.propertiesSubtitle ?? null,
     featuredPropertyIds: landing?.featuredPropertyIds ?? [],
   });
+}
+
+export function mapInmobiliariaLandingToPublicV2(input: {
+  name: string;
+  slug: string;
+  logoUrl?: string | null;
+  description?: string | null;
+  landing?: InmobiliariaLandingTheme | null;
+}): PublicInmobiliariaLandingV2 {
+  const normalized = normalizeInmobiliariaLandingToV2(input);
+
+  return {
+    slug: input.slug,
+    name: input.name,
+    logoUrl: input.logoUrl ?? null,
+    hero: {
+      title: normalized.heroTitle ?? input.name,
+      subtitle: normalized.heroSubtitle ?? input.description ?? null,
+      imageUrl: normalized.heroImageUrl ?? null,
+      ctaLabel: normalized.heroCtaLabel ?? null,
+      ctaHref: normalized.heroCtaHref ?? null,
+    },
+    about: {
+      title: normalized.aboutTitle ?? null,
+      body: normalized.aboutBody ?? null,
+    },
+    contact: {
+      email: normalized.contactEmail ?? null,
+      phone: normalized.contactPhone ?? null,
+      whatsapp: normalized.contactWhatsapp ?? null,
+      website: normalized.contactWebsite ?? null,
+      address: normalized.contactAddress ?? null,
+    },
+    advisorsIntro: normalized.advisorsIntro ?? null,
+    propertiesIntro: normalized.propertiesIntro ?? null,
+    featuredPropertyIds: normalized.featuredPropertyIds ?? [],
+  };
 }
 
 export function buildInmobiliariaLandingJson(

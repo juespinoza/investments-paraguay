@@ -25,6 +25,7 @@ import {
 import {
   buildInmobiliariaLandingJson,
   InmobiliariaLandingThemeSchema,
+  normalizeInmobiliariaLandingToV2,
   parseInmobiliariaLandingTheme,
 } from "@/lib/virtualoffice/inmobiliaria-landing";
 export { parseInmobiliariaLandingTheme } from "@/lib/virtualoffice/inmobiliaria-landing";
@@ -56,6 +57,10 @@ export type InmobiliariaWorkflowUserInput = {
 };
 
 function resolveLandingThemeFromRecord(record: {
+  name?: string | null;
+  slug?: string | null;
+  logoUrl?: string | null;
+  description?: string | null;
   themeJson?: unknown;
   landing?: { themeJson: unknown; deletedAt: Date | null } | null;
 }) {
@@ -63,6 +68,23 @@ function resolveLandingThemeFromRecord(record: {
     (record.landing?.deletedAt ? null : record.landing?.themeJson) ??
       record.themeJson,
   );
+}
+
+function resolveLandingThemeV2FromRecord(record: {
+  name?: string | null;
+  slug?: string | null;
+  logoUrl?: string | null;
+  description?: string | null;
+  themeJson?: unknown;
+  landing?: { themeJson: unknown; deletedAt: Date | null } | null;
+}) {
+  return normalizeInmobiliariaLandingToV2({
+    name: record.name ?? null,
+    slug: record.slug ?? null,
+    logoUrl: record.logoUrl ?? null,
+    description: record.description ?? null,
+    landing: resolveLandingThemeFromRecord(record),
+  });
 }
 
 export async function requireInmobiliariaRoles() {
@@ -328,6 +350,7 @@ export async function getInmobiliariaById(id: string) {
   return {
     ...inmobiliaria,
     landingTheme: resolveLandingThemeFromRecord(inmobiliaria),
+    landingThemeV2: resolveLandingThemeV2FromRecord(inmobiliaria),
     users,
     advisors: advisors.map((advisor) => ({
       ...advisor,

@@ -32,30 +32,34 @@ export function Button(props: ButtonProps) {
     "inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] transition duration-200";
   const variants: Record<ButtonVariant, string> = {
     primary:
-      "bg-[linear-gradient(135deg,#b8914c_0%,#d8b26c_100%)] text-white shadow-[0_16px_36px_rgba(185,145,76,0.28)] hover:-translate-y-0.5",
+      "bg-[var(--carbon)] text-[var(--ivory)] shadow-[0_16px_36px_rgba(10,10,10,0.18)] hover:-translate-y-0.5 hover:bg-[var(--gold)] hover:text-[var(--carbon)]",
     secondary:
-      "border border-[rgba(201,164,92,0.42)] bg-white/70 text-primary hover:-translate-y-0.5 hover:bg-white",
+      "border border-[var(--line)] bg-[rgba(250,250,248,0.72)] text-primary hover:-translate-y-0.5 hover:border-[var(--gold)] hover:bg-[var(--stone)]",
   };
 
   const cls = cn(base, variants[variant], className);
 
   // Si tiene href → Link interno (Next)
-  if ("href" in props) {
-    const { href, target, rel, prefetch, ...linkProps } = props as ButtonAsLink;
+  if ("href" in rest) {
+    const { href, target, rel, prefetch, ...linkProps } =
+      rest as Omit<ButtonAsLink, keyof Common>;
 
     // Si es URL externa, usamos <a> (porque next/link para externo no aporta)
     const isExternal =
       href.startsWith("http") ||
       href.startsWith("mailto:") ||
       href.startsWith("tel:");
+
+    const safeRel = target === "_blank" ? (rel ?? "noopener noreferrer") : rel;
+
     if (isExternal) {
       return (
         <a
+          {...linkProps}
           href={href}
           target={target}
-          rel={rel}
+          rel={safeRel}
           className={cls}
-          {...linkProps}
         >
           {children}
         </a>
@@ -63,7 +67,7 @@ export function Button(props: ButtonProps) {
     }
 
     return (
-      <Link href={href} prefetch={prefetch} className={cls} {...linkProps}>
+      <Link {...linkProps} href={href} prefetch={prefetch} className={cls}>
         {children}
       </Link>
     );

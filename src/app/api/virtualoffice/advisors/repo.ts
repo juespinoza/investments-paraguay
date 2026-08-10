@@ -15,6 +15,7 @@ import {
 } from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import type { SessionPayload, PublicAdvisorLanding } from "@/lib/data/types";
+import type { PublicAdvisorLandingV2 } from "@/lib/data/types";
 import { FormSchema } from "@/components/virtualoffice/advisors/schema";
 import type { z } from "zod";
 import { syncAdvisorTenantAssignments } from "@/lib/virtualoffice/assignment-sync";
@@ -26,7 +27,9 @@ import {
   buildAdvisorLandingCreateData,
   buildAdvisorLandingUpdateData,
   mapAdvisorLandingToFormData,
+  mapAdvisorLandingToFormDataV2,
   mapAdvisorToPublicLanding,
+  mapAdvisorToPublicLandingV2,
   replaceAdvisorLandingCollections,
 } from "@/lib/virtualoffice/advisor-landing";
 
@@ -361,6 +364,24 @@ export async function getAdvisorById(id: string): Promise<AdvisorFormData | null
     }
     throw error;
   }
+}
+
+export async function getAdvisorLandingV2ById(id: string) {
+  const session = await requireAdvisorLandingSession("read");
+
+  const scopedAdvisor = await prisma.advisor.findFirst({
+    where: {
+      id,
+      ...getAdvisorScopeWhere(session, "advisor_landing", "read"),
+    },
+    include: advisorDetailInclude,
+  });
+
+  if (!scopedAdvisor || scopedAdvisor.deletedAt) {
+    return null;
+  }
+
+  return mapAdvisorLandingToFormDataV2(scopedAdvisor);
 }
 
 export async function upsertAdvisor(input: {
@@ -744,4 +765,22 @@ export async function getPublicAdvisorBySlug(
   }
 
   return mapAdvisorToPublicLanding(advisor);
+}
+
+export async function getPublicAdvisorBySlugV2(
+  slug: string,
+): Promise<PublicAdvisorLandingV2 | null> {
+  const advisor = await prisma.advisor.findFirst({
+    where: {
+      slug,
+      deletedAt: null,
+    },
+    include: publicAdvisorInclude,
+  });
+
+  if (!advisor || !advisor.landing) {
+    return null;
+  }
+
+  return mapAdvisorToPublicLandingV2(advisor);
 }

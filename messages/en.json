@@ -90,8 +90,8 @@
     "availableTitle": "Available properties",
     "filters": {
       "location": "Area, neighborhood or city",
-      "min": "Minimum investment (USD)",
-      "max": "Maximum investment (USD)",
+      "min": "Min investment (USD)",
+      "max": "Max investment (USD)",
       "apply": "Apply filters"
     },
     "map": {

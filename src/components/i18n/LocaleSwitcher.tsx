@@ -100,7 +100,7 @@ export function LocaleSwitcher({
         type="button"
         disabled={isPending}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-10 items-center gap-2 rounded-lg border border-soft bg-white px-3 text-sm font-medium text-primary disabled:opacity-60"
+        className="inline-flex h-10 items-center gap-2 rounded-lg border border-soft bg-[var(--ivory)] px-3 text-sm font-medium text-primary disabled:opacity-60"
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="Select language"
@@ -123,7 +123,7 @@ export function LocaleSwitcher({
         <div
           role="menu"
           aria-label="Select language"
-          className="absolute right-0 top-full z-50 mt-2 w-16 overflow-hidden rounded-lg border border-soft bg-[rgba(255,253,249,0.98)] shadow-[0_18px_48px_rgba(15,23,38,0.16)] backdrop-blur-xl"
+          className="absolute right-0 top-full z-50 mt-2 w-16 overflow-hidden rounded-lg border border-soft bg-[rgba(250,250,248,0.98)] shadow-[0_18px_48px_rgba(10,10,10,0.16)] backdrop-blur-xl"
         >
           {LOCALES.map((l) => {
             const active = l.value === selected;
@@ -134,8 +134,8 @@ export function LocaleSwitcher({
                 role="menuitem"
                 onClick={() => pick(l.value)}
                 disabled={isPending}
-                className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-white disabled:opacity-60 ${
-                  active ? "bg-[#f5ecdd] text-primary" : "text-secondary"
+                className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-[var(--stone)] disabled:opacity-60 ${
+                  active ? "bg-[var(--stone)] text-primary" : "text-secondary"
                 }`}
                 aria-label={l.label}
               >

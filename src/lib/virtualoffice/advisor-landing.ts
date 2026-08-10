@@ -1,7 +1,10 @@
 import "server-only";
 
 import { Prisma, SocialPlatform } from "@/generated/prisma";
-import type { PublicAdvisorLanding } from "@/lib/data/types";
+import type {
+  PublicAdvisorLanding,
+  PublicAdvisorLandingV2,
+} from "@/lib/data/types";
 import { z } from "zod";
 
 export const ADVISOR_LANDING_LEGACY_FIELDS = [
@@ -42,6 +45,7 @@ export const AdvisorLandingV2Schema = z.object({
 });
 
 export type AdvisorLandingV2 = z.output<typeof AdvisorLandingV2Schema>;
+export type AdvisorLandingV2FormData = AdvisorLandingV2;
 
 export type AdvisorLandingInput = {
   aboutImageUrl?: string | null;
@@ -274,6 +278,12 @@ export function mapAdvisorLandingToV2(advisor: AdvisorWithDetail) {
   });
 }
 
+export function mapAdvisorLandingToFormDataV2(
+  advisor: AdvisorWithDetail,
+): AdvisorLandingV2FormData {
+  return mapAdvisorLandingToV2(advisor);
+}
+
 function calculateYearsExperience(startDate: Date) {
   const now = new Date();
   let years = now.getUTCFullYear() - startDate.getUTCFullYear();
@@ -339,6 +349,69 @@ export function mapAdvisorToPublicLanding(
       value: item.value,
       href: item.href,
       platform: item.platform,
+    })),
+  };
+}
+
+export function mapAdvisorToPublicLandingV2(
+  advisor: AdvisorWithPublicLanding,
+): PublicAdvisorLandingV2 {
+  if (!advisor.landing) {
+    throw new Error("Asesor no encontrado");
+  }
+
+  const normalized = normalizeAdvisorLandingToV2({
+    fullName: advisor.fullName,
+    headline: advisor.headline ?? null,
+    heroBgUrl: advisor.heroBgUrl ?? null,
+    ctaLabel: advisor.ctaLabel ?? null,
+    ctaHref: advisor.ctaHref ?? null,
+    aboutImageUrl: advisor.landing.aboutImageUrl || advisor.photoUrl || null,
+    aboutTitle: advisor.landing.aboutTitle,
+    aboutDescription: advisor.landing.aboutDescription ?? null,
+    aboutParagraph1: advisor.landing.aboutParagraph1,
+    aboutParagraph2: advisor.landing.aboutParagraph2,
+    servicesParagraph1: advisor.landing.servicesParagraph1,
+    servicesParagraph2: advisor.landing.servicesParagraph2,
+    socialMedia: advisor.landing.socialMedia.map((item) => ({
+      platform: item.platform,
+      label: item.label,
+      value: item.value,
+      href: item.href,
+    })),
+    featuredPropertyIds: advisor.landing.featuredProperties.map(
+      (item) => item.propertyId,
+    ),
+  });
+
+  return {
+    slug: advisor.slug,
+    fullName: advisor.fullName,
+    hero: {
+      title: normalized.heroTitle ?? advisor.fullName,
+      subtitle: normalized.heroSubtitle ?? null,
+      imageUrl: normalized.heroImageUrl ?? null,
+      ctaLabel: normalized.ctaLabel ?? null,
+      ctaHref: normalized.ctaHref ?? null,
+    },
+    about: {
+      title: normalized.aboutTitle ?? null,
+      body: normalized.aboutBody ?? null,
+    },
+    services: {
+      title: normalized.servicesTitle ?? null,
+      body: normalized.servicesBody ?? null,
+    },
+    featuredProperties: advisor.landing.featuredProperties.map((item) => ({
+      slug: item.property.slug,
+      title: item.property.title,
+      coverImageUrl: item.property.coverImageUrl ?? null,
+      priceUsd: item.property.priceUsd ?? null,
+      city: item.property.city ?? null,
+    })),
+    socialLinks: normalized.socialLinks.map((item) => ({
+      platform: item.platform as SocialPlatform,
+      url: item.url,
     })),
   };
 }

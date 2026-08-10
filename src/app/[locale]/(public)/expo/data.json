@@ -1,0 +1,446 @@
+{
+  "areaCatalog": [
+    "Dormitorio principal",
+    "Dormitorio secundario",
+    "Baño principal (en suite)",
+    "Baño social / visitas",
+    "Cocina",
+    "Comedor",
+    "Sala de estar / Living",
+    "Lavadero",
+    "Cochera / Garage",
+    "Balcón / Terraza",
+    "Jardín / Patio",
+    "Piscina",
+    "Quincho / Parrillero",
+    "Estudio / Home office",
+    "Vestidor / Walk-in closet",
+    "Depósito / Baulera",
+    "Gimnasio",
+    "Salón de usos múltiples (SUM)",
+    "Rooftop",
+    "Área de juegos infantiles",
+    "Cancha deportiva",
+    "Espacio pet friendly",
+    "Recepción / Lobby",
+    "Coworking / Sala de reuniones",
+    "Seguridad / Portería 24 hs",
+    "Ascensor",
+    "Bicicletero",
+    "Lavandería compartida",
+    "Depósito de residuos / reciclaje",
+    "Acceso a costanera / lago"
+  ],
+  "projects": [
+    {
+      "id": "haven",
+      "name": "The Haven",
+      "location": "Highlands Park & Lagoon, San Bernardino",
+      "tagline": "Vivir frente a la laguna, en uno de los barrios cerrados más seguro y exclusivo de San Bernardino.",
+      "overview": "The Haven reúne dos formas de invertir en Highlands Park & Lagoon: un lote con plano de construcción listo para levantar la casa que soñás, o una casa con lote ya terminada, lista para mudarse o alquilar. El desarrollo está pensado para quienes buscan una segunda residencia o una renta con identidad de lago, dentro de un barrio cerrado con espacios verdes, seguridad y acceso a la costanera.",
+      "stats": [
+        { "num": "6", "label": "Tipologías disponibles" },
+        { "num": "USD 68.000", "label": "Desde (lote + proyecto)" },
+        { "num": "Lista", "label": "Casa terminada disponible" }
+      ],
+      "areas": [
+        {
+          "name": "Dormitorio principal",
+          "desc": "Suite con ventanales hacia el bosque circundante, pensada para maximizar luz natural durante todo el día.",
+          "photos": []
+        },
+        {
+          "name": "Dormitorio secundario",
+          "desc": "Dos dormitorios adicionales de buen tamaño, ideales para familia o huéspedes.",
+          "photos": []
+        },
+        {
+          "name": "Sala de estar / Living",
+          "desc": "Ambiente integrado con doble altura y salida directa a la galería exterior.",
+          "photos": []
+        },
+        {
+          "name": "Cocina",
+          "desc": "Cocina abierta al living-comedor, con isla central y mesada en granito.",
+          "photos": []
+        },
+        {
+          "name": "Jardín / Patio",
+          "desc": "Lote con arbolado nativo y espacio verde propio, sin medianeras a la vista.",
+          "photos": []
+        },
+        {
+          "name": "Acceso a costanera / lago",
+          "desc": "Circuito peatonal interno del barrio con salida directa a la costanera de la laguna.",
+          "photos": []
+        }
+      ],
+      "typologies": [
+        {
+          "name": "Lote + Proyecto de construcción",
+          "desc": "Terreno de 720 m² con proyecto de arquitectura aprobado, listo para iniciar obra.",
+          "planImage": "",
+          "rooms": "A definir según plano",
+          "m2": "720 m² (terreno)",
+          "price": "USD 68.000",
+          "cochera": false
+        },
+        {
+          "name": "Casa terminada + Lote",
+          "desc": "Casa de dos plantas, 3 dormitorios en suite, entregada llave en mano sobre lote de 850 m².",
+          "planImage": "",
+          "rooms": "3 dorm. / 2 baños",
+          "m2": "180 m² cubiertos · 850 m² terreno",
+          "price": "USD 195.000",
+          "cochera": true
+        }
+      ],
+      "cochera": {
+        "price": "Incluida en Casa + Lote",
+        "m2": "36 m² (4 vehículos)"
+      },
+      "financingUrl": "https://docs.google.com/spreadsheets/d/EJEMPLO-THE-HAVEN/edit",
+      "developer": {
+        "name": "The Haven Desarrollos",
+        "role": "Desarrolladora",
+        "bio": "Con más de 12 años de desarrollo en Bélgica, ahora llegan a Paraguay con un proyecto de vivienda de alta gama en la zona del lago, con foco en diseño y calidad de construcción."
+      },
+      "constructor": {
+        "name": "Constructora Paraguay",
+        "role": "Constructora",
+        "bio": "Equipo constructor especializado en viviendas de alta gama, con obras entregadas en todo el país."
+      },
+      "advisor": {
+        "name": "Julia Espinoza",
+        "role": "Asesora inmobiliaria a cargo",
+        "bio": "Especialista en inversiones inmobiliarias en Paraguay. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.",
+        "phone": "+595 985 444 801",
+        "email": "juliaespinoza.skyone@gmail.com"
+      }
+    },
+    {
+      "id": "oga",
+      "name": "Oga",
+      "location": "Luque",
+      "tagline": "Departamentos de 1, 2 y 3 dormitorios en el corazón de Luque.",
+      "overview": "Oga es un complejo de edificios en Luque con unidades de 1D, 2D y 3D pensadas para quienes buscan primera vivienda o renta con alta demanda de alquiler por su cercanía a zonas comerciales y vías de acceso.",
+      "stats": [
+        { "num": "3", "label": "Tipologías (1D, 2D, 3D)" },
+        { "num": "USD 54.000", "label": "Desde" },
+        { "num": "Luque", "label": "Ubicación" }
+      ],
+      "areas": [
+        {
+          "name": "Dormitorio principal",
+          "desc": "Dormitorio con placard empotrado y ventana al exterior.",
+          "photos": []
+        },
+        {
+          "name": "Cocina",
+          "desc": "Cocina integrada al comedor, con mesada de granito y muebles bajo mesada.",
+          "photos": []
+        },
+        {
+          "name": "Balcón / Terraza",
+          "desc": "Balcón aterrazado en todas las unidades, con espacio para exterior.",
+          "photos": []
+        },
+        {
+          "name": "Salón de usos múltiples (SUM)",
+          "desc": "Espacio común para eventos y reuniones de propietarios.",
+          "photos": []
+        },
+        {
+          "name": "Seguridad / Portería 24 hs",
+          "desc": "Portería y control de accesos las 24 horas.",
+          "photos": []
+        }
+      ],
+      "typologies": [
+        {
+          "name": "1 Dormitorio (1D)",
+          "desc": "Unidad compacta ideal para inversión en renta.",
+          "planImage": "",
+          "rooms": "1 dorm. / 1 baño",
+          "m2": "42 m²",
+          "price": "USD 54.000",
+          "cochera": false
+        },
+        {
+          "name": "2 Dormitorios (2D)",
+          "desc": "Unidad familiar con living-comedor amplio.",
+          "planImage": "",
+          "rooms": "2 dorm. / 2 baños",
+          "m2": "68 m²",
+          "price": "USD 79.000",
+          "cochera": true
+        },
+        {
+          "name": "3 Dormitorios (3D)",
+          "desc": "Unidad superior con dependencia de servicio.",
+          "planImage": "",
+          "rooms": "3 dorm. / 2 baños",
+          "m2": "96 m²",
+          "price": "USD 118.000",
+          "cochera": true
+        }
+      ],
+      "cochera": { "price": "USD 6.500", "m2": "14 m²" },
+      "financingUrl": "https://docs.google.com/spreadsheets/d/EJEMPLO-OGA/edit",
+      "developer": {
+        "name": "Grupo Oga Desarrollos",
+        "role": "Desarrolladora",
+        "bio": "Desarrolladora enfocada en vivienda urbana vertical en el área metropolitana de Asunción, con proyectos activos en Luque y Fernando de la Mora."
+      },
+      "constructor": {
+        "name": "Constructora del Este",
+        "role": "Constructora",
+        "bio": "Más de 15 años construyendo edificios residenciales en el Departamento Central, con entregas puntuales certificadas."
+      },
+      "advisor": {
+        "name": "Julia Espinoza",
+        "role": "Asesora inmobiliaria a cargo",
+        "bio": "Especialista en inversiones inmobiliarias en Paraguay. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.",
+        "phone": "+595 985 444 801",
+        "email": "juliaespinoza.skyone@gmail.com"
+      }
+    },
+    {
+      "id": "paseo-rosario",
+      "name": "Paseo Rosario",
+      "location": "Luque",
+      "tagline": "Complejo de edificios con departamentos disponibles en Luque.",
+      "overview": "Paseo Rosario ofrece departamentos en un complejo de edificios en Luque, con áreas comunes pensadas para el día a día y buena conectividad con las principales vías de la ciudad.",
+      "stats": [
+        { "num": "2", "label": "Tipologías disponibles" },
+        { "num": "USD 58.000", "label": "Desde" },
+        { "num": "Luque", "label": "Ubicación" }
+      ],
+      "areas": [
+        {
+          "name": "Dormitorio principal",
+          "desc": "Dormitorio principal con buena ventilación cruzada.",
+          "photos": []
+        },
+        {
+          "name": "Sala de estar / Living",
+          "desc": "Living-comedor integrado, ideal para recibir.",
+          "photos": []
+        },
+        {
+          "name": "Lavadero",
+          "desc": "Espacio de lavado independiente dentro de la unidad.",
+          "photos": []
+        },
+        {
+          "name": "Recepción / Lobby",
+          "desc": "Lobby de acceso con recepción para visitas.",
+          "photos": []
+        }
+      ],
+      "typologies": [
+        {
+          "name": "2 Dormitorios (2D)",
+          "desc": "Unidad estándar con balcón.",
+          "planImage": "",
+          "rooms": "2 dorm. / 1 baño",
+          "m2": "64 m²",
+          "price": "USD 58.000",
+          "cochera": false
+        },
+        {
+          "name": "3 Dormitorios (3D)",
+          "desc": "Unidad superior con vestidor.",
+          "planImage": "",
+          "rooms": "3 dorm. / 2 baños",
+          "m2": "88 m²",
+          "price": "USD 89.000",
+          "cochera": true
+        }
+      ],
+      "cochera": { "price": "USD 5.800", "m2": "13 m²" },
+      "financingUrl": "https://docs.google.com/spreadsheets/d/EJEMPLO-PASEO-ROSARIO/edit",
+      "developer": {
+        "name": "Rosario Desarrollos Inmobiliarios",
+        "role": "Desarrolladora",
+        "bio": "Desarrolladora con foco en proyectos de mediana escala en Luque, orientados a primera vivienda."
+      },
+      "constructor": {
+        "name": "Constructora del Este",
+        "role": "Constructora",
+        "bio": "Más de 15 años construyendo edificios residenciales en el Departamento Central, con entregas puntuales certificadas."
+      },
+      "advisor": {
+        "name": "Julia Espinoza",
+        "role": "Asesora inmobiliaria a cargo",
+        "bio": "Especialista en inversiones inmobiliarias en Paraguay. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.",
+        "phone": "+595 985 444 801",
+        "email": "juliaespinoza.skyone@gmail.com"
+      }
+    },
+    {
+      "id": "casa-mood",
+      "name": "Casa Mood",
+      "location": "Lotes disponibles en Limpio e Itauguá",
+      "tagline": "Tu casa lista en 3 meses, financiada con Che Roga Porá.",
+      "overview": "Casa Mood es un proyecto habitacional que construye y entrega casas en 3 meses sobre lotes disponibles en Limpio e Itauguá, con financiación a través del programa Che Roga Porá. Pensado para quienes quieren acceder a su primera vivienda con plazos de entrega cortos y financiación accesible.",
+      "stats": [
+        { "num": "3 meses", "label": "Plazo de entrega" },
+        { "num": "Che Roga Porá", "label": "Financiación" },
+        { "num": "2", "label": "Zonas: Limpio e Itauguá" }
+      ],
+      "areas": [
+        {
+          "name": "Dormitorio principal",
+          "desc": "Dormitorio principal con placard.",
+          "photos": []
+        },
+        {
+          "name": "Dormitorio secundario",
+          "desc": "Dormitorios adicionales según tipología elegida.",
+          "photos": []
+        },
+        {
+          "name": "Cocina",
+          "desc": "Cocina integrada al comedor.",
+          "photos": []
+        },
+        {
+          "name": "Baño social / visitas",
+          "desc": "Baño completo con terminaciones estándar del programa.",
+          "photos": []
+        },
+        {
+          "name": "Jardín / Patio",
+          "desc": "Patio de servicio en la parte posterior del lote.",
+          "photos": []
+        }
+      ],
+      "typologies": [
+        {
+          "name": "Casa 2 dormitorios",
+          "desc": "Vivienda de entrega rápida sobre lote propio.",
+          "planImage": "",
+          "rooms": "2 dorm. / 1 baño",
+          "m2": "56 m²",
+          "price": "USD 42.000",
+          "cochera": false
+        },
+        {
+          "name": "Casa 3 dormitorios",
+          "desc": "Vivienda familiar con living-comedor ampliado.",
+          "planImage": "",
+          "rooms": "3 dorm. / 2 baños",
+          "m2": "72 m²",
+          "price": "USD 53.000",
+          "cochera": false
+        }
+      ],
+      "cochera": { "price": "No disponible en esta etapa", "m2": "—" },
+      "financingUrl": "https://docs.google.com/spreadsheets/d/EJEMPLO-CASA-MOOD-CHE-ROGA-PORA/edit",
+      "developer": {
+        "name": "Casa Mood",
+        "role": "Desarrolladora",
+        "bio": "Proyecto habitacional enfocado en reducir los tiempos de entrega de vivienda social y de clase media, en articulación con el programa estatal Che Roga Porá."
+      },
+      "constructor": {
+        "name": "Constructora Mood",
+        "role": "Constructora",
+        "bio": "Equipo constructor especializado en sistemas constructivos de entrega rápida, con procesos estandarizados para cumplir el plazo de 3 meses."
+      },
+      "advisor": {
+        "name": "Julia Espinoza",
+        "role": "Asesora inmobiliaria a cargo",
+        "bio": "Especialista en inversiones inmobiliarias en Paraguay. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.",
+        "phone": "+595 985 444 801",
+        "email": "juliaespinoza.skyone@gmail.com"
+      }
+    },
+    {
+      "id": "campus",
+      "name": "Campus 2 · 3 · 4 (CDE)",
+      "location": "Ciudad del Este",
+      "tagline": "Residencias de estudiantes en Ciudad del Este.",
+      "overview": "Campus 2, Campus 3 y Campus 4 son edificios de departamentos destinados a estudiantes en Ciudad del Este. Campus 2 y 3 ofrecen monoambientes independientes; Campus 4 suma además la posibilidad de comprar un complejo completo de habitaciones independientes con áreas compartidas, pensado para inversores que buscan renta estudiantil.",
+      "stats": [
+        { "num": "3", "label": "Edificios: Campus 2, 3 y 4" },
+        { "num": "USD 21.000", "label": "Monoambiente desde" },
+        { "num": "CDE", "label": "Ciudad del Este" }
+      ],
+      "areas": [
+        {
+          "name": "Dormitorio principal",
+          "desc": "Monoambiente con zona de descanso integrada al estudio.",
+          "photos": []
+        },
+        {
+          "name": "Cocina",
+          "desc": "Kitchenette equipada dentro del monoambiente.",
+          "photos": []
+        },
+        {
+          "name": "Estudio / Home office",
+          "desc": "Escritorio integrado, pensado para el uso estudiantil diario.",
+          "photos": []
+        },
+        {
+          "name": "Lavandería compartida",
+          "desc": "Área de lavado compartida en planta baja del edificio.",
+          "photos": []
+        },
+        {
+          "name": "Coworking / Sala de reuniones",
+          "desc": "Sala de estudio grupal disponible para todos los residentes.",
+          "photos": []
+        },
+        {
+          "name": "Seguridad / Portería 24 hs",
+          "desc": "Control de accesos 24 horas en los tres edificios.",
+          "photos": []
+        }
+      ],
+      "typologies": [
+        {
+          "name": "Monoambiente independiente",
+          "desc": "Unidad individual disponible en Campus 2, 3 y 4.",
+          "planImage": "",
+          "rooms": "Monoambiente",
+          "m2": "24 m²",
+          "price": "USD 21.000",
+          "cochera": false
+        },
+        {
+          "name": "Complejo de habitaciones (solo Campus 4)",
+          "desc": "Compra del complejo completo: habitaciones independientes con áreas compartidas, pensado para renta.",
+          "planImage": "",
+          "rooms": "Múltiples habitaciones + áreas comunes",
+          "m2": "Consultar planta completa",
+          "price": "Consultar",
+          "cochera": false
+        }
+      ],
+      "cochera": {
+        "price": "No disponible (proyecto sin cocheras)",
+        "m2": "—"
+      },
+      "financingUrl": "https://docs.google.com/spreadsheets/d/EJEMPLO-CAMPUS-CDE/edit",
+      "developer": {
+        "name": "Campus Desarrollos Estudiantiles",
+        "role": "Desarrolladora",
+        "bio": "Desarrolladora especializada en vivienda estudiantil en Ciudad del Este, con foco en unidades pequeñas de alta rotación y buena rentabilidad."
+      },
+      "constructor": {
+        "name": "Constructora Triple Frontera",
+        "role": "Constructora",
+        "bio": "Constructora con obras entregadas en Ciudad del Este y Hernandarias, especializada en edificios de departamentos compactos."
+      },
+      "advisor": {
+        "name": "Julia Espinoza",
+        "role": "Asesora inmobiliaria a cargo",
+        "bio": "Especialista en inversiones inmobiliarias en Paraguay. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.",
+        "phone": "+595 985 444 801",
+        "email": "juliaespinoza.skyone@gmail.com"
+      }
+    }
+  ]
+}

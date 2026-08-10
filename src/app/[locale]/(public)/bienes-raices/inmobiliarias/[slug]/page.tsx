@@ -219,7 +219,7 @@ export default async function AgencyLandingPage({ params }: PageProps) {
       {contactItems.length ? (
         <section className="px-4 py-8 md:py-10">
           <div className="container-page">
-            <div className="rounded-[1.9rem] border border-[rgba(24,39,63,0.08)] bg-white p-6 shadow-[0_18px_60px_rgba(15,23,38,0.06)]">
+            <div className="rounded-[1.9rem] border border-soft bg-[var(--ivory)] p-6 shadow-[0_18px_60px_rgba(10,10,10,0.06)]">
               <SectionTitle
                 title={landingTheme?.contactTitle ?? "Contacto de la inmobiliaria"}
                 subtitle="Canales directos para consultas comerciales, coordinación de visitas y seguimiento."
@@ -232,7 +232,7 @@ export default async function AgencyLandingPage({ params }: PageProps) {
                     href={item.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-[1.4rem] border border-[rgba(24,39,63,0.08)] bg-[linear-gradient(180deg,#ffffff_0%,#fcfaf6_100%)] px-5 py-4 hover:-translate-y-0.5"
+                    className="rounded-[1.4rem] border border-soft bg-[linear-gradient(180deg,var(--ivory)_0%,var(--stone)_100%)] px-5 py-4 hover:-translate-y-0.5"
                   >
                     <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent1">
                       {item.label}

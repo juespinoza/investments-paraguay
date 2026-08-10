@@ -1,54 +1,68 @@
 @import "tailwindcss";
 
 :root {
-  --ip-primary: #0f1726;
-  --ip-primary-hover: #19263b;
-  --ip-secondary: #2b3f5b;
-  --ip-accent1: #c9a45c;
-  --ip-accent2: #efe4d2;
+  --carbon: #0a0a0a;
+  --onyx: #1c1c1c;
+  --stone: #f5f3ef;
+  --ivory: #fafaf8;
+  --gold: #bfa882;
+  --amber: #8b7355;
+  --ink: #0a0a0a;
+  --lagoon: #1c1c1c;
+  --lagoon-deep: #0a0a0a;
+  --copper: #bfa882;
+  --sand: #f5f3ef;
+  --line: rgba(191, 168, 130, 0.4);
 
-  --ip-bg: #f6f1e8;
-  --ip-surface: #fffdf9;
+  --ip-primary: var(--carbon);
+  --ip-primary-hover: var(--onyx);
+  --ip-secondary: var(--amber);
+  --ip-accent1: var(--gold);
+  --ip-accent2: var(--stone);
+
+  --ip-bg: var(--ivory);
+  --ip-surface: var(--ivory);
   --ip-surface-strong: #ffffff;
-  --ip-border: rgba(15, 23, 38, 0.1);
+  --ip-border: var(--line);
 
-  --ip-text-primary: #142033;
-  --ip-text-secondary: #546173;
-  --ip-text-muted: #8a93a1;
-  --ip-text-highlight: #d6a84e;
-  --ip-shadow: 0 24px 80px rgba(16, 24, 40, 0.12);
-  --ip-shadow-soft: 0 18px 48px rgba(16, 24, 40, 0.08);
+  --ip-text-primary: var(--ink);
+  --ip-text-secondary: var(--onyx);
+  --ip-text-muted: var(--amber);
+  --ip-text-highlight: var(--gold);
+  --ip-text-ivory: var(--ivory);
+  --ip-shadow: 0 24px 80px rgba(10, 10, 10, 0.12);
+  --ip-shadow-soft: 0 18px 48px rgba(10, 10, 10, 0.08);
 
-  --ip-danger: #ef4444;
-  --ip-success: #16a34a;
+  --ip-danger: #a13d3d;
+  --ip-success: #3f6b33;
 }
 
 :root.dark,
 .dark :root {
-  --ip-primary: #d8e1ef;
-  --ip-primary-hover: #eef2f8;
-  --ip-secondary: #a9bad4;
-  --ip-accent1: #d6a84e;
-  --ip-accent2: #f4ede2;
+  --ip-primary: var(--ivory);
+  --ip-primary-hover: var(--stone);
+  --ip-secondary: var(--gold);
+  --ip-accent1: var(--gold);
+  --ip-accent2: var(--onyx);
 
-  --ip-bg: #0a1124;
-  --ip-surface: #132033;
-  --ip-surface-strong: #1c2b42;
-  --ip-border: rgba(255, 255, 255, 0.12);
-  --ip-text-primary: #f8fafc;
-  --ip-text-secondary: #cbd5e1;
-  --ip-text-muted: #64748b;
-  --ip-text-highlight: #d6a84e;
+  --ip-bg: var(--carbon);
+  --ip-surface: var(--onyx);
+  --ip-surface-strong: #242424;
+  --ip-border: rgba(191, 168, 130, 0.32);
+  --ip-text-primary: var(--ivory);
+  --ip-text-secondary: var(--stone);
+  --ip-text-muted: var(--gold);
+  --ip-text-highlight: var(--gold);
   --ip-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
   --ip-shadow-soft: 0 18px 48px rgba(0, 0, 0, 0.24);
 
-  --ip-danger: #fca5a5;
-  --ip-success: #4ade80;
+  --ip-danger: #f0b4b4;
+  --ip-success: #b9d1b0;
 }
 
 :root {
-  --font-primary: var(--font-inter);
-  --font-brand: var(--font-playfair);
+  --font-inter: var(--font-primary);
+  --font-playfair: var(--font-brand);
 }
 
 * {
@@ -61,10 +75,7 @@ html {
 
 body {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(201, 164, 92, 0.2), transparent 28%),
-    radial-gradient(circle at top right, rgba(43, 63, 91, 0.08), transparent 28%),
-    linear-gradient(180deg, #fbf8f3 0%, #f3ede4 52%, #f7f3ec 100%);
+  background: var(--ivory);
   color: var(--ip-text-primary);
   font-family: var(--font-primary), sans-serif;
   text-rendering: optimizeLegibility;
@@ -75,19 +86,19 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-playfair), serif;
+  font-family: var(--font-brand), serif;
 }
 
 p,
 ul,
 ol,
 li {
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-primary), sans-serif;
   line-height: 1.6;
 }
 
 a {
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-primary), sans-serif;
   transition:
     color 180ms ease,
     opacity 180ms ease,
@@ -97,7 +108,7 @@ a {
 }
 
 ::selection {
-  background: rgba(201, 164, 92, 0.28);
+  background: rgba(191, 168, 130, 0.34);
 }
 
 @layer utilities {
@@ -110,10 +121,16 @@ a {
   }
 
   .font-inter {
-    font-family: var(--font-inter), sans-serif;
+    font-family: var(--font-primary), sans-serif;
   }
   .font-playfair {
-    font-family: var(--font-playfair), serif;
+    font-family: var(--font-brand), serif;
+  }
+  .font-dm-sans {
+    font-family: var(--font-primary), sans-serif;
+  }
+  .font-cormorant {
+    font-family: var(--font-brand), serif;
   }
   .bg-primary {
     background-color: var(--ip-primary);
@@ -149,19 +166,25 @@ a {
   .text-accent2 {
     color: var(--ip-accent2);
   }
+  .text-ivory {
+    color: var(--ip-text-ivory);
+  }
   .border-soft {
     border-color: var(--ip-border);
   }
   .surface-card {
-    background-color: rgba(255, 253, 249, 0.78);
+    background-color: rgba(250, 250, 248, 0.86);
     border: 1px solid var(--ip-border);
     box-shadow: var(--ip-shadow-soft);
     backdrop-filter: blur(18px);
   }
   .luxury-panel {
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 250, 244, 0.78));
-    border: 1px solid rgba(201, 164, 92, 0.22);
+    background: linear-gradient(
+      180deg,
+      rgba(250, 250, 248, 0.94),
+      rgba(245, 243, 239, 0.82)
+    );
+    border: 1px solid var(--line);
     box-shadow: var(--ip-shadow);
     backdrop-filter: blur(20px);
   }
@@ -170,25 +193,42 @@ a {
   }
   .eyebrow {
     @apply inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.34em];
-    border-color: rgba(201, 164, 92, 0.34);
-    background: rgba(255, 255, 255, 0.64);
-    color: var(--ip-secondary);
+    border-color: var(--line);
+    background: rgba(245, 243, 239, 0.72);
+    color: var(--amber);
   }
 
   .btn-primary {
     @apply inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold tracking-[0.18em] uppercase;
-    background: linear-gradient(135deg, #b8914c 0%, #d8b26c 100%);
-    color: #fffdf8;
-    box-shadow: 0 16px 36px rgba(185, 145, 76, 0.28);
+    background: var(--carbon);
+    color: var(--ivory);
+    box-shadow: 0 16px 36px rgba(10, 10, 10, 0.18);
   }
   .btn-secondary {
     @apply inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold tracking-[0.16em] uppercase border;
-    border-color: rgba(201, 164, 92, 0.46);
+    border-color: var(--line);
     color: var(--ip-text-primary);
-    background: rgba(255, 255, 255, 0.58);
+    background: rgba(250, 250, 248, 0.7);
   }
-  .btn-primary:hover,
-  .btn-secondary:hover {
+  .btn-primary:hover {
+    background: var(--gold);
+    color: var(--carbon);
     transform: translateY(-1px);
   }
+  .btn-secondary:hover {
+    border-color: var(--gold);
+    background: var(--stone);
+    transform: translateY(-1px);
+  }
+}
+
+.brand {
+  font-family: var(--font-brand), serif;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.brand > span {
+  color: var(--copper);
 }
