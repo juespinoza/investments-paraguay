@@ -232,7 +232,7 @@
 }
 
 .heroLoc::before {
-  content: "Ubicacion: ";
+  content: "Ubicación: ";
 }
 
 .heroPitch {
@@ -278,11 +278,42 @@
   color: var(--ivory);
 }
 
+.tourLaunch {
+  animation: tourLaunchBlink 8s ease-in-out infinite;
+}
+
+.tourLaunch:hover {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--carbon);
+  animation-play-state: paused;
+}
+
 .tourLaunchIcon {
   width: 9px;
   height: 9px;
   border-radius: 50%;
   background: var(--gold);
+}
+
+@keyframes tourLaunchBlink {
+  0%,
+  6%,
+  12%,
+  100% {
+    border-color: var(--carbon);
+    background: var(--carbon);
+    box-shadow: none;
+    color: var(--ivory);
+  }
+
+  3%,
+  9% {
+    border-color: var(--gold);
+    background: var(--gold);
+    box-shadow: 0 0 0 6px rgba(191, 168, 130, 0.2);
+    color: var(--carbon);
+  }
 }
 
 .statRow {
@@ -414,6 +445,30 @@
   gap: 4px;
 }
 
+.areaPhotosSingle {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.areaPhotosTwo {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+.areaPhotosThree {
+  grid-template-columns: 1.2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.areaPhotosThree .areaPhoto:first-child {
+  grid-row: 1 / span 2;
+}
+
+.areaPhotosEmpty {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
 .areaPhoto {
   position: relative;
   display: flex;
@@ -424,6 +479,10 @@
   text-align: center;
   font-family: monospace;
   font-size: 9.5px;
+}
+
+.areaPhoto:only-child {
+  min-height: 100%;
 }
 
 .areaPhoto img,
@@ -709,6 +768,11 @@
   border: 1px solid var(--line);
   background: var(--ivory);
   padding: 34px;
+}
+
+.formShell button:disabled {
+  cursor: wait;
+  opacity: 0.72;
 }
 
 .field {
@@ -1017,18 +1081,16 @@
 
 .tourCaption {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
   z-index: 3;
-  background: linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.82) 0%,
-    rgba(0, 0, 0, 0.35) 55%,
-    transparent 100%
-  );
+  max-width: 720px;
+  border: 1px solid rgba(250, 250, 248, 0.16);
+  background: rgba(10, 10, 10, 0.72);
+  backdrop-filter: blur(10px);
   color: var(--ivory);
-  padding: 60px 22px 26px;
+  padding: 18px 20px;
 }
 
 .tourAreaName {
@@ -1059,6 +1121,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .tourLaunch {
+    animation: none;
+  }
+
   .tourImg.kenburns {
     animation: none;
   }

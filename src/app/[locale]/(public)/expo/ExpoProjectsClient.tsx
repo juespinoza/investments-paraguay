@@ -67,6 +67,10 @@ type TourSlide = {
 };
 
 const TOUR_SLIDE_MS = 4500;
+const PROJECT_HASH_ALIASES: Record<string, string> = {
+  haven: "thehaven",
+  "the-haven": "thehaven",
+};
 
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
@@ -82,15 +86,87 @@ function initials(name: string) {
     .toUpperCase();
 }
 
+function uniquePhotos(photos: string[]) {
+  return Array.from(
+    new Set(photos.map((photo) => photo.trim()).filter(Boolean)),
+  );
+}
+
 function buildTourSlides(project: Project): TourSlide[] {
-  return project.areas.flatMap((area, areaIndex) => {
-    const photos = area.photos.length > 0 ? area.photos.slice(0, 4) : [null];
+  return project.areas.flatMap<TourSlide>((area, areaIndex) => {
+    const photos = uniquePhotos(area.photos).slice(0, 4);
+    if (!photos.length) return [{ area, areaIndex, photo: null }];
     return photos.map((photo) => ({ area, areaIndex, photo }));
   });
 }
 
 function phoneHref(phone: string) {
   return `tel:${phone.replace(/\s/g, "")}`;
+}
+
+function normalizeHash(value: string) {
+  return value.replace(/^#/, "").trim().toLowerCase();
+}
+
+function resolveProjectHash(hash: string, projects: Project[]) {
+  const normalized = normalizeHash(hash);
+  if (!normalized) return null;
+
+  const aliased = PROJECT_HASH_ALIASES[normalized] ?? normalized;
+  return projects.some((project) => project.id === aliased) ? aliased : null;
+}
+
+function updateHash(id: string) {
+  const url = new URL(window.location.href);
+  if (normalizeHash(url.hash) === id) return;
+
+  url.hash = id;
+  window.history.pushState(null, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
+function currentSourcePage(projectId: string) {
+  if (typeof window === "undefined") return `/expo#${projectId}`;
+
+  const hash = window.location.hash || `#${projectId}`;
+  return `${window.location.pathname}${window.location.search}${hash}`;
+}
+
+function AreaPhotoGrid({ area }: { area: Area }) {
+  const photos = uniquePhotos(area.photos).slice(0, 4);
+  const count = photos.length;
+
+  if (!count) {
+    return (
+      <div className={cx(styles.areaPhotos, styles.areaPhotosEmpty)}>
+        <div className={styles.areaPhoto}>Foto pendiente</div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={cx(
+        styles.areaPhotos,
+        count === 1 && styles.areaPhotosSingle,
+        count === 2 && styles.areaPhotosTwo,
+        count === 3 && styles.areaPhotosThree,
+      )}
+    >
+      {photos.map((photo, photoIndex) => (
+        <div className={styles.areaPhoto} key={`${area.name}-${photo}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={photo}
+            alt={`${area.name} ${photoIndex + 1}`}
+            loading="lazy"
+            decoding="async"
+            width={300}
+            height={180}
+          />
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
@@ -122,6 +198,8 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
     setCurrentProjectId(id);
     setMobileOpen(false);
     setTourOpen(false);
+    setTourIndex(0);
+    updateHash(id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
@@ -206,6 +284,22 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
   }, [project.id]);
 
   useEffect(() => {
+    const applyHashProject = () => {
+      const projectId = resolveProjectHash(window.location.hash, data.projects);
+      if (!projectId) return;
+
+      setCurrentProjectId(projectId);
+      setMobileOpen(false);
+      setTourOpen(false);
+      setTourIndex(0);
+    };
+
+    applyHashProject();
+    window.addEventListener("hashchange", applyHashProject);
+    return () => window.removeEventListener("hashchange", applyHashProject);
+  }, [data.projects]);
+
+  useEffect(() => {
     document.body.classList.toggle(styles.tourLock, tourOpen);
     return () => document.body.classList.remove(styles.tourLock);
   }, [tourOpen]);
@@ -229,11 +323,20 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const fullName = String(formData.get("name") ?? "").trim();
     const whatsapp = String(formData.get("phone") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
+
+    if (!fullName || (!email && !whatsapp)) {
+      setFormStatus({
+        kind: "err",
+        text: "Completá tu nombre y al menos un dato de contacto.",
+      });
+      return;
+    }
 
     setFormStatus({ kind: "loading", text: "Enviando..." });
 
@@ -245,23 +348,36 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
           fullName,
           email,
           whatsapp,
-          sourcePage: "/expo-proyectos",
-          notes: `${message}\n\nProyecto: ${project.name}`,
+          sourcePage: currentSourcePage(project.id),
+          notes: [
+            message,
+            `Proyecto: ${project.name}`,
+            `ID proyecto expo: ${project.id}`,
+          ]
+            .filter(Boolean)
+            .join("\n\n"),
         }),
       });
 
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const result = await response.json().catch(() => null);
+      if (!response.ok) {
+        const errorMessage =
+          result && typeof result.error === "string"
+            ? result.error
+            : `HTTP ${response.status}`;
+        throw new Error(errorMessage);
+      }
 
       setFormStatus({
         kind: "ok",
         text: "Gracias. Tu consulta fue enviada, te contactaremos a la brevedad.",
       });
-      event.currentTarget.reset();
+      form.reset();
     } catch (error) {
       console.error(error);
       setFormStatus({
         kind: "err",
-        text: "No pudimos enviar tu consulta. Proba nuevamente en unos minutos.",
+        text: "No pudimos enviar tu consulta. Probá nuevamente en unos minutos.",
       });
     }
   };
@@ -283,6 +399,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
                 key={item.id}
                 type="button"
                 className={item.id === project.id ? styles.active : undefined}
+                aria-current={item.id === project.id ? "page" : undefined}
                 onClick={() => selectProject(item.id)}
               >
                 {item.name}
@@ -292,7 +409,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
           <button
             className={cx(styles.burger, mobileOpen && styles.open)}
             type="button"
-            aria-label="Abrir menu"
+            aria-label="Abrir menú"
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((value) => !value)}
           >
@@ -311,6 +428,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
                   styles.mobileProject,
                   item.id === project.id && styles.active,
                 )}
+                aria-current={item.id === project.id ? "page" : undefined}
                 onClick={() => selectProject(item.id)}
               >
                 {item.name}
@@ -321,7 +439,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
               type="button"
               onClick={scrollToForm}
             >
-              Solicitar informacion
+              Solicitar información
             </button>
           </div>
         </div>
@@ -354,14 +472,14 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
               onClick={openTour}
             >
               <span className={styles.tourLaunchIcon} />
-              Iniciar recorrido virtual
+              Recorrido 2D
             </button>
             <button
               className={cx(styles.btn, styles.btnGhostLight)}
               type="button"
               onClick={scrollToForm}
             >
-              Solicitar informacion
+              Solicitar información
             </button>
           </div>
           <div className={styles.statRow}>
@@ -381,41 +499,19 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
           <div className={styles.blockHead}>
             <div className={styles.blockTitle}>Conoce cada ambiente</div>
             <div className={styles.blockSub}>
-              {project.areas.length} areas relevadas
+              {project.areas.length} áreas relevadas
             </div>
           </div>
           <div className={styles.areasGrid}>
             {project.areas.map((area, index) => (
               <div className={styles.areaCard} key={area.name}>
-                <div className={styles.areaPhotos}>
-                  {[0, 1, 2, 3].map((photoIndex) => {
-                    const photo = area.photos[photoIndex];
-                    return (
-                      <div
-                        className={styles.areaPhoto}
-                        key={`${area.name}-${photoIndex}`}
-                      >
-                        {photo ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={photo}
-                            alt={area.name}
-                            loading="lazy"
-                            decoding="async"
-                            width={300}
-                            height={150}
-                          />
-                        ) : (
-                          "Foto pendiente"
-                        )}
-                      </div>
-                    );
-                  })}
+                <AreaPhotoGrid area={area} />
+                <div>
+                  <span className={styles.areaNum}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className={styles.areaName}> {area.name}</span>
                 </div>
-                <div className={styles.areaNum}>
-                  {String(index + 1).padStart(2, "0")} / AREA
-                </div>
-                <div className={styles.areaName}>{area.name}</div>
                 <div className={styles.areaDesc}>{area.desc}</div>
               </div>
             ))}
@@ -426,7 +522,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
       <section className={cx(styles.block, styles.alt)}>
         <div className={styles.wrap}>
           <div className={styles.blockHead}>
-            <div className={styles.blockTitle}>Tipologias disponibles</div>
+            <div className={styles.blockTitle}>Tipologías disponibles</div>
             <div className={styles.blockSub}>Hasta 4 por proyecto</div>
           </div>
           <div className={styles.typoGrid}>
@@ -497,7 +593,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Ver planilla de financiacion
+                  Ver planilla de financiación
                 </a>
               </div>
             </div>
@@ -505,7 +601,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
         </div>
       </section>
 
-      <section className={cx(styles.block, styles.alt)}>
+      {/* <section className={cx(styles.block, styles.alt)}>
         <div className={styles.wrap}>
           <div className={styles.blockHead}>
             <div className={styles.blockTitle}>Quiénes están detrás</div>
@@ -523,7 +619,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className={styles.block}>
         <div className={styles.wrap}>
@@ -557,7 +653,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
       <section className={cx(styles.block, styles.alt, styles.lastBlock)}>
         <div className={styles.wrap}>
           <div className={styles.blockHead}>
-            <div className={styles.blockTitle}>Quiero mas informacion</div>
+            <div className={styles.blockTitle}>Quiero más información</div>
           </div>
           <form
             key={project.id}
@@ -576,11 +672,11 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
               />
             </div>
             <div className={styles.field}>
-              <label htmlFor="f_phone">Numero de telefono</label>
+              <label htmlFor="f_phone">Número de teléfono</label>
               <input type="tel" id="f_phone" name="phone" required />
             </div>
             <div className={styles.field}>
-              <label htmlFor="f_email">Correo electronico</label>
+              <label htmlFor="f_email">Correo electrónico</label>
               <input type="email" id="f_email" name="email" required />
             </div>
             <div className={styles.field}>
@@ -591,8 +687,14 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
                 defaultValue={`Estoy interesado en la propiedad "${project.name}"`}
               />
             </div>
-            <button type="submit" className={styles.btn}>
-              Enviar consulta
+            <button
+              type="submit"
+              className={styles.btn}
+              disabled={formStatus.kind === "loading"}
+            >
+              {formStatus.kind === "loading"
+                ? "Enviando..."
+                : "Enviar consulta"}
             </button>
             <div className={styles.formNote}>
               Tus datos se guardan como lead para seguimiento del equipo
@@ -618,7 +720,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
         className={cx(styles.stickyCta, stickyVisible && styles.show)}
         onClick={scrollToForm}
       >
-        <span className={styles.dot} /> Solicitar informacion
+        <span className={styles.dot} /> Solicitar información
       </button>
 
       <div
@@ -688,19 +790,19 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
           <button
             className={cx(styles.tourTap, styles.tourTapLeft)}
             type="button"
-            aria-label="Area anterior"
+            aria-label="Área anterior"
             onClick={prevTourSlide}
           />
           <button
             className={cx(styles.tourTap, styles.tourTapRight)}
             type="button"
-            aria-label="Area siguiente"
+            aria-label="Área siguiente"
             onClick={nextTourSlide}
           />
           <button
             className={cx(styles.tourArrow, styles.tourArrowLeft)}
             type="button"
-            aria-label="Area anterior"
+            aria-label="Área anterior"
             onClick={prevTourSlide}
           >
             ‹
@@ -708,7 +810,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
           <button
             className={cx(styles.tourArrow, styles.tourArrowRight)}
             type="button"
-            aria-label="Area siguiente"
+            aria-label="Área siguiente"
             onClick={nextTourSlide}
           >
             ›
@@ -717,7 +819,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
             <div className={styles.tourAreaName}>{currentSlide?.area.name}</div>
             <div className={styles.tourAreaDesc}>{currentSlide?.area.desc}</div>
             <div className={styles.tourCounter}>
-              Area {(currentSlide?.areaIndex ?? 0) + 1} de{" "}
+              Área {(currentSlide?.areaIndex ?? 0) + 1} de{" "}
               {project.areas.length} · Foto {tourIndex + 1} de{" "}
               {tourSlides.length}
             </div>

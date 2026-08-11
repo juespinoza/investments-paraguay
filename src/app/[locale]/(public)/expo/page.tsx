@@ -17,13 +17,13 @@ export async function generateMetadata({
   return buildMetadata({
     title: "Expo Proyectos | Investments Paraguay",
     description:
-      "Explora proyectos inmobiliarios destacados en Paraguay, sus tipologias, espacios, financiacion y asesores.",
-    pathname: "/expo-proyectos",
+      "Explora proyectos inmobiliarios destacados en Paraguay, sus tipologías, espacios, financiación y asesores.",
+    pathname: "/expo",
     locale,
     keywords: [
       "expo proyectos paraguay",
       "proyectos inmobiliarios paraguay",
-      "inversion inmobiliaria paraguay",
+      "inversión inmobiliaria paraguay",
       "departamentos paraguay",
     ],
   });
