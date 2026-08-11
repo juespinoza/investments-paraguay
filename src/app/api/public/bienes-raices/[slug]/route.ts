@@ -9,8 +9,8 @@ type Params = {
 
 export async function GET(_req: Request, { params }: Params) {
   const { slug } = await params;
-  const property = await prisma.property.findUnique({
-    where: { slug },
+  const property = await prisma.property.findFirst({
+    where: { slug, deletedAt: null },
     include: {
       advisor: {
         select: {
@@ -19,6 +19,7 @@ export async function GET(_req: Request, { params }: Params) {
           headline: true,
           photoUrl: true,
           whatsapp: true,
+          phone: true,
         },
       },
     },
@@ -39,6 +40,10 @@ export async function GET(_req: Request, { params }: Params) {
     coverImageUrl: property.coverImageUrl,
     gallery: property.gallery,
     priceUsd: property.priceUsd,
+    propertyType: property.propertyType,
+    bedrooms: property.bedrooms,
+    bathrooms: property.bathrooms,
+    areaM2: property.areaM2 ? Number(property.areaM2) : null,
     city: property.city,
     neighborhood: property.neighborhood,
     address: property.address,
@@ -56,6 +61,7 @@ export async function GET(_req: Request, { params }: Params) {
           headline: property.advisor.headline,
           photoUrl: property.advisor.photoUrl,
           whatsapp: property.advisor.whatsapp,
+          phone: property.advisor.phone,
         }
       : null,
   };

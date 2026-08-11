@@ -108,6 +108,10 @@ model Property {
   title          String
   slug           String   @unique
   priceUsd       Int?
+  propertyType   String?
+  bedrooms       String?
+  bathrooms      Int?
+  areaM2         Decimal? @db.Decimal(8, 2)
   city           String?
   neighborhood   String?
   address        String?

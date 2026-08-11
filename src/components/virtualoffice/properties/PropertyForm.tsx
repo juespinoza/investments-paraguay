@@ -21,6 +21,10 @@ type PropertyFormValues = {
   isFeatured: string;
   featuredOrder: string;
   priceUsd: string;
+  propertyType: string;
+  bedrooms: string;
+  bathrooms: string;
+  areaM2: string;
   description: string;
   coverImageUrl: string;
   galleryCsv: string;
@@ -46,6 +50,10 @@ type PropertyPayload = {
   isFeatured: boolean;
   featuredOrder: number | null;
   priceUsd: number | null;
+  propertyType: string | null;
+  bedrooms: string | null;
+  bathrooms: number | null;
+  areaM2: number | null;
   description: string | null;
   coverImageUrl: string | null;
   gallery: string[];
@@ -65,6 +73,10 @@ const EMPTY_VALUES: PropertyFormValues = {
   isFeatured: "false",
   featuredOrder: "",
   priceUsd: "",
+  propertyType: "",
+  bedrooms: "",
+  bathrooms: "",
+  areaM2: "",
   description: "",
   coverImageUrl: "",
   galleryCsv: "",
@@ -93,6 +105,8 @@ function toPayload(values: PropertyFormValues): PropertyPayload {
   const roiAnnualPct = Number(values.roiAnnualPct);
   const appreciationAnnualPct = Number(values.appreciationAnnualPct);
   const featuredOrder = Number(values.featuredOrder);
+  const bathrooms = Number(values.bathrooms);
+  const areaM2 = Number(values.areaM2);
 
   return {
     title: values.title.trim(),
@@ -110,6 +124,11 @@ function toPayload(values: PropertyFormValues): PropertyPayload {
     featuredOrder: Number.isFinite(featuredOrder) ? Math.floor(featuredOrder) : null,
     priceUsd:
       Number.isFinite(priceNum) && priceNum > 0 ? Math.floor(priceNum) : null,
+    propertyType: values.propertyType.trim() || null,
+    bedrooms: values.bedrooms.trim() || null,
+    bathrooms:
+      Number.isFinite(bathrooms) && bathrooms > 0 ? Math.floor(bathrooms) : null,
+    areaM2: Number.isFinite(areaM2) && areaM2 > 0 ? areaM2 : null,
     description: values.description.trim() || null,
     coverImageUrl: values.coverImageUrl.trim() || null,
     gallery,
@@ -395,6 +414,48 @@ export function PropertyForm({
               </Field>
             </div>
           ) : null}
+        </div>
+      </FormSection>
+
+      <FormSection
+        title="Ficha técnica"
+        description="Estos datos alimentan la ficha pública. Dejá en blanco cualquier atributo que no aplique."
+      >
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Field label="Tipo de propiedad">
+            <input
+              value={values.propertyType}
+              onChange={(e) => update("propertyType", e.target.value)}
+              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+              placeholder="Loft / Apart-hotel"
+            />
+          </Field>
+          <Field label="Habitaciones">
+            <input
+              value={values.bedrooms}
+              onChange={(e) => update("bedrooms", e.target.value)}
+              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+              placeholder="1 (Loft)"
+            />
+          </Field>
+          <Field label="Baños">
+            <input
+              value={values.bathrooms}
+              onChange={(e) => update("bathrooms", e.target.value)}
+              inputMode="numeric"
+              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+              placeholder="1"
+            />
+          </Field>
+          <Field label="Superficie (m²)">
+            <input
+              value={values.areaM2}
+              onChange={(e) => update("areaM2", e.target.value)}
+              inputMode="decimal"
+              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+              placeholder="35"
+            />
+          </Field>
         </div>
       </FormSection>
 
