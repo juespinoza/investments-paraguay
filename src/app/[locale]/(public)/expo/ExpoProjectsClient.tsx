@@ -39,6 +39,7 @@ type Project = {
   id: string;
   name: string;
   location: string;
+  locationLink: string;
   tagline: string;
   overview: string;
   stats: Stat[];
@@ -328,15 +329,23 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
 
       <section className={styles.hero} ref={heroRef}>
         <div className={cx(styles.wrap, styles.heroInner)}>
-          <div className={styles.eyebrow}>
+          {/* <div className={styles.eyebrow}>
             Proyecto destacado · InvestmentsParaguay
-          </div>
+          </div> */}
           <h1>
             {project.name}
             <br />
-            <em>{project.tagline}</em>
+            <em className="text-2xl">{project.tagline}</em>
           </h1>
-          <div className={styles.heroLoc}>{project.location}</div>
+          <div className={styles.heroLoc}>
+            <a
+              href={project.locationLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {project.location}
+            </a>
+          </div>
           <div className={styles.heroPitch}>{project.overview}</div>
           <div className={styles.heroActions}>
             <button
