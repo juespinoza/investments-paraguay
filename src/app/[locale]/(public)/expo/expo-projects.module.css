@@ -1014,6 +1014,21 @@
   animation: tourKen 4.5s ease-out forwards;
 }
 
+.tourImg.portraitPan {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: auto;
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+  transform: none;
+}
+
+.tourImg.portraitPan.kenburns {
+  animation: none;
+}
+
 @keyframes tourKen {
   from {
     transform: scale(1);
@@ -1087,37 +1102,37 @@
 
 .tourCaption {
   position: absolute;
-  right: 16px;
-  bottom: 16px;
-  left: 16px;
+  right: 12px;
+  bottom: 12px;
+  left: 12px;
   z-index: 3;
-  max-width: 720px;
+  max-width: 640px;
   border: 1px solid rgba(250, 250, 248, 0.16);
   background: rgba(10, 10, 10, 0.72);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(2px);
   color: var(--ivory);
-  padding: 18px 20px;
+  padding: 14px 16px;
 }
 
 .tourAreaName {
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   color: var(--gold);
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: 23px;
   font-weight: 600;
 }
 
 .tourAreaDesc {
   max-width: 560px;
-  font-size: 13.5px;
-  line-height: 1.55;
+  font-size: 11.5px;
+  line-height: 1.5;
   opacity: 0.92;
 }
 
 .tourCounter {
-  margin-top: 10px;
+  margin-top: 8px;
   font-family: monospace;
-  font-size: 10.5px;
+  font-size: 9px;
   letter-spacing: 0.5px;
   opacity: 0.7;
 }
