@@ -6,7 +6,7 @@ import "@/app/globals.css";
 import { NavBar } from "@/components/landing/NavBar";
 import { Footer } from "@/components/landing/Footer";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
-import { SUPPORTED_LOCALES, type AppLocale } from "@/lib/i18n";
+import { isSupportedLocale } from "@/lib/i18n";
 
 export default async function PublicLayout({
   children,
@@ -17,11 +17,11 @@ export default async function PublicLayout({
 }) {
   const { locale: routeLocale } = await params;
 
-  if (!SUPPORTED_LOCALES.includes(routeLocale as AppLocale)) {
+  if (!isSupportedLocale(routeLocale)) {
     notFound();
   }
 
-  const locale = routeLocale as AppLocale;
+  const locale = routeLocale;
   setRequestLocale(locale);
   const messages = await getMessages();
 

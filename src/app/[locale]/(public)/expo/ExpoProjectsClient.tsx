@@ -132,6 +132,19 @@ function currentSourcePage(projectId: string) {
   return `${window.location.pathname}${window.location.search}${hash}`;
 }
 
+function isMobilePortrait() {
+  if (typeof window === "undefined") return false;
+  return (
+    window.matchMedia("(max-width: 640px)").matches &&
+    window.innerHeight > window.innerWidth
+  );
+}
+
+function prefersReducedMotion() {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 function AreaPhotoGrid({ area }: { area: Area }) {
   const photos = uniquePhotos(area.photos).slice(0, 4);
   const count = photos.length;
@@ -167,6 +180,157 @@ function AreaPhotoGrid({ area }: { area: Area }) {
         </div>
       ))}
     </div>
+  );
+}
+
+function TourStageImage({
+  slide,
+  active,
+  paused,
+}: {
+  slide: TourSlide | undefined;
+  active: boolean;
+  paused: boolean;
+}) {
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const panAnimationRef = useRef<Animation | null>(null);
+  const pausedRef = useRef(paused);
+  const [visible, setVisible] = useState(false);
+  const [portraitPan, setPortraitPan] = useState(false);
+  const photo = slide?.photo ?? null;
+
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
+
+  const cancelPan = useCallback(() => {
+    panAnimationRef.current?.cancel();
+    panAnimationRef.current = null;
+
+    if (imageRef.current) {
+      imageRef.current.style.transform = "";
+    }
+  }, []);
+
+  const applyPortraitPan = useCallback(
+    (image: HTMLImageElement) => {
+      const container = image.parentElement;
+      if (!container || !image.naturalWidth || !image.naturalHeight) return;
+
+      const scaledWidth =
+        (container.clientHeight * image.naturalWidth) / image.naturalHeight;
+      const panDistance = Math.max(0, scaledWidth - container.clientWidth);
+
+      if (panDistance <= 4) return;
+
+      if (prefersReducedMotion()) {
+        image.style.transform = `translateX(-${panDistance / 2}px)`;
+        return;
+      }
+
+      const animation = image.animate(
+        [
+          { transform: "translateX(0px)" },
+          { transform: `translateX(-${panDistance}px)` },
+        ],
+        {
+          duration: TOUR_SLIDE_MS,
+          easing: "ease-in-out",
+          fill: "forwards",
+        },
+      );
+
+      panAnimationRef.current = animation;
+      if (pausedRef.current) animation.pause();
+    },
+    [],
+  );
+
+  const handleImageReady = useCallback(() => {
+    const image = imageRef.current;
+    if (!active || !image) return;
+
+    cancelPan();
+    setVisible(true);
+
+    if (isMobilePortrait()) {
+      setPortraitPan(true);
+      window.requestAnimationFrame(() => applyPortraitPan(image));
+      return;
+    }
+
+    setPortraitPan(false);
+  }, [active, applyPortraitPan, cancelPan]);
+
+  useEffect(() => {
+    cancelPan();
+    setVisible(false);
+    setPortraitPan(false);
+  }, [cancelPan, photo]);
+
+  useEffect(() => {
+    if (!active) {
+      cancelPan();
+      setVisible(false);
+      setPortraitPan(false);
+    }
+  }, [active, cancelPan]);
+
+  useEffect(() => {
+    const animation = panAnimationRef.current;
+    if (!animation) return;
+
+    if (paused) animation.pause();
+    else animation.play();
+  }, [paused]);
+
+  useEffect(() => {
+    const image = imageRef.current;
+    if (active && photo && image?.complete) {
+      handleImageReady();
+    }
+  }, [active, handleImageReady, photo]);
+
+  useEffect(() => {
+    if (!active || !photo) return;
+
+    const onResize = () => {
+      const image = imageRef.current;
+      if (image?.complete) handleImageReady();
+    };
+
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
+  }, [active, handleImageReady, photo]);
+
+  useEffect(() => cancelPan, [cancelPan]);
+
+  if (!photo) {
+    return (
+      <div className={styles.tourPlaceholderLabel}>
+        Foto de &quot;{slide?.area.name}&quot; pendiente de carga
+      </div>
+    );
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      key={`${slide?.areaIndex ?? 0}-${photo}`}
+      ref={imageRef}
+      className={cx(
+        styles.tourImg,
+        visible && styles.visible,
+        portraitPan ? styles.portraitPan : styles.kenburns,
+      )}
+      src={photo}
+      alt={slide?.area.name ?? "Ambiente del proyecto"}
+      onLoad={handleImageReady}
+    />
   );
 }
 
@@ -525,7 +689,9 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
         <div className={styles.wrap}>
           <div className={styles.blockHead}>
             <div className={styles.blockTitle}>Tipologías disponibles</div>
-            <div className={styles.blockSub}>Hasta 4 por proyecto</div>
+            <div className={styles.blockSub}>
+              {project.typologies.length} áreas relevadas
+            </div>
           </div>
           <div className={styles.typoGrid}>
             {project.typologies.map((typology) => (
@@ -776,18 +942,11 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
         </div>
         <div className={styles.tourStage}>
           <div className={styles.tourImgWrap}>
-            {currentSlide?.photo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                className={cx(styles.tourImg, styles.visible, styles.kenburns)}
-                src={currentSlide.photo}
-                alt={currentSlide.area.name}
-              />
-            ) : (
-              <div className={styles.tourPlaceholderLabel}>
-                Foto de &quot;{currentSlide?.area.name}&quot; pendiente de carga
-              </div>
-            )}
+            <TourStageImage
+              slide={currentSlide}
+              active={tourOpen}
+              paused={tourPaused}
+            />
           </div>
           <button
             className={cx(styles.tourTap, styles.tourTapLeft)}

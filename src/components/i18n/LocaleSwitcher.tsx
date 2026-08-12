@@ -5,18 +5,25 @@ import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { isAnalyticsEnabled } from "@/lib/analytics";
 import { usePathname, useRouter } from "@/i18n/navigation";
+import { DEFAULT_LOCALE, type AppLocale } from "@/lib/i18n";
 
-type Locale = "en" | "es" | "pt" | "de";
+type LocaleOption = { value: AppLocale; icon: string; label: string };
 
-const LOCALES: Array<{ value: Locale; icon: string; label: string }> = [
-  { value: "en", icon: "🇺🇸", label: "English" },
+const LOCALES: LocaleOption[] = [
   { value: "es", icon: "🇵🇾", label: "Español" },
-  { value: "pt", icon: "🇧🇷", label: "Português" },
-  { value: "de", icon: "🇩🇪", label: "Deutsch" },
 ];
 
-function readCookieLocale(): Locale {
-  if (typeof document === "undefined") return "en";
+// TODO(i18n): Reactivar estas opciones cuando sus contenidos estén traducidos.
+// { value: "en", icon: "🇺🇸", label: "English" }
+// { value: "pt", icon: "🇧🇷", label: "Português" }
+// { value: "de", icon: "🇩🇪", label: "Deutsch" }
+
+function isSupportedLocale(value: string | undefined): value is AppLocale {
+  return LOCALES.some((locale) => locale.value === value);
+}
+
+function readCookieLocale(): AppLocale {
+  if (typeof document === "undefined") return DEFAULT_LOCALE;
 
   const match = document.cookie
     .split(";")
@@ -24,13 +31,7 @@ function readCookieLocale(): Locale {
     .find((v) => v.startsWith("locale="));
 
   const value = match?.split("=")[1];
-  return value === "es"
-    ? "es"
-    : value === "pt"
-      ? "pt"
-      : value === "de"
-        ? "de"
-        : "en";
+  return isSupportedLocale(value) ? value : DEFAULT_LOCALE;
 }
 
 export function LocaleSwitcher({
@@ -46,7 +47,7 @@ export function LocaleSwitcher({
   const [isPending, startTransition] = useTransition();
 
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<Locale>("en");
+  const [selected, setSelected] = useState<AppLocale>(DEFAULT_LOCALE);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -76,7 +77,7 @@ export function LocaleSwitcher({
     return LOCALES.find((l) => l.value === selected) ?? LOCALES[0];
   }, [selected]);
 
-  function pick(locale: Locale) {
+  function pick(locale: AppLocale) {
     setOpen(false);
     setSelected(locale);
 
@@ -92,6 +93,25 @@ export function LocaleSwitcher({
       const nextPath = query ? `${pathname}?${query}` : pathname;
       router.replace(nextPath, { locale });
     });
+  }
+
+  if (LOCALES.length === 1) {
+    return (
+      <div className={cn("relative inline-flex", className)}>
+        <div
+          className="inline-flex h-10 items-center gap-2 rounded-lg border border-soft bg-[var(--ivory)] px-3 text-sm font-medium text-primary"
+          aria-label="Idioma disponible: Español"
+          title="Idioma disponible: Español"
+        >
+          <span className="text-base">{selectedLocale.icon}</span>
+          {showLabel ? (
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
+              {selectedLocale.value}
+            </span>
+          ) : null}
+        </div>
+      </div>
+    );
   }
 
   return (
