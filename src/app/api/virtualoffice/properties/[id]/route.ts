@@ -19,7 +19,7 @@ export async function GET(_req: Request, { params }: Params) {
 
   const { id } = await params;
   try {
-    await assertPropertyScope(session, id);
+    await assertPropertyScope(session, id, "read");
   } catch (error) {
     if (error instanceof PropertyRepoError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
@@ -43,6 +43,10 @@ export async function GET(_req: Request, { params }: Params) {
       isFeatured: true,
       featuredOrder: true,
       priceUsd: true,
+      propertyType: true,
+      bedrooms: true,
+      bathrooms: true,
+      areaM2: true,
       description: true,
       coverImageUrl: true,
       gallery: true,
@@ -70,7 +74,7 @@ export async function PATCH(req: Request, { params }: Params) {
   const { id } = await params;
   let scope;
   try {
-    scope = await assertPropertyScope(session, id);
+    scope = await assertPropertyScope(session, id, "update");
   } catch (error) {
     if (error instanceof PropertyRepoError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
@@ -107,6 +111,10 @@ export async function PATCH(req: Request, { params }: Params) {
         isFeatured: assignments.isFeatured,
         featuredOrder: assignments.featuredOrder,
         priceUsd: data.priceUsd ?? null,
+        propertyType: data.propertyType ?? null,
+        bedrooms: data.bedrooms ?? null,
+        bathrooms: data.bathrooms ?? null,
+        areaM2: data.areaM2 ?? null,
         description: data.description ?? null,
         coverImageUrl: data.coverImageUrl ?? null,
         gallery: data.gallery,
@@ -142,7 +150,7 @@ export async function DELETE(_req: Request, { params }: Params) {
 
   const { id } = await params;
   try {
-    await assertPropertyScope(session, id);
+    await assertPropertyScope(session, id, "delete_soft");
   } catch (error) {
     if (error instanceof PropertyRepoError) {
       return NextResponse.json({ error: error.message }, { status: error.status });

@@ -4,6 +4,13 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import type { SessionPayload } from "@/lib/data/types";
 import { Prisma } from "@/generated/prisma";
+import {
+  can,
+  scopeFor,
+  isAdmin,
+  isAdvisor,
+  isInmobiliaria,
+} from "@/lib/auth/permissions";
 
 export class PropertyRepoError extends Error {
   status: number;
@@ -28,6 +35,10 @@ export const PropertyUpsertSchema = z.object({
   isFeatured: z.boolean().optional(),
   featuredOrder: z.number().int().nullable().optional(),
   priceUsd: z.number().int().positive().nullable().optional(),
+  propertyType: z.string().trim().nullable().optional(),
+  bedrooms: z.string().trim().nullable().optional(),
+  bathrooms: z.number().int().positive().nullable().optional(),
+  areaM2: z.number().positive().nullable().optional(),
   description: z.string().trim().nullable().optional(),
   coverImageUrl: z.string().trim().nullable().optional(),
   gallery: z.array(z.string().trim()).default([]),
@@ -46,24 +57,20 @@ type ScopedProperty = {
 };
 
 export function canCreateProperty(session: SessionPayload) {
-  return session.role === "ADMIN" || session.role === "INMOBILIARIA";
+  return can(session, "properties", "create");
 }
 
 export function canDeleteProperty(session: SessionPayload) {
-  return session.role === "ADMIN" || session.role === "INMOBILIARIA";
+  return can(session, "properties", "delete_soft");
 }
 
 export function canEditProperty(session: SessionPayload) {
-  return (
-    session.role === "ADMIN" ||
-    session.role === "INMOBILIARIA" ||
-    session.role === "ASESOR"
-  );
+  return can(session, "properties", "update");
 }
 
 export async function getPropertyFormOptions(session: SessionPayload) {
   const [inmobiliarias, advisors] = await Promise.all([
-    session.role === "ADMIN"
+    isAdmin(session)
       ? prisma.inmobiliaria.findMany({
           where: { deletedAt: null },
           orderBy: { name: "asc" },
@@ -73,9 +80,9 @@ export async function getPropertyFormOptions(session: SessionPayload) {
     prisma.advisor.findMany({
       where: {
         deletedAt: null,
-        ...(session.role === "ADMIN"
+        ...(isAdmin(session)
           ? {}
-          : session.role === "INMOBILIARIA"
+          : isInmobiliaria(session)
             ? { inmobiliariaId: session.inmobiliariaId ?? "__none__" }
             : { id: session.advisorId ?? "__none__" }),
       },
@@ -90,7 +97,12 @@ export async function getPropertyFormOptions(session: SessionPayload) {
 export async function assertPropertyScope(
   session: SessionPayload,
   propertyId: string,
+  action: "read" | "update" | "delete_soft" = "read",
 ): Promise<ScopedProperty> {
+  if (!can(session, "properties", action)) {
+    throw new PropertyRepoError("Forbidden", 403);
+  }
+
   const property = await prisma.property.findFirst({
     where: { id: propertyId, deletedAt: null },
     select: {
@@ -106,9 +118,10 @@ export async function assertPropertyScope(
     throw new PropertyRepoError("Not found", 404);
   }
 
-  if (session.role === "ADMIN") return property;
+  const scope = scopeFor(session, "properties", action);
+  if (scope === "all") return property;
 
-  if (session.role === "INMOBILIARIA") {
+  if (scope === "advisor_properties") {
     if (
       !session.inmobiliariaId ||
       property.inmobiliariaId !== session.inmobiliariaId
@@ -118,7 +131,7 @@ export async function assertPropertyScope(
     return property;
   }
 
-  if (session.role === "ASESOR") {
+  if (scope === "self") {
     if (!session.advisorId || property.advisorId !== session.advisorId) {
       throw new PropertyRepoError("Forbidden", 403);
     }
@@ -146,52 +159,39 @@ export async function resolvePropertyAssignments(
   data: PropertyUpsertInput,
   current?: ScopedProperty,
 ) {
-  if (session.role === "ASESOR") {
-    if (!session.advisorId) {
-      throw new PropertyRepoError("Missing advisor scope", 403);
-    }
+  const propertyScope = scopeFor(
+    session,
+    "properties",
+    current ? "update" : "create",
+  );
+  const advisorId = isAdvisor(session)
+    ? session.advisorId ?? null
+    : data.advisorId ?? null;
 
-    const advisor = await getAdvisorIfValid(session.advisorId);
-
-    return {
-      advisorId: advisor.id,
-      inmobiliariaId:
-        advisor.inmobiliariaId ?? current?.inmobiliariaId ?? session.inmobiliariaId ?? null,
-      isFeatured: current?.isFeatured ?? false,
-      featuredOrder: current?.featuredOrder ?? null,
-    };
-  }
-
-  let inmobiliariaId =
-    session.role === "ADMIN"
-      ? data.inmobiliariaId ?? current?.inmobiliariaId ?? null
-      : session.inmobiliariaId ?? null;
-
-  if (session.role !== "ADMIN" && !inmobiliariaId) {
-    throw new PropertyRepoError("Missing inmobiliaria scope", 403);
-  }
-
-  const advisorId = data.advisorId ?? null;
+  let inmobiliariaId: string | null = null;
   if (advisorId) {
     const advisor = await getAdvisorIfValid(advisorId);
-
-    if (inmobiliariaId && advisor.inmobiliariaId !== inmobiliariaId) {
+    if (
+      propertyScope === "advisor_properties" &&
+      advisor.inmobiliariaId !== (session.inmobiliariaId ?? null)
+    ) {
       throw new PropertyRepoError(
-        "El asesor no pertenece a la inmobiliaria seleccionada.",
-        400,
+        "Solo puedes asignar propiedades a asesores de tu inmobiliaria.",
+        403,
       );
     }
-
-    if (!inmobiliariaId && advisor.inmobiliariaId) {
-      inmobiliariaId = advisor.inmobiliariaId;
-    }
+    inmobiliariaId = advisor.inmobiliariaId ?? null;
   }
 
   return {
     advisorId,
     inmobiliariaId,
-    isFeatured: data.isFeatured ?? false,
-    featuredOrder: data.featuredOrder ?? null,
+    isFeatured: isAdvisor(session)
+      ? current?.isFeatured ?? false
+      : data.isFeatured ?? false,
+    featuredOrder: isAdvisor(session)
+      ? current?.featuredOrder ?? null
+      : data.featuredOrder ?? null,
   };
 }
 
@@ -199,17 +199,22 @@ export function buildPropertyListWhere(
   session: SessionPayload,
   query?: { q?: string; advisorId?: string },
 ): Prisma.PropertyWhereInput {
-  const where: Prisma.PropertyWhereInput = { deletedAt: null };
-
-  if (session.role === "INMOBILIARIA") {
-    where.inmobiliariaId = session.inmobiliariaId ?? "__none__";
-  } else if (session.role === "ASESOR") {
-    where.advisorId = session.advisorId ?? "__none__";
-  } else if (session.role !== "ADMIN") {
+  if (!can(session, "properties", "read")) {
     throw new PropertyRepoError("Forbidden", 403);
   }
 
-  if (query?.advisorId && session.role !== "ASESOR") {
+  const where: Prisma.PropertyWhereInput = { deletedAt: null };
+  const scope = scopeFor(session, "properties", "read");
+
+  if (scope === "advisor_properties") {
+    where.inmobiliariaId = session.inmobiliariaId ?? "__none__";
+  } else if (scope === "self") {
+    where.advisorId = session.advisorId ?? "__none__";
+  } else if (scope !== "all") {
+    throw new PropertyRepoError("Forbidden", 403);
+  }
+
+  if (query?.advisorId && scope !== "self") {
     where.advisorId = query.advisorId;
   }
 

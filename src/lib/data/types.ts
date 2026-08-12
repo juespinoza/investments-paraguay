@@ -113,6 +113,64 @@ export type PublicAdvisorLanding = {
   socialMedia: Array<SocialItem>;
 };
 
+export type PublicAdvisorLandingV2 = {
+  slug: string;
+  fullName: string;
+  hero: {
+    title: string;
+    subtitle: string | null;
+    imageUrl: string | null;
+    ctaLabel: string | null;
+    ctaHref: string | null;
+  };
+  about: {
+    title: string | null;
+    body: string | null;
+  };
+  services: {
+    title: string | null;
+    body: string | null;
+  };
+  featuredProperties: Array<{
+    slug: string;
+    title: string;
+    coverImageUrl: string | null;
+    priceUsd: number | null;
+    city: string | null;
+  }>;
+  socialLinks: Array<{
+    platform: SocialPlatform;
+    url: string;
+  }>;
+};
+
+export type PublicInmobiliariaLandingV2 = {
+  slug: string;
+  name: string;
+  logoUrl: string | null;
+  hero: {
+    title: string;
+    subtitle: string | null;
+    imageUrl: string | null;
+    ctaLabel: string | null;
+    ctaHref: string | null;
+  };
+  about: {
+    title: string | null;
+    body: string | null;
+  };
+  contact: {
+    email: string | null;
+    phone: string | null;
+    whatsapp: string | null;
+    website: string | null;
+    address: string | null;
+  };
+  advisorsIntro: string | null;
+  propertiesIntro: string | null;
+  featuredPropertyIds: string[];
+};
+
 export type SessionPayload = {
   sub: string; // userId
   id: string;

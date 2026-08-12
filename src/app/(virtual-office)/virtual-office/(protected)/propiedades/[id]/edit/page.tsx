@@ -1,6 +1,11 @@
 import { notFound } from "next/navigation";
 import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
 import { PropertyForm } from "@/components/virtualoffice/properties/PropertyForm";
+import {
+  canManagePropertyAssignments,
+  canManagePropertyFeatured,
+  isAdvisor,
+} from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import { prisma } from "@/lib/prisma";
 import {
@@ -10,11 +15,18 @@ import {
   PropertyRepoError,
 } from "@/lib/virtualoffice/properties";
 
-type PageProps = { params: Promise<{ id: string }> };
+type PageProps = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ status?: string }>;
+};
 
-export default async function EditPropertyPage({ params }: PageProps) {
+export default async function EditPropertyPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { id } = await params;
   const session = await requireSession();
+  const query = await searchParams;
 
   if (!canEditProperty(session)) {
     return (
@@ -28,7 +40,7 @@ export default async function EditPropertyPage({ params }: PageProps) {
   }
 
   try {
-    await assertPropertyScope(session, id);
+    await assertPropertyScope(session, id, "update");
   } catch (error) {
     if (error instanceof PropertyRepoError && error.status === 404) {
       return notFound();
@@ -67,6 +79,10 @@ export default async function EditPropertyPage({ params }: PageProps) {
       isFeatured: true,
       featuredOrder: true,
       priceUsd: true,
+      propertyType: true,
+      bedrooms: true,
+      bathrooms: true,
+      areaM2: true,
       description: true,
       coverImageUrl: true,
       gallery: true,
@@ -81,9 +97,19 @@ export default async function EditPropertyPage({ params }: PageProps) {
     <div>
       <PageHeader
         eyebrow="Portafolio"
-        title="Editar propiedad"
-        description="Actualizá la información de la propiedad."
+        title={isAdvisor(session) ? "Mi propiedad" : "Editar propiedad"}
+        description={
+          isAdvisor(session)
+            ? "Actualiza únicamente la información de una propiedad dentro de tu propio alcance."
+            : "Actualizá la información de la propiedad."
+        }
       />
+
+      {query.status === "created" ? (
+        <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          Propiedad creada correctamente.
+        </div>
+      ) : null}
 
       <Card>
         <CardBody>
@@ -114,14 +140,18 @@ export default async function EditPropertyPage({ params }: PageProps) {
                   ? String(property.featuredOrder)
                   : "",
               priceUsd: property.priceUsd ? String(property.priceUsd) : "",
+              propertyType: property.propertyType ?? "",
+              bedrooms: property.bedrooms ?? "",
+              bathrooms:
+                property.bathrooms !== null ? String(property.bathrooms) : "",
+              areaM2: property.areaM2 !== null ? String(property.areaM2) : "",
               description: property.description ?? "",
               coverImageUrl: property.coverImageUrl ?? "",
               galleryCsv: property.gallery.join(","),
               advisorId: property.advisorId ?? "",
-              inmobiliariaId: property.inmobiliariaId ?? "",
             }}
-            canManageAssignments={session.role === "ADMIN" || session.role === "INMOBILIARIA"}
-            canManageFeatured={session.role === "ADMIN" || session.role === "INMOBILIARIA"}
+            canManageAssignments={canManagePropertyAssignments(session)}
+            canManageFeatured={canManagePropertyFeatured(session)}
             advisors={options.advisors.map((advisor) => ({
               id: advisor.id,
               label: advisor.fullName,
@@ -131,12 +161,7 @@ export default async function EditPropertyPage({ params }: PageProps) {
               id: item.id,
               label: item.name,
             }))}
-            lockedAdvisorId={session.role === "ASESOR" ? session.advisorId ?? "" : undefined}
-            lockedInmobiliariaId={
-              session.role === "INMOBILIARIA" || session.role === "ASESOR"
-                ? session.inmobiliariaId ?? ""
-                : undefined
-            }
+            lockedAdvisorId={isAdvisor(session) ? session.advisorId ?? "" : undefined}
           />
         </CardBody>
       </Card>

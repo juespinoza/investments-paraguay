@@ -1,6 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
+import { prisma } from "@/lib/prisma";
 import { SessionPayload } from "../data/types";
 
 function getSecret() {
@@ -16,25 +17,29 @@ export async function getSession(): Promise<SessionPayload | null> {
 
   try {
     const { payload } = await jwtVerify(token, getSecret());
-    // console.log("Session payload constructed:", {
-    //   id: String(payload.id ?? ""),
-    //   sub: String(payload.sub ?? ""),
-    //   email: String(payload.email ?? ""),
-    //   role: payload.role as SessionPayload["role"],
-    //   inmobiliariaId: payload.inmobiliariaId
-    //     ? String(payload.inmobiliariaId)
-    //     : null,
-    //   advisorId: payload.advisorId ? String(payload.advisorId) : null,
-    // });
+    const userId = String(payload.sub ?? payload.id ?? "");
+    if (!userId) return null;
+
+    const user = await prisma.user.findFirst({
+      where: { id: userId, deletedAt: null },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        inmobiliariaId: true,
+        advisorId: true,
+      },
+    });
+
+    if (!user) return null;
+
     return {
-      id: String(payload.id ?? ""),
-      sub: String(payload.sub ?? ""),
-      email: String(payload.email ?? ""),
-      role: payload.role as SessionPayload["role"],
-      inmobiliariaId: payload.inmobiliariaId
-        ? String(payload.inmobiliariaId)
-        : null,
-      advisorId: payload.advisorId ? String(payload.advisorId) : null,
+      id: user.id,
+      sub: user.id,
+      email: user.email,
+      role: user.role as SessionPayload["role"],
+      inmobiliariaId: user.inmobiliariaId ? String(user.inmobiliariaId) : null,
+      advisorId: user.advisorId ? String(user.advisorId) : null,
     };
   } catch {
     return null;

@@ -77,9 +77,9 @@ export function SocialLinks({
                 href={i.href}
                 target="_blank"
                 rel="noreferrer"
-                className="surface-card flex items-center gap-4 rounded-3xl p-4 hover:-translate-y-0.5"
+                className="group surface-card flex items-center gap-4 rounded-3xl p-4 hover:-translate-y-0.5"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[linear-gradient(135deg,#b8914c_0%,#d8b26c_100%)] text-white">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--carbon)] text-[var(--ivory)] transition group-hover:bg-[var(--gold)] group-hover:text-[var(--carbon)]">
                   <Icon size={17} />
                 </span>
 

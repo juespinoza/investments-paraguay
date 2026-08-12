@@ -1,12 +1,37 @@
 import "server-only";
 
+import { Role, Prisma } from "@/generated/prisma";
+import { hashPassword, normalizeEmail } from "@/lib/auth/user-bootstrap";
 import { prisma } from "@/lib/prisma";
+import {
+  canAccessAdvisors,
+  canCreateAdvisor,
+  canDeleteAdvisor,
+  canEditAdvisor,
+  can,
+  isAdmin,
+  isAdvisor,
+  isInmobiliaria,
+} from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import type { SessionPayload, PublicAdvisorLanding } from "@/lib/data/types";
-import { Prisma } from "@/generated/prisma";
+import type { PublicAdvisorLandingV2 } from "@/lib/data/types";
 import { FormSchema } from "@/components/virtualoffice/advisors/schema";
 import type { z } from "zod";
 import { syncAdvisorTenantAssignments } from "@/lib/virtualoffice/assignment-sync";
+import {
+  buildAdvisorCoreCreateData,
+  buildAdvisorCoreUpdateData,
+} from "@/lib/virtualoffice/advisor-core";
+import {
+  buildAdvisorLandingCreateData,
+  buildAdvisorLandingUpdateData,
+  mapAdvisorLandingToFormData,
+  mapAdvisorLandingToFormDataV2,
+  mapAdvisorToPublicLanding,
+  mapAdvisorToPublicLandingV2,
+  replaceAdvisorLandingCollections,
+} from "@/lib/virtualoffice/advisor-landing";
 
 export class AdvisorRepoError extends Error {
   status: number;
@@ -20,6 +45,11 @@ export class AdvisorRepoError extends Error {
 
 export type AdvisorPayload = z.output<typeof FormSchema>;
 export type AdvisorFormData = z.input<typeof FormSchema>;
+export type AdvisorWorkflowUserInput = {
+  email: string;
+  password: string;
+  name?: string | null;
+};
 
 export type Advisor = {
   id: string;
@@ -69,16 +99,20 @@ type AdvisorWithDetail = Prisma.AdvisorGetPayload<{
   include: typeof advisorDetailInclude;
 }>;
 
-type AdvisorWithPublicLanding = Prisma.AdvisorGetPayload<{
-  include: typeof publicAdvisorInclude;
-}>;
-
-function buildScopedWhere(session: SessionPayload) {
+function getAdvisorScopeWhere(
+  session: SessionPayload,
+  resource: "advisor_core" | "advisor_landing",
+  action: "read" | "update",
+) {
   const where: Prisma.AdvisorWhereInput = { deletedAt: null };
 
-  if (session.role === "ADMIN") return where;
+  if (!can(session, resource, action)) {
+    throw new AdvisorRepoError("Forbidden", 403);
+  }
 
-  if (session.role === "INMOBILIARIA") {
+  if (isAdmin(session)) return where;
+
+  if (resource === "advisor_core" && isInmobiliaria(session)) {
     if (!session.inmobiliariaId) {
       throw new AdvisorRepoError("Missing inmobiliaria scope", 403);
     }
@@ -86,7 +120,35 @@ function buildScopedWhere(session: SessionPayload) {
     return where;
   }
 
-  if (session.role === "ASESOR") {
+  if (isAdvisor(session)) {
+    if (!session.advisorId) {
+      throw new AdvisorRepoError("Missing advisor scope", 403);
+    }
+    where.id = session.advisorId;
+    return where;
+  }
+
+  throw new AdvisorRepoError("Forbidden", 403);
+}
+
+function buildScopedWhere(session: SessionPayload) {
+  const where: Prisma.AdvisorWhereInput = { deletedAt: null };
+
+  if (!canAccessAdvisors(session)) {
+    throw new AdvisorRepoError("Forbidden", 403);
+  }
+
+  if (isAdmin(session)) return where;
+
+  if (isInmobiliaria(session)) {
+    if (!session.inmobiliariaId) {
+      throw new AdvisorRepoError("Missing inmobiliaria scope", 403);
+    }
+    where.inmobiliariaId = session.inmobiliariaId;
+    return where;
+  }
+
+  if (isAdvisor(session)) {
     if (!session.advisorId) {
       throw new AdvisorRepoError("Missing advisor scope", 403);
     }
@@ -99,7 +161,23 @@ function buildScopedWhere(session: SessionPayload) {
 
 async function requireAdvisorEditorSession() {
   const session = await requireSession();
-  if (session.role !== "ADMIN" && session.role !== "INMOBILIARIA") {
+  if (!canEditAdvisor(session)) {
+    throw new AdvisorRepoError("Forbidden", 403);
+  }
+  return session;
+}
+
+async function requireAdvisorCoreSession(action: "read" | "update") {
+  const session = await requireSession();
+  if (!can(session, "advisor_core", action)) {
+    throw new AdvisorRepoError("Forbidden", 403);
+  }
+  return session;
+}
+
+async function requireAdvisorLandingSession(action: "read" | "update") {
+  const session = await requireSession();
+  if (!can(session, "advisor_landing", action)) {
     throw new AdvisorRepoError("Forbidden", 403);
   }
   return session;
@@ -119,61 +197,6 @@ async function findScopedAdvisorOrThrow(session: SessionPayload, id: string) {
   }
 
   return advisor;
-}
-
-async function replaceLandingCollections(
-  tx: Prisma.TransactionClient,
-  landingId: string,
-  data: AdvisorPayload["landing"],
-) {
-  await tx.landingAdvisorPropertyType.deleteMany({ where: { landingId } });
-  await tx.landingAdvisorClientType.deleteMany({ where: { landingId } });
-  await tx.landingAdvisorArea.deleteMany({ where: { landingId } });
-  await tx.landingAdvisorServiceItem.deleteMany({ where: { landingId } });
-  await tx.advisorTestimonial.deleteMany({ where: { landingId } });
-  await tx.advisorSocialLink.deleteMany({ where: { landingId } });
-  await tx.landingAdvisorFeaturedProperty.deleteMany({ where: { landingId } });
-
-  if (data.propertyTypes.length) {
-    await tx.landingAdvisorPropertyType.createMany({
-      data: data.propertyTypes.map((value) => ({ landingId, value })),
-    });
-  }
-  if (data.clientTypes.length) {
-    await tx.landingAdvisorClientType.createMany({
-      data: data.clientTypes.map((value) => ({ landingId, value })),
-    });
-  }
-  if (data.areas.length) {
-    await tx.landingAdvisorArea.createMany({
-      data: data.areas.map((value) => ({ landingId, value })),
-    });
-  }
-  if (data.serviceList.length) {
-    await tx.landingAdvisorServiceItem.createMany({
-      data: data.serviceList.map((value) => ({ landingId, value })),
-    });
-  }
-  if (data.testimonies.length) {
-    await tx.advisorTestimonial.createMany({
-      data: data.testimonies.map((item) => ({
-        landingId,
-        name: item.name,
-        text: item.text,
-      })),
-    });
-  }
-  if (data.socialMedia.length) {
-    await tx.advisorSocialLink.createMany({
-      data: data.socialMedia.map((item) => ({
-        landingId,
-        platform: item.platform,
-        label: item.label,
-        value: item.value,
-        href: item.href,
-      })),
-    });
-  }
 }
 
 async function validateFeaturedProperties(
@@ -197,7 +220,7 @@ async function validateFeaturedProperties(
     }
   }
 
-  if (session.role !== "ADMIN") {
+  if (!isAdmin(session)) {
     for (const property of found) {
       if (property.inmobiliariaId !== inmobiliariaId) {
         throw new AdvisorRepoError("Featured property outside scope", 403);
@@ -217,106 +240,37 @@ function mapAdvisorToFormData(advisor: AdvisorWithDetail): AdvisorFormData {
     ctaLabel: advisor.ctaLabel ?? null,
     ctaHref: advisor.ctaHref ?? null,
     inmobiliariaId: advisor.inmobiliariaId ?? null,
-    landing: {
-      aboutImageUrl: advisor.landing?.aboutImageUrl ?? advisor.photoUrl ?? null,
-      aboutTitle: advisor.landing?.aboutTitle ?? "",
-      startDate: advisor.landing
-        ? new Date(advisor.landing.startDate).toISOString().slice(0, 10)
-        : "",
-      company: advisor.landing?.company ?? "",
-      aboutDescription: advisor.landing?.aboutDescription ?? null,
-      aboutParagraph1: advisor.landing?.aboutParagraph1 ?? "",
-      aboutParagraph2: advisor.landing?.aboutParagraph2 ?? "",
-      servicesParagraph1: advisor.landing?.servicesParagraph1 ?? "",
-      servicesParagraph2: advisor.landing?.servicesParagraph2 ?? "",
-      propertyTypes: advisor.landing?.propertyTypes.map((item) => item.value) ?? [],
-      clientTypes: advisor.landing?.clientTypes.map((item) => item.value) ?? [],
-      areas: advisor.landing?.areas.map((item) => item.value) ?? [],
-      serviceList: advisor.landing?.serviceList.map((item) => item.value) ?? [],
-      testimonies:
-        advisor.landing?.testimonies.map((item) => ({
-          name: item.name,
-          text: item.text,
-        })) ?? [],
-      socialMedia:
-        advisor.landing?.socialMedia.map((item) => ({
-          platform: item.platform,
-          label: item.label,
-          value: item.value,
-          href: item.href,
-        })) ?? [],
-      featuredPropertyIds:
-        advisor.landing?.featuredProperties.map((item) => item.propertyId) ?? [],
-    },
+    landing: mapAdvisorLandingToFormData(advisor),
   };
 }
 
-function calculateYearsExperience(startDate: Date) {
-  const now = new Date();
-  let years = now.getUTCFullYear() - startDate.getUTCFullYear();
-  const monthDelta = now.getUTCMonth() - startDate.getUTCMonth();
-  const dayDelta = now.getUTCDate() - startDate.getUTCDate();
-
-  if (monthDelta < 0 || (monthDelta === 0 && dayDelta < 0)) {
-    years -= 1;
-  }
-
-  return Math.max(0, years);
-}
-
-function mapAdvisorToPublicLanding(
-  advisor: AdvisorWithPublicLanding,
-): PublicAdvisorLanding {
-  if (!advisor.landing) {
-    throw new AdvisorRepoError("Asesor no encontrado", 404);
-  }
-
+function mapAdvisorCoreToFormData(advisor: AdvisorWithDetail): AdvisorFormData {
   return {
-    slug: advisor.slug,
     fullName: advisor.fullName,
+    slug: advisor.slug,
     headline: advisor.headline ?? null,
     heroBgUrl: advisor.heroBgUrl ?? null,
     ctaLabel: advisor.ctaLabel ?? null,
     ctaHref: advisor.ctaHref ?? null,
-    about: {
-      imageUrl: advisor.landing.aboutImageUrl || advisor.photoUrl || "",
-      title: advisor.landing.aboutTitle,
-      startDate: advisor.landing.startDate.toISOString(),
-      companyName: advisor.landing.company,
-      description: advisor.landing.aboutDescription ?? null,
-      paragraphs: [
-        advisor.landing.aboutParagraph1,
-        advisor.landing.aboutParagraph2,
-      ],
-      yearsExperience: calculateYearsExperience(advisor.landing.startDate),
+    inmobiliariaId: advisor.inmobiliariaId ?? null,
+    landing: {
+      aboutImageUrl: null,
+      aboutTitle: "",
+      startDate: "",
+      company: "",
+      aboutDescription: null,
+      aboutParagraph1: "",
+      aboutParagraph2: "",
+      servicesParagraph1: "",
+      servicesParagraph2: "",
+      propertyTypes: [],
+      clientTypes: [],
+      areas: [],
+      serviceList: [],
+      testimonies: [],
+      socialMedia: [],
+      featuredPropertyIds: [],
     },
-    services: {
-      propertyTypes: advisor.landing.propertyTypes.map((item) => item.value),
-      clientTypes: advisor.landing.clientTypes.map((item) => item.value),
-      areas: advisor.landing.areas.map((item) => item.value),
-      serviceList: advisor.landing.serviceList.map((item) => item.value),
-      paragraphs: [
-        advisor.landing.servicesParagraph1,
-        advisor.landing.servicesParagraph2,
-      ],
-    },
-    featuredProperties: advisor.landing.featuredProperties.map((item) => ({
-      slug: item.property.slug,
-      title: item.property.title,
-      coverImageUrl: item.property.coverImageUrl ?? null,
-      priceUsd: item.property.priceUsd ?? null,
-      city: item.property.city ?? null,
-    })),
-    testimonies: advisor.landing.testimonies.map((item) => ({
-      name: item.name,
-      text: item.text,
-    })),
-    socialMedia: advisor.landing.socialMedia.map((item) => ({
-      label: item.label,
-      value: item.value,
-      href: item.href,
-      platform: item.platform,
-    })),
   };
 }
 
@@ -327,6 +281,10 @@ function normalizeRepoError(error: unknown): never {
     error instanceof Prisma.PrismaClientKnownRequestError &&
     error.code === "P2002"
   ) {
+    const target = String(error.meta?.target ?? "");
+    if (target.includes("email")) {
+      throw new AdvisorRepoError("Ya existe un usuario con ese email.", 409);
+    }
     throw new AdvisorRepoError("Slug ya existe", 409);
   }
 
@@ -373,10 +331,20 @@ export async function listAdvisors(params?: {
 }
 
 export async function getAdvisorById(id: string): Promise<AdvisorFormData | null> {
-  const session = await requireSession();
+  const session = await requireAdvisorCoreSession("read");
 
   try {
-    await findScopedAdvisorOrThrow(session, id);
+    const scopedAdvisor = await prisma.advisor.findFirst({
+      where: {
+        id,
+        ...getAdvisorScopeWhere(session, "advisor_core", "read"),
+      },
+      select: { id: true },
+    });
+
+    if (!scopedAdvisor) {
+      return null;
+    }
 
     const advisor = await prisma.advisor.findUnique({
       where: { id },
@@ -387,13 +355,33 @@ export async function getAdvisorById(id: string): Promise<AdvisorFormData | null
       return null;
     }
 
-    return mapAdvisorToFormData(advisor);
+    return can(session, "advisor_landing", "read")
+      ? mapAdvisorToFormData(advisor)
+      : mapAdvisorCoreToFormData(advisor);
   } catch (error) {
     if (error instanceof AdvisorRepoError && error.status === 404) {
       return null;
     }
     throw error;
   }
+}
+
+export async function getAdvisorLandingV2ById(id: string) {
+  const session = await requireAdvisorLandingSession("read");
+
+  const scopedAdvisor = await prisma.advisor.findFirst({
+    where: {
+      id,
+      ...getAdvisorScopeWhere(session, "advisor_landing", "read"),
+    },
+    include: advisorDetailInclude,
+  });
+
+  if (!scopedAdvisor || scopedAdvisor.deletedAt) {
+    return null;
+  }
+
+  return mapAdvisorLandingToFormDataV2(scopedAdvisor);
 }
 
 export async function upsertAdvisor(input: {
@@ -465,6 +453,9 @@ export async function deleteAdvisorById(
 
 export async function softDeleteAdvisor(id: string): Promise<void> {
   const session = await requireAdvisorEditorSession();
+  if (!canDeleteAdvisor(session)) {
+    throw new AdvisorRepoError("Forbidden", 403);
+  }
 
   try {
     await findScopedAdvisorOrThrow(session, id);
@@ -477,29 +468,67 @@ export async function softDeleteAdvisor(id: string): Promise<void> {
   }
 }
 
-export async function createAdvisor(data: AdvisorPayload): Promise<Advisor> {
+function normalizeWorkflowUserInput(
+  user?: AdvisorWorkflowUserInput,
+): AdvisorWorkflowUserInput | null {
+  if (!user) return null;
+
+  const email = normalizeEmail(user.email);
+  if (!email) {
+    throw new AdvisorRepoError("El email del usuario es obligatorio.", 400);
+  }
+
+  if (user.password.trim().length < 8) {
+    throw new AdvisorRepoError(
+      "La contraseña del usuario debe tener al menos 8 caracteres.",
+      400,
+    );
+  }
+
+  return {
+    email,
+    password: user.password,
+    name: user.name?.trim() || null,
+  };
+}
+
+export async function createAdvisor(
+  data: AdvisorPayload,
+  workflowUser?: AdvisorWorkflowUserInput,
+): Promise<Advisor> {
   const session = await requireAdvisorEditorSession();
+  if (!canCreateAdvisor(session)) {
+    throw new AdvisorRepoError("Forbidden", 403);
+  }
+  const user = normalizeWorkflowUserInput(workflowUser);
   const inmobiliariaId =
-    session.role === "ADMIN"
+    isAdmin(session)
       ? data.inmobiliariaId ?? null
       : session.inmobiliariaId ?? null;
 
-  if (session.role !== "ADMIN" && !inmobiliariaId) {
+  if (user && !isAdmin(session)) {
+    throw new AdvisorRepoError(
+      "Solo un admin puede crear el usuario del asesor en este flujo.",
+      403,
+    );
+  }
+
+  if (!isAdmin(session) && !inmobiliariaId) {
     throw new AdvisorRepoError("Missing inmobiliariaId in session", 403);
   }
 
   try {
     const created = await prisma.$transaction(async (tx) => {
       const advisor = await tx.advisor.create({
-        data: {
+        data: buildAdvisorCoreCreateData({
           fullName: data.fullName,
           slug: data.slug,
-          headline: data.headline ?? null,
-          heroBgUrl: data.heroBgUrl ?? null,
-          ctaLabel: data.ctaLabel ?? "Contactar",
-          ctaHref: data.ctaHref ?? "#",
+          headline: data.headline,
+          heroBgUrl: data.heroBgUrl,
+          ctaLabel: data.ctaLabel,
+          ctaHref: data.ctaHref,
           inmobiliariaId,
-        },
+        }),
         select: {
           id: true,
           fullName: true,
@@ -515,20 +544,12 @@ export async function createAdvisor(data: AdvisorPayload): Promise<Advisor> {
       const landing = await tx.landingAdvisor.create({
         data: {
           advisorId: advisor.id,
-          aboutImageUrl: data.landing.aboutImageUrl ?? "",
-          aboutTitle: data.landing.aboutTitle,
-          startDate: new Date(data.landing.startDate),
-          company: data.landing.company,
-          aboutDescription: data.landing.aboutDescription ?? null,
-          aboutParagraph1: data.landing.aboutParagraph1,
-          aboutParagraph2: data.landing.aboutParagraph2,
-          servicesParagraph1: data.landing.servicesParagraph1,
-          servicesParagraph2: data.landing.servicesParagraph2,
+          ...buildAdvisorLandingCreateData(data.landing),
         },
         select: { id: true },
       });
 
-      await replaceLandingCollections(tx, landing.id, data.landing);
+      await replaceAdvisorLandingCollections(tx, landing.id, data.landing);
 
       const featuredIds = await validateFeaturedProperties(
         tx,
@@ -547,6 +568,20 @@ export async function createAdvisor(data: AdvisorPayload): Promise<Advisor> {
         });
       }
 
+      if (user) {
+        await tx.user.create({
+          data: {
+            email: user.email,
+            name: user.name ?? null,
+            password: await hashPassword(user.password),
+            role: Role.ASESOR,
+            inmobiliariaId,
+            advisorId: advisor.id,
+          },
+          select: { id: true },
+        });
+      }
+
       return advisor;
     });
 
@@ -560,26 +595,64 @@ export async function updateAdvisor(
   id: string,
   data: AdvisorPayload,
 ): Promise<Advisor> {
-  const session = await requireAdvisorEditorSession();
-  const scopedAdvisor = await findScopedAdvisorOrThrow(session, id);
+  await updateAdvisorCore(id, {
+    fullName: data.fullName,
+    slug: data.slug,
+    headline: data.headline,
+    heroBgUrl: data.heroBgUrl,
+    ctaLabel: data.ctaLabel,
+    ctaHref: data.ctaHref,
+    inmobiliariaId: data.inmobiliariaId ?? null,
+  });
+
+  return updateAdvisorLanding(id, data.landing);
+}
+
+export async function updateAdvisorCore(
+  id: string,
+  data: {
+    fullName: string;
+    slug: string;
+    headline?: string | null;
+    heroBgUrl?: string | null;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+    inmobiliariaId?: string | null;
+  },
+): Promise<Advisor> {
+  const session = await requireAdvisorCoreSession("update");
+  const scopedAdvisor = await prisma.advisor.findFirst({
+    where: {
+      id,
+      ...getAdvisorScopeWhere(session, "advisor_core", "update"),
+    },
+    select: { id: true, inmobiliariaId: true },
+  });
+
+  if (!scopedAdvisor) {
+    throw new AdvisorRepoError("Asesor no encontrado", 404);
+  }
+
   const inmobiliariaId =
-    session.role === "ADMIN"
+    isAdmin(session)
       ? data.inmobiliariaId ?? scopedAdvisor.inmobiliariaId ?? null
-      : session.inmobiliariaId ?? null;
+      : isInmobiliaria(session)
+        ? session.inmobiliariaId ?? null
+        : scopedAdvisor.inmobiliariaId ?? null;
 
   try {
     const updated = await prisma.$transaction(async (tx) => {
       const advisor = await tx.advisor.update({
         where: { id },
-        data: {
+        data: buildAdvisorCoreUpdateData({
           fullName: data.fullName,
           slug: data.slug,
-          headline: data.headline ?? null,
-          heroBgUrl: data.heroBgUrl ?? null,
-          ctaLabel: data.ctaLabel ?? null,
-          ctaHref: data.ctaHref ?? null,
+          headline: data.headline,
+          heroBgUrl: data.heroBgUrl,
+          ctaLabel: data.ctaLabel,
+          ctaHref: data.ctaHref,
           inmobiliariaId,
-        },
+        }),
         select: {
           id: true,
           fullName: true,
@@ -594,39 +667,65 @@ export async function updateAdvisor(
 
       await syncAdvisorTenantAssignments(tx, id, inmobiliariaId);
 
+      return advisor;
+    });
+
+    return updated;
+  } catch (error) {
+    normalizeRepoError(error);
+  }
+}
+
+export async function updateAdvisorLanding(
+  id: string,
+  data: AdvisorPayload["landing"],
+): Promise<Advisor> {
+  const session = await requireAdvisorLandingSession("update");
+  const scopedAdvisor = await prisma.advisor.findFirst({
+    where: {
+      id,
+      ...getAdvisorScopeWhere(session, "advisor_landing", "update"),
+    },
+    select: { id: true, inmobiliariaId: true },
+  });
+
+  if (!scopedAdvisor) {
+    throw new AdvisorRepoError("Asesor no encontrado", 404);
+  }
+
+  const inmobiliariaId = scopedAdvisor.inmobiliariaId ?? null;
+
+  try {
+    const updated = await prisma.$transaction(async (tx) => {
+      const advisor = await tx.advisor.findUniqueOrThrow({
+        where: { id },
+        select: {
+          id: true,
+          fullName: true,
+          slug: true,
+          phone: true,
+          whatsapp: true,
+          instagram: true,
+          headline: true,
+          createdAt: true,
+        },
+      });
+
       const landing = await tx.landingAdvisor.upsert({
         where: { advisorId: id },
         create: {
           advisorId: id,
-          aboutImageUrl: data.landing.aboutImageUrl ?? "",
-          aboutTitle: data.landing.aboutTitle,
-          startDate: new Date(data.landing.startDate),
-          company: data.landing.company,
-          aboutDescription: data.landing.aboutDescription ?? null,
-          aboutParagraph1: data.landing.aboutParagraph1,
-          aboutParagraph2: data.landing.aboutParagraph2,
-          servicesParagraph1: data.landing.servicesParagraph1,
-          servicesParagraph2: data.landing.servicesParagraph2,
+          ...buildAdvisorLandingCreateData(data),
         },
-        update: {
-          aboutImageUrl: data.landing.aboutImageUrl ?? "",
-          aboutTitle: data.landing.aboutTitle,
-          startDate: new Date(data.landing.startDate),
-          company: data.landing.company,
-          aboutDescription: data.landing.aboutDescription ?? null,
-          aboutParagraph1: data.landing.aboutParagraph1,
-          aboutParagraph2: data.landing.aboutParagraph2,
-          servicesParagraph1: data.landing.servicesParagraph1,
-          servicesParagraph2: data.landing.servicesParagraph2,
-        },
+        update: buildAdvisorLandingUpdateData(data),
         select: { id: true },
       });
 
-      await replaceLandingCollections(tx, landing.id, data.landing);
+      await replaceAdvisorLandingCollections(tx, landing.id, data);
 
       const featuredIds = await validateFeaturedProperties(
         tx,
-        data.landing.featuredPropertyIds,
+        data.featuredPropertyIds,
         session,
         inmobiliariaId,
       );
@@ -666,4 +765,22 @@ export async function getPublicAdvisorBySlug(
   }
 
   return mapAdvisorToPublicLanding(advisor);
+}
+
+export async function getPublicAdvisorBySlugV2(
+  slug: string,
+): Promise<PublicAdvisorLandingV2 | null> {
+  const advisor = await prisma.advisor.findFirst({
+    where: {
+      slug,
+      deletedAt: null,
+    },
+    include: publicAdvisorInclude,
+  });
+
+  if (!advisor || !advisor.landing) {
+    return null;
+  }
+
+  return mapAdvisorToPublicLandingV2(advisor);
 }

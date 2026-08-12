@@ -5,7 +5,9 @@ import {
   assertBlogPostScope,
   BlogRepoError,
   BlogUpsertSchema,
-  resolveBlogAssignments,
+  deriveBlogOwnershipFromRecord,
+  ownerTypeToDbValue,
+  resolveBlogOwnership,
 } from "@/lib/virtualoffice/blog";
 
 type Params = { params: Promise<{ id: string }> };
@@ -15,7 +17,7 @@ export async function GET(_req: Request, { params }: Params) {
 
   try {
     const session = await requireSession();
-    await assertBlogPostScope(session, id);
+    await assertBlogPostScope(session, id, "read");
 
     const item = await prisma.blogPost.findFirst({
       where: { id, deletedAt: null },
@@ -25,6 +27,8 @@ export async function GET(_req: Request, { params }: Params) {
         slug: true,
         content: true,
         coverImageUrl: true,
+        ownerType: true,
+        ownerId: true,
         authorRole: true,
         advisorId: true,
         inmobiliariaId: true,
@@ -36,7 +40,10 @@ export async function GET(_req: Request, { params }: Params) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    return NextResponse.json(item);
+    return NextResponse.json({
+      ...item,
+      ...deriveBlogOwnershipFromRecord(item),
+    });
   } catch (error) {
     if (error instanceof BlogRepoError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
@@ -60,8 +67,8 @@ export async function PATCH(req: Request, { params }: Params) {
 
   try {
     const session = await requireSession();
-    const current = await assertBlogPostScope(session, id);
-    const assignments = await resolveBlogAssignments(session, parsed.data, current);
+    const current = await assertBlogPostScope(session, id, "update");
+    const ownership = await resolveBlogOwnership(session, parsed.data, current);
 
     await prisma.blogPost.update({
       where: { id },
@@ -70,9 +77,11 @@ export async function PATCH(req: Request, { params }: Params) {
         slug: parsed.data.slug,
         content: parsed.data.content,
         coverImageUrl: parsed.data.coverImageUrl ?? null,
-        authorRole: assignments.authorRole,
-        advisorId: assignments.advisorId,
-        inmobiliariaId: assignments.inmobiliariaId,
+        ownerType: ownerTypeToDbValue(ownership.ownerType),
+        ownerId: ownership.ownerId,
+        authorRole: ownership.authorRole,
+        advisorId: ownership.advisorId,
+        inmobiliariaId: ownership.inmobiliariaId,
       },
     });
 
@@ -100,7 +109,7 @@ export async function DELETE(_req: Request, { params }: Params) {
 
   try {
     const session = await requireSession();
-    await assertBlogPostScope(session, id);
+    await assertBlogPostScope(session, id, "delete_soft");
 
     await prisma.blogPost.update({
       where: { id },

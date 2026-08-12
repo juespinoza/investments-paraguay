@@ -45,9 +45,17 @@ async function ensureLeadsTable() {
   `);
 }
 
+function normalizeLeadId(value: number | bigint | string | null | undefined) {
+  if (typeof value === "bigint") return Number(value);
+  if (typeof value === "string") return Number(value);
+  return value ?? 0;
+}
+
 export async function createLead(input: LeadInput): Promise<number> {
   await ensureLeadsTable();
-  const rows = await prisma.$queryRawUnsafe<Array<{ id: number }>>(
+  const rows = await prisma.$queryRawUnsafe<
+    Array<{ id: number | bigint | string }>
+  >(
     `
     INSERT INTO investment_leads (
       full_name,
@@ -69,7 +77,7 @@ export async function createLead(input: LeadInput): Promise<number> {
     input.propertySlug ?? null,
     input.notes ?? null,
   );
-  return rows[0]?.id ?? 0;
+  return normalizeLeadId(rows[0]?.id);
 }
 
 export async function listLeads(filters?: {

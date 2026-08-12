@@ -1,0 +1,496 @@
+{
+  "areaCatalog": [
+    "Dormitorio principal",
+    "Dormitorio secundario",
+    "Baño principal (en suite)",
+    "Baño social / visitas",
+    "Cocina",
+    "Comedor",
+    "Sala de estar / Living",
+    "Lavadero",
+    "Cochera / Garage",
+    "Balcón / Terraza",
+    "Jardín / Patio",
+    "Piscina",
+    "Quincho / Parrillero",
+    "Estudio / Home office",
+    "Vestidor / Walk-in closet",
+    "Depósito / Baulera",
+    "Gimnasio",
+    "Salón de usos múltiples (SUM)",
+    "Rooftop",
+    "Área de juegos infantiles",
+    "Cancha deportiva",
+    "Espacio pet friendly",
+    "Recepción / Lobby",
+    "Coworking / Sala de reuniones",
+    "Seguridad / Portería 24 hs",
+    "Ascensor",
+    "Bicicletero",
+    "Lavandería compartida",
+    "Depósito de residuos / reciclaje",
+    "Acceso a costanera / lago"
+  ],
+  "projects": [
+    {
+      "id": "thehaven",
+      "name": "Bondi Haven Villa de Lujo",
+      "location": "Highlands Park & Lagoon, San Bernardino",
+      "locationLink": "https://maps.app.goo.gl/WfN7LK5NrHUGXb7DA",
+      "tagline": "Una oportunidad única para vivir en primera línea de la laguna en Highlands, San Bernardino",
+      "overview": "Vivir en Bondi Haven es experimentar una armonía perfecta entre diseño, tecnología y naturaleza. La villa estará terminada a tiempo para disfrutar plenamente del verano 2026–2027. Además, el moderno centro deportivo de Highlands ya se encuentra abierto y operativo, con bar y restaurante abiertos diariamente para almuerzos y cenas, ofreciendo una experiencia de vida de resort completa desde el primer día.",
+      "stats": [
+        { "num": "538 m²", "label": "Superficie Total" },
+        { "num": "370 m²", "label": "Construcción" },
+        { "num": "5", "label": "Dormitorios en suite" },
+        { "num": "USD 849.000", "label": "Inversión" }
+      ],
+      "areas": [
+        {
+          "name": "Fachada principal",
+          "desc": "Presenta un diseño moderno y contemporáneo de dos niveles con líneas rectas, iluminación cálida integrada, garaje cubierto para varios vehículos y un amplio jardín en el frente.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786397401/BONDIHAVEN_XX_H28_AereaFrontalDiajpg.jpg",
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786397595/BONDIHAVEN_XX_H53_.jpg"
+          ]
+        },
+        {
+          "name": "Entrada principal / Hall",
+          "desc": "Un hall de acceso elegante con puerta de gran formato, techos de doble altura con iluminación decorativa en tiras LED y vista hacia un patio interno ajardinado.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786397597/BONDIHAVEN_XX_H72_entrancehall.jpg"
+          ]
+        },
+        {
+          "name": "Sala de estar / Living",
+          "desc": "Espacio integrado de concepto abierto con ventanales de piso a techo que aportan excelente luz natural, muebles de diseño en tonos neutros y acceso directo a la galería.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786397595/BONDIHAVEN_XX_H06_SalaTerraza.pg.jpg"
+          ]
+        },
+        {
+          "name": "Cocina",
+          "desc": "Estilo moderno y funcional con isla central, mesadas de tono claro, mobiliario a medida en acabados oscuros y electrodomésticos empotrados.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786397596/BONDIHAVEN_XX_H12_SalaCocina.jpg",
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786397596/BONDIHAVEN_XX_H12_SalaCocina.jpg"
+          ]
+        },
+        {
+          "name": "Dormitorio principal PB en suite",
+          "desc": "Habitación amplia ubicada en planta baja, con ventanales que brindan vista directa al jardín/patio, acabados cálidos y baño privado integrado.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786397596/BONDIHAVEN_XX_H13_MasterDia.jpg"
+          ]
+        },
+        {
+          "name": "Fachada trasera / Patio",
+          "desc": "Moderna estructura de dos niveles con grandes ventanales y acabados en piedra y madera, que conecta directamente con una galería techada con quincho. El patio incluye una piscina con solárium, reposeras y áreas verdes, creando un espacio privado ideal para el relax y el entretenimiento.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786397603/BONDIHAVEN_XX_H60_backside.png"
+          ]
+        }
+      ],
+      "typologies": [
+        {
+          "name": "Casa Bondi Haven Villa de Lujo",
+          "desc": "Casa inteligente equipada con domótica cableada de última generación europea. Sistema de energía solar con 12 paneles solares, inverter y batería de reserva de 10 kWh.",
+          "planImage": "https://res.cloudinary.com/sykuzysd/image/upload/v1786402223/6593a4e1-24f7-4257-b78a-131e4b0dde58.png",
+          "rooms": "5 dorm. / 6 baños",
+          "m2": "370 m² cubiertos · 538 m² terreno",
+          "price": "USD 849.000",
+          "cochera": true
+        }
+      ],
+      "cochera": {
+        "price": "Incluida en la propiedad",
+        "m2": "36 m²"
+      },
+      "financingUrl": "https://drive.google.com/file/d/1RN12A8C3f7U7YWSAoYs5ObKI3CdBFI5B/view?usp=sharing",
+      "developer": {
+        "name": "The Haven Desarrollos",
+        "role": "Desarrolladora",
+        "bio": "Con más de 12 años de desarrollo en Bélgica, ahora llegan a Paraguay con un proyecto de vivienda de alta gama en la zona del lago, con foco en diseño y calidad de construcción."
+      },
+      "constructor": {
+        "name": "Constructora Paraguay",
+        "role": "Constructora",
+        "bio": "Equipo constructor especializado en viviendas de alta gama, con obras entregadas en todo el país."
+      },
+      "advisor": {
+        "name": "Julia Espinoza",
+        "role": "Asesora inmobiliaria a cargo",
+        "bio": "Especialista en inversiones inmobiliarias en Paraguay. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.",
+        "phone": "+595 985 444 801",
+        "email": "juliaespinoza.skyone@gmail.com"
+      }
+    },
+    {
+      "id": "oga",
+      "name": "Oga Ciudad Jardín",
+      "location": "Ykua Karanday, Luque",
+      "locationLink": "https://maps.app.goo.gl/zoRksS1LTKH94WcE8",
+      "tagline": "Departamentos de 2 y 3 dormitorios en el complejo más verde de Luque.",
+      "overview": "Descubrí un nuevo estilo de vida en Luque con más del 60% del proyecto destinado a áreas verdes y amenidades de primer nivel.",
+      "stats": [
+        { "num": "2", "label": "Tipologías (2D, 3D)" },
+        { "num": "USD 82.500", "label": "Desde" },
+        { "num": "+60%", "label": "Áreas verdes" }
+      ],
+      "areas": [
+        {
+          "name": "Dormitorios",
+          "desc": "Dormitorio con placard empotrado y ventana al exterior.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416366/9DBDF1BF-386B-458A-8F08-5F6B43324096.jpg"
+          ]
+        },
+        {
+          "name": "Cocina/Comedor",
+          "desc": "Cocina integrada al comedor, con mesada de granito y muebles bajo mesada.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416363/3013638D-6B17-49AA-A982-0CF25F4C2097.jpg"
+          ]
+        },
+        {
+          "name": "Balcón / Terraza",
+          "desc": "Balcón en todas las unidades, con espacio para exterior.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416368/40B4DC8A-82C8-4E6E-AA41-854CE47388E1.jpg"
+          ]
+        },
+        {
+          "name": "Amenidades / Áreas comunes",
+          "desc": "Piscina, Solarium, Gimnasio, Kids Room, Parque infantil, Cancha de Padel y Cancha Multidisciplinaria.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416365/E733A291-0D46-4D8B-A3CC-2E4DF8519297.jpg",
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416368/528F9DEB-ECF4-4239-B901-9932ADE513C1.jpg"
+          ]
+        },
+        {
+          "name": "Quincho / Salones",
+          "desc": "Quincho y salones comunes para eventos y reuniones de propietarios.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416367/1DF11161-6E90-4BF1-A620-341E49AA3E75.jpg"
+          ]
+        }
+      ],
+      "typologies": [
+        {
+          "name": "2 Dormitorios (2D)",
+          "desc": "Unidad familiar con living-comedor amplio.",
+          "planImage": "https://res.cloudinary.com/sykuzysd/image/upload/v1786417721/Screenshot_2026-08-10_at_10.56.28_PM.png",
+          "rooms": "2 dorm. / 2 baños",
+          "m2": "63 m²",
+          "price": "USD 82.500",
+          "cochera": false
+        },
+        {
+          "name": "3 Dormitorios (3D)",
+          "desc": "Unidad familiar con living-comedor amplio.",
+          "planImage": "https://res.cloudinary.com/sykuzysd/image/upload/v1786417728/Screenshot_2026-08-10_at_10.58.03_PM.png",
+          "rooms": "3 dorm. / 2 baños",
+          "m2": "80 m²",
+          "price": "USD 99.700",
+          "cochera": false
+        }
+      ],
+      "cochera": { "price": "USD 10.000 (destechada)", "m2": "~14 m²" },
+      "financingUrl": "https://drive.google.com/file/d/1jBEX7U2wqvv_UahV3gaz34pmlsEvXtys/view?usp=drive_link",
+      "developer": {
+        "name": "Grupo Oga",
+        "role": "Desarrolladora",
+        "bio": "Desarrolladora enfocada en vivienda urbana vertical en el área metropolitana de Asunción, con proyectos activos en Luque y Fernando de la Mora."
+      },
+      "constructor": {
+        "name": "Constructora Oga",
+        "role": "Constructora",
+        "bio": "Más de 15 años construyendo edificios residenciales en el Departamento Central, con entregas puntuales certificadas."
+      },
+      "advisor": {
+        "name": "Julia Espinoza",
+        "role": "Asesora inmobiliaria a cargo",
+        "bio": "Especialista en inversiones inmobiliarias en Paraguay. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.",
+        "phone": "+595 985 444 801",
+        "email": "juliaespinoza.skyone@gmail.com"
+      }
+    },
+    {
+      "id": "paseo-rosario",
+      "name": "Paseo Rosario",
+      "location": "Av. Rosario (Ruta Luque-Limpio), Luque",
+      "locationLink": "https://maps.app.goo.gl/f8MDTsWQqrZ9N5k88",
+      "tagline": "Complejo de departamentos y salones comerciales en Luque.",
+      "overview": "Paseo Rosario ofrece departamentos en un complejo de edificios en Luque, con áreas comunes pensadas para el día a día y buena conectividad con las principales vías de la ciudad.",
+      "stats": [
+        { "num": "4", "label": "Tipologías disponibles" },
+        { "num": "USD 38.100", "label": "Desde" },
+        { "num": "Luque", "label": "Ubicación" }
+      ],
+      "areas": [
+        {
+          "name": "Dormitorio principal",
+          "desc": "Dormitorio principal con buena iluminación.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416322/Fase2-Paseo_Rosario_-_Brochure2026_-_18.png"
+          ]
+        },
+        {
+          "name": "Sala de estar / Living",
+          "desc": "Living-comedor integrado, ideal para recibir.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416325/Fase2-Paseo_Rosario_-_Brochure2026_-_25.png"
+          ]
+        },
+        {
+          "name": "Amenidades / Áreas comunes",
+          "desc": "Espacio comunes para el uso de los propietarios.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416321/Fase2-Paseo_Rosario_-_Brochure2026_-_10.png",
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416331/Fase2-Paseo_Rosario_-_Brochure2026_-_11.png",
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416321/Fase2-Paseo_Rosario_-_Brochure2026_-_10.png"
+          ]
+        },
+        {
+          "name": "Vista General del Complejo",
+          "desc": "Imponente construcción que es atravesada por un arroyo.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416328/Fase2-Paseo_Rosario_-_Brochure2026_-_4.png",
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786416321/Fase2-Paseo_Rosario_-_Brochure2026_-_2.png"
+          ]
+        }
+      ],
+      "typologies": [
+        {
+          "name": "Monoambiente",
+          "desc": "Unidad tipo loft con balcón.",
+          "planImage": "https://res.cloudinary.com/sykuzysd/image/upload/v1786416324/Fase2-Paseo_Rosario_-_Brochure2026_-_19.png",
+          "rooms": "1 dorm. / 1 baño",
+          "m2": "33,01 m²",
+          "price": "USD 38.100",
+          "cochera": false
+        },
+        {
+          "name": "1 Dormitorio",
+          "desc": "Unidad estándar con balcón.",
+          "planImage": "https://res.cloudinary.com/sykuzysd/image/upload/v1786416326/Fase2-Paseo_Rosario_-_Brochure2026_-_27.png",
+          "rooms": "1 dorm. / 1 baño",
+          "m2": "42,32 m²",
+          "price": "USD 48.900",
+          "cochera": false
+        },
+        {
+          "name": "2 Dormitorios",
+          "desc": "Unidad estándar con balcón.",
+          "planImage": "https://res.cloudinary.com/sykuzysd/image/upload/v1786416327/Fase2-Paseo_Rosario_-_Brochure2026_-_31.png",
+          "rooms": "2 dorm. / 1 baño",
+          "m2": "52,69 m²",
+          "price": "USD 60.900",
+          "cochera": false
+        },
+        {
+          "name": "Penthouse",
+          "desc": "Unidad superior con terraza y parrilla.",
+          "planImage": "https://res.cloudinary.com/sykuzysd/image/upload/v1786416327/Fase2-Paseo_Rosario_-_Brochure2026_-_33.png",
+          "rooms": "2 dorm. / 1 baño",
+          "m2": "65,70 m²",
+          "price": "USD 93.100",
+          "cochera": false
+        }
+      ],
+      "cochera": { "price": "USD 12.000", "m2": "~13 m²" },
+      "financingUrl": "https://drive.google.com/file/d/1I3Aqw5ELhTnZVQW4MviUqhUB7BKahKZ7/view?usp=drive_link",
+      "developer": {
+        "name": "Rosario Desarrollos Inmobiliarios",
+        "role": "Desarrolladora",
+        "bio": "Desarrolladora con foco en proyectos de mediana escala en Luque, orientados a primera vivienda."
+      },
+      "constructor": {
+        "name": "Constructora del Este",
+        "role": "Constructora",
+        "bio": "Más de 15 años construyendo edificios residenciales en el Departamento Central, con entregas puntuales certificadas."
+      },
+      "advisor": {
+        "name": "Julia Espinoza",
+        "role": "Asesora inmobiliaria a cargo",
+        "bio": "Especialista en inversiones inmobiliarias en Paraguay. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.",
+        "phone": "+595 985 444 801",
+        "email": "juliaespinoza.skyone@gmail.com"
+      }
+    },
+    {
+      "id": "casa-mood",
+      "name": "Casa Mood Limpio",
+      "location": "Isla Aveiro, Limpio",
+      "locationLink": "https://maps.app.goo.gl/VSGAZ7cvR2qrn5wy9",
+      "tagline": "Tu casa lista en unos meses, financiada con Che Roga Porá.",
+      "overview": "Casa Mood es un proyecto habitacional que construye y entrega casas en menos de 6 meses sobre lotes disponibles en Limpio, con financiación a través del programa Che Roga Porá. Pensado para quienes quieren acceder a su primera vivienda con plazos de entrega cortos y financiación accesible.",
+      "stats": [
+        { "num": "~3 meses", "label": "Plazo de entrega" },
+        { "num": "Che Roga Porá", "label": "Financiación" },
+        { "num": "31, 38 y 47 m²", "label": "Tipologías" }
+      ],
+      "areas": [
+        {
+          "name": "Fachada principal",
+          "desc": "Patio frontal y estacionamiento descubierto.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786507183/20260425_123414.jpg"
+          ]
+        },
+        {
+          "name": "Dormitorios",
+          "desc": "Dormitorio principal con placard.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786507197/20260425_123606.jpg",
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786507184/20260425_123541.jpg"
+          ]
+        },
+        {
+          "name": "Sala de estar / Comedor / Cocina",
+          "desc": "Ambientes integrados con mucha iluminación.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786507184/20260425_123506.jpg"
+          ]
+        },
+        {
+          "name": "Baño",
+          "desc": "Baño completo con terminaciones estándar del programa.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786507197/20260425_123555.jpg"
+          ]
+        }
+      ],
+      "typologies": [
+        {
+          "name": "31 m² (1 dorm.)",
+          "desc": "Vivienda de entrega rápida sobre lote propio.",
+          "planImage": "https://res.cloudinary.com/sykuzysd/image/upload/v1786507331/Screenshot_2026-08-12_at_1.01.17_AM.png",
+          "rooms": "1 dorm. / 1 baño",
+          "m2": "31 m²",
+          "price": "GS 250.552.384",
+          "cochera": true
+        },
+        {
+          "name": "38 m² (2 dorm.)",
+          "desc": "Vivienda familiar con living-comedor ampliado.",
+          "planImage": "https://res.cloudinary.com/sykuzysd/image/upload/v1786507332/Screenshot_2026-08-12_at_1.01.37_AM.png",
+          "rooms": "2 dorm. / 1 baño",
+          "m2": "38 m²",
+          "price": "GS 280.993.994",
+          "cochera": true
+        },
+        {
+          "name": "47 m² (2 dorm.)",
+          "desc": "Vivienda familiar con parrilla en el patio trasero.",
+          "planImage": "https://res.cloudinary.com/sykuzysd/image/upload/v1786507334/Screenshot_2026-08-12_at_1.01.52_AM.png",
+          "rooms": "2 dorm. / 1 baño / Parrilla",
+          "m2": "47 m²",
+          "price": "GS 319.996.065",
+          "cochera": true
+        }
+      ],
+      "cochera": { "price": "Incluida en la propiedad", "m2": "~15 m²" },
+      "financingUrl": "https://drive.google.com/file/d/1VBvBA9yG_FR8VSu91uXpdHfXn2yDSKTx/view?usp=sharing",
+      "developer": {
+        "name": "Casa Mood",
+        "role": "Desarrolladora",
+        "bio": "Proyecto habitacional enfocado en reducir los tiempos de entrega de vivienda social y de clase media, en articulación con el programa estatal Che Roga Porá."
+      },
+      "constructor": {
+        "name": "Constructora Mood",
+        "role": "Constructora",
+        "bio": "Equipo constructor especializado en sistemas constructivos de entrega rápida, con procesos estandarizados para cumplir el plazo de 3 meses."
+      },
+      "advisor": {
+        "name": "Julia Espinoza",
+        "role": "Asesora inmobiliaria a cargo",
+        "bio": "Especialista en inversiones inmobiliarias en Paraguay. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.",
+        "phone": "+595 985 444 801",
+        "email": "juliaespinoza.skyone@gmail.com"
+      }
+    },
+    {
+      "id": "campus",
+      "name": "Campus IV",
+      "location": "Barrio Pablo Rojas, Ciudad del Este",
+      "locationLink": "https://maps.app.goo.gl/nZmeCpNNw8CvkwHt6",
+      "tagline": "Residencias de estudiantes en Ciudad del Este.",
+      "overview": "Campus Lofts es un edificio de departamentos destinado a estudiantes en Ciudad del Este. Igual que los proyectos Campus 1, 2 y 3 también ofrece monoambientes independientes; la novedad en Campus 4 es la adicion de la tipología Coliving Inteligente un complejo completo de 3 habitaciones independientes con áreas comunes compartidas, todo pensado para inversores que buscan una excelente rentabilidad.",
+      "stats": [
+        { "num": "2", "label": "Tipologías" },
+        { "num": "USD 40.000", "label": "Monoambiente desde" },
+        { "num": "~7-10% Anual", "label": "Rentabilidad" }
+      ],
+      "areas": [
+        {
+          "name": "Loft independiente",
+          "desc": "Monoambiente con zona de descanso y area de estar y estudio.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786510298/Screenshot_2026-08-12_at_1.44.50_AM.png",
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786510300/Screenshot_2026-08-12_at_1.45.48_AM.png"
+          ]
+        },
+        {
+          "name": "Coliving inteligente",
+          "desc": "3 dormitorios que comparten cocina, living, escritorio y ducha/baño.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786510359/Screenshot_2026-08-12_at_1.45.28_AM.png",
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786510364/Screenshot_2026-08-12_at_1.46.10_AM.png"
+          ]
+        },
+        {
+          "name": "Amenities",
+          "desc": "Coworking, piscina, gimnasio, areas verdes, supermercado, todo en un solo lugar.",
+          "photos": [
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786510370/Screenshot_2026-08-12_at_1.46.27_AM.png",
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786510373/Screenshot_2026-08-12_at_1.46.55_AM.png",
+            "https://res.cloudinary.com/sykuzysd/image/upload/v1786510376/Screenshot_2026-08-12_at_1.47.38_AM.png"
+          ]
+        }
+      ],
+      "typologies": [
+        {
+          "name": "Monoambiente independiente",
+          "desc": "Unidad individual disponible",
+          "planImage": "https://res.cloudinary.com/sykuzysd/image/upload/v1786510380/Screenshot_2026-08-12_at_1.52.18_AM.png",
+          "rooms": "Loft",
+          "m2": "38 m²",
+          "price": "Consultar",
+          "cochera": true
+        },
+        {
+          "name": "Coliving inteligente",
+          "desc": "Un complejo de 3 habitaciones independientes con áreas compartidas, pensado para renta.",
+          "planImage": "https://res.cloudinary.com/sykuzysd/image/upload/v1786510382/Screenshot_2026-08-12_at_1.52.31_AM.png",
+          "rooms": "3 habitaciones + áreas comunes",
+          "m2": "67 m²",
+          "price": "Consultar",
+          "cochera": true
+        }
+      ],
+      "cochera": {
+        "price": "Disponibles",
+        "m2": "—"
+      },
+      "financingUrl": "",
+      "developer": {
+        "name": "Campus Desarrollos Estudiantiles",
+        "role": "Desarrolladora",
+        "bio": "Desarrolladora especializada en vivienda estudiantil en Ciudad del Este, con foco en unidades pequeñas de alta rotación y buena rentabilidad."
+      },
+      "constructor": {
+        "name": "Constructora Triple Frontera",
+        "role": "Constructora",
+        "bio": "Constructora con obras entregadas en Ciudad del Este y Hernandarias, especializada en edificios de departamentos compactos."
+      },
+      "advisor": {
+        "name": "Julia Espinoza",
+        "role": "Asesora inmobiliaria a cargo",
+        "bio": "Especialista en inversiones inmobiliarias en Paraguay. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.",
+        "phone": "+595 985 444 801",
+        "email": "juliaespinoza.skyone@gmail.com"
+      }
+    }
+  ]
+}

@@ -1,4 +1,9 @@
 import Link from "next/link";
+import {
+  can,
+  canCreateInmobiliaria,
+} from "@/lib/auth/permissions";
+import { Role } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/require-session";
 import {
@@ -13,7 +18,7 @@ const onboardingByRole = {
   ADMIN:
     "Configura inmobiliarias, ordena el equipo y controla que la información pública esté consistente.",
   INMOBILIARIA:
-    "Carga primero la información de tu inmobiliaria, luego tus asesores y finalmente las propiedades que publicarás.",
+    "Mantén tu landing actualizada, crea asesores y usuarios de asesores, y supervisa que las propiedades de tu equipo estén completas.",
   ASESOR:
     "Mantén tu perfil actualizado y revisa que tus propiedades tengan datos completos, fotos y asignación correcta.",
   BLOGUERO:
@@ -22,17 +27,57 @@ const onboardingByRole = {
 
 export default async function AdminHome() {
   const session = await requireSession();
+  const canSeeUsers = can(session, "users", "read");
+  const canSeeAdvisors = can(session, "advisor_core", "read");
+  const canSeeProperties = can(session, "properties", "read");
+  const canSeeInmobiliarias =
+    can(session, "inmobiliaria_core", "read") ||
+    can(session, "inmobiliaria_landing", "read");
+  const canCreateTenant = canCreateInmobiliaria(session);
+  const canSeeBlog = can(session, "blogs", "read");
 
-  const [advisorCount, propertyCount, inmobiliariaCount, blogCount] =
+  const advisorIdsForScopedUsers =
+    session.role === Role.INMOBILIARIA && session.inmobiliariaId
+      ? (
+          await prisma.advisor.findMany({
+            where: {
+              deletedAt: null,
+              inmobiliariaId: session.inmobiliariaId,
+            },
+            select: { id: true },
+          })
+        ).map((advisor) => advisor.id)
+      : [];
+
+  const [userCount, advisorCount, propertyCount, inmobiliariaCount, blogCount] =
     await Promise.all([
+      canSeeUsers
+        ? prisma.user.count({
+            where: {
+              deletedAt: null,
+              ...(session.role === Role.ADMIN
+                ? {}
+                : session.role === Role.INMOBILIARIA
+                  ? {
+                      role: Role.ASESOR,
+                      advisorId: {
+                        in: advisorIdsForScopedUsers.length
+                          ? advisorIdsForScopedUsers
+                          : ["__none__"],
+                      },
+                    }
+                  : { id: "__none__" }),
+            },
+          })
+        : Promise.resolve(0),
       prisma.advisor.count({
         where: {
           deletedAt: null,
-          ...(session.role === "ADMIN"
+          ...(session.role === Role.ADMIN
             ? {}
-            : session.role === "INMOBILIARIA"
+            : session.role === Role.INMOBILIARIA
               ? { inmobiliariaId: session.inmobiliariaId ?? "__none__" }
-              : session.role === "ASESOR"
+              : session.role === Role.ASESOR
                 ? { id: session.advisorId ?? "__none__" }
                 : { id: "__none__" }),
         },
@@ -40,20 +85,20 @@ export default async function AdminHome() {
       prisma.property.count({
         where: {
           deletedAt: null,
-          ...(session.role === "ADMIN"
+          ...(session.role === Role.ADMIN
             ? {}
-            : session.role === "INMOBILIARIA"
+            : session.role === Role.INMOBILIARIA
               ? { inmobiliariaId: session.inmobiliariaId ?? "__none__" }
-              : session.role === "ASESOR"
+              : session.role === Role.ASESOR
                 ? { advisorId: session.advisorId ?? "__none__" }
                 : { id: "__none__" }),
         },
       }),
-      session.role === "ADMIN" || session.role === "INMOBILIARIA"
+      session.role === Role.ADMIN || session.role === Role.INMOBILIARIA
         ? prisma.inmobiliaria.count({
             where: {
               deletedAt: null,
-              ...(session.role === "ADMIN"
+              ...(session.role === Role.ADMIN
                 ? {}
                 : { id: session.inmobiliariaId ?? "__none__" }),
             },
@@ -62,50 +107,71 @@ export default async function AdminHome() {
       prisma.blogPost.count({
         where: {
           deletedAt: null,
-          ...(session.role === "ADMIN"
+          ...(session.role === Role.ADMIN
             ? {}
-            : session.role === "BLOGUERO"
+            : session.role === Role.BLOGUERO
               ? { authorRole: "BLOGUERO" }
-              : session.role === "INMOBILIARIA"
-                ? { inmobiliariaId: session.inmobiliariaId ?? "__none__" }
-                : { advisorId: session.advisorId ?? "__none__" }),
+              : session.role === Role.INMOBILIARIA
+                ? {
+                    authorRole: "INMOBILIARIA",
+                    inmobiliariaId: session.inmobiliariaId ?? "__none__",
+                  }
+                : session.role === Role.ASESOR
+                  ? {
+                      authorRole: "ASESOR",
+                      advisorId: session.advisorId ?? "__none__",
+                    }
+                  : { id: "__none__" }),
         },
       }),
     ]);
 
   const modules = [
     {
-      label: "Asesores",
-      description: "Perfiles públicos, bios, landing y propiedades destacadas.",
-      href: "/virtual-office/asesores",
-      enabled:
-        session.role === "ADMIN" ||
-        session.role === "INMOBILIARIA" ||
-        session.role === "ASESOR",
+      label: "Usuarios",
+      description:
+        session.role === Role.INMOBILIARIA
+          ? "Gestiona accesos de asesores vinculados a tu inmobiliaria."
+          : "Cuentas de acceso, roles y asignaciones operativas.",
+      href: "/virtual-office/usuarios",
+      enabled: canSeeUsers,
+      count: userCount,
+    },
+    {
+      label: session.role === Role.ASESOR ? "Mi landing" : "Asesores",
+      description:
+        session.role === Role.ASESOR
+          ? "Edita tu perfil público, propuesta de valor y propiedades destacadas."
+          : "Perfiles públicos, bios, landing y propiedades destacadas.",
+      href:
+        session.role === Role.ASESOR
+          ? "/virtual-office/mi-landing"
+          : "/virtual-office/asesores",
+      enabled: canSeeAdvisors,
       count: advisorCount,
     },
     {
       label: "Propiedades",
-      description: "Alta, edición y curación del portafolio público.",
+      description:
+        session.role === Role.INMOBILIARIA
+          ? "Supervisa y actualiza el portafolio de propiedades de tus asesores."
+          : "Alta, edición y curación del portafolio público.",
       href: "/virtual-office/propiedades",
-      enabled:
-        session.role === "ADMIN" ||
-        session.role === "INMOBILIARIA" ||
-        session.role === "ASESOR",
+      enabled: canSeeProperties,
       count: propertyCount,
     },
     {
       label: "Inmobiliarias",
       description: "Gestión del tenant, relaciones y estructura operativa.",
       href: "/virtual-office/inmobiliaria",
-      enabled: session.role === "ADMIN" || session.role === "INMOBILIARIA",
+      enabled: canSeeInmobiliarias,
       count: inmobiliariaCount,
     },
     {
       label: "Blog",
       description: "Artículos y visibilidad editorial por autor o tenant.",
       href: "/virtual-office/blog",
-      enabled: true,
+      enabled: canSeeBlog,
       count: blogCount,
     },
   ].filter((module) => module.enabled);
@@ -119,6 +185,13 @@ export default async function AdminHome() {
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {canSeeUsers && (
+          <StatCard
+            label="Usuarios"
+            value={userCount}
+            hint="Accesos activos dentro de tu scope."
+          />
+        )}
         <StatCard
           label="Asesores"
           value={advisorCount}
@@ -129,7 +202,7 @@ export default async function AdminHome() {
           value={propertyCount}
           hint="Inventario disponible para gestión."
         />
-        {(session.role === "ADMIN" || session.role === "INMOBILIARIA") && (
+        {canSeeInmobiliarias && (
           <StatCard
             label="Inmobiliarias"
             value={inmobiliariaCount}
@@ -181,6 +254,25 @@ export default async function AdminHome() {
                   </div>
                 </CardSection>
               ))}
+              {canCreateTenant ? (
+                <CardSection
+                  title="Alta operativa"
+                  description="Crea la estructura inicial de una nueva inmobiliaria y ordénala desde el panel."
+                  className="h-full"
+                >
+                  <div className="flex items-end justify-between gap-4">
+                    <div className="text-sm text-zinc-500">
+                      Disponible solo para administración central.
+                    </div>
+                    <Link
+                      className="inline-flex rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+                      href="/virtual-office/inmobiliaria/new"
+                    >
+                      Crear tenant
+                    </Link>
+                  </div>
+                </CardSection>
+              ) : null}
             </div>
           </CardBody>
         </Card>

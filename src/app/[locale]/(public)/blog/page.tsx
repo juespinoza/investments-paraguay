@@ -93,8 +93,8 @@ export default async function BlogPage() {
   return (
     <div className="px-4 py-10">
       <div className="container-page">
-        <section className="section-shell bg-[linear-gradient(135deg,#0f1726_0%,#18253d_52%,#243653_100%)] px-6 py-10 text-white shadow-[0_24px_80px_rgba(15,23,38,0.18)] md:px-10 md:py-14">
-          <div className="eyebrow border-white/16 text-white">
+        <section className="section-shell bg-[linear-gradient(135deg,var(--carbon)_0%,var(--onyx)_100%)] px-6 py-10 text-[var(--ivory)] shadow-[0_24px_80px_rgba(10,10,10,0.18)] md:px-10 md:py-14">
+          <div className="eyebrow border-[rgba(191,168,130,0.35)] bg-[rgba(250,250,248,0.08)] text-[var(--ivory)]">
             {t("blog.eyebrow")}
           </div>
           <div className="mt-5 max-w-4xl">
@@ -102,18 +102,19 @@ export default async function BlogPage() {
               title={t("blog.title")}
               subtitle={t("blog.subtitle")}
               align="left"
+              tone="dark"
             />
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {(["market", "strategy", "guides"] as const).map((item) => (
               <div
                 key={item}
-                className="rounded-3xl border border-white/10 bg-white/8 px-5 py-5 backdrop-blur-sm"
+                className="rounded-3xl border border-[rgba(191,168,130,0.22)] bg-[rgba(250,250,248,0.08)] px-5 py-5 backdrop-blur-sm"
               >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-(--ip-accent1)">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--gold)]">
                   {t(`blog.highlights.${item}.label`)}
                 </p>
-                <p className="mt-3 text-base leading-7 text-white/78">
+                <p className="mt-3 text-base leading-7 text-[rgba(250,250,248,0.78)]">
                   {t(`blog.highlights.${item}.value`)}
                 </p>
               </div>

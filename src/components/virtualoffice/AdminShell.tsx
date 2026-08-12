@@ -8,6 +8,7 @@ import { Building2, Home, X } from "lucide-react";
 import AdminHeader from "./AdminHeader";
 import AdminFooter from "./AdminFooter";
 import { AdminAuthProvider, useAdminAuth } from "./AuthProvider";
+import { LogoutButton } from "./LogoutButton";
 import { VIRTUALOFFICE_MENU } from "@/lib/virtualoffice/menu";
 import { cn } from "@/lib/cn";
 
@@ -128,6 +129,11 @@ function AdminShellInner({ children }: { children: ReactNode }) {
           <div className="rounded-3xl border border-[rgba(24,39,63,0.08)] bg-white/90 p-4 text-sm text-zinc-600 shadow-sm">
             Usa el panel para crear, editar y revisar solo la información que te corresponde.
           </div>
+
+          <LogoutButton
+            onLoggedOut={() => setNavOpen(false)}
+            className="mt-4 inline-flex items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-50"
+          />
         </aside>
 
         <div className="min-w-0 flex-1 lg:pl-0">

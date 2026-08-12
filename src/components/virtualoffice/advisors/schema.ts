@@ -59,3 +59,15 @@ export const FormSchema = z.object({
     featuredPropertyIds: z.array(z.string()).max(3).default([]),
   }),
 });
+
+export const AdvisorCoreFormSchema = FormSchema.pick({
+  fullName: true,
+  slug: true,
+  headline: true,
+  heroBgUrl: true,
+  ctaLabel: true,
+  ctaHref: true,
+  inmobiliariaId: true,
+});
+
+export const AdvisorLandingFormSchema = FormSchema.shape.landing;

@@ -6,6 +6,7 @@ import {
   StatCard,
 } from "@/components/virtualoffice/Page";
 import PaginationBar from "@/components/virtualoffice/PaginationBar";
+import { canAccessLeads } from "@/lib/auth/permissions";
 import { listLeads } from "@/lib/leads/repo";
 import { prisma } from "@/lib/prisma";
 import {
@@ -16,7 +17,7 @@ import {
   Tr,
 } from "@/components/virtualoffice/Table";
 import LeadStatusSelect from "@/components/virtualoffice/leads/LeadStatusSelect";
-import { requireVirtualOfficeRoles } from "@/lib/auth/virtual-office";
+import { requireSession } from "@/lib/auth/require-session";
 import {
   paginateItems,
   resolvePagination,
@@ -42,14 +43,10 @@ type LeadsPageProps = {
 };
 
 export default async function LeadsPage({ searchParams }: LeadsPageProps) {
-  const access = await requireVirtualOfficeRoles([
-    "ADMIN",
-    "INMOBILIARIA",
-    "ASESOR",
-  ]);
+  const session = await requireSession();
   const params = await searchParams;
 
-  if (!access.allowed) {
+  if (!canAccessLeads(session)) {
     return (
       <div className="p-6">
         <h1 className="text-2xl font-semibold">Leads</h1>
@@ -60,7 +57,6 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
     );
   }
 
-  const session = access.session;
   const statusFilter =
     LEAD_STATUSES.find((status) => status === params.status) ?? undefined;
 

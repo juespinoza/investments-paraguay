@@ -34,13 +34,12 @@ export function HeroSplit({
           className="h-full w-full bg-cover bg-center"
           style={{ backgroundImage: `url(${backgroundImageUrl})` }}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(15,23,38,0.88)_0%,rgba(15,23,38,0.58)_42%,rgba(15,23,38,0.18)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(201,164,92,0.24),transparent_28%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(10,10,10,0.9)_0%,rgba(10,10,10,0.62)_42%,rgba(10,10,10,0.22)_100%)]" />
       </div>
 
       <div className="container-page relative">
-        <div className="section-shell grid min-h-[calc(100vh-8.5rem)] items-end gap-10 border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,38,0.28),rgba(15,23,38,0.12))] px-6 py-10 shadow-[0_32px_90px_rgba(15,23,38,0.26)] backdrop-blur-[2px] md:grid-cols-[minmax(0,1.3fr)_minmax(300px,0.7fr)] md:px-10 md:py-14 lg:px-14">
-          <div className="max-w-3xl text-white">
+        <div className="section-shell grid min-h-[calc(100vh-8.5rem)] items-end gap-10 border border-[rgba(191,168,130,0.24)] bg-[rgba(10,10,10,0.2)] px-6 py-10 shadow-[0_32px_90px_rgba(10,10,10,0.26)] backdrop-blur-[2px] md:grid-cols-[minmax(0,1.3fr)_minmax(300px,0.7fr)] md:px-10 md:py-14 lg:px-14">
+          <div className="max-w-3xl text-[var(--ivory)]">
             {logoLeftUrl ? (
               <div className="mb-6 flex items-center gap-3">
                 <Image
@@ -53,16 +52,16 @@ export function HeroSplit({
               </div>
             ) : null}
 
-            <div className="eyebrow border-white/20 text-white">
+            <div className="eyebrow border-[rgba(191,168,130,0.4)] bg-[rgba(10,10,10,0.22)] text-[var(--ivory)]">
               <span>{brandLeft + " "}</span>
-              <span className="h-1 w-1 rounded-full bg-(--ip-accent1)"> </span>
+              <span className="h-1 w-1 rounded-full bg-[var(--gold)]"> </span>
               <span> {" " + brandRight}</span>
             </div>
 
             <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-[0.98] tracking-tight md:text-7xl">
               {title}
             </h1>
-            <p className="mt-6 max-w-2xl text-lg font-light leading-8 text-white/78 md:text-xl">
+            <p className="mt-6 max-w-2xl text-lg font-light leading-8 text-[rgba(250,250,248,0.78)] md:text-xl">
               {subtitle}
             </p>
 
@@ -89,7 +88,7 @@ export function HeroSplit({
               </Button>
             </div>
 
-            <div className="mt-10 grid gap-3 text-sm text-white/78 md:max-w-2xl md:grid-cols-3">
+            <div className="mt-10 grid gap-3 text-sm text-[rgba(250,250,248,0.78)] md:max-w-2xl md:grid-cols-3">
               {[
                 t("heroFocusItems.advisory"),
                 t("heroFocusItems.realEstate"),
@@ -97,13 +96,13 @@ export function HeroSplit({
               ].map((item) => (
                 <div
                   key={item}
-                  className="rounded-2xl border border-white/12 bg-white/10 px-4 py-4 backdrop-blur-sm"
+                  className="rounded-2xl border border-[rgba(191,168,130,0.22)] bg-[rgba(250,250,248,0.1)] px-4 py-4 backdrop-blur-sm"
                 >
-                  <div className="mb-3 h-px w-12 bg-[var(--ip-accent1)]" />
-                  <p className="text-[11px] uppercase tracking-[0.26em] text-white/55">
+                  <div className="mb-3 h-px w-12 bg-[var(--gold)]" />
+                  <p className="text-[11px] uppercase tracking-[0.26em] text-[rgba(250,250,248,0.55)]">
                     {t("heroFocusLabel")}
                   </p>
-                  <p className="mt-2 text-base font-medium text-white">
+                  <p className="mt-2 text-base font-medium text-[var(--ivory)]">
                     {item}
                   </p>
                 </div>
@@ -112,21 +111,21 @@ export function HeroSplit({
           </div>
 
           <div className="md:ml-auto w-full max-w-md mx-auto">
-            <div className="rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0.08))] p-6 text-white shadow-[0_18px_60px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-8">
-              <p className="text-[11px] uppercase tracking-[0.32em] text-white/58">
+            <div className="rounded-[2rem] border border-[rgba(191,168,130,0.24)] bg-[rgba(10,10,10,0.42)] p-6 text-[var(--ivory)] shadow-[0_18px_60px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-8">
+              <p className="text-[11px] uppercase tracking-[0.32em] text-[rgba(250,250,248,0.58)]">
                 {t("heroPanel.eyebrow")}
               </p>
               <div className="mt-5 space-y-5">
-                <div className="border-b border-white/10 pb-4">
-                  <p className="text-sm text-white/58">
+                <div className="border-b border-[rgba(191,168,130,0.16)] pb-4">
+                  <p className="text-sm text-[rgba(250,250,248,0.58)]">
                     {t("heroPanel.item1.label")}
                   </p>
                   <p className="mt-2 text-2xl font-semibold">
                     {t("heroPanel.item1.value")}
                   </p>
                 </div>
-                <div className="border-b border-white/10 pb-4">
-                  <p className="text-sm text-white/58">
+                <div className="border-b border-[rgba(191,168,130,0.16)] pb-4">
+                  <p className="text-sm text-[rgba(250,250,248,0.58)]">
                     {t("heroPanel.item2.label")}
                   </p>
                   <p className="mt-2 text-2xl font-semibold">
@@ -134,7 +133,7 @@ export function HeroSplit({
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-white/58">
+                  <p className="text-sm text-[rgba(250,250,248,0.58)]">
                     {t("heroPanel.item3.label")}
                   </p>
                   <p className="mt-2 text-2xl font-semibold">
@@ -145,7 +144,7 @@ export function HeroSplit({
 
               <Link
                 href="/blog"
-                className="mt-8 inline-flex text-sm font-medium uppercase tracking-[0.18em] text-[var(--ip-accent1)]"
+                className="mt-8 inline-flex text-sm font-medium uppercase tracking-[0.18em] text-[var(--gold)]"
                 data-analytics-event="cta_click"
                 data-analytics-category="hero"
                 data-analytics-label="blog_panel"

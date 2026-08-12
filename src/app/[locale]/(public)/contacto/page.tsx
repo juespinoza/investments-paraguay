@@ -88,7 +88,7 @@ export default async function ContactPage({ params }: PageProps) {
             ))}
           </div>
 
-          <div className="rounded-[1.75rem] border border-soft bg-[linear-gradient(180deg,#fffdf9_0%,#f5ede1_100%)] p-6 shadow-[0_18px_48px_rgba(15,23,38,0.1)] md:p-8">
+          <div className="rounded-[1.75rem] border border-soft bg-[linear-gradient(180deg,var(--ivory)_0%,var(--stone)_100%)] p-6 shadow-[0_18px_48px_rgba(10,10,10,0.1)] md:p-8">
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent1">
               {c.formTitle}
             </p>

@@ -48,23 +48,23 @@ export default function BlogPostPage() {
       <StructuredData data={[organizationJsonLd, articleJsonLd]} />
       <div className="container-page">
         <article className="mx-auto max-w-4xl">
-          <div className="section-shell bg-[linear-gradient(135deg,#0f1726_0%,#18253d_55%,#243653_100%)] px-6 py-10 text-white shadow-[0_24px_80px_rgba(15,23,38,0.18)] md:px-10 md:py-14">
-            <div className="eyebrow border-white/16 text-white">
+          <div className="section-shell bg-[linear-gradient(135deg,var(--carbon)_0%,var(--onyx)_100%)] px-6 py-10 text-[var(--ivory)] shadow-[0_24px_80px_rgba(10,10,10,0.18)] md:px-10 md:py-14">
+            <div className="eyebrow border-[rgba(191,168,130,0.35)] bg-[rgba(250,250,248,0.08)] text-[var(--ivory)]">
               Artículo
             </div>
             <h1 className="mt-6 text-4xl font-semibold tracking-tight md:text-6xl">
               Por qué Paraguay se está convirtiendo en el nuevo polo de inversión
               inmobiliaria en Sudamérica
             </h1>
-            <div className="mt-8 flex flex-col gap-3 text-sm text-white/72 sm:flex-row sm:gap-4">
-              <span className="rounded-full border border-white/10 bg-white/8 px-4 py-2">
+            <div className="mt-8 flex flex-col gap-3 text-sm text-[rgba(250,250,248,0.72)] sm:flex-row sm:gap-4">
+              <span className="rounded-full border border-[rgba(191,168,130,0.22)] bg-[rgba(250,250,248,0.08)] px-4 py-2">
                 Actualizado: 27 Ene 2026
               </span>
-              <span className="rounded-full border border-white/10 bg-white/8 px-4 py-2">
+              <span className="rounded-full border border-[rgba(191,168,130,0.22)] bg-[rgba(250,250,248,0.08)] px-4 py-2">
                 Autor: Investments Paraguay
               </span>
             </div>
-            <p className="mt-8 max-w-3xl text-lg leading-8 text-white/76">
+            <p className="mt-8 max-w-3xl text-lg leading-8 text-[rgba(250,250,248,0.76)]">
               Paraguay viene ganando atención como destino de inversión inmobiliaria
               por su estabilidad macro relativa, una inflación controlada dentro de
               una meta oficial, incentivos a la inversión y un ciclo de expansión

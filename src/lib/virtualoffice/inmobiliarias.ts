@@ -2,13 +2,33 @@ import "server-only";
 
 import { Role } from "@/generated/prisma";
 import { z } from "zod";
+import { hashPassword, normalizeEmail } from "@/lib/auth/user-bootstrap";
+import { can, scopeFor } from "@/lib/auth/permissions";
 import { prisma } from "@/lib/prisma";
+import {
+  canCreateInmobiliaria,
+  canManageInmobiliariaAssignments,
+  isAdmin,
+} from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import type { SessionPayload } from "@/lib/data/types";
 import {
   countInmobiliariaDependencies,
   syncAdvisorTenantAssignments,
 } from "@/lib/virtualoffice/assignment-sync";
+import {
+  buildInmobiliariaCoreCreateData,
+  buildInmobiliariaCoreUpdateData,
+  InmobiliariaCoreSchema,
+  type InmobiliariaCoreInput,
+} from "@/lib/virtualoffice/inmobiliaria-core";
+import {
+  buildInmobiliariaLandingJson,
+  InmobiliariaLandingThemeSchema,
+  normalizeInmobiliariaLandingToV2,
+  parseInmobiliariaLandingTheme,
+} from "@/lib/virtualoffice/inmobiliaria-landing";
+export { parseInmobiliariaLandingTheme } from "@/lib/virtualoffice/inmobiliaria-landing";
 
 export class InmobiliariaRepoError extends Error {
   status: number;
@@ -21,28 +41,89 @@ export class InmobiliariaRepoError extends Error {
 }
 
 export const InmobiliariaSchema = z.object({
-  name: z.string().trim().min(2),
-  slug: z.string().trim().min(2),
-  description: z.string().trim().nullable().optional(),
-  logoUrl: z.string().trim().nullable().optional(),
+  ...InmobiliariaCoreSchema.shape,
+  landing: InmobiliariaLandingThemeSchema.optional(),
 });
 
 export type InmobiliariaInput = z.output<typeof InmobiliariaSchema>;
+export type InmobiliariaLandingInput = z.output<
+  typeof InmobiliariaLandingThemeSchema
+>;
+
+export type InmobiliariaWorkflowUserInput = {
+  email: string;
+  password: string;
+  name?: string | null;
+};
+
+function resolveLandingThemeFromRecord(record: {
+  name?: string | null;
+  slug?: string | null;
+  logoUrl?: string | null;
+  description?: string | null;
+  themeJson?: unknown;
+  landing?: { themeJson: unknown; deletedAt: Date | null } | null;
+}) {
+  return parseInmobiliariaLandingTheme(
+    (record.landing?.deletedAt ? null : record.landing?.themeJson) ??
+      record.themeJson,
+  );
+}
+
+function resolveLandingThemeV2FromRecord(record: {
+  name?: string | null;
+  slug?: string | null;
+  logoUrl?: string | null;
+  description?: string | null;
+  themeJson?: unknown;
+  landing?: { themeJson: unknown; deletedAt: Date | null } | null;
+}) {
+  return normalizeInmobiliariaLandingToV2({
+    name: record.name ?? null,
+    slug: record.slug ?? null,
+    logoUrl: record.logoUrl ?? null,
+    description: record.description ?? null,
+    landing: resolveLandingThemeFromRecord(record),
+  });
+}
 
 export async function requireInmobiliariaRoles() {
   const session = await requireSession();
 
-  if (session.role !== "ADMIN" && session.role !== "INMOBILIARIA") {
+  if (
+    !can(session, "inmobiliaria_core", "read") &&
+    !can(session, "inmobiliaria_landing", "read")
+  ) {
     throw new InmobiliariaRepoError("Forbidden", 403);
   }
 
   return session;
 }
 
+async function requireInmobiliariaCoreSession(
+  action: "read" | "update" | "delete_soft",
+) {
+  const session = await requireSession();
+  if (!can(session, "inmobiliaria_core", action)) {
+    throw new InmobiliariaRepoError("Forbidden", 403);
+  }
+  return session;
+}
+
+async function requireInmobiliariaLandingSession(
+  action: "read" | "update" | "delete_soft",
+) {
+  const session = await requireSession();
+  if (!can(session, "inmobiliaria_landing", action)) {
+    throw new InmobiliariaRepoError("Forbidden", 403);
+  }
+  return session;
+}
+
 async function requireAdminInmobiliariaSession() {
   const session = await requireInmobiliariaRoles();
 
-  if (session.role !== "ADMIN") {
+  if (!canManageInmobiliariaAssignments(session)) {
     throw new InmobiliariaRepoError(
       "Solo un admin puede gestionar asignaciones.",
       403,
@@ -65,23 +146,29 @@ async function assertInmobiliariaExists(id: string) {
   return agency;
 }
 
-async function assertInmobiliariaScope(session: SessionPayload, id: string) {
+async function assertScopedInmobiliariaAccess(
+  session: SessionPayload,
+  resource: "inmobiliaria_core" | "inmobiliaria_landing",
+  action: "read" | "update" | "delete_soft",
+  id: string,
+) {
   const agency = await assertInmobiliariaExists(id);
+  const scope = scopeFor(session, resource, action);
 
-  if (session.role === "INMOBILIARIA" && session.inmobiliariaId !== id) {
-    throw new InmobiliariaRepoError("Forbidden", 403);
-  }
+  if (scope === "all") return agency;
+  if (scope === "own" && session.inmobiliariaId === id) return agency;
 
-  return agency;
+  throw new InmobiliariaRepoError("Forbidden", 403);
 }
 
 export async function listInmobiliarias() {
-  const session = await requireInmobiliariaRoles();
+  const session = await requireInmobiliariaCoreSession("read");
+  const scope = scopeFor(session, "inmobiliaria_core", "read");
 
   return prisma.inmobiliaria.findMany({
     where: {
       deletedAt: null,
-      ...(session.role === "ADMIN" ? {} : { id: session.inmobiliariaId ?? "__none__" }),
+      ...(scope === "all" ? {} : { id: session.inmobiliariaId ?? "__none__" }),
     },
     orderBy: { updatedAt: "desc" },
     select: {
@@ -102,9 +189,35 @@ export async function listInmobiliarias() {
   });
 }
 
+async function validateFeaturedPropertyIds(
+  inmobiliariaId: string,
+  featuredPropertyIds: string[] | undefined,
+) {
+  const ids = (featuredPropertyIds ?? []).filter(Boolean).slice(0, 6);
+  if (!ids.length) return [];
+
+  const found = await prisma.property.findMany({
+    where: {
+      id: { in: ids },
+      deletedAt: null,
+      inmobiliariaId,
+    },
+    select: { id: true },
+  });
+
+  if (found.length !== ids.length) {
+    throw new InmobiliariaRepoError(
+      "Solo puedes destacar propiedades activas de tu propia inmobiliaria.",
+      400,
+    );
+  }
+
+  return ids;
+}
+
 export async function getInmobiliariaById(id: string) {
-  const session = await requireInmobiliariaRoles();
-  await assertInmobiliariaScope(session, id);
+  const session = await requireInmobiliariaCoreSession("read");
+  await assertScopedInmobiliariaAccess(session, "inmobiliaria_core", "read", id);
 
   const inmobiliaria = await prisma.inmobiliaria.findUnique({
     where: { id },
@@ -114,6 +227,10 @@ export async function getInmobiliariaById(id: string) {
       slug: true,
       description: true,
       logoUrl: true,
+      themeJson: true,
+      landing: {
+        select: { themeJson: true, deletedAt: true },
+      },
       updatedAt: true,
       createdAt: true,
       _count: {
@@ -130,7 +247,7 @@ export async function getInmobiliariaById(id: string) {
     return null;
   }
 
-  const [users, advisorUsers, advisors, availableUsers, availableAdvisors] =
+  const [users, advisorUsers, advisors, properties, availableUsers, availableAdvisors] =
     await Promise.all([
       prisma.user.findMany({
         where: { inmobiliariaId: id, deletedAt: null },
@@ -174,7 +291,16 @@ export async function getInmobiliariaById(id: string) {
           },
         },
       }),
-      session.role === "ADMIN"
+      prisma.property.findMany({
+        where: { inmobiliariaId: id, deletedAt: null },
+        orderBy: { updatedAt: "desc" },
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+        },
+      }),
+      isAdmin(session)
         ? prisma.user.findMany({
             where: {
               deletedAt: null,
@@ -189,7 +315,7 @@ export async function getInmobiliariaById(id: string) {
             },
           })
         : Promise.resolve([]),
-      session.role === "ADMIN"
+      isAdmin(session)
         ? prisma.advisor.findMany({
             where: { deletedAt: null },
             orderBy: { fullName: "asc" },
@@ -223,11 +349,14 @@ export async function getInmobiliariaById(id: string) {
 
   return {
     ...inmobiliaria,
+    landingTheme: resolveLandingThemeFromRecord(inmobiliaria),
+    landingThemeV2: resolveLandingThemeV2FromRecord(inmobiliaria),
     users,
     advisors: advisors.map((advisor) => ({
       ...advisor,
       linkedUsers: linkedUsersByAdvisorId.get(advisor.id) ?? [],
     })),
+    properties,
     availableUsers: availableUsers.map((user) => ({
       ...user,
       isAssignedHere: user.inmobiliariaId === id,
@@ -242,20 +371,125 @@ export async function getInmobiliariaById(id: string) {
   };
 }
 
-export async function createInmobiliaria(input: InmobiliariaInput) {
+function normalizeWorkflowUserInput(
+  user?: InmobiliariaWorkflowUserInput,
+): InmobiliariaWorkflowUserInput | null {
+  if (!user) return null;
+
+  const email = normalizeEmail(user.email);
+  if (!email) {
+    throw new InmobiliariaRepoError("El email del usuario es obligatorio.", 400);
+  }
+
+  if (user.password.trim().length < 8) {
+    throw new InmobiliariaRepoError(
+      "La contraseña del usuario debe tener al menos 8 caracteres.",
+      400,
+    );
+  }
+
+  return {
+    email,
+    password: user.password,
+    name: user.name?.trim() || null,
+  };
+}
+
+export async function createInmobiliaria(
+  input: InmobiliariaInput,
+  workflowUser?: InmobiliariaWorkflowUserInput,
+) {
   const session = await requireInmobiliariaRoles();
-  if (session.role !== "ADMIN") {
+  if (!canCreateInmobiliaria(session)) {
     throw new InmobiliariaRepoError("Solo un admin puede crear inmobiliarias.", 403);
   }
 
+  const user = normalizeWorkflowUserInput(workflowUser);
+
   try {
-    return await prisma.inmobiliaria.create({
-      data: {
-        name: input.name,
-        slug: input.slug,
-        description: input.description ?? null,
-        logoUrl: input.logoUrl ?? null,
-      },
+    return await prisma.$transaction(async (tx) => {
+      const inmobiliaria = await tx.inmobiliaria.create({
+        data: {
+          ...buildInmobiliariaCoreCreateData(input as InmobiliariaCoreInput),
+          themeJson: buildInmobiliariaLandingJson(input.landing),
+        },
+        select: { id: true },
+      });
+
+      if (input.landing) {
+        await tx.inmobiliariaLanding.create({
+          data: {
+            inmobiliariaId: inmobiliaria.id,
+            themeJson: buildInmobiliariaLandingJson(input.landing),
+          },
+          select: { id: true },
+        });
+      }
+
+      if (user) {
+        await tx.user.create({
+          data: {
+            email: user.email,
+            name: user.name ?? null,
+            password: await hashPassword(user.password),
+            role: Role.INMOBILIARIA,
+            inmobiliariaId: inmobiliaria.id,
+            advisorId: null,
+          },
+          select: { id: true },
+        });
+      }
+
+      return inmobiliaria;
+    });
+  } catch (error: unknown) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "P2002"
+    ) {
+      const target =
+        "meta" in error &&
+        typeof (error as { meta?: { target?: unknown } }).meta?.target !==
+          "undefined"
+          ? String((error as { meta?: { target?: unknown } }).meta?.target)
+          : "";
+
+      if (target.includes("email")) {
+        throw new InmobiliariaRepoError(
+          "Ya existe un usuario con ese email.",
+          409,
+        );
+      }
+
+      throw new InmobiliariaRepoError("El slug ya existe.", 409);
+    }
+    throw error;
+  }
+}
+
+export async function updateInmobiliaria(id: string, input: InmobiliariaInput) {
+  await updateInmobiliariaCore(id, input as InmobiliariaCoreInput);
+  return updateInmobiliariaLanding(id, input.landing);
+}
+
+export async function updateInmobiliariaCore(
+  id: string,
+  input: InmobiliariaCoreInput,
+) {
+  const session = await requireInmobiliariaCoreSession("update");
+  await assertScopedInmobiliariaAccess(
+    session,
+    "inmobiliaria_core",
+    "update",
+    id,
+  );
+
+  try {
+    return await prisma.inmobiliaria.update({
+      where: { id },
+      data: buildInmobiliariaCoreUpdateData(input),
       select: { id: true },
     });
   } catch (error: unknown) {
@@ -271,20 +505,48 @@ export async function createInmobiliaria(input: InmobiliariaInput) {
   }
 }
 
-export async function updateInmobiliaria(id: string, input: InmobiliariaInput) {
-  const session = await requireInmobiliariaRoles();
-  await assertInmobiliariaScope(session, id);
+export async function updateInmobiliariaLanding(
+  id: string,
+  input?: InmobiliariaLandingInput,
+) {
+  const session = await requireInmobiliariaLandingSession("update");
+  await assertScopedInmobiliariaAccess(
+    session,
+    "inmobiliaria_landing",
+    "update",
+    id,
+  );
+  const featuredPropertyIds = await validateFeaturedPropertyIds(
+    id,
+    input?.featuredPropertyIds,
+  );
 
   try {
-    return await prisma.inmobiliaria.update({
-      where: { id },
-      data: {
-        name: input.name,
-        slug: input.slug,
-        description: input.description ?? null,
-        logoUrl: input.logoUrl ?? null,
-      },
-      select: { id: true },
+    const landingJson = buildInmobiliariaLandingJson(input, featuredPropertyIds);
+
+    return await prisma.$transaction(async (tx) => {
+      const updated = await tx.inmobiliaria.update({
+        where: { id },
+        data: {
+          themeJson: landingJson,
+        },
+        select: { id: true },
+      });
+
+      await tx.inmobiliariaLanding.upsert({
+        where: { inmobiliariaId: id },
+        create: {
+          inmobiliariaId: id,
+          themeJson: landingJson,
+        },
+        update: {
+          themeJson: landingJson,
+          deletedAt: null,
+        },
+        select: { id: true },
+      });
+
+      return updated;
     });
   } catch (error: unknown) {
     if (
@@ -300,15 +562,20 @@ export async function updateInmobiliaria(id: string, input: InmobiliariaInput) {
 }
 
 export async function softDeleteInmobiliaria(id: string) {
-  const session = await requireInmobiliariaRoles();
-  if (session.role !== "ADMIN") {
+  const session = await requireInmobiliariaCoreSession("delete_soft");
+  if (!isAdmin(session)) {
     throw new InmobiliariaRepoError(
       "Solo un admin puede desactivar inmobiliarias.",
       403,
     );
   }
 
-  await assertInmobiliariaScope(session, id);
+  await assertScopedInmobiliariaAccess(
+    session,
+    "inmobiliaria_core",
+    "delete_soft",
+    id,
+  );
 
   const dependencies = await countInmobiliariaDependencies(prisma, id);
   if (

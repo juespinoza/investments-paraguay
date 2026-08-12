@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { inter, playfair } from "./fonts";
+import { cormorantGaramond, dmSans } from "./fonts";
 import { getLocale } from "next-intl/server";
 import { buildMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
 
@@ -39,7 +39,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${inter.variable} ${playfair.variable}`}>
+      <body className={`${dmSans.variable} ${cormorantGaramond.variable}`}>
         {children}
       </body>
     </html>

@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvestmentsParaguay — Pantalla Premium de Proyecto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Paleta InvestmentsParaguay */
+    --carbon:#0A0A0A;
+    --onyx:#1C1C1C;
+    --stone:#F5F3EF;
+    --ivory:#FAFAF8;
+    --gold:#BFA882;
+    --amber:#8B7355;
+
+    /* Alias funcionales */
+    --ink:#0A0A0A;
+    --lagoon:#1C1C1C;
+    --lagoon-deep:#0A0A0A;
+    --copper:#BFA882;
+    --sand:#F5F3EF;
+    --line:rgba(191,168,130,.4);
+
+    --font-display:'Cormorant Garamond', serif;
+    --font-body:'DM Sans', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--ivory);color:var(--ink);font-family:var(--font-body);}
+  body{-webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  img{max-width:100%;display:block;}
+  button{font-family:inherit;cursor:pointer;}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+  @media(max-width:640px){.wrap{padding:0 18px;}}
+
+  /* ---------- Top brand bar ---------- */
+  .brandbar{border-bottom:1px solid var(--line);background:var(--ivory);position:sticky;top:0;z-index:60;}
+  .brandbar-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 0;gap:16px;}
+  .brand{font-family:var(--font-display);font-weight:600;font-size:19px;letter-spacing:.2px;}
+  .brand span{color:var(--copper);}
+
+  .project-switch{display:flex;gap:6px;flex-wrap:wrap;}
+  .project-switch button{
+    border:1px solid var(--line);background:transparent;color:var(--ink);
+    font-size:12.5px;padding:8px 13px;border-radius:100px;font-weight:500;
+    letter-spacing:.2px;transition:all .15s ease;
+  }
+  .project-switch button:hover{border-color:var(--gold);color:var(--carbon);}
+  .project-switch button.active{background:var(--carbon);border-color:var(--carbon);color:var(--ivory);}
+
+  /* burger — oculto en desktop */
+  .burger{display:none;background:transparent;border:1px solid var(--line);padding:9px 11px;border-radius:8px;}
+  .burger span{display:block;width:18px;height:2px;background:var(--carbon);margin:3px 0;transition:transform .2s ease,opacity .2s ease;}
+  .burger.open span:nth-child(1){transform:translateY(5px) rotate(45deg);}
+  .burger.open span:nth-child(2){opacity:0;}
+  .burger.open span:nth-child(3){transform:translateY(-5px) rotate(-45deg);}
+
+  .mobile-panel{display:none;max-height:0;overflow:hidden;background:var(--ivory);border-bottom:1px solid var(--line);transition:max-height .25s ease;}
+  .mobile-panel.open{max-height:420px;}
+  .mobile-panel-inner{padding:14px 18px 20px;display:flex;flex-direction:column;gap:8px;}
+  .mobile-panel button.mproj{
+    text-align:left;border:1px solid var(--line);background:transparent;padding:12px 14px;
+    border-radius:8px;font-size:14px;color:var(--ink);font-weight:500;
+  }
+  .mobile-panel button.mproj.active{background:var(--carbon);color:var(--ivory);border-color:var(--carbon);}
+  .mobile-panel a.mcta{
+    margin-top:6px;text-align:center;background:var(--gold);color:var(--carbon);
+    padding:12px 14px;border-radius:8px;font-weight:600;font-size:14px;text-decoration:none;
+  }
+
+  @media(max-width:780px){
+    .project-switch{display:none;}
+    .burger{display:inline-flex;flex-direction:column;justify-content:center;}
+    .mobile-panel{display:block;}
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{background:linear-gradient(160deg,var(--lagoon-deep) 0%,var(--lagoon) 100%);color:var(--ivory);padding:64px 0 48px;position:relative;overflow:hidden;}
+  .hero:after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 85% 15%, rgba(255,255,255,.08), transparent 55%);}
+  .hero-inner{position:relative;}
+  .eyebrow{font-family:var(--font-mono);font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+  .hero h1{font-family:var(--font-display);font-weight:500;font-size:clamp(34px,5vw,56px);line-height:1.03;margin:0 0 14px;}
+  .hero h1 em{font-style:italic;color:#D8C8A3;}
+  .hero-loc{font-size:14.5px;opacity:.85;margin-bottom:26px;}
+  .hero-pitch{max-width:560px;font-size:15.5px;line-height:1.6;opacity:.92;margin-bottom:28px;}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:34px;}
+  .stat-row{display:flex;gap:0;border-top:1px solid rgba(255,255,255,.22);flex-wrap:wrap;}
+  .stat{padding:16px 26px 4px 0;border-right:1px solid rgba(255,255,255,.22);margin-right:26px;min-width:120px;}
+  .stat:last-child{border-right:none;}
+  .stat-num{font-family:var(--font-mono);font-size:20px;font-weight:500;}
+  .stat-label{font-size:11.5px;opacity:.75;margin-top:2px;}
+
+  /* ---------- Section shell ---------- */
+  section.block{padding:56px 0;border-bottom:1px solid var(--line);}
+  section.block.alt{background:var(--sand);}
+  .block-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:30px;gap:20px;flex-wrap:wrap;}
+  .block-title{font-family:var(--font-display);font-size:28px;font-weight:500;}
+  .block-sub{font-family:var(--font-mono);font-size:11.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--copper);}
+  .survey-divider{font-family:var(--font-mono);font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);text-align:center;margin:0 0 40px;
+    display:flex;align-items:center;gap:14px;}
+  .survey-divider:before,.survey-divider:after{content:"";flex:1;height:0;border-top:1px dashed var(--line);}
+
+  /* ---------- Overview ---------- */
+  .overview-text{font-size:16px;line-height:1.75;max-width:760px;color:#3A4038;}
+
+  /* ---------- Areas (Airbnb style) ---------- */
+  .areas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;}
+  .area-card{background:var(--ivory);border:1px solid var(--line);position:relative;padding:18px 18px 20px;}
+  .area-card:before,.area-card:after{content:"";position:absolute;width:14px;height:14px;top:10px;border-top:1.5px solid var(--copper);}
+  .area-card:before{left:10px;border-left:1.5px solid var(--copper);}
+  .area-card:after{right:10px;border-right:1.5px solid var(--copper);}
+  .area-photos{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:4px;height:150px;margin-bottom:14px;overflow:hidden;}
+  .area-photo{background:linear-gradient(135deg,var(--stone),#E8DFC9);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:9.5px;color:var(--amber);text-align:center;position:relative;}
+  .area-photo img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+  .area-num{font-family:var(--font-mono);font-size:11px;color:var(--copper);margin-bottom:6px;}
+  .area-name{font-family:var(--font-display);font-size:18px;font-weight:600;margin-bottom:6px;}
+  .area-desc{font-size:13.5px;line-height:1.55;color:#54594F;}
+
+  /* ---------- Typologies ---------- */
+  .typo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px;}
+  .typo-card{background:var(--ivory);border:1px solid var(--line);}
+  .typo-plan{height:150px;background:repeating-linear-gradient(45deg,var(--stone),var(--stone) 8px,rgba(191,168,130,.18) 8px,rgba(191,168,130,.18) 16px);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10.5px;color:var(--amber);border-bottom:1px solid var(--line);position:relative;}
+  .typo-plan img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+  .typo-body{padding:18px;}
+  .typo-name{font-family:var(--font-display);font-weight:600;font-size:17px;margin-bottom:6px;}
+  .typo-desc{font-size:13px;line-height:1.5;color:#54594F;margin-bottom:14px;min-height:36px;}
+  .typo-specs{display:flex;flex-wrap:wrap;gap:8px 16px;font-family:var(--font-mono);font-size:12px;margin-bottom:14px;border-top:1px dashed var(--line);padding-top:12px;}
+  .typo-specs span b{display:block;font-size:14px;color:var(--ink);}
+  .typo-specs span{color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.5px;}
+  .typo-price-row{display:flex;align-items:center;justify-content:space-between;}
+  .typo-price{font-family:var(--font-mono);font-weight:500;font-size:17px;color:var(--amber);}
+  .cochera-tag{font-size:10.5px;font-family:var(--font-mono);padding:4px 8px;border-radius:100px;text-transform:uppercase;letter-spacing:.4px;}
+  .cochera-yes{background:#E4EEE0;color:#3F6B33;}
+  .cochera-no{background:#F0E5DC;color:#8A5A2E;}
+
+  /* ---------- Cochera + financing ---------- */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+  @media(max-width:720px){.two-col{grid-template-columns:1fr;}}
+  .info-card{background:var(--ivory);border:1px solid var(--line);padding:24px;}
+  .info-card h3{font-family:var(--font-display);font-size:19px;margin:0 0 10px;font-weight:600;}
+  .info-card p{font-size:13.5px;line-height:1.6;color:#54594F;margin:0 0 14px;}
+  .price-big{font-family:var(--font-mono);font-size:24px;color:var(--amber);margin-bottom:4px;}
+  .m2-tag{font-family:var(--font-mono);font-size:12px;color:var(--amber);}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--carbon);color:var(--ivory);border:1px solid var(--carbon);padding:12px 20px;font-size:13.5px;font-weight:600;letter-spacing:.2px;text-decoration:none;transition:all .15s ease;}
+  .btn:hover{background:var(--gold);border-color:var(--gold);color:var(--carbon);}
+  .btn-outline{background:transparent;border:1px solid var(--onyx);color:var(--onyx);}
+  .btn-outline:hover{background:var(--gold);border-color:var(--gold);color:var(--carbon);}
+  .btn-ghost-light{background:transparent;border:1px solid rgba(255,255,255,.4);color:var(--ivory);}
+  .btn-ghost-light:hover{background:var(--gold);border-color:var(--gold);color:var(--carbon);}
+
+  /* ---------- Developer / builder / advisor ---------- */
+  .people-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+  @media(max-width:720px){.people-grid{grid-template-columns:1fr;}}
+  .people-card{background:var(--ivory);border:1px solid var(--line);padding:24px;display:flex;gap:18px;}
+  .avatar{width:64px;height:64px;flex:none;background:var(--lagoon);color:var(--ivory);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:22px;font-weight:600;}
+  .people-role{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--copper);margin-bottom:4px;}
+  .people-name{font-family:var(--font-display);font-size:18px;font-weight:600;margin-bottom:8px;}
+  .people-bio{font-size:13px;line-height:1.6;color:#54594F;}
+
+  .advisor-card{background:var(--lagoon-deep);color:var(--ivory);padding:32px;display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;}
+  .advisor-avatar{width:86px;height:86px;flex:none;border-radius:50%;background:var(--copper);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:30px;font-weight:600;color:var(--carbon);}
+  .advisor-name{font-family:var(--font-display);font-size:22px;font-weight:600;margin-bottom:4px;}
+  .advisor-role{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.75;margin-bottom:12px;}
+  .advisor-bio{font-size:14px;line-height:1.65;opacity:.92;max-width:600px;margin-bottom:16px;}
+  .advisor-contacts{display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-family:var(--font-mono);font-size:12px;border:1px solid rgba(255,255,255,.35);padding:7px 13px;border-radius:100px;text-decoration:none;color:var(--ivory);}
+  .chip:hover{background:rgba(255,255,255,.12);}
+
+  /* ---------- Contact form ---------- */
+  .form-shell{background:var(--ivory);border:1px solid var(--line);padding:34px;max-width:620px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--amber);margin-bottom:6px;}
+  .field input,.field textarea{width:100%;padding:11px 13px;border:1px solid var(--line);background:#fff;font-family:var(--font-body);font-size:14px;color:var(--ink);}
+  .field textarea{resize:vertical;min-height:80px;}
+  .field input:focus,.field textarea:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .form-note{font-size:12px;color:var(--amber);margin-top:10px;}
+  .form-status{font-size:13px;margin-top:12px;font-weight:600;}
+  .form-status.ok{color:#3F6B33;}
+  .form-status.err{color:#a13d3d;}
+
+  footer{padding:30px 0 110px;text-align:center;font-family:var(--font-mono);font-size:11px;color:var(--amber);}
+
+  /* ---------- Sticky CTA ---------- */
+  .sticky-cta{
+    position:fixed;left:50%;bottom:20px;transform:translate(-50%,140%);
+    background:var(--carbon);color:var(--ivory);border:1px solid var(--carbon);
+    padding:14px 24px;border-radius:100px;font-size:14px;font-weight:600;
+    display:inline-flex;align-items:center;gap:10px;text-decoration:none;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:55;
+    transition:transform .3s ease,background .15s ease;
+  }
+  .sticky-cta.show{transform:translate(-50%,0);}
+  .sticky-cta:hover{background:var(--gold);color:var(--carbon);}
+  .sticky-cta .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);}
+  .sticky-cta:hover .dot{background:var(--carbon);}
+  @media(max-width:640px){
+    .sticky-cta{left:16px;right:16px;bottom:16px;transform:translateY(140%);width:auto;justify-content:center;}
+    .sticky-cta.show{transform:translateY(0);}
+  }
+
+  /* ---------- Virtual tour modal ---------- */
+  .tour-launch{display:inline-flex;align-items:center;gap:9px;}
+  .tour-launch .ico{width:9px;height:9px;border-radius:50%;background:var(--gold);}
+
+  .tour-overlay{
+    position:fixed;inset:0;background:var(--carbon);z-index:200;
+    display:flex;flex-direction:column;opacity:0;visibility:hidden;
+    transition:opacity .25s ease;
+  }
+  .tour-overlay.open{opacity:1;visibility:visible;}
+
+  .tour-progress{display:flex;gap:5px;padding:14px 14px 0;}
+  .tour-seg{flex:1;height:3px;background:rgba(255,255,255,.25);border-radius:3px;overflow:hidden;}
+  .tour-seg-fill{height:100%;width:0%;background:var(--gold);}
+  .tour-seg-fill.animating{transition:width linear;}
+
+  .tour-topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 6px;color:var(--ivory);}
+  .tour-title{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.8px;text-transform:uppercase;opacity:.85;}
+  .tour-actions{display:flex;gap:8px;}
+  .tour-icon-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);color:var(--ivory);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;}
+  .tour-icon-btn:hover{background:var(--gold);color:var(--carbon);border-color:var(--gold);}
+
+  .tour-stage{position:relative;flex:1;overflow:hidden;}
+  .tour-img-wrap{position:absolute;inset:0;overflow:hidden;background:var(--onyx);}
+  .tour-img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s ease;transform:scale(1);}
+  .tour-img.visible{opacity:1;}
+  .tour-img.kenburns{animation:tourKen 4.5s ease-out forwards;}
+  @keyframes tourKen{from{transform:scale(1.0);}to{transform:scale(1.08);}}
+  @media (prefers-reduced-motion: reduce){
+    .tour-img.kenburns{animation:none;}
+  }
+  .tour-placeholder-label{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-mono);font-size:12px;color:var(--amber);letter-spacing:.5px;
+    background:linear-gradient(135deg,var(--onyx),#2A2A2A);
+  }
+
+  .tour-tap{position:absolute;top:0;bottom:0;width:35%;z-index:2;}
+  .tour-tap-left{left:0;}
+  .tour-tap-right{right:0;}
+
+  .tour-arrow{
+    position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+    background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.3);color:var(--ivory);
+    width:42px;height:42px;border-radius:50%;font-size:22px;display:flex;align-items:center;justify-content:center;
+  }
+  .tour-arrow:hover{background:var(--gold);color:var(--carbon);border-color:var(--gold);}
+  .tour-arrow-left{left:14px;}
+  .tour-arrow-right{right:14px;}
+  @media(max-width:640px){.tour-arrow{display:none;}}
+
+  .tour-caption{
+    position:absolute;left:0;right:0;bottom:0;z-index:3;
+    padding:60px 22px 26px;
+    background:linear-gradient(0deg, rgba(0,0,0,.82) 0%, rgba(0,0,0,.35) 55%, transparent 100%);
+    color:var(--ivory);
+  }
+  .tour-area-name{font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--gold);margin-bottom:6px;}
+  .tour-area-desc{font-size:13.5px;line-height:1.55;max-width:560px;opacity:.92;}
+  .tour-counter{font-family:var(--font-mono);font-size:10.5px;opacity:.7;margin-top:10px;letter-spacing:.5px;}
+
+  body.tour-lock{overflow:hidden;}
+</style>
+</head>
+<body>
+
+<div class="brandbar">
+  <div class="wrap brandbar-inner">
+    <div class="brand">Investments<span>Paraguay</span></div>
+    <nav class="project-switch" id="projectSwitch"></nav>
+    <button class="burger" id="burgerBtn" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-panel" id="mobilePanel">
+    <div class="mobile-panel-inner" id="mobilePanelInner">
+      <a class="mcta" href="#contactForm" id="mobileCta">Solicitar información</a>
+    </div>
+  </div>
+</div>
+
+<div id="app"></div>
+
+<a href="#contactForm" class="sticky-cta" id="stickyCta">
+  <span class="dot"></span> Solicitar información
+</a>
+
+<div class="tour-overlay" id="tourOverlay" aria-hidden="true" role="dialog" aria-label="Recorrido virtual">
+  <div class="tour-progress" id="tourProgress"></div>
+  <div class="tour-topbar">
+    <div class="tour-title" id="tourTopTitle"></div>
+    <div class="tour-actions">
+      <button class="tour-icon-btn" id="tourPauseBtn" aria-label="Pausar recorrido">❚❚</button>
+      <button class="tour-icon-btn" id="tourCloseBtn" aria-label="Cerrar recorrido">✕</button>
+    </div>
+  </div>
+  <div class="tour-stage" id="tourStage">
+    <div class="tour-img-wrap">
+      <img class="tour-img" id="tourImg" alt="">
+      <div class="tour-placeholder-label" id="tourPlaceholder" hidden></div>
+    </div>
+    <div class="tour-tap tour-tap-left" id="tourTapLeft"></div>
+    <div class="tour-tap tour-tap-right" id="tourTapRight"></div>
+    <button class="tour-arrow tour-arrow-left" id="tourPrevBtn" aria-label="Área anterior">‹</button>
+    <button class="tour-arrow tour-arrow-right" id="tourNextBtn" aria-label="Área siguiente">›</button>
+    <div class="tour-caption">
+      <div class="tour-area-name" id="tourAreaName"></div>
+      <div class="tour-area-desc" id="tourAreaDesc"></div>
+      <div class="tour-counter" id="tourCounter"></div>
+    </div>
+  </div>
+</div>
+
+<footer>InvestmentsParaguay — Pantalla premium de proyectos · Plantilla de referencia</footer>
+
+<script>
+/* =========================================================================
+   CARGA DE DATOS
+   -------------------------------------------------------------------------
+   La pantalla se alimenta de ./data.json (ver estructura documentada aparte).
+   Si el archivo no puede leerse (por ejemplo al abrir el .html directamente
+   con doble clic, sin servidor), se usa una copia embebida de respaldo para
+   que la plantilla nunca quede en blanco.
+   ========================================================================= */
+const EMBEDDED_FALLBACK = {"areaCatalog":["Dormitorio principal","Dormitorio secundario","Baño principal (en suite)","Baño social / visitas","Cocina","Comedor","Sala de estar / Living","Lavadero","Cochera / Garage","Balcón / Terraza","Jardín / Patio","Piscina","Quincho / Parrillero","Estudio / Home office","Vestidor / Walk-in closet","Depósito / Baulera","Gimnasio","Salón de usos múltiples (SUM)","Rooftop","Área de juegos infantiles","Cancha deportiva","Espacio pet friendly","Recepción / Lobby","Coworking / Sala de reuniones","Seguridad / Portería 24 hs","Ascensor","Bicicletero","Lavandería compartida","Depósito de residuos / reciclaje","Acceso a costanera / lago"],"projects":[{"id":"haven","name":"The Haven","location":"Highlands Park & Lagoon, San Bernardino","tagline":"Vivir frente a la laguna, a paso del casco histórico de San Bernardino.","overview":"The Haven reúne dos formas de invertir en Highlands Park & Lagoon: un lote con plano de construcción listo para levantar la casa que soñás, o una casa con lote ya terminada, lista para mudarse o alquilar. El desarrollo está pensado para quienes buscan una segunda residencia o una renta con identidad de lago, dentro de un barrio cerrado con espacios verdes, seguridad y acceso a la costanera.","stats":[{"num":"2","label":"Tipologías disponibles"},{"num":"USD 68.000","label":"Desde (lote + plano)"},{"num":"Lista","label":"Casa terminada disponible"}],"areas":[{"name":"Dormitorio principal","desc":"Suite con ventanales hacia el bosque circundante, pensada para maximizar luz natural durante todo el día.","photos":[]},{"name":"Dormitorio secundario","desc":"Dos dormitorios adicionales de buen tamaño, ideales para familia o huéspedes.","photos":[]},{"name":"Sala de estar / Living","desc":"Ambiente integrado con doble altura y salida directa a la galería exterior.","photos":[]},{"name":"Cocina","desc":"Cocina abierta al living-comedor, con isla central y mesada en granito.","photos":[]},{"name":"Jardín / Patio","desc":"Lote con arbolado nativo y espacio verde propio, sin medianeras a la vista.","photos":[]},{"name":"Acceso a costanera / lago","desc":"Circuito peatonal interno del barrio con salida directa a la costanera de la laguna.","photos":[]}],"typologies":[{"name":"Lote + Plano de construcción","desc":"Terreno de 720 m² con proyecto de arquitectura aprobado, listo para iniciar obra.","planImage":"","rooms":"A definir según plano","m2":"720 m² (terreno)","price":"USD 68.000","cochera":false},{"name":"Casa + Lote terminado","desc":"Casa de una planta, 3 dormitorios, entregada llave en mano sobre lote de 850 m².","planImage":"","rooms":"3 dorm. / 2 baños","m2":"180 m² cubiertos · 850 m² terreno","price":"USD 195.000","cochera":true}],"cochera":{"price":"Incluida en Casa + Lote","m2":"36 m² (2 vehículos)"},"financingUrl":"https://docs.google.com/spreadsheets/d/EJEMPLO-THE-HAVEN/edit","developer":{"name":"Highlands Park & Lagoon Desarrollos","role":"Desarrolladora","bio":"Con más de 12 años posicionando a San Bernardino como polo residencial y de inversión, la desarrolladora lleva entregados 6 barrios cerrados en la zona del lago Ypacaraí, con foco en paisajismo y baja densidad."},"constructor":{"name":"Constructora Itá Guazú","role":"Constructora","bio":"Equipo constructor especializado en vivienda unifamiliar de alta gama, con obras entregadas en San Bernardino, Areguá y Luque desde 2011."},"advisor":{"name":"María José Duarte","role":"Asesora inmobiliaria a cargo","bio":"Especialista en propiedades de la zona del lago con más de 8 años de trayectoria. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.","phone":"+595 981 000 000","email":"mj.duarte@investmentsparaguay.com"}},{"id":"oga","name":"Oga","location":"Luque","tagline":"Departamentos de 1, 2 y 3 dormitorios en el corazón de Luque.","overview":"Oga es un complejo de edificios en Luque con unidades de 1D, 2D y 3D pensadas para quienes buscan primera vivienda o renta con alta demanda de alquiler por su cercanía a zonas comerciales y vías de acceso.","stats":[{"num":"3","label":"Tipologías (1D, 2D, 3D)"},{"num":"USD 54.000","label":"Desde"},{"num":"Luque","label":"Ubicación"}],"areas":[{"name":"Dormitorio principal","desc":"Dormitorio con placard empotrado y ventana al exterior.","photos":[]},{"name":"Cocina","desc":"Cocina integrada al comedor, con mesada de granito y muebles bajo mesada.","photos":[]},{"name":"Balcón / Terraza","desc":"Balcón aterrazado en todas las unidades, con espacio para exterior.","photos":[]},{"name":"Salón de usos múltiples (SUM)","desc":"Espacio común para eventos y reuniones de propietarios.","photos":[]},{"name":"Seguridad / Portería 24 hs","desc":"Portería y control de accesos las 24 horas.","photos":[]}],"typologies":[{"name":"1 Dormitorio (1D)","desc":"Unidad compacta ideal para inversión en renta.","planImage":"","rooms":"1 dorm. / 1 baño","m2":"42 m²","price":"USD 54.000","cochera":false},{"name":"2 Dormitorios (2D)","desc":"Unidad familiar con living-comedor amplio.","planImage":"","rooms":"2 dorm. / 2 baños","m2":"68 m²","price":"USD 79.000","cochera":true},{"name":"3 Dormitorios (3D)","desc":"Unidad superior con dependencia de servicio.","planImage":"","rooms":"3 dorm. / 2 baños","m2":"96 m²","price":"USD 118.000","cochera":true}],"cochera":{"price":"USD 6.500","m2":"14 m²"},"financingUrl":"https://docs.google.com/spreadsheets/d/EJEMPLO-OGA/edit","developer":{"name":"Grupo Oga Desarrollos","role":"Desarrolladora","bio":"Desarrolladora enfocada en vivienda urbana vertical en el área metropolitana de Asunción, con proyectos activos en Luque y Fernando de la Mora."},"constructor":{"name":"Constructora del Este","role":"Constructora","bio":"Más de 15 años construyendo edificios residenciales en el Departamento Central, con entregas puntuales certificadas."},"advisor":{"name":"María José Duarte","role":"Asesora inmobiliaria a cargo","bio":"Especialista en propiedades de la zona del lago con más de 8 años de trayectoria. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.","phone":"+595 981 000 000","email":"mj.duarte@investmentsparaguay.com"}},{"id":"paseo-rosario","name":"Paseo Rosario","location":"Luque","tagline":"Complejo de edificios con departamentos disponibles en Luque.","overview":"Paseo Rosario ofrece departamentos en un complejo de edificios en Luque, con áreas comunes pensadas para el día a día y buena conectividad con las principales vías de la ciudad.","stats":[{"num":"2","label":"Tipologías disponibles"},{"num":"USD 58.000","label":"Desde"},{"num":"Luque","label":"Ubicación"}],"areas":[{"name":"Dormitorio principal","desc":"Dormitorio principal con buena ventilación cruzada.","photos":[]},{"name":"Sala de estar / Living","desc":"Living-comedor integrado, ideal para recibir.","photos":[]},{"name":"Lavadero","desc":"Espacio de lavado independiente dentro de la unidad.","photos":[]},{"name":"Recepción / Lobby","desc":"Lobby de acceso con recepción para visitas.","photos":[]}],"typologies":[{"name":"2 Dormitorios (2D)","desc":"Unidad estándar con balcón.","planImage":"","rooms":"2 dorm. / 1 baño","m2":"64 m²","price":"USD 58.000","cochera":false},{"name":"3 Dormitorios (3D)","desc":"Unidad superior con vestidor.","planImage":"","rooms":"3 dorm. / 2 baños","m2":"88 m²","price":"USD 89.000","cochera":true}],"cochera":{"price":"USD 5.800","m2":"13 m²"},"financingUrl":"https://docs.google.com/spreadsheets/d/EJEMPLO-PASEO-ROSARIO/edit","developer":{"name":"Rosario Desarrollos Inmobiliarios","role":"Desarrolladora","bio":"Desarrolladora con foco en proyectos de mediana escala en Luque, orientados a primera vivienda."},"constructor":{"name":"Constructora del Este","role":"Constructora","bio":"Más de 15 años construyendo edificios residenciales en el Departamento Central, con entregas puntuales certificadas."},"advisor":{"name":"María José Duarte","role":"Asesora inmobiliaria a cargo","bio":"Especialista en propiedades de la zona del lago con más de 8 años de trayectoria. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.","phone":"+595 981 000 000","email":"mj.duarte@investmentsparaguay.com"}},{"id":"casa-mood","name":"Casa Mood","location":"Lotes disponibles en Limpio e Itauguá","tagline":"Tu casa lista en 3 meses, financiada con Che Roga Porá.","overview":"Casa Mood es un proyecto habitacional que construye y entrega casas en 3 meses sobre lotes disponibles en Limpio e Itauguá, con financiación a través del programa Che Roga Porá. Pensado para quienes quieren acceder a su primera vivienda con plazos de entrega cortos y financiación accesible.","stats":[{"num":"3 meses","label":"Plazo de entrega"},{"num":"Che Roga Porá","label":"Financiación"},{"num":"2","label":"Zonas: Limpio e Itauguá"}],"areas":[{"name":"Dormitorio principal","desc":"Dormitorio principal con placard.","photos":[]},{"name":"Dormitorio secundario","desc":"Dormitorios adicionales según tipología elegida.","photos":[]},{"name":"Cocina","desc":"Cocina integrada al comedor.","photos":[]},{"name":"Baño social / visitas","desc":"Baño completo con terminaciones estándar del programa.","photos":[]},{"name":"Jardín / Patio","desc":"Patio de servicio en la parte posterior del lote.","photos":[]}],"typologies":[{"name":"Casa 2 dormitorios","desc":"Vivienda de entrega rápida sobre lote propio.","planImage":"","rooms":"2 dorm. / 1 baño","m2":"56 m²","price":"USD 42.000","cochera":false},{"name":"Casa 3 dormitorios","desc":"Vivienda familiar con living-comedor ampliado.","planImage":"","rooms":"3 dorm. / 2 baños","m2":"72 m²","price":"USD 53.000","cochera":false}],"cochera":{"price":"No disponible en esta etapa","m2":"—"},"financingUrl":"https://docs.google.com/spreadsheets/d/EJEMPLO-CASA-MOOD-CHE-ROGA-PORA/edit","developer":{"name":"Casa Mood","role":"Desarrolladora","bio":"Proyecto habitacional enfocado en reducir los tiempos de entrega de vivienda social y de clase media, en articulación con el programa estatal Che Roga Porá."},"constructor":{"name":"Constructora Mood","role":"Constructora","bio":"Equipo constructor especializado en sistemas constructivos de entrega rápida, con procesos estandarizados para cumplir el plazo de 3 meses."},"advisor":{"name":"María José Duarte","role":"Asesora inmobiliaria a cargo","bio":"Especialista en propiedades de la zona del lago con más de 8 años de trayectoria. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.","phone":"+595 981 000 000","email":"mj.duarte@investmentsparaguay.com"}},{"id":"campus","name":"Campus 2 · 3 · 4 (CDE)","location":"Ciudad del Este","tagline":"Residencias de estudiantes en Ciudad del Este.","overview":"Campus 2, Campus 3 y Campus 4 son edificios de departamentos destinados a estudiantes en Ciudad del Este. Campus 2 y 3 ofrecen monoambientes independientes; Campus 4 suma además la posibilidad de comprar un complejo completo de habitaciones independientes con áreas compartidas, pensado para inversores que buscan renta estudiantil.","stats":[{"num":"3","label":"Edificios: Campus 2, 3 y 4"},{"num":"USD 21.000","label":"Monoambiente desde"},{"num":"CDE","label":"Ciudad del Este"}],"areas":[{"name":"Dormitorio principal","desc":"Monoambiente con zona de descanso integrada al estudio.","photos":[]},{"name":"Cocina","desc":"Kitchenette equipada dentro del monoambiente.","photos":[]},{"name":"Estudio / Home office","desc":"Escritorio integrado, pensado para el uso estudiantil diario.","photos":[]},{"name":"Lavandería compartida","desc":"Área de lavado compartida en planta baja del edificio.","photos":[]},{"name":"Coworking / Sala de reuniones","desc":"Sala de estudio grupal disponible para todos los residentes.","photos":[]},{"name":"Seguridad / Portería 24 hs","desc":"Control de accesos 24 horas en los tres edificios.","photos":[]}],"typologies":[{"name":"Monoambiente independiente","desc":"Unidad individual disponible en Campus 2, 3 y 4.","planImage":"","rooms":"Monoambiente","m2":"24 m²","price":"USD 21.000","cochera":false},{"name":"Complejo de habitaciones (solo Campus 4)","desc":"Compra del complejo completo: habitaciones independientes con áreas compartidas, pensado para renta.","planImage":"","rooms":"Múltiples habitaciones + áreas comunes","m2":"Consultar planta completa","price":"Consultar","cochera":false}],"cochera":{"price":"No disponible (proyecto sin cocheras)","m2":"—"},"financingUrl":"https://docs.google.com/spreadsheets/d/EJEMPLO-CAMPUS-CDE/edit","developer":{"name":"Campus Desarrollos Estudiantiles","role":"Desarrolladora","bio":"Desarrolladora especializada en vivienda estudiantil en Ciudad del Este, con foco en unidades pequeñas de alta rotación y buena rentabilidad."},"constructor":{"name":"Constructora Triple Frontera","role":"Constructora","bio":"Constructora con obras entregadas en Ciudad del Este y Hernandarias, especializada en edificios de departamentos compactos."},"advisor":{"name":"María José Duarte","role":"Asesora inmobiliaria a cargo","bio":"Especialista en propiedades de la zona del lago con más de 8 años de trayectoria. Acompaña procesos de inversión de principio a fin: visitas, financiación y escrituración.","phone":"+595 981 000 000","email":"mj.duarte@investmentsparaguay.com"}}]};
+
+let DATA = null;
+let PROJECTS = [];
+let currentProjectId = null;
+
+async function loadData(){
+  try{
+    const res = await fetch('./data.json', {cache:"no-store"});
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    DATA = await res.json();
+  }catch(err){
+    console.warn("No se pudo cargar data.json, usando datos embebidos de respaldo.", err);
+    DATA = EMBEDDED_FALLBACK;
+  }
+  PROJECTS = DATA.projects;
+  currentProjectId = PROJECTS[0].id;
+  renderApp();
+}
+
+function currentProject(){ return PROJECTS.find(x=>x.id===currentProjectId); }
+
+/* ===================== Helpers de UI ===================== */
+function initials(name){
+  return name.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+}
+
+/* Imagen optimizada: lazy + async decode + fallback visual si no hay URL */
+function areaPhotoTile(photo, label){
+  if(photo){
+    return `<div class="area-photo"><img src="${photo}" alt="${label}" loading="lazy" decoding="async" width="300" height="150"></div>`;
+  }
+  return `<div class="area-photo">Foto pendiente</div>`;
+}
+function planTile(planImage, label){
+  if(planImage){
+    return `<img src="${planImage}" alt="Plano ${label}" loading="lazy" decoding="async" width="400" height="300">`;
+  }
+  return "Plano pendiente";
+}
+
+function renderSwitch(){
+  const el = document.getElementById("projectSwitch");
+  el.innerHTML = PROJECTS.map(p =>
+    `<button data-id="${p.id}" class="${p.id===currentProjectId?'active':''}">${p.name}</button>`
+  ).join("");
+  el.querySelectorAll("button").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ selectProject(btn.dataset.id); });
+  });
+
+  const mEl = document.getElementById("mobilePanelInner");
+  mEl.innerHTML = PROJECTS.map(p =>
+    `<button data-id="${p.id}" class="mproj ${p.id===currentProjectId?'active':''}">${p.name}</button>`
+  ).join("") + `<a class="mcta" href="#contactForm" id="mobileCta">Solicitar información</a>`;
+  mEl.querySelectorAll("button.mproj").forEach(btn=>{
+    btn.addEventListener("click", ()=>{ selectProject(btn.dataset.id); closeMobilePanel(); });
+  });
+  mEl.querySelector("#mobileCta").addEventListener("click", closeMobilePanel);
+}
+
+function selectProject(id){
+  currentProjectId = id;
+  renderApp();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ===================== Menú mobile ===================== */
+function closeMobilePanel(){
+  document.getElementById("mobilePanel").classList.remove("open");
+  document.getElementById("burgerBtn").classList.remove("open");
+  document.getElementById("burgerBtn").setAttribute("aria-expanded","false");
+}
+function initBurger(){
+  const burger = document.getElementById("burgerBtn");
+  const panel = document.getElementById("mobilePanel");
+  burger.addEventListener("click", ()=>{
+    const open = panel.classList.toggle("open");
+    burger.classList.toggle("open", open);
+    burger.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+}
+
+/* ===================== Sticky CTA ===================== */
+function initStickyCta(){
+  const cta = document.getElementById("stickyCta");
+  const hero = document.querySelector(".hero");
+  let heroPassed = false;
+  let formVisible = false;
+
+  const updateVisibility = ()=>{
+    cta.classList.toggle("show", heroPassed && !formVisible);
+  };
+
+  if(hero){
+    const heroObs = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{ heroPassed = !e.isIntersecting; });
+      updateVisibility();
+    }, {threshold:0});
+    heroObs.observe(hero);
+  }
+
+  const formEl = document.getElementById("contactForm");
+  if(formEl){
+    const formObs = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{ formVisible = e.isIntersecting; });
+      updateVisibility();
+    }, {threshold:0.2});
+    formObs.observe(formEl);
+  }
+
+  cta.addEventListener("click", (e)=>{
+    e.preventDefault();
+    formEl.scrollIntoView({behavior:"smooth", block:"start"});
+    setTimeout(()=>{ document.getElementById("f_name")?.focus(); }, 400);
+  });
+}
+/* Los observers de sticky CTA se re-inicializan en cada render porque
+   el formulario se recrea; ver renderApp() -> requestAnimationFrame */
+
+/* ===================== Recorrido virtual ===================== */
+let tourSlides = [];
+let tourIndex = 0;
+let tourTimer = null;
+let tourPaused = false;
+const TOUR_SLIDE_MS = 4500;
+
+function buildTourSlides(project){
+  const slides = [];
+  project.areas.forEach((area, areaIdx)=>{
+    const photos = (area.photos && area.photos.length) ? area.photos.slice(0,4) : [null];
+    photos.forEach(photo=>{
+      slides.push({ area, areaIdx, photo });
+    });
+  });
+  return slides;
+}
+
+function openTour(project){
+  tourSlides = buildTourSlides(project);
+  if(!tourSlides.length) return;
+  tourIndex = 0;
+  tourPaused = false;
+
+  const overlay = document.getElementById("tourOverlay");
+  document.getElementById("tourTopTitle").textContent = project.name + " · Recorrido virtual";
+  buildTourProgress();
+  overlay.classList.add("open");
+  overlay.setAttribute("aria-hidden","false");
+  document.body.classList.add("tour-lock");
+  document.getElementById("tourPauseBtn").textContent = "❚❚";
+
+  showTourSlide(0);
+}
+
+function closeTour(){
+  const overlay = document.getElementById("tourOverlay");
+  overlay.classList.remove("open");
+  overlay.setAttribute("aria-hidden","true");
+  document.body.classList.remove("tour-lock");
+  clearTimeout(tourTimer);
+}
+
+function buildTourProgress(){
+  const wrap = document.getElementById("tourProgress");
+  wrap.innerHTML = tourSlides.map(()=>`<div class="tour-seg"><div class="tour-seg-fill"></div></div>`).join("");
+}
+
+function setProgressState(i){
+  const fills = document.querySelectorAll("#tourProgress .tour-seg-fill");
+  fills.forEach((f, idx)=>{
+    f.classList.remove("animating");
+    f.style.transition = "none";
+    if(idx < i){ f.style.width = "100%"; }
+    else if(idx === i){ f.style.width = "0%"; }
+    else { f.style.width = "0%"; }
+  });
+}
+
+function animateCurrentSegment(){
+  const fills = document.querySelectorAll("#tourProgress .tour-seg-fill");
+  const f = fills[tourIndex];
+  if(!f) return;
+  // Forzar reflow para reiniciar la transición
+  void f.offsetWidth;
+  f.style.transition = `width ${TOUR_SLIDE_MS}ms linear`;
+  requestAnimationFrame(()=>{ f.style.width = "100%"; });
+}
+
+/* Precarga solo la siguiente imagen — clave para redes lentas */
+function preloadNext(i){
+  const next = tourSlides[i+1];
+  if(next && next.photo){
+    const img = new Image();
+    img.decoding = "async";
+    img.src = next.photo;
+  }
+}
+
+function showTourSlide(i){
+  clearTimeout(tourTimer);
+  if(i < 0 || i >= tourSlides.length){ closeTour(); return; }
+  tourIndex = i;
+  const slide = tourSlides[i];
+
+  const imgEl = document.getElementById("tourImg");
+  const placeholderEl = document.getElementById("tourPlaceholder");
+
+  imgEl.classList.remove("visible","kenburns");
+
+  const applyKenBurns = ()=>{
+    void imgEl.offsetWidth;
+    imgEl.classList.add("kenburns");
+  };
+
+  if(slide.photo){
+    placeholderEl.hidden = true;
+    imgEl.style.display = "block";
+    imgEl.onload = ()=>{ imgEl.classList.add("visible"); applyKenBurns(); };
+    imgEl.src = slide.photo;
+  }else{
+    imgEl.style.display = "none";
+    placeholderEl.hidden = false;
+    placeholderEl.textContent = "Foto de \"" + slide.area.name + "\" pendiente de carga";
+  }
+
+  document.getElementById("tourAreaName").textContent = slide.area.name;
+  document.getElementById("tourAreaDesc").textContent = slide.area.desc || "";
+  document.getElementById("tourCounter").textContent =
+    `Área ${slide.areaIdx+1} de ${currentProject().areas.length} · Foto ${i+1} de ${tourSlides.length}`;
+
+  setProgressState(i);
+  animateCurrentSegment();
+  preloadNext(i);
+
+  if(!tourPaused){
+    tourTimer = setTimeout(()=> showTourSlide(i+1), TOUR_SLIDE_MS);
+  }
+}
+
+function tourNext(){ showTourSlide(tourIndex+1 >= tourSlides.length ? tourSlides.length-1 : tourIndex+1); if(tourIndex+1>=tourSlides.length){closeTour();} }
+function tourPrev(){ showTourSlide(Math.max(0, tourIndex-1)); }
+
+function toggleTourPause(){
+  tourPaused = !tourPaused;
+  const btn = document.getElementById("tourPauseBtn");
+  if(tourPaused){
+    clearTimeout(tourTimer);
+    const fills = document.querySelectorAll("#tourProgress .tour-seg-fill");
+    const f = fills[tourIndex];
+    if(f){
+      const computed = getComputedStyle(f).width;
+      f.style.transition = "none";
+      f.style.width = computed;
+    }
+    btn.textContent = "▶";
+  }else{
+    btn.textContent = "❚❚";
+    animateCurrentSegment();
+    tourTimer = setTimeout(()=> showTourSlide(tourIndex+1), TOUR_SLIDE_MS);
+  }
+}
+
+function initTourControls(){
+  document.getElementById("tourCloseBtn").addEventListener("click", closeTour);
+  document.getElementById("tourPrevBtn").addEventListener("click", ()=>{ showTourSlide(Math.max(0,tourIndex-1)); });
+  document.getElementById("tourNextBtn").addEventListener("click", ()=>{ tourNext(); });
+  document.getElementById("tourTapLeft").addEventListener("click", ()=>{ showTourSlide(Math.max(0,tourIndex-1)); });
+  document.getElementById("tourTapRight").addEventListener("click", ()=>{ tourNext(); });
+  document.getElementById("tourPauseBtn").addEventListener("click", toggleTourPause);
+
+  document.addEventListener("keydown", (e)=>{
+    const overlay = document.getElementById("tourOverlay");
+    if(!overlay.classList.contains("open")) return;
+    if(e.key === "Escape") closeTour();
+    if(e.key === "ArrowRight") tourNext();
+    if(e.key === "ArrowLeft") showTourSlide(Math.max(0,tourIndex-1));
+    if(e.key === " "){ e.preventDefault(); toggleTourPause(); }
+  });
+
+  /* Swipe táctil */
+  const stage = document.getElementById("tourStage");
+  let touchStartX = 0;
+  stage.addEventListener("touchstart", (e)=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
+  stage.addEventListener("touchend", (e)=>{
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if(Math.abs(dx) < 40) return;
+    if(dx < 0) tourNext(); else showTourSlide(Math.max(0,tourIndex-1));
+  }, {passive:true});
+}
+
+/* ===================== Render principal ===================== */
+function renderApp(){
+  renderSwitch();
+  const p = currentProject();
+  const app = document.getElementById("app");
+
+  app.innerHTML = `
+    <section class="hero">
+      <div class="wrap hero-inner">
+        <div class="eyebrow">Proyecto destacado · InvestmentsParaguay</div>
+        <h1>${p.name}<br><em>${p.tagline}</em></h1>
+        <div class="hero-loc">📍 ${p.location}</div>
+        <div class="hero-pitch">${p.overview}</div>
+        <div class="hero-actions">
+          <button class="btn tour-launch" id="tourLaunchBtn"><span class="ico"></span> Iniciar recorrido virtual</button>
+          <a class="btn btn-ghost-light" href="#contactForm">Solicitar información</a>
+        </div>
+        <div class="stat-row">
+          ${p.stats.map(s=>`<div class="stat"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>`).join("")}
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="wrap">
+        <div class="survey-divider">— espacios del proyecto —</div>
+        <div class="block-head">
+          <div class="block-title">Conocé cada ambiente</div>
+          <div class="block-sub">${p.areas.length} áreas relevadas</div>
+        </div>
+        <div class="areas-grid">
+          ${p.areas.map((a,i)=>`
+            <div class="area-card">
+              <div class="area-photos">
+                ${[0,1,2,3].map(n=>areaPhotoTile(a.photos && a.photos[n], a.name)).join("")}
+              </div>
+              <div class="area-num">${String(i+1).padStart(2,"0")} / ÁREA</div>
+              <div class="area-name">${a.name}</div>
+              <div class="area-desc">${a.desc}</div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </section>
+
+    <section class="block alt">
+      <div class="wrap">
+        <div class="block-head">
+          <div class="block-title">Tipologías disponibles</div>
+          <div class="block-sub">Hasta 4 por proyecto</div>
+        </div>
+        <div class="typo-grid">
+          ${p.typologies.map(t=>`
+            <div class="typo-card">
+              <div class="typo-plan">${planTile(t.planImage, t.name)}</div>
+              <div class="typo-body">
+                <div class="typo-name">${t.name}</div>
+                <div class="typo-desc">${t.desc}</div>
+                <div class="typo-specs">
+                  <span><b>${t.rooms}</b>Ambientes</span>
+                  <span><b>${t.m2}</b>Superficie</span>
+                </div>
+                <div class="typo-price-row">
+                  <div class="typo-price">${t.price}</div>
+                  <div class="cochera-tag ${t.cochera?'cochera-yes':'cochera-no'}">${t.cochera?'Con cochera':'Sin cochera'}</div>
+                </div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="wrap">
+        <div class="two-col">
+          <div class="info-card">
+            <h3>Cochera</h3>
+            <div class="price-big">${p.cochera.price}</div>
+            <div class="m2-tag">${p.cochera.m2}</div>
+          </div>
+          <div class="info-card">
+            <h3>Plan de financiación</h3>
+            <p>Descargá o revisá el detalle de cuotas, plazos y condiciones en la planilla oficial del proyecto.</p>
+            <a class="btn" href="${p.financingUrl}" target="_blank" rel="noopener">Ver planilla de financiación ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block alt">
+      <div class="wrap">
+        <div class="block-head">
+          <div class="block-title">Quiénes están detrás</div>
+        </div>
+        <div class="people-grid">
+          <div class="people-card">
+            <div class="avatar">${initials(p.developer.name)}</div>
+            <div>
+              <div class="people-role">${p.developer.role}</div>
+              <div class="people-name">${p.developer.name}</div>
+              <div class="people-bio">${p.developer.bio}</div>
+            </div>
+          </div>
+          <div class="people-card">
+            <div class="avatar">${initials(p.constructor.name)}</div>
+            <div>
+              <div class="people-role">${p.constructor.role}</div>
+              <div class="people-name">${p.constructor.name}</div>
+              <div class="people-bio">${p.constructor.bio}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="wrap">
+        <div class="advisor-card">
+          <div class="advisor-avatar">${initials(p.advisor.name)}</div>
+          <div>
+            <div class="advisor-role">${p.advisor.role}</div>
+            <div class="advisor-name">${p.advisor.name}</div>
+            <div class="advisor-bio">${p.advisor.bio}</div>
+            <div class="advisor-contacts">
+              <a class="chip" href="tel:${p.advisor.phone.replace(/\\s/g,'')}">${p.advisor.phone}</a>
+              <a class="chip" href="mailto:${p.advisor.email}">${p.advisor.email}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block alt" style="border-bottom:none;">
+      <div class="wrap">
+        <div class="block-head">
+          <div class="block-title">Quiero más información</div>
+        </div>
+        <form class="form-shell" id="contactForm">
+          <div class="field">
+            <label for="f_name">Nombre completo</label>
+            <input type="text" id="f_name" name="name" required>
+          </div>
+          <div class="field">
+            <label for="f_phone">Número de teléfono</label>
+            <input type="tel" id="f_phone" name="phone" required>
+          </div>
+          <div class="field">
+            <label for="f_email">Correo electrónico</label>
+            <input type="email" id="f_email" name="email" required>
+          </div>
+          <div class="field">
+            <label for="f_message">Mensaje</label>
+            <textarea id="f_message" name="message">Estoy interesado en la propiedad "${p.name}"</textarea>
+          </div>
+          <button type="submit" class="btn">Enviar consulta</button>
+          <div class="form-note">Tus datos se envían directamente a la planilla de seguimiento del equipo comercial.</div>
+          <div class="form-status" id="formStatus"></div>
+        </form>
+      </div>
+    </section>
+  `;
+
+  document.getElementById("contactForm").addEventListener("submit", (e)=>onSubmit(e,p));
+  document.getElementById("tourLaunchBtn").addEventListener("click", ()=> openTour(p));
+
+  // El formulario se recreó: hay que re-observarlo para el sticky CTA
+  requestAnimationFrame(initStickyCta);
+}
+
+async function onSubmit(e, project){
+  e.preventDefault();
+  const status = document.getElementById("formStatus");
+  const payload = {
+    name: document.getElementById("f_name").value,
+    phone: document.getElementById("f_phone").value,
+    email: document.getElementById("f_email").value,
+    message: document.getElementById("f_message").value,
+    project: project.name,
+    date: new Date().toISOString()
+  };
+
+  status.className = "form-status";
+  status.textContent = "Enviando...";
+
+  try{
+    const key = "leads:" + Date.now();
+    await window.storage.set(key, JSON.stringify(payload), true);
+
+    // Configurá GOOGLE_SHEETS_WEBHOOK_URL (más abajo) para además enviar
+    // el lead a un Google Sheet real vía Apps Script Web App.
+    if(GOOGLE_SHEETS_WEBHOOK_URL){
+      await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(payload)
+      });
+    }
+
+    status.className = "form-status ok";
+    status.textContent = "¡Gracias! Tu consulta fue enviada, te contactaremos a la brevedad.";
+    e.target.reset();
+    document.getElementById("f_message").value = `Estoy interesado en la propiedad "${project.name}"`;
+  }catch(err){
+    status.className = "form-status err";
+    status.textContent = "No pudimos enviar tu consulta. Probá nuevamente en unos minutos.";
+    console.error(err);
+  }
+}
+
+const GOOGLE_SHEETS_WEBHOOK_URL = ""; // <-- pegar URL del Apps Script Web App
+
+/* ===================== Init ===================== */
+initBurger();
+initTourControls();
+loadData();
+</script>
+</body>
+</html>

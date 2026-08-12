@@ -1,4 +1,9 @@
 import Link from "next/link";
+import {
+  canAccessAdvisors,
+  canCreateAdvisor,
+  isAdvisor,
+} from "@/lib/auth/permissions";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/require-session";
 import DeleteButton from "@/components/virtualoffice/DeleteButton";
@@ -30,8 +35,21 @@ type PageProps = {
 
 export default async function AdvisorsPage({ searchParams }: PageProps) {
   const session = await requireSession();
+  const isAdvisorUser = isAdvisor(session);
   const params = await searchParams;
   const q = params.q?.trim() ?? "";
+  const canCreate = canCreateAdvisor(session);
+
+  if (!canAccessAdvisors(session)) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-semibold">Asesores</h1>
+        <p className="mt-2 text-secondary">
+          No tienes permisos para ver esta sección.
+        </p>
+      </div>
+    );
+  }
 
   const where: {
     deletedAt: null;
@@ -48,15 +66,6 @@ export default async function AdvisorsPage({ searchParams }: PageProps) {
     where.inmobiliariaId = session.inmobiliariaId ?? "__none__";
   } else if (session.role === "ASESOR") {
     where.id = session.advisorId ?? "__none__";
-  } else if (session.role !== "ADMIN") {
-    return (
-      <div className="p-6">
-        <h1 className="text-2xl font-semibold">Asesores</h1>
-        <p className="mt-2 text-secondary">
-          No tienes permisos para ver esta sección.
-        </p>
-      </div>
-    );
   }
 
   if (q) {
@@ -98,15 +107,26 @@ export default async function AdvisorsPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Gestión de perfiles"
-        title="Asesores"
-        description="Gestiona los perfiles públicos, su tenant y el contenido asociado que aparece en el sitio."
+        title={isAdvisorUser ? "Mi perfil público" : "Asesores"}
+        description={
+          isAdvisorUser
+            ? "Revisa tu landing, tu propuesta pública y el contenido vinculado a tu perfil."
+            : "Gestiona los perfiles públicos, su tenant y el contenido asociado que aparece en el sitio."
+        }
         actions={
-          session.role !== "ASESOR" ? (
+          canCreate ? (
             <Link
               href="/virtual-office/asesores/new"
               className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
             >
               + Nuevo asesor
+            </Link>
+          ) : isAdvisorUser && session.advisorId ? (
+            <Link
+              href={`/virtual-office/asesores/${session.advisorId}/edit`}
+              className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+            >
+              Editar mi landing
             </Link>
           ) : null
         }
@@ -161,7 +181,7 @@ export default async function AdvisorsPage({ searchParams }: PageProps) {
               : "Cuando cargues asesores aparecerán aquí con su tenant, contenido y accesos de edición."
           }
           action={
-            session.role !== "ASESOR" ? (
+            canCreate ? (
               <Link
                 href="/virtual-office/asesores/new"
                 className="inline-flex rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"

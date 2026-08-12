@@ -1,13 +1,25 @@
 import { PropertyForm } from "@/components/virtualoffice/properties/PropertyForm";
 import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
+import {
+  canManagePropertyAssignments,
+  canManagePropertyFeatured,
+  isAdvisor,
+} from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import {
   canCreateProperty,
   getPropertyFormOptions,
 } from "@/lib/virtualoffice/properties";
 
-export default async function NewPropertyPage() {
+type NewPropertyPageProps = {
+  searchParams: Promise<{ advisorId?: string }>;
+};
+
+export default async function NewPropertyPage({
+  searchParams,
+}: NewPropertyPageProps) {
   const session = await requireSession();
+  const params = await searchParams;
 
   if (!canCreateProperty(session)) {
     return (
@@ -21,21 +33,26 @@ export default async function NewPropertyPage() {
   }
 
   const options = await getPropertyFormOptions(session);
+  const defaultAdvisorId = params.advisorId?.trim() || "";
 
   return (
     <div>
       <PageHeader
         eyebrow="Portafolio"
         title="Nueva propiedad"
-        description="Creá una propiedad para publicarla en el sitio."
+        description={
+          isAdvisor(session)
+            ? "Crea una propiedad dentro de tu propio alcance. La asignación al asesor y la inmobiliaria derivada se resolverán automáticamente."
+            : "Creá una propiedad y asígnala al asesor o tenant correcto desde el mismo flujo."
+        }
       />
 
       <Card>
         <CardBody>
           <PropertyForm
             mode="create"
-            canManageAssignments={session.role === "ADMIN" || session.role === "INMOBILIARIA"}
-            canManageFeatured={session.role === "ADMIN" || session.role === "INMOBILIARIA"}
+            canManageAssignments={canManagePropertyAssignments(session)}
+            canManageFeatured={canManagePropertyFeatured(session)}
             advisors={options.advisors.map((advisor) => ({
               id: advisor.id,
               label: advisor.fullName,
@@ -45,12 +62,10 @@ export default async function NewPropertyPage() {
               id: item.id,
               label: item.name,
             }))}
-            lockedAdvisorId={session.role === "ASESOR" ? session.advisorId ?? "" : undefined}
-            lockedInmobiliariaId={
-              session.role === "INMOBILIARIA" || session.role === "ASESOR"
-                ? session.inmobiliariaId ?? ""
-                : undefined
-            }
+            initialData={{
+              advisorId: defaultAdvisorId,
+            }}
+            lockedAdvisorId={isAdvisor(session) ? session.advisorId ?? "" : undefined}
           />
         </CardBody>
       </Card>

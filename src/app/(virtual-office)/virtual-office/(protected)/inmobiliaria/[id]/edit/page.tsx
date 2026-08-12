@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card, CardBody, PageHeader } from "@/components/virtualoffice/Page";
+import { canManageInmobiliariaAssignments } from "@/lib/auth/permissions";
 import {
   Table,
   TableShell,
@@ -28,6 +29,14 @@ type PageProps = {
 
 function renderStatus(status?: string) {
   switch (status) {
+    case "created":
+      return "Inmobiliaria creada correctamente.";
+    case "core-updated":
+      return "Datos operativos actualizados correctamente.";
+    case "landing-updated":
+      return "Landing pública actualizada correctamente.";
+    case "updated":
+      return "Inmobiliaria actualizada correctamente.";
     case "user-assigned":
       return "Usuario vinculado correctamente.";
     case "user-unassigned":
@@ -46,6 +55,7 @@ export default async function EditInmobiliariaPage({
   searchParams,
 }: PageProps) {
   const session = await requireInmobiliariaRoles();
+  const canManageAssignments = canManageInmobiliariaAssignments(session);
   const { id } = await params;
   const query = await searchParams;
 
@@ -80,12 +90,20 @@ export default async function EditInmobiliariaPage({
         title="Editar inmobiliaria"
         description="Actualiza la entidad principal y gestiona sus usuarios, asesores y relaciones activas."
         actions={
-          <Link
-            href="/virtual-office/inmobiliaria"
-            className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
-          >
-            Volver
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={`/virtual-office/asesores/new?inmobiliariaId=${id}`}
+              className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+            >
+              Crear asesor para este tenant
+            </Link>
+            <Link
+              href="/virtual-office/inmobiliaria"
+              className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+            >
+              Volver
+            </Link>
+          </div>
         }
       />
 
@@ -143,6 +161,7 @@ export default async function EditInmobiliariaPage({
         <CardBody>
           <InmobiliariaForm
             mode="edit"
+            section="core"
             inmobiliariaId={id}
             initialData={{
               name: inmobiliaria.name,
@@ -150,6 +169,41 @@ export default async function EditInmobiliariaPage({
               description: inmobiliaria.description ?? "",
               logoUrl: inmobiliaria.logoUrl ?? "",
             }}
+          />
+        </CardBody>
+      </Card>
+
+      <Card>
+        <CardBody>
+          <InmobiliariaForm
+            mode="edit"
+            section="landing"
+            inmobiliariaId={id}
+            initialData={{
+              heroTitle: inmobiliaria.landingTheme?.heroTitle ?? "",
+              heroSubtitle: inmobiliaria.landingTheme?.heroSubtitle ?? "",
+              heroCtaLabel: inmobiliaria.landingTheme?.heroCtaLabel ?? "",
+              heroCtaHref: inmobiliaria.landingTheme?.heroCtaHref ?? "",
+              heroBackgroundUrl:
+                inmobiliaria.landingTheme?.heroBackgroundUrl ?? "",
+              contactTitle: inmobiliaria.landingTheme?.contactTitle ?? "",
+              contactEmail: inmobiliaria.landingTheme?.contactEmail ?? "",
+              contactPhone: inmobiliaria.landingTheme?.contactPhone ?? "",
+              contactWhatsapp:
+                inmobiliaria.landingTheme?.contactWhatsapp ?? "",
+              contactWebsite: inmobiliaria.landingTheme?.contactWebsite ?? "",
+              contactAddress: inmobiliaria.landingTheme?.contactAddress ?? "",
+              advisorsTitle: inmobiliaria.landingTheme?.advisorsTitle ?? "",
+              advisorsSubtitle:
+                inmobiliaria.landingTheme?.advisorsSubtitle ?? "",
+              propertiesTitle:
+                inmobiliaria.landingTheme?.propertiesTitle ?? "",
+              propertiesSubtitle:
+                inmobiliaria.landingTheme?.propertiesSubtitle ?? "",
+              featuredPropertyIds:
+                inmobiliaria.landingTheme?.featuredPropertyIds ?? [],
+            }}
+            propertyOptions={inmobiliaria.properties}
           />
         </CardBody>
       </Card>
@@ -165,7 +219,7 @@ export default async function EditInmobiliariaPage({
             </p>
           </div>
 
-          {session.role === "ADMIN" ? (
+          {canManageAssignments ? (
             <form
               action={assignInmobiliariaUserAction.bind(null, id)}
               className="mt-4 flex flex-col gap-3 md:flex-row"
@@ -245,7 +299,7 @@ export default async function EditInmobiliariaPage({
                             >
                               Editar usuario
                             </Link>
-                            {session.role === "ADMIN" && user.role === "INMOBILIARIA" ? (
+                            {canManageAssignments && user.role === "INMOBILIARIA" ? (
                               <form
                                 action={unassignInmobiliariaUserAction.bind(null, id)}
                               >
@@ -281,7 +335,7 @@ export default async function EditInmobiliariaPage({
             </p>
           </div>
 
-          {session.role === "ADMIN" ? (
+          {canManageAssignments ? (
             <form
               action={assignAdvisorToInmobiliariaAction.bind(null, id)}
               className="mt-4 flex flex-col gap-3 md:flex-row"
@@ -363,7 +417,7 @@ export default async function EditInmobiliariaPage({
                             >
                               Editar asesor
                             </Link>
-                            {session.role === "ADMIN" ? (
+                            {canManageAssignments ? (
                               <form
                                 action={unassignAdvisorFromInmobiliariaAction.bind(
                                   null,

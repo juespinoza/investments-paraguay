@@ -5,6 +5,7 @@ interface BaseSectionProps {
   slugify: (value: string) => string;
   slugTouchedRef: React.MutableRefObject<boolean>;
   canEditInmobiliariaId: boolean;
+  inmobiliariaOptions?: Array<{ id: string; label: string }>;
 }
 
 export default function BaseSection({
@@ -14,6 +15,7 @@ export default function BaseSection({
   slugify,
   slugTouchedRef,
   canEditInmobiliariaId,
+  inmobiliariaOptions = [],
 }: BaseSectionProps) {
   return (
     <section className="rounded-xl border border-accent2 bg-white p-4">
@@ -100,12 +102,27 @@ export default function BaseSection({
 
         {canEditInmobiliariaId ? (
           <div>
-            <label className="text-sm text-secondary">Inmobiliaria ID</label>
-            <input
-              {...register("inmobiliariaId")}
-              className="mt-1 w-full rounded-md border px-3 py-2"
-              placeholder="cuid..."
-            />
+            <label className="text-sm text-secondary">Inmobiliaria</label>
+            {inmobiliariaOptions.length > 0 ? (
+              <select
+                {...register("inmobiliariaId")}
+                className="mt-1 w-full rounded-md border px-3 py-2"
+                defaultValue=""
+              >
+                <option value="">Asesor independiente / sin asignar</option>
+                {inmobiliariaOptions.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                {...register("inmobiliariaId")}
+                className="mt-1 w-full rounded-md border px-3 py-2"
+                placeholder="cuid..."
+              />
+            )}
           </div>
         ) : null}
       </div>

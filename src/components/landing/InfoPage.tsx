@@ -18,14 +18,14 @@ export function InfoPageIntro({
     <section className="px-4 py-8 md:py-10">
       <div className="container-page">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
-          <div className="section-shell bg-[linear-gradient(135deg,#0f1726_0%,#18253d_52%,#243653_100%)] px-6 py-8 text-white shadow-[0_24px_80px_rgba(15,23,38,0.18)] md:px-10 md:py-12">
-            <div className="eyebrow border-white/16 bg-white/10 text-white">
+          <div className="section-shell bg-[linear-gradient(135deg,var(--carbon)_0%,var(--onyx)_100%)] px-6 py-8 text-[var(--ivory)] shadow-[0_24px_80px_rgba(10,10,10,0.18)] md:px-10 md:py-12">
+            <div className="eyebrow border-[rgba(191,168,130,0.35)] bg-[rgba(250,250,248,0.08)] text-[var(--ivory)]">
               {eyebrow}
             </div>
             <h1 className="mt-6 max-w-4xl text-4xl font-semibold tracking-tight md:text-6xl">
               {title}
             </h1>
-            <p className="mt-6 max-w-3xl text-base leading-8 text-white/78 md:text-lg">
+            <p className="mt-6 max-w-3xl text-base leading-8 text-[rgba(250,250,248,0.78)] md:text-lg">
               {description}
             </p>
           </div>

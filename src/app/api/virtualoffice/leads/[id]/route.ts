@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { canManageLeadStatus } from "@/lib/auth/permissions";
 import { getSession } from "@/lib/auth/session";
 import { updateLeadStatus } from "@/lib/leads/repo";
 
@@ -14,7 +15,7 @@ export async function PATCH(req: Request, { params }: Params) {
   if (!session)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (session.role !== "ADMIN" && session.role !== "INMOBILIARIA") {
+  if (!canManageLeadStatus(session)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

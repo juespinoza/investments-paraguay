@@ -96,7 +96,7 @@ export function HomePageContent() {
             {pillars.map((item) => (
               <div
                 key={item}
-                className="rounded-2xl border border-[rgba(20,32,51,0.08)] bg-[rgba(20,32,51,0.05)] p-5"
+                className="rounded-2xl border border-[var(--line)] bg-[var(--stone)] p-5"
               >
                 <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-accent1">
                   {t("home.pillarsEyebrow")}

@@ -21,6 +21,7 @@ import {
   buildBlogListWhere,
   canCreateBlogPost,
   canDeleteBlogPost,
+  deriveBlogOwnershipFromRecord,
 } from "@/lib/virtualoffice/blog";
 import {
   paginateItems,
@@ -58,20 +59,28 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       id: true,
       title: true,
       slug: true,
+      ownerType: true,
+      ownerId: true,
       authorRole: true,
+      advisorId: true,
+      inmobiliariaId: true,
       updatedAt: true,
       advisor: { select: { fullName: true } },
       inmobiliaria: { select: { name: true } },
     },
   });
+  const itemsWithOwnership = items.map((item) => ({
+    ...item,
+    ...deriveBlogOwnershipFromRecord(item),
+  }));
   const pagination = resolvePagination(
     {
       page: params.page,
       perPage: params.perPage,
     },
-    items.length,
+    itemsWithOwnership.length,
   );
-  const paginatedItems = paginateItems(items, pagination);
+  const paginatedItems = paginateItems(itemsWithOwnership, pagination);
 
   return (
     <div>
@@ -82,7 +91,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         meta={
           <div className="flex flex-wrap gap-2">
             <Badge tone="info">{session.role}</Badge>
-            <Badge tone="default">{items.length} posts</Badge>
+            <Badge tone="default">{itemsWithOwnership.length} posts</Badge>
           </div>
         }
         actions={
@@ -100,17 +109,17 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="Posts visibles"
-          value={items.length}
+          value={itemsWithOwnership.length}
           hint="Posts dentro del scope del usuario actual."
         />
         <StatCard
           label="Con asesor"
-          value={items.filter((item) => item.advisor?.fullName).length}
+          value={itemsWithOwnership.filter((item) => item.ownerType === "advisor").length}
           hint="Contenido atribuido a asesores."
         />
         <StatCard
           label="Con inmobiliaria"
-          value={items.filter((item) => item.inmobiliaria?.name).length}
+          value={itemsWithOwnership.filter((item) => item.ownerType === "inmobiliaria").length}
           hint="Posts ligados a una inmobiliaria concreta."
         />
         <StatCard
@@ -144,7 +153,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         </Link>
       </FilterBar>
 
-      {items.length === 0 ? (
+      {itemsWithOwnership.length === 0 ? (
         <EmptyState
           title="Todavía no hay posts para esta vista"
           description="Crea el primer artículo o abre el filtro para revisar otro subconjunto del blog."
@@ -185,14 +194,14 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   <Td>
                     <Badge
                       tone={
-                        item.authorRole === "ASESOR"
+                        item.ownerType === "advisor"
                           ? "success"
-                          : item.authorRole === "INMOBILIARIA"
+                          : item.ownerType === "inmobiliaria"
                             ? "warning"
                             : "info"
                       }
                     >
-                      {item.authorRole}
+                      {item.ownerType}
                     </Badge>
                   </Td>
                   <Td>

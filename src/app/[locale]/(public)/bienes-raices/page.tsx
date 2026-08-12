@@ -22,7 +22,8 @@ export async function generateMetadata({
 
   const seoByLocale = {
     en: {
-      title: "Real Estate Investment in Paraguay | Apartments, Land and Projects",
+      title:
+        "Real Estate Investment in Paraguay | Apartments, Land and Projects",
       description:
         "Find apartments, land, houses and investment projects in Paraguay with professional advisory for local and international buyers.",
       keywords: [
@@ -34,7 +35,8 @@ export async function generateMetadata({
       ],
     },
     es: {
-      title: "Inversión Inmobiliaria en Paraguay | Departamentos, terrenos y proyectos",
+      title:
+        "Inversión Inmobiliaria en Paraguay | Departamentos, terrenos y proyectos",
       description:
         "Encuentre departamentos, terrenos, casas y proyectos inmobiliarios en Paraguay con asesoría profesional para compradores locales e internacionales.",
       keywords: [
@@ -46,7 +48,8 @@ export async function generateMetadata({
       ],
     },
     pt: {
-      title: "Investimento Imobiliário no Paraguai | Apartamentos, terrenos e projetos",
+      title:
+        "Investimento Imobiliário no Paraguai | Apartamentos, terrenos e projetos",
       description:
         "Encontre apartamentos, terrenos, casas e projetos imobiliários no Paraguai com assessoria profissional para compradores locais e internacionais.",
       keywords: [
@@ -58,7 +61,8 @@ export async function generateMetadata({
       ],
     },
     de: {
-      title: "Immobilieninvestitionen in Paraguay | Wohnungen, Grundstücke und Projekte",
+      title:
+        "Immobilieninvestitionen in Paraguay | Wohnungen, Grundstücke und Projekte",
       description:
         "Finden Sie Wohnungen, Grundstücke, Häuser und Immobilienprojekte in Paraguay mit professioneller Beratung für lokale und internationale Käufer.",
       keywords: [
@@ -183,7 +187,7 @@ export default async function BienesRaicesPage({ searchParams }: PageProps) {
         </div>
       </section>
 
-      <section className="px-4 pb-4">
+      {/* <section className="px-4 pb-4">
         <div className="container-page">
           <div className="section-shell surface-card p-4 md:p-6">
             <h2 className="text-2xl font-semibold text-primary">
@@ -202,7 +206,7 @@ export default async function BienesRaicesPage({ searchParams }: PageProps) {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <FeaturedGrid title={t("realEstate.availableTitle")} items={items} />
     </>
