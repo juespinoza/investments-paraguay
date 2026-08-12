@@ -525,7 +525,9 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
         <div className={styles.wrap}>
           <div className={styles.blockHead}>
             <div className={styles.blockTitle}>Tipologías disponibles</div>
-            <div className={styles.blockSub}>Hasta 4 por proyecto</div>
+            <div className={styles.blockSub}>
+              {project.typologies.length} áreas relevadas
+            </div>
           </div>
           <div className={styles.typoGrid}>
             {project.typologies.map((typology) => (

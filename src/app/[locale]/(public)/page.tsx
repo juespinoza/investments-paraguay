@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { HomePageContent } from "@/components/landing/HomePageContent";
 import { buildMetadata } from "@/lib/seo";
-import { SUPPORTED_LOCALES, type AppLocale } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isSupportedLocale, type AppLocale } from "@/lib/i18n";
 
 export default function HomePage() {
   return <HomePageContent />;
@@ -71,9 +71,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const resolvedLocale = SUPPORTED_LOCALES.includes(locale as AppLocale)
-    ? (locale as AppLocale)
-    : "en";
+  const resolvedLocale = isSupportedLocale(locale) ? locale : DEFAULT_LOCALE;
   const seo = homeSeoByLocale[resolvedLocale];
 
   return buildMetadata({
