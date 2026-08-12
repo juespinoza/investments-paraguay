@@ -11,6 +11,8 @@
   --copper: #bfa882;
   --sand: #f5f3ef;
   --line: rgba(191, 168, 130, 0.4);
+  --skyone-blue: #06326b;
+  --skyone-gray: #798490;
   --font-inter: var(--font-primary);
   --font-playfair: var(--font-brand);
   --font-display: var(--font-playfair), serif;
@@ -98,8 +100,8 @@
 
 .projectSwitch button.active,
 .mobileProject.active {
-  border-color: var(--carbon);
-  background: var(--carbon);
+  border-color: var(--skyone-blue);
+  background: var(--skyone-blue);
   color: var(--ivory);
 }
 
@@ -180,8 +182,8 @@
   overflow: hidden;
   background: linear-gradient(
     160deg,
-    var(--lagoon-deep) 0%,
-    var(--lagoon) 100%
+    var(--skyone-blue) 0%,
+    var(--carbon) 100%
   );
   color: var(--ivory);
   padding: 64px 0 48px;
@@ -226,13 +228,17 @@
 }
 
 .heroLoc {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   margin-bottom: 26px;
   font-size: 14.5px;
   opacity: 0.85;
 }
 
-.heroLoc::before {
-  content: "Ubicación: ";
+.heroLoc svg {
+  flex: none;
+  color: var(--gold);
 }
 
 .heroPitch {
@@ -256,7 +262,7 @@
   align-items: center;
   gap: 8px;
   border: 1px solid var(--carbon);
-  background: var(--carbon);
+  background: var(--skyone-blue);
   color: var(--ivory);
   padding: 12px 20px;
   text-decoration: none;
@@ -301,8 +307,8 @@
   6%,
   12%,
   100% {
-    border-color: var(--carbon);
-    background: var(--carbon);
+    border-color: var(--skyone-blue);
+    background: var(--skyone-blue);
     box-shadow: none;
     color: var(--ivory);
   }
@@ -706,7 +712,7 @@
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 22px;
-  background: var(--lagoon-deep);
+  background: var(--skyone-blue);
   color: var(--ivory);
   padding: 32px;
 }
@@ -849,7 +855,7 @@
   gap: 10px;
   border: 1px solid var(--carbon);
   border-radius: 100px;
-  background: var(--carbon);
+  background: var(--skyone-blue);
   color: var(--ivory);
   padding: 14px 24px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);

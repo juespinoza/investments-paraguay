@@ -1,5 +1,6 @@
 "use client";
 
+import { MapPin } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./expo-projects.module.css";
 
@@ -456,6 +457,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
             <em className="text-2xl">{project.tagline}</em>
           </h1>
           <div className={styles.heroLoc}>
+            <MapPin aria-hidden="true" size={16} strokeWidth={1.8} />
             <a
               href={project.locationLink}
               target="_blank"
