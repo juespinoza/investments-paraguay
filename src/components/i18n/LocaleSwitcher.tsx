@@ -1,22 +1,27 @@
 "use client";
 
 import { cn } from "@/lib/cn";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { isAnalyticsEnabled } from "@/lib/analytics";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { DEFAULT_LOCALE, type AppLocale } from "@/lib/i18n";
 
-type LocaleOption = { value: AppLocale; icon: string; label: string };
+type LocaleOption = { value: AppLocale; label: string };
 
 const LOCALES: LocaleOption[] = [
-  { value: "es", icon: "🇵🇾", label: "Español" },
+  { value: "es", label: "ES" },
 ];
 
-// TODO(i18n): Reactivar estas opciones cuando sus contenidos estén traducidos.
-// { value: "en", icon: "🇺🇸", label: "English" }
-// { value: "pt", icon: "🇧🇷", label: "Português" }
-// { value: "de", icon: "🇩🇪", label: "Deutsch" }
+const DISPLAY_LOCALES: Array<
+  LocaleOption | { value: "en"; label: string; disabled: true }
+> = [
+  ...LOCALES,
+  // TODO(i18n): Reactivar "en" como AppLocale soportado cuando el contenido
+  // esté traducido. Se muestra para preservar la dirección visual solicitada,
+  // pero no navega mientras routing solo soporte "es".
+  { value: "en", label: "EN", disabled: true },
+];
 
 function isSupportedLocale(value: string | undefined): value is AppLocale {
   return LOCALES.some((locale) => locale.value === value);
@@ -35,7 +40,6 @@ function readCookieLocale(): AppLocale {
 }
 
 export function LocaleSwitcher({
-  showLabel = false,
   className,
 }: {
   showLabel?: boolean;
@@ -46,31 +50,10 @@ export function LocaleSwitcher({
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<AppLocale>(DEFAULT_LOCALE);
-  const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setSelected(readCookieLocale());
-  }, []);
-
-  useEffect(() => {
-    function onDocMouseDown(e: MouseEvent) {
-      const el = rootRef.current;
-      if (!el) return;
-      if (e.target instanceof Node && !el.contains(e.target)) setOpen(false);
-    }
-
-    function onDocKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
-    }
-
-    document.addEventListener("mousedown", onDocMouseDown);
-    document.addEventListener("keydown", onDocKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", onDocMouseDown);
-      document.removeEventListener("keydown", onDocKeyDown);
-    };
   }, []);
 
   const selectedLocale = useMemo(() => {
@@ -78,7 +61,6 @@ export function LocaleSwitcher({
   }, [selected]);
 
   function pick(locale: AppLocale) {
-    setOpen(false);
     setSelected(locale);
 
     if (typeof window !== "undefined" && isAnalyticsEnabled() && window.gtag) {
@@ -95,81 +77,54 @@ export function LocaleSwitcher({
     });
   }
 
-  if (LOCALES.length === 1) {
-    return (
-      <div className={cn("relative inline-flex", className)}>
-        <div
-          className="inline-flex h-10 items-center gap-2 rounded-lg border border-soft bg-[var(--ivory)] px-3 text-sm font-medium text-primary"
-          aria-label="Idioma disponible: Español"
-          title="Idioma disponible: Español"
-        >
-          <span className="text-base">{selectedLocale.icon}</span>
-          {showLabel ? (
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
-              {selectedLocale.value}
-            </span>
-          ) : null}
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div ref={rootRef} className={cn("relative inline-flex", className)}>
-      <button
-        type="button"
-        disabled={isPending}
-        onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-10 items-center gap-2 rounded-lg border border-soft bg-[var(--ivory)] px-3 text-sm font-medium text-primary disabled:opacity-60"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-label="Select language"
-        data-analytics-event="locale_switcher_open"
-        data-analytics-category="i18n"
-        data-analytics-label={selectedLocale.value}
-      >
-        <span className="text-base">{selectedLocale.icon}</span>
-        {showLabel ? (
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
-            {selectedLocale.value}
-          </span>
-        ) : null}
-        <span aria-hidden className="text-xs text-secondary">
-          ▾
-        </span>
-      </button>
-
-      {open && (
-        <div
-          role="menu"
-          aria-label="Select language"
-          className="absolute right-0 top-full z-50 mt-2 w-16 overflow-hidden rounded-lg border border-soft bg-[rgba(250,250,248,0.98)] shadow-[0_18px_48px_rgba(10,10,10,0.16)] backdrop-blur-xl"
-        >
-          {LOCALES.map((l) => {
-            const active = l.value === selected;
-            return (
-              <button
-                key={l.value}
-                type="button"
-                role="menuitem"
-                onClick={() => pick(l.value)}
-                disabled={isPending}
-                className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-[var(--stone)] disabled:opacity-60 ${
-                  active ? "bg-[var(--stone)] text-primary" : "text-secondary"
-                }`}
-                aria-label={l.label}
-              >
-                <span className="text-base">{l.icon}</span>
-                {active ? (
-                  <span className="text-lg text-accent1" aria-hidden>
-                    •
-                  </span>
-                ) : null}
-              </button>
-            );
-          })}
-        </div>
+    <div
+      className={cn(
+        "inline-flex h-8 items-center gap-2 text-[13px] font-medium uppercase tracking-[0.05em]",
+        className,
       )}
+      aria-label={`Idioma actual: ${selectedLocale.label}`}
+    >
+      {DISPLAY_LOCALES.map((locale, index) => {
+        const supported = isSupportedLocale(locale.value);
+        const active = locale.value === selected;
+
+        return (
+          <span key={locale.value} className="inline-flex items-center gap-2">
+            <button
+              type="button"
+              disabled={isPending || !supported}
+              onClick={() => {
+                if (supported) pick(locale.value);
+              }}
+              className={cn(
+                "text-[13px] font-medium uppercase tracking-[0.05em] transition-colors duration-150 disabled:cursor-default",
+                active
+                  ? "text-primary"
+                  : "text-muted hover:text-primary disabled:hover:text-muted",
+                !supported && "opacity-55",
+              )}
+              aria-current={active ? "true" : undefined}
+              aria-disabled={!supported}
+              title={
+                supported
+                  ? locale.label
+                  : "TODO(i18n): habilitar cuando exista contenido en inglés."
+              }
+              data-analytics-event="language_change"
+              data-analytics-category="i18n"
+              data-analytics-label={locale.value}
+            >
+              {locale.label}
+            </button>
+            {index < DISPLAY_LOCALES.length - 1 ? (
+              <span aria-hidden className="text-muted opacity-50">
+                |
+              </span>
+            ) : null}
+          </span>
+        );
+      })}
     </div>
   );
 }
