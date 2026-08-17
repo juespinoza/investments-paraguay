@@ -2,16 +2,23 @@ import { apiGet } from "@/lib/api/public";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
-import { LeadCaptureForm } from "@/components/leads/LeadCaptureForm";
 import { resolveLocale } from "@/lib/content/public-pages";
-import { PropertyAdvisorCard } from "@/components/landing/property-detail/PropertyAdvisorCard";
+import { PropertyContactSidebar } from "@/components/landing/property-detail/PropertyContactSidebar";
 import { PropertyImageGallery } from "@/components/landing/property-detail/PropertyImageGallery";
-import { PropertySpecs } from "@/components/landing/property-detail/PropertySpecs";
 import { PropertyMap } from "@/components/PropertyMap";
 import {
   RichPropertyText,
   toPlainPropertyText,
 } from "@/components/landing/property-detail/RichPropertyText";
+import { Link } from "@/i18n/navigation";
+import {
+  Bath,
+  Bed,
+  Building2,
+  MapPin,
+  Maximize2,
+  type LucideIcon,
+} from "lucide-react";
 
 export const revalidate = 120;
 
@@ -45,6 +52,15 @@ type PublicPropertyDetail = {
 };
 
 type PageProps = { params: Promise<{ locale: string; slug: string }> };
+
+function textValue(value: string | null | undefined) {
+  const normalized = value?.trim();
+  return normalized || null;
+}
+
+function numberValue(value: number | null | undefined) {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
 
 export async function generateMetadata({
   params,
@@ -105,172 +121,176 @@ export default async function PropertyPage({ params }: PageProps) {
   ].filter(Boolean);
   const mapProperties =
     property.latitude !== null && property.longitude !== null
-    ? [
-        {
-          slug: property.slug,
-          title: property.title,
-          coverImageUrl: property.coverImageUrl,
-          priceUsd: property.priceUsd,
-          latitude: property.latitude,
-          longitude: property.longitude,
-        },
-      ]
-    : [];
+      ? [
+          {
+            slug: property.slug,
+            title: property.title,
+            coverImageUrl: property.coverImageUrl,
+            priceUsd: property.priceUsd,
+            latitude: property.latitude,
+            longitude: property.longitude,
+          },
+        ]
+      : [];
   const hasCoordinates = mapProperties.length > 0;
-  const investmentStats = [
-    property.priceUsd
+  const validAreaM2 = numberValue(property.areaM2);
+  const validBathrooms = numberValue(property.bathrooms);
+  const featureTags = [
+    textValue(property.propertyType)
       ? {
-          label: "Precio",
-          value: `USD ${property.priceUsd.toLocaleString("en-US")}`,
+          label: "Tipo",
+          value: textValue(property.propertyType),
+          icon: Building2,
         }
       : null,
-    property.roiAnnualPct !== null
+    validAreaM2 !== null
       ? {
-          label: "ROI Anual aproximado",
-          value: `${property.roiAnnualPct.toFixed(2)}%`,
+          label: "Superficie",
+          value: `${validAreaM2.toLocaleString("es-PY")} m²`,
+          icon: Maximize2,
         }
       : null,
-    property.appreciationAnnualPct !== null
+    textValue(property.bedrooms)
       ? {
-          label: "Plusvalía Anual aproximada",
-          value: `${property.appreciationAnnualPct.toFixed(2)}%`,
+          label: "Dormitorios",
+          value: textValue(property.bedrooms),
+          icon: Bed,
         }
       : null,
-  ].filter(Boolean) as Array<{ label: string; value: string }>;
+    validBathrooms !== null
+      ? {
+          label: "Baños",
+          value: String(validBathrooms),
+          icon: Bath,
+        }
+      : null,
+  ].filter(Boolean) as Array<{
+    label: string;
+    value: string;
+    icon: LucideIcon;
+  }>;
 
   return (
     <>
-      <section className="px-4 py-8 md:py-10">
-        <div className="container-page">
-          <div className="border-b border-soft pb-8">
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-4xl">
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="eyebrow">Propiedad</div>
-                  {property.propertyType ? (
-                    <span className="rounded-full border border-soft bg-[var(--stone)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                      {property.propertyType}
-                    </span>
-                  ) : null}
-                </div>
-                <h1 className="mt-5 text-4xl font-semibold tracking-tight text-primary md:text-6xl">
-                  {property.title}
-                </h1>
-                {locationParts.length ? (
-                  <p className="mt-4 text-base leading-7 text-secondary">
-                    {locationParts.join(", ")}
-                  </p>
-                ) : null}
-              </div>
-
-              {property.priceUsd ? (
-                <div className="surface-card min-w-[230px] rounded-[1.5rem] p-5 lg:text-right">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">
-                    Precio desde
-                  </p>
-                  <p className="mt-2 text-3xl font-semibold text-primary">
-                    USD {property.priceUsd.toLocaleString("en-US")}
-                  </p>
-                </div>
-              ) : null}
-            </div>
-          </div>
-        </div>
-      </section>
-
       <PropertyImageGallery
         title={property.title}
         coverImageUrl={property.coverImageUrl}
         gallery={property.gallery}
       />
 
-      <PropertySpecs
-        propertyType={property.propertyType}
-        bedrooms={property.bedrooms}
-        bathrooms={property.bathrooms}
-        areaM2={property.areaM2}
-      />
+      <section className="px-4 pb-12 pt-2 md:px-6 md:pb-16">
+        <div className="mx-auto grid max-w-[1280px] gap-10 lg:grid-cols-[minmax(0,65fr)_minmax(320px,35fr)] lg:gap-12">
+          <div>
+            <nav
+              aria-label="Breadcrumb"
+              className="flex flex-wrap items-center gap-2 text-[12px] text-muted"
+            >
+              <Link href="/" className="transition-colors hover:text-primary">
+                Inicio
+              </Link>
+              <span aria-hidden="true">/</span>
+              <Link
+                href="/bienes-raices"
+                className="transition-colors hover:text-primary"
+              >
+                Bienes raíces
+              </Link>
+              <span aria-hidden="true">/</span>
+              <span className="text-primary">{property.title}</span>
+            </nav>
 
-      {property.description || investmentStats.length ? (
-        <section className="px-4 py-8 md:py-10">
-          <div className="container-page">
-            <div className="surface-card rounded-[1.75rem] p-6 md:p-8">
-              {property.description ? (
-                <>
-                  <h2 className="text-3xl font-semibold tracking-tight text-primary">
-                    Sobre la propiedad
-                  </h2>
-                  <div className="mt-5">
-                    <RichPropertyText value={property.description} />
-                  </div>
-                </>
-              ) : null}
-
-              {investmentStats.length ? (
-                <div className="mt-8 grid gap-4 border-t border-soft pt-6 md:grid-cols-3">
-                  {investmentStats.map((stat) => (
-                    <div
-                      key={stat.label}
-                      className="rounded-[1.25rem] border border-soft bg-[var(--stone)] p-4"
-                    >
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-accent1">
-                        {stat.label}
-                      </p>
-                      <p className="mt-3 text-2xl font-semibold text-primary">
-                        {stat.value}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : null}
+            <div className="mt-6">
+              <span className="inline-flex rounded-[2px] bg-[rgba(10,10,10,0.72)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-white">
+                En venta
+              </span>
             </div>
-          </div>
-        </section>
-      ) : null}
 
-      {hasCoordinates ? (
-        <section className="px-4 pb-4">
-          <div className="container-page section-shell surface-card p-4 md:p-6">
-            <h2 className="text-2xl font-semibold text-primary">
-              Mapa de ubicación
-            </h2>
-            <p className="mt-2 text-sm text-secondary">
-              Ubicación exacta por coordenadas geográficas.
-            </p>
-            <div className="mt-4">
-              <PropertyMap properties={mapProperties} />
-            </div>
-          </div>
-        </section>
-      ) : null}
+            <h1 className="mt-5 font-cormorant text-[36px] font-normal leading-[1.1] text-primary">
+              {property.title}
+            </h1>
 
-      <section className="px-4 py-8">
-        <div className="container-page grid gap-8 lg:grid-cols-12 lg:items-start">
-          <div className="rounded-[1.75rem] border border-soft bg-[linear-gradient(180deg,var(--ivory)_0%,var(--stone)_100%)] p-6 shadow-[0_18px_48px_rgba(10,10,10,0.1)] md:p-8 lg:col-span-7">
-            <div className="max-w-2xl">
-              <div className="eyebrow">Contacto</div>
-              <h2 className="mt-5 text-3xl font-semibold tracking-tight text-primary">
-                Solicitar información
-              </h2>
-              <p className="mt-3 text-sm leading-7 text-secondary">
-                Recibí asesoría y detalles de esta oportunidad de inversión.
-              </p>
-              <div className="mt-6">
-                <LeadCaptureForm
-                  compact
-                  sourcePage={`/bienes-raices/propiedades/${property.slug}`}
-                  propertySlug={property.slug}
-                  advisorSlug={property.advisor?.slug}
+            {locationParts.length ? (
+              <p className="mt-4 flex items-start gap-2 text-[15px] leading-7 text-secondary">
+                <MapPin
+                  size={18}
+                  strokeWidth={1.8}
+                  className="mt-1 shrink-0 text-[var(--gold)]"
+                  aria-hidden="true"
                 />
+                <span>{locationParts.join(", ")}</span>
+              </p>
+            ) : null}
+
+            {featureTags.length ? (
+              <div className="mt-7 flex flex-wrap gap-3">
+                {featureTags.map((tag) => {
+                  const Icon = tag.icon;
+
+                  return (
+                    <div
+                      key={tag.label}
+                      className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--stone)] px-4 py-2 text-[13px] text-primary"
+                    >
+                      <Icon
+                        size={15}
+                        strokeWidth={1.8}
+                        className="text-[var(--gold)]"
+                        aria-hidden="true"
+                      />
+                      <span className="font-medium">{tag.value}</span>
+                    </div>
+                  );
+                })}
               </div>
+            ) : null}
+
+            <div className="mt-8 lg:hidden">
+              <PropertyContactSidebar
+                priceUsd={property.priceUsd}
+                roiAnnualPct={property.roiAnnualPct}
+                propertySlug={property.slug}
+                advisor={property.advisor}
+              />
             </div>
+
+            <div className="my-8 h-px bg-[var(--line)]" />
+
+            {property.description ? (
+              <section>
+                <h2 className="font-cormorant text-[30px] font-normal text-primary">
+                  Sobre la propiedad
+                </h2>
+                <div className="mt-5 text-base leading-[1.8] text-secondary">
+                  <RichPropertyText value={property.description} />
+                </div>
+              </section>
+            ) : null}
+
+            {hasCoordinates ? (
+              <section className="mt-10">
+                <h2 className="font-cormorant text-[30px] font-normal text-primary">
+                  Ubicación
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-secondary">
+                  Ubicación exacta por coordenadas geográficas.
+                </p>
+                <div className="mt-5">
+                  <PropertyMap properties={mapProperties} />
+                </div>
+              </section>
+            ) : null}
           </div>
 
-          {property.advisor ? (
-            <div className="lg:col-span-5">
-              <PropertyAdvisorCard advisor={property.advisor} />
+          <div className="hidden lg:block">
+            <div className="lg:sticky lg:top-[88px]">
+              <PropertyContactSidebar
+                priceUsd={property.priceUsd}
+                roiAnnualPct={property.roiAnnualPct}
+                propertySlug={property.slug}
+                advisor={property.advisor}
+              />
             </div>
-          ) : null}
+          </div>
         </div>
       </section>
     </>
