@@ -83,6 +83,7 @@ export async function generateMetadata({
     description: seo.description,
     pathname: "/bienes-raices",
     locale,
+    image: "/images/og-home.jpg",
     keywords: [...seo.keywords],
   });
 }

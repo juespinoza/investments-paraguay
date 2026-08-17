@@ -7,6 +7,7 @@ import { StructuredData } from "@/components/seo/StructuredData";
 import { PropertyContactSidebar } from "@/components/landing/property-detail/PropertyContactSidebar";
 import { PropertyImageGallery } from "@/components/landing/property-detail/PropertyImageGallery";
 import { PropertyMap } from "@/components/PropertyMap";
+import { buildCloudinaryOpenGraphImageUrl } from "@/lib/cloudinary";
 import { buildRealEstateListingJsonLd } from "@/lib/structured-data";
 import {
   RichPropertyText,
@@ -96,7 +97,9 @@ export async function generateMetadata({
     description,
     pathname: `/bienes-raices/propiedades/${slug}`,
     locale: resolvedLocale,
-    image: property.coverImageUrl || "/images/logo.png",
+    image:
+      buildCloudinaryOpenGraphImageUrl(property.coverImageUrl) ||
+      "/images/logo.png",
     keywords: [
       property.title,
       property.city ?? "paraguay",

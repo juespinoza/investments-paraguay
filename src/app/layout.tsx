@@ -14,6 +14,7 @@ export const metadata: Metadata = {
       "Explore real estate investment opportunities, business ideas and strategic advisory for investors in Paraguay.",
     pathname: "/",
     locale: "en",
+    image: "/images/og-home.jpg",
     keywords: [
       "investments in Paraguay",
       "real estate Paraguay",

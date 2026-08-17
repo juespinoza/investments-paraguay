@@ -39,6 +39,27 @@ function buildLanguageAlternates(pathname: string) {
   };
 }
 
+function resolveMetadataImageUrl(image: string) {
+  if (image.startsWith("http://") || image.startsWith("https://")) {
+    return image;
+  }
+
+  if (image.startsWith("/")) {
+    return `${SITE_URL}${image}`;
+  }
+
+  const cloudName =
+    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "din9bhvas";
+  const publicId = image
+    .split("/")
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+  const versionPrefix = /^v\d+\//.test(publicId) ? "" : "v1/";
+
+  return `https://res.cloudinary.com/${cloudName}/image/upload/c_fill,w_1200,h_630,g_center/f_auto/q_auto/${versionPrefix}${publicId}`;
+}
+
 export function buildMetadata({
   title,
   description,
@@ -50,7 +71,7 @@ export function buildMetadata({
 }: SeoInput): Metadata {
   const localizedPath = withLocalePrefix(locale, pathname);
   const url = normalizeUrl(localizedPath);
-  const imageUrl = image.startsWith("http") ? image : `${SITE_URL}${image}`;
+  const imageUrl = resolveMetadataImageUrl(image);
 
   return {
     metadataBase: new URL(SITE_URL),
