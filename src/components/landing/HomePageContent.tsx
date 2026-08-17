@@ -1,4 +1,5 @@
 import { HeroSplit } from "@/components/landing/HeroSplit";
+import { FeaturedPropertiesSection } from "@/components/landing/FeaturedPropertiesSection";
 import { WhyParaguaySection } from "@/components/landing/WhyParaguaySection";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { SITE_URL } from "@/lib/seo";
@@ -36,6 +37,7 @@ export function HomePageContent() {
       <StructuredData data={[organizationJsonLd, websiteJsonLd]} />
       <HeroSplit backgroundImageUrl="/backgrounds/asuncion-hero-1672.webp" />
       <WhyParaguaySection />
+      <FeaturedPropertiesSection />
     </>
   );
 }
