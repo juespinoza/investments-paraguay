@@ -75,6 +75,7 @@ export async function generateMetadata({
     description: seo.description,
     pathname: "/blog",
     locale,
+    image: "/images/og-home.jpg",
     keywords: [...seo.keywords],
   });
 }

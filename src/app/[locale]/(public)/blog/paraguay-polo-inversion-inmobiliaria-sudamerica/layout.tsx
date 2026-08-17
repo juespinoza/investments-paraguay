@@ -11,7 +11,7 @@ const baseMetadata = buildMetadata({
     "Paraguay gana atractivo para inversión inmobiliaria por estabilidad, inflación controlada e incentivos. Claves, riesgos y checklist para invertir mejor.",
   pathname,
   locale: "es",
-  image: "/images/logo.png",
+  image: "/images/og-home.jpg",
   keywords: [
     "inversiones Paraguay",
     "inversión inmobiliaria Paraguay",
