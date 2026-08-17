@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import {
   DEFAULT_LOCALE,
-  SUPPORTED_LOCALES,
   type AppLocale,
 } from "@/lib/i18n";
 
 export const SITE_URL = "https://www.investmentsparaguay.com";
 export const SITE_NAME = "Investments Paraguay";
+export const SEO_LOCALES = ["es", "en"] as const;
 
 type SeoInput = {
   title: string;
@@ -31,11 +31,14 @@ function withLocalePrefix(locale: AppLocale, pathname: string) {
 
 function buildLanguageAlternates(pathname: string) {
   const languages = Object.fromEntries(
-    SUPPORTED_LOCALES.map((locale) => [locale, withLocalePrefix(locale, pathname)]),
+    SEO_LOCALES.map((locale) => [
+      locale,
+      normalizeUrl(withLocalePrefix(locale, pathname)),
+    ]),
   );
   return {
     ...languages,
-    "x-default": withLocalePrefix(DEFAULT_LOCALE, pathname),
+    "x-default": normalizeUrl(withLocalePrefix(DEFAULT_LOCALE, pathname)),
   };
 }
 

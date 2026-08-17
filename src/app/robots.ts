@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/virtual-office/", "/admin/", "/private/"],
+        disallow: ["/api/", "/admin/", "/virtual-office/", "/_next/"],
       },
     ],
     sitemap: "https://www.investmentsparaguay.com/sitemap.xml",
