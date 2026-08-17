@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { buildWhatsAppHref } from "@/lib/whatsapp";
 
 type Props = {
   backgroundImageUrl: string;
@@ -12,9 +13,9 @@ type Props = {
   ctaLabel?: string;
   ctaHref?: string;
   logoLeftUrl?: string;
+  locale?: string;
 };
 
-const WHATSAPP_URL = "https://wa.me/595985444801";
 const ASUNCION_HERO_IMAGES = {
   sm: "/backgrounds/asuncion-hero-768.webp",
   md: "/backgrounds/asuncion-hero-1280.webp",
@@ -25,20 +26,31 @@ function isInternalPath(href: string) {
   return href.startsWith("/") && !href.startsWith("//");
 }
 
+function isWhatsAppHref(href: string) {
+  return href.includes("wa.me/") || href.includes("api.whatsapp.com/");
+}
+
+function normalizeWhatsAppHref(href: string, locale?: string) {
+  return isWhatsAppHref(href) ? buildWhatsAppHref(href, locale) : href;
+}
+
 function PrimaryCta({
   href,
+  locale,
   children,
 }: {
   href: string;
+  locale?: string;
   children: React.ReactNode;
 }) {
+  const normalizedHref = normalizeWhatsAppHref(href, locale);
   const className =
-    "inline-flex items-center justify-center rounded-[2px] bg-[var(--gold)] px-8 py-3.5 text-[13px] font-medium uppercase tracking-[0.06em] text-[var(--carbon)] transition-colors duration-150 hover:bg-[var(--ivory)]";
+    "inline-flex items-center justify-center rounded-xs bg-(--gold) px-8 py-3.5 text-[13px] font-medium uppercase tracking-[0.06em] text-(--carbon) transition-colors duration-150 hover:bg-(--ivory)";
 
-  if (isInternalPath(href)) {
+  if (isInternalPath(normalizedHref)) {
     return (
       <Link
-        href={href}
+        href={normalizedHref}
         className={className}
         data-analytics-event="cta_click"
         data-analytics-category="hero"
@@ -52,10 +64,12 @@ function PrimaryCta({
 
   return (
     <a
-      href={href}
+      href={normalizedHref}
       className={className}
-      target={href.startsWith("http") ? "_blank" : undefined}
-      rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+      target={normalizedHref.startsWith("http") ? "_blank" : undefined}
+      rel={
+        normalizedHref.startsWith("http") ? "noopener noreferrer" : undefined
+      }
       data-analytics-event="cta_click"
       data-analytics-category="hero"
       data-analytics-label="primary"
@@ -74,14 +88,14 @@ export function HeroSplit({
   subtitle,
   ctaLabel,
   ctaHref,
+  locale,
 }: Props) {
   const eyebrow =
     brandLeft || brandRight
       ? [brandLeft, brandRight].filter(Boolean).join(" ")
       : "Inversión en Paraguay";
   const headline =
-    title ??
-    "Vivir, crecer e invertir donde el mercado aún tiene margen real.";
+    title ?? "Vivir, crecer e invertir donde el mercado aún tiene margen real.";
   const subheadline =
     subtitle ??
     "Selección exclusiva de propiedades e inversiones en Paraguay, con acompañamiento estratégico local.";
@@ -119,27 +133,29 @@ export function HeroSplit({
       </picture>
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.45)_0%,rgba(0,0,0,0.65)_100%)]" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[1280px] items-center px-4 py-24 md:px-6">
-        <div className="mx-auto max-w-[680px] text-center">
-          <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.15em] text-[var(--gold)]">
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl items-center px-4 py-24 md:px-6">
+        <div className="mx-auto max-w-170 text-center">
+          <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.15em] text-(--gold)">
             {eyebrow}
           </p>
 
-          <h1 className="mb-6 font-cormorant text-[36px] font-normal leading-[1.15] text-[var(--ivory)] md:text-[56px]">
+          <h1 className="mb-6 font-cormorant text-[36px] font-normal leading-[1.15] text-(--ivory) md:text-[56px]">
             {headline}
           </h1>
 
-          <p className="mx-auto mb-10 max-w-[620px] text-[18px] leading-8 text-[var(--ivory)] opacity-80">
+          <p className="mx-auto mb-10 max-w-155 text-[18px] leading-8 text-(--ivory) opacity-80">
             {subheadline}
           </p>
 
           <div className="flex flex-col justify-center gap-3 sm:flex-row">
-            <PrimaryCta href={primaryHref}>{primaryLabel}</PrimaryCta>
+            <PrimaryCta href={primaryHref} locale={locale}>
+              {primaryLabel}
+            </PrimaryCta>
             <a
-              href={WHATSAPP_URL}
+              href={buildWhatsAppHref(undefined, locale)}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-[2px] border border-[var(--ivory)] bg-transparent px-8 py-3.5 text-[13px] font-medium uppercase tracking-[0.06em] text-[var(--ivory)] transition-colors duration-150 hover:bg-[rgba(255,255,255,0.12)]"
+              className="inline-flex items-center justify-center rounded-xs border border-(--ivory) bg-transparent px-8 py-3.5 text-[13px] font-medium uppercase tracking-[0.06em] text-(--ivory) transition-colors duration-150 hover:bg-[rgba(255,255,255,0.12)]"
               data-analytics-event="cta_click"
               data-analytics-category="hero"
               data-analytics-label="advisor"
@@ -151,7 +167,7 @@ export function HeroSplit({
         </div>
       </div>
 
-      <div className="pointer-events-none absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-[var(--ivory)] opacity-60">
+      <div className="pointer-events-none absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-(--ivory) opacity-60">
         <ChevronDown
           size={28}
           strokeWidth={1.5}

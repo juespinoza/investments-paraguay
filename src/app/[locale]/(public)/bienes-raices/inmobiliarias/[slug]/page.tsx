@@ -8,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { resolveLocale } from "@/lib/content/public-pages";
 import { Link } from "@/i18n/navigation";
 import { parseInmobiliariaLandingTheme } from "@/lib/virtualoffice/inmobiliarias";
+import { buildWhatsAppHref } from "@/lib/whatsapp";
 
 type PageProps = { params: Promise<{ locale: string; slug: string }> };
 
@@ -43,7 +44,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export const revalidate = 300;
 
 export default async function AgencyLandingPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const resolvedLocale = resolveLocale(locale);
   const agency = await prisma.inmobiliaria.findUnique({
     where: { slug, deletedAt: null },
     select: {
@@ -134,7 +136,7 @@ export default async function AgencyLandingPage({ params }: PageProps) {
       ? {
           label: "WhatsApp",
           value: landingTheme.contactWhatsapp,
-          href: `https://wa.me/${landingTheme.contactWhatsapp.replace(/\D/g, "")}`,
+          href: buildWhatsAppHref(landingTheme.contactWhatsapp, resolvedLocale),
         }
       : null,
     landingTheme?.contactWebsite
@@ -173,6 +175,7 @@ export default async function AgencyLandingPage({ params }: PageProps) {
           landingTheme?.heroBackgroundUrl ?? "/backgrounds/asuncion-hero-1672.webp"
         }
         logoLeftUrl={agency.logoUrl ?? undefined}
+        locale={resolvedLocale}
       />
 
       <section className="px-4 py-8 md:py-10">
@@ -219,7 +222,7 @@ export default async function AgencyLandingPage({ params }: PageProps) {
       {contactItems.length ? (
         <section className="px-4 py-8 md:py-10">
           <div className="container-page">
-            <div className="rounded-[1.9rem] border border-soft bg-[var(--ivory)] p-6 shadow-[0_18px_60px_rgba(10,10,10,0.06)]">
+            <div className="rounded-[1.9rem] border border-soft bg-(--ivory) p-6 shadow-[0_18px_60px_rgba(10,10,10,0.06)]">
               <SectionTitle
                 title={landingTheme?.contactTitle ?? "Contacto de la inmobiliaria"}
                 subtitle="Canales directos para consultas comerciales, coordinación de visitas y seguimiento."

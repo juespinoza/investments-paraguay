@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale } from "next-intl";
 import { Send } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { ImageCloudinary } from "@/components/ui/ImageCloudinary";
+import { buildWhatsAppHref } from "@/lib/whatsapp";
 
 type Advisor = {
   slug: string;
@@ -31,22 +33,6 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-function whatsappHref(value: string | null) {
-  const trimmed = value?.trim();
-  if (!trimmed) return "https://wa.me/595985444801";
-
-  if (
-    trimmed.startsWith("http") ||
-    trimmed.startsWith("mailto:") ||
-    trimmed.startsWith("tel:")
-  ) {
-    return trimmed;
-  }
-
-  const digits = trimmed.replace(/\D/g, "");
-  return digits ? `https://wa.me/${digits}` : "https://wa.me/595985444801";
-}
-
 function formatPrice(priceUsd: number | null) {
   if (priceUsd === null) return "Precio a consultar";
 
@@ -67,6 +53,7 @@ export function PropertyContactSidebar({
   propertySlug,
   advisor,
 }: PropertyContactSidebarProps) {
+  const locale = useLocale();
   const [formOpen, setFormOpen] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -119,22 +106,22 @@ export function PropertyContactSidebar({
   }
 
   return (
-    <aside className="rounded-[8px] border border-soft bg-[var(--ivory)] p-6 shadow-[0_18px_48px_rgba(10,10,10,0.08)]">
+    <aside className="rounded-lg border border-soft bg-(--ivory) p-6 shadow-[0_18px_48px_rgba(10,10,10,0.08)]">
       <p className="font-cormorant text-[32px] font-normal leading-none text-primary">
         {formatPrice(priceUsd)}
       </p>
 
       {roi ? (
-        <span className="mt-4 inline-flex rounded-[2px] bg-[rgba(191,168,130,0.22)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.05em] text-[var(--carbon)]">
+        <span className="mt-4 inline-flex rounded-xs bg-[rgba(191,168,130,0.22)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.05em] text-(--carbon)">
           {roi}
         </span>
       ) : null}
 
-      <div className="my-6 h-px bg-[var(--line)]" />
+      <div className="my-6 h-px bg-(--line)" />
 
       {advisor ? (
         <div className="flex items-center gap-3">
-          <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-soft bg-[var(--stone)] text-sm font-semibold text-primary">
+          <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-soft bg-(--stone) text-sm font-semibold text-primary">
             {advisor.photoUrl ? (
               <ImageCloudinary
                 imageUrl={advisor.photoUrl}
@@ -164,10 +151,13 @@ export function PropertyContactSidebar({
 
       <div className="mt-6 grid gap-3">
         <a
-          href={whatsappHref(advisor?.whatsapp ?? advisor?.phone ?? null)}
+          href={buildWhatsAppHref(
+            advisor?.whatsapp ?? advisor?.phone ?? undefined,
+            locale,
+          )}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[2px] bg-[var(--gold)] px-4 text-[13px] font-semibold uppercase tracking-[0.06em] text-[var(--carbon)] transition-colors duration-150 hover:bg-[var(--carbon)] hover:text-[var(--ivory)]"
+          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xs bg-(--gold) px-4 text-[13px] font-semibold uppercase tracking-[0.06em] text-(--carbon) transition-colors duration-150 hover:bg-(--carbon) hover:text-(--ivory)"
         >
           <FaWhatsapp size={17} aria-hidden="true" />
           Consultar por WhatsApp
@@ -176,7 +166,7 @@ export function PropertyContactSidebar({
         <button
           type="button"
           onClick={() => setFormOpen((current) => !current)}
-          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[2px] border border-[var(--line)] px-4 text-[13px] font-semibold uppercase tracking-[0.06em] text-primary transition-colors duration-150 hover:border-[var(--gold)] hover:text-[var(--gold)]"
+          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xs border border-(--line) px-4 text-[13px] font-semibold uppercase tracking-[0.06em] text-primary transition-colors duration-150 hover:border-(--gold) hover:text-(--gold)"
           aria-expanded={formOpen}
         >
           <Send size={15} strokeWidth={1.8} aria-hidden="true" />
@@ -190,7 +180,7 @@ export function PropertyContactSidebar({
             required
             value={fullName}
             onChange={(event) => setFullName(event.currentTarget.value)}
-            className="h-11 rounded-[2px] border border-soft bg-white/80 px-3 text-sm outline-none transition-colors focus:border-[var(--gold)]"
+            className="h-11 rounded-xs border border-soft bg-white/80 px-3 text-sm outline-none transition-colors focus:border-(--gold)"
             placeholder="Nombre"
           />
           <input
@@ -198,13 +188,13 @@ export function PropertyContactSidebar({
             type="email"
             value={email}
             onChange={(event) => setEmail(event.currentTarget.value)}
-            className="h-11 rounded-[2px] border border-soft bg-white/80 px-3 text-sm outline-none transition-colors focus:border-[var(--gold)]"
+            className="h-11 rounded-xs border border-soft bg-white/80 px-3 text-sm outline-none transition-colors focus:border-(--gold)"
             placeholder="Email"
           />
           <textarea
             value={notes}
             onChange={(event) => setNotes(event.currentTarget.value)}
-            className="min-h-[96px] resize-none rounded-[2px] border border-soft bg-white/80 px-3 py-3 text-sm outline-none transition-colors focus:border-[var(--gold)]"
+            className="min-h-24 resize-none rounded-xs border border-soft bg-white/80 px-3 py-3 text-sm outline-none transition-colors focus:border-(--gold)"
             placeholder="Mensaje"
             rows={3}
           />
@@ -213,8 +203,8 @@ export function PropertyContactSidebar({
             <p
               className={
                 status.type === "success"
-                  ? "rounded-[4px] bg-emerald-50 px-3 py-2 text-xs text-emerald-700"
-                  : "rounded-[4px] bg-red-50 px-3 py-2 text-xs text-red-700"
+                  ? "rounded-sm bg-emerald-50 px-3 py-2 text-xs text-emerald-700"
+                  : "rounded-sm bg-red-50 px-3 py-2 text-xs text-red-700"
               }
             >
               {status.text}
@@ -224,7 +214,7 @@ export function PropertyContactSidebar({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex h-11 items-center justify-center rounded-[2px] bg-[var(--carbon)] px-4 text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--ivory)] transition-colors duration-150 hover:bg-[var(--gold)] hover:text-[var(--carbon)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex h-11 items-center justify-center rounded-xs bg-(--carbon) px-4 text-[12px] font-semibold uppercase tracking-[0.08em] text-(--ivory) transition-colors duration-150 hover:bg-(--gold) hover:text-(--carbon) disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting ? "Enviando..." : "Enviar consulta"}
           </button>

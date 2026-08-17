@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Menu, X } from "lucide-react";
 import { LocaleSwitcher } from "../i18n/LocaleSwitcher";
 import { cn } from "@/lib/cn";
 import { Link, usePathname } from "@/i18n/navigation";
+import { buildWhatsAppHref } from "@/lib/whatsapp";
 
 const HEADER_BORDER = "border-[rgba(191,168,130,0.35)]";
 const ITEM_BORDER = "border-[rgba(191,168,130,0.28)]";
@@ -13,6 +14,7 @@ const ITEM_DIVIDER = "divide-[rgba(191,168,130,0.28)]";
 
 export function NavBar() {
   const t = useTranslations();
+  const locale = useLocale();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const links = [
@@ -52,16 +54,16 @@ export function NavBar() {
     );
 
   const ctaClass =
-    "inline-flex items-center justify-center rounded-[2px] border border-current px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.05em] text-primary transition-colors duration-150 hover:bg-[var(--carbon)] hover:text-[var(--ivory)]";
+    "inline-flex items-center justify-center rounded-xs border border-current px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.05em] text-primary transition-colors duration-150 hover:bg-(--carbon) hover:text-(--ivory)";
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 border-b-[0.5px] bg-[var(--ivory)]",
+        "sticky top-0 z-50 border-b-[0.5px] bg-(--ivory)",
         HEADER_BORDER,
       )}
     >
-      <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-4 md:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
         <Link
           href="/"
           className="flex min-w-0 items-center gap-3"
@@ -81,7 +83,7 @@ export function NavBar() {
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-[var(--line)] bg-transparent text-primary transition-colors duration-150 hover:bg-[var(--carbon)] hover:text-[var(--ivory)]"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-xs border border-(--line) bg-transparent text-primary transition-colors duration-150 hover:bg-(--carbon) hover:text-(--ivory)"
             aria-label={t("header.openMenu")}
           >
             <Menu size={18} />
@@ -108,7 +110,7 @@ export function NavBar() {
           <LocaleSwitcher showLabel className="shrink-0" />
 
           <Link
-            href="https://wa.me/595985444801"
+            href={buildWhatsAppHref(undefined, locale)}
             target="_blank"
             className={ctaClass}
             data-analytics-event="cta_click"
@@ -131,7 +133,7 @@ export function NavBar() {
 
           <div
             className={cn(
-              "fixed inset-x-0 top-16 z-50 border-b-[0.5px] bg-[var(--ivory)] px-4 md:hidden",
+              "fixed inset-x-0 top-16 z-50 border-b-[0.5px] bg-(--ivory) px-4 md:hidden",
               HEADER_BORDER,
             )}
           >
@@ -156,7 +158,7 @@ export function NavBar() {
               <button
                 type="button"
                 onClick={close}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-[var(--line)] bg-transparent text-primary transition-colors duration-150 hover:bg-[var(--carbon)] hover:text-[var(--ivory)]"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xs border border-(--line) bg-transparent text-primary transition-colors duration-150 hover:bg-(--carbon) hover:text-(--ivory)"
                 aria-label={t("header.closeMenu")}
               >
                 <X size={18} />
@@ -203,7 +205,7 @@ export function NavBar() {
             </nav>
 
             <Link
-              href="https://wa.me/595985444801"
+              href={buildWhatsAppHref(undefined, locale)}
               target="_blank"
               className={cn("my-4 w-full", ctaClass)}
               data-analytics-event="cta_click"

@@ -1,8 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { resolveLocale } from "@/lib/content/public-pages";
-
-const WHATSAPP_URL = "https://wa.me/595985444801";
+import { buildWhatsAppHref } from "@/lib/whatsapp";
 
 type FooterLink = {
   href:
@@ -38,7 +37,7 @@ function FooterLinks({
           <Link
             href={link.href}
             locale={locale}
-            className="text-sm text-[var(--stone)] opacity-80 transition-colors duration-150 hover:text-[var(--gold)] hover:opacity-100"
+            className="text-sm text-(--stone) opacity-80 transition-colors duration-150 hover:text-(--gold) hover:opacity-100"
           >
             {link.label}
           </Link>
@@ -51,6 +50,7 @@ function FooterLinks({
 export async function Footer() {
   const t = await getTranslations();
   const locale = resolveLocale(await getLocale());
+  const whatsappHref = buildWhatsAppHref(undefined, locale);
 
   const platformLinks: FooterLink[] = [
     { href: "/", label: t("header.home") },
@@ -66,14 +66,14 @@ export async function Footer() {
   ];
 
   return (
-    <footer className="bg-[linear-gradient(180deg,var(--carbon)_0%,var(--onyx)_100%)] text-[var(--ivory)]">
-      <div className="border-t border-[var(--gold)]">
-        <div className="mx-auto grid max-w-[1280px] gap-10 px-4 py-12 md:px-6 md:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr] lg:gap-14 lg:py-14">
+    <footer className="bg-[linear-gradient(180deg,var(--carbon)_0%,var(--onyx)_100%)] text-(--ivory)">
+      <div className="border-t border-(--gold)">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 md:px-6 md:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr] lg:gap-14 lg:py-14">
           <section>
             <div className="brand text-ivory">
               Investments<span>Paraguay</span>
             </div>
-            <p className="mt-5 max-w-sm text-sm leading-7 text-[var(--stone)] opacity-80">
+            <p className="mt-5 max-w-sm text-sm leading-7 text-(--stone) opacity-80">
               Oportunidades exclusivas, contexto local y una forma más clara de
               invertir en Paraguay.
             </p>
@@ -99,21 +99,21 @@ export async function Footer() {
               <SectionTitle>Contacto directo</SectionTitle>
               <div className="mt-4 space-y-3">
                 <a
-                  href={WHATSAPP_URL}
+                  href={whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-sm font-semibold text-[var(--stone)] transition-colors duration-150 hover:text-[var(--gold)]"
+                  className="block text-sm font-semibold text-(--stone) transition-colors duration-150 hover:text-(--gold)"
                 >
                   +595 985 444 801
                 </a>
-                <p className="text-sm leading-6 text-[var(--stone)] opacity-70">
+                <p className="text-sm leading-6 text-(--stone) opacity-70">
                   Lunes a viernes, 8:00 – 18:00
                 </p>
                 <a
-                  href={WHATSAPP_URL}
+                  href={whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex rounded-[2px] border border-current px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.05em] text-[var(--ivory)] transition-colors duration-150 hover:bg-[var(--ivory)] hover:text-[var(--carbon)]"
+                  className="inline-flex rounded-xs border border-current px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.05em] text-(--ivory) transition-colors duration-150 hover:bg-(--ivory) hover:text-(--carbon)"
                 >
                   {t("header.cta")}
                 </a>
@@ -123,7 +123,7 @@ export async function Footer() {
         </div>
       </div>
 
-      <div className="bg-[var(--carbon)] px-4 py-4 text-center text-xs text-muted md:px-6">
+      <div className="bg-(--carbon) px-4 py-4 text-center text-xs text-muted md:px-6">
         © 2025 Investments Paraguay · Todos los derechos reservados
       </div>
     </footer>

@@ -16,11 +16,14 @@ const websiteJsonLd = {
   },
 };
 
-export function HomePageContent() {
+export function HomePageContent({ locale }: { locale?: string }) {
   return (
     <>
       <StructuredData data={websiteJsonLd} />
-      <HeroSplit backgroundImageUrl="/backgrounds/asuncion-hero-1672.webp" />
+      <HeroSplit
+        backgroundImageUrl="/backgrounds/asuncion-hero-1672.webp"
+        locale={locale}
+      />
       <WhyParaguaySection />
       <FeaturedPropertiesSection />
     </>

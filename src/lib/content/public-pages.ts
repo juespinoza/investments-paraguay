@@ -1,4 +1,5 @@
 import type { AppLocale } from "@/lib/i18n";
+import { buildWhatsAppHref } from "@/lib/whatsapp";
 
 type Section = {
   title: string;
@@ -920,7 +921,7 @@ export const contactPageContent: Record<AppLocale, ContactContent> = {
       {
         label: "WhatsApp",
         value: "+595 985 444 801",
-        href: "https://wa.me/595985444801",
+        href: buildWhatsAppHref(undefined, "en"),
         description: "Primary direct channel for commercial follow-up.",
       },
       {
@@ -996,7 +997,7 @@ export const contactPageContent: Record<AppLocale, ContactContent> = {
       {
         label: "WhatsApp",
         value: "+595 985 444 801",
-        href: "https://wa.me/595985444801",
+        href: buildWhatsAppHref(undefined, "es"),
         description:
           "Canal principal de contacto directo para seguimiento comercial.",
       },
@@ -1073,7 +1074,7 @@ export const contactPageContent: Record<AppLocale, ContactContent> = {
       {
         label: "WhatsApp",
         value: "+595 985 444 801",
-        href: "https://wa.me/595985444801",
+        href: buildWhatsAppHref(undefined, "es"),
         description:
           "Canal principal de contato direto para acompanhamento comercial.",
       },
@@ -1150,7 +1151,7 @@ export const contactPageContent: Record<AppLocale, ContactContent> = {
       {
         label: "WhatsApp",
         value: "+595 985 444 801",
-        href: "https://wa.me/595985444801",
+        href: buildWhatsAppHref(undefined, "es"),
         description:
           "Primärer direkter Kanal für die geschäftliche Nachverfolgung.",
       },

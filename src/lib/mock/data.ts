@@ -1,4 +1,5 @@
 import { metadata } from "@/app/layout";
+import { DEFAULT_WHATSAPP_HREF } from "@/lib/whatsapp";
 import { title } from "process";
 import { FaWhatsapp, FaInstagram, FaFacebookF, FaTiktok } from "react-icons/fa";
 import { SocialLink } from "../data/types";
@@ -85,7 +86,7 @@ export const mockAdvisorLanding = {
     {
       label: "WhatsApp",
       value: "+595 985 444 801",
-      href: "https://wa.me/595985444801",
+      href: DEFAULT_WHATSAPP_HREF,
       icon: "whatsapp",
     },
     {

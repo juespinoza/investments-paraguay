@@ -3,8 +3,15 @@ import { HomePageContent } from "@/components/landing/HomePageContent";
 import { buildMetadata } from "@/lib/seo";
 import { DEFAULT_LOCALE, isSupportedLocale, type AppLocale } from "@/lib/i18n";
 
-export default function HomePage() {
-  return <HomePageContent />;
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const resolvedLocale = isSupportedLocale(locale) ? locale : DEFAULT_LOCALE;
+
+  return <HomePageContent locale={resolvedLocale} />;
 }
 
 const homeSeoByLocale: Record<

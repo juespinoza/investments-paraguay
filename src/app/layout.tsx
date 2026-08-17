@@ -5,6 +5,7 @@ import { getLocale } from "next-intl/server";
 import { buildMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { buildOrganizationJsonLd } from "@/lib/structured-data";
+import { WhatsAppFloat } from "@/components/landing/WhatsAppFloat";
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -45,6 +46,7 @@ export default async function RootLayout({
       <body className={`${dmSans.variable} ${cormorantGaramond.variable}`}>
         <StructuredData data={buildOrganizationJsonLd()} />
         {children}
+        <WhatsAppFloat />
       </body>
     </html>
   );

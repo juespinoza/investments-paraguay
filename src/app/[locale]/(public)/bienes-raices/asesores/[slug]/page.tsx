@@ -57,7 +57,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function AdvisorLandingPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const resolvedLocale = resolveLocale(locale);
 
   const d = await apiGet<PublicAdvisorLanding>(
     `/api/public/asesores/${slug}`,
@@ -94,6 +95,7 @@ export default async function AdvisorLandingPage({ params }: PageProps) {
         ctaLabel={d.ctaLabel ?? "Contactar"}
         ctaHref={d.ctaHref ?? "#"}
         backgroundImageUrl={d.heroBgUrl ?? "/backgrounds/office.jpg"}
+        locale={resolvedLocale}
       />
 
       <AboutSection
