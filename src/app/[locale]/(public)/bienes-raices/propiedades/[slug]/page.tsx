@@ -3,9 +3,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 import { resolveLocale } from "@/lib/content/public-pages";
+import { StructuredData } from "@/components/seo/StructuredData";
 import { PropertyContactSidebar } from "@/components/landing/property-detail/PropertyContactSidebar";
 import { PropertyImageGallery } from "@/components/landing/property-detail/PropertyImageGallery";
 import { PropertyMap } from "@/components/PropertyMap";
+import { buildRealEstateListingJsonLd } from "@/lib/structured-data";
 import {
   RichPropertyText,
   toPlainPropertyText,
@@ -105,7 +107,8 @@ export async function generateMetadata({
 }
 
 export default async function PropertyPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const resolvedLocale = resolveLocale(locale);
 
   const property = await apiGet<PublicPropertyDetail>(
     `/api/public/bienes-raices/${slug}`,
@@ -172,6 +175,12 @@ export default async function PropertyPage({ params }: PageProps) {
 
   return (
     <>
+      <StructuredData
+        data={buildRealEstateListingJsonLd(property, {
+          locale: resolvedLocale,
+        })}
+      />
+
       <PropertyImageGallery
         title={property.title}
         coverImageUrl={property.coverImageUrl}
@@ -179,7 +188,7 @@ export default async function PropertyPage({ params }: PageProps) {
       />
 
       <section className="px-4 pb-12 pt-2 md:px-6 md:pb-16">
-        <div className="mx-auto grid max-w-[1280px] gap-10 lg:grid-cols-[minmax(0,65fr)_minmax(320px,35fr)] lg:gap-12">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[minmax(0,65fr)_minmax(320px,35fr)] lg:gap-12">
           <div>
             <nav
               aria-label="Breadcrumb"
@@ -200,7 +209,7 @@ export default async function PropertyPage({ params }: PageProps) {
             </nav>
 
             <div className="mt-6">
-              <span className="inline-flex rounded-[2px] bg-[rgba(10,10,10,0.72)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-white">
+              <span className="inline-flex rounded-xs bg-[rgba(10,10,10,0.72)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-white">
                 En venta
               </span>
             </div>
@@ -214,7 +223,7 @@ export default async function PropertyPage({ params }: PageProps) {
                 <MapPin
                   size={18}
                   strokeWidth={1.8}
-                  className="mt-1 shrink-0 text-[var(--gold)]"
+                  className="mt-1 shrink-0 text-(--gold)"
                   aria-hidden="true"
                 />
                 <span>{locationParts.join(", ")}</span>
@@ -229,12 +238,12 @@ export default async function PropertyPage({ params }: PageProps) {
                   return (
                     <div
                       key={tag.label}
-                      className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--stone)] px-4 py-2 text-[13px] text-primary"
+                      className="inline-flex items-center gap-2 rounded-full border border-(--line) bg-(--stone) px-4 py-2 text-[13px] text-primary"
                     >
                       <Icon
                         size={15}
                         strokeWidth={1.8}
-                        className="text-[var(--gold)]"
+                        className="text-(--gold)"
                         aria-hidden="true"
                       />
                       <span className="font-medium">{tag.value}</span>
@@ -253,7 +262,7 @@ export default async function PropertyPage({ params }: PageProps) {
               />
             </div>
 
-            <div className="my-8 h-px bg-[var(--line)]" />
+            <div className="my-8 h-px bg-(--line)" />
 
             {property.description ? (
               <section>
@@ -282,7 +291,7 @@ export default async function PropertyPage({ params }: PageProps) {
           </div>
 
           <div className="hidden lg:block">
-            <div className="lg:sticky lg:top-[88px]">
+            <div className="lg:sticky lg:top-22">
               <PropertyContactSidebar
                 priceUsd={property.priceUsd}
                 roiAnnualPct={property.roiAnnualPct}

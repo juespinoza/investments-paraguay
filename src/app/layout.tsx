@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import "./globals.css";
+// import "./globals.css";
 import { cormorantGaramond, dmSans } from "./fonts";
 import { getLocale } from "next-intl/server";
 import { buildMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { buildOrganizationJsonLd } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -40,6 +42,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className={`${dmSans.variable} ${cormorantGaramond.variable}`}>
+        <StructuredData data={buildOrganizationJsonLd()} />
         {children}
       </body>
     </html>
