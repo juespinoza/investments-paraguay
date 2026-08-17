@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { cn } from "@/lib/cn";
@@ -12,9 +11,14 @@ function isContactPath(pathname: string | null) {
   return /^\/(?:[a-z]{2}\/)?contacto(?:\/)?$/.test(pathname);
 }
 
+function localeFromPathname(pathname: string | null) {
+  const locale = pathname?.split("/").filter(Boolean)[0];
+  return locale === "en" ? "en" : "es";
+}
+
 export function WhatsAppFloat() {
   const pathname = usePathname();
-  const locale = useLocale();
+  const locale = localeFromPathname(pathname);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -41,7 +45,7 @@ export function WhatsAppFloat() {
       data-analytics-category="contact"
       data-analytics-label="whatsapp_float"
     >
-      <span className="pointer-events-none absolute right-[calc(100%+12px)] hidden whitespace-nowrap rounded-[4px] bg-[var(--carbon)] px-3 py-2 text-[12px] font-medium text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100 md:block">
+      <span className="pointer-events-none absolute right-[calc(100%+12px)] hidden whitespace-nowrap rounded-sm bg-(--carbon) px-3 py-2 text-[12px] font-medium text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100 md:block">
         Hablar con un asesor
       </span>
       <FaWhatsapp size={30} aria-hidden="true" />
