@@ -28,10 +28,10 @@ export async function FeaturedPropertiesSection() {
   }
 
   return (
-    <section className="bg-[var(--ivory)] px-4 py-16 md:px-6 md:py-24">
-      <div className="mx-auto max-w-[1280px]">
-        <div className="max-w-[520px]">
-          <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.15em] text-[var(--gold)]">
+    <section className="bg-(--ivory) px-4 py-16 md:px-6 md:py-24">
+      <div className="mx-auto max-w-7xl">
+        <div className="max-w-130">
+          <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.15em] text-(--gold)">
             Portafolio
           </p>
           <h2 className="font-cormorant text-[28px] font-normal leading-[1.15] text-primary md:text-[40px]">
@@ -52,7 +52,7 @@ export async function FeaturedPropertiesSection() {
         <div className="mt-10">
           <Link
             href="/bienes-raices"
-            className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-primary transition-colors hover:text-[var(--gold)]"
+            className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-primary transition-colors hover:text-(--gold)"
           >
             Ver todas las propiedades
             <ArrowRight size={16} strokeWidth={1.8} aria-hidden="true" />

@@ -7,6 +7,7 @@ import { resolveLocale } from "@/lib/content/public-pages";
 import { PropertyAdvisorCard } from "@/components/landing/property-detail/PropertyAdvisorCard";
 import { PropertyImageGallery } from "@/components/landing/property-detail/PropertyImageGallery";
 import { PropertySpecs } from "@/components/landing/property-detail/PropertySpecs";
+import { PropertyMap } from "@/components/PropertyMap";
 import {
   RichPropertyText,
   toPlainPropertyText,
@@ -102,8 +103,20 @@ export default async function PropertyPage({ params }: PageProps) {
     property.city,
     property.address,
   ].filter(Boolean);
-  const hasCoordinates =
-    property.latitude !== null && property.longitude !== null;
+  const mapProperties =
+    property.latitude !== null && property.longitude !== null
+    ? [
+        {
+          slug: property.slug,
+          title: property.title,
+          coverImageUrl: property.coverImageUrl,
+          priceUsd: property.priceUsd,
+          latitude: property.latitude,
+          longitude: property.longitude,
+        },
+      ]
+    : [];
+  const hasCoordinates = mapProperties.length > 0;
   const investmentStats = [
     property.priceUsd
       ? {
@@ -224,13 +237,8 @@ export default async function PropertyPage({ params }: PageProps) {
             <p className="mt-2 text-sm text-secondary">
               Ubicación exacta por coordenadas geográficas.
             </p>
-            <div className="mt-4 overflow-hidden rounded-3xl border border-soft bg-[var(--ivory)]">
-              <iframe
-                title={`Mapa de ${property.title}`}
-                className="h-80 w-full"
-                src={`https://maps.google.com/maps?q=${property.latitude},${property.longitude}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
-                loading="lazy"
-              />
+            <div className="mt-4">
+              <PropertyMap properties={mapProperties} />
             </div>
           </div>
         </section>
