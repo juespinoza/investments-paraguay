@@ -80,7 +80,9 @@ function parseFilters(searchParams: URLSearchParams): Filters {
   };
 }
 
-function parseFiltersFromQuery(query: RealEstatePropertiesClientProps["initialQuery"]) {
+function parseFiltersFromQuery(
+  query: RealEstatePropertiesClientProps["initialQuery"],
+) {
   const searchParams = new URLSearchParams();
 
   if (query.tipo) searchParams.set("tipo", query.tipo);
@@ -141,7 +143,7 @@ function FilterBadge({ count }: { count: number }) {
   if (count === 0) return null;
 
   return (
-    <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--carbon)] px-1.5 text-[11px] font-semibold text-[var(--ivory)]">
+    <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-(--carbon) px-1.5 text-[11px] font-semibold text-(--ivory)">
       {count}
     </span>
   );
@@ -190,8 +192,8 @@ function FiltersPanel({
                 className={cn(
                   "rounded-full border px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.06em] transition-colors duration-150",
                   active
-                    ? "border-[var(--carbon)] bg-[var(--carbon)] text-[var(--ivory)]"
-                    : "border-[var(--line)] bg-transparent text-primary hover:border-[var(--gold)] hover:text-[var(--gold)]",
+                    ? "border-(--carbon) bg-(--carbon) text-(--ivory)"
+                    : "border-(--line) bg-transparent text-primary hover:border-(--gold) hover:text-(--gold)",
                 )}
               >
                 {option.label}
@@ -201,7 +203,7 @@ function FiltersPanel({
         </div>
       </fieldset>
 
-      <div className={cn(isMobile ? "w-full" : "w-[300px] shrink-0")}>
+      <div className={cn(isMobile ? "w-full" : "w-75 shrink-0")}>
         <div className="mb-2 flex items-center justify-between gap-3">
           <label
             htmlFor={`precio-maximo-${variant}`}
@@ -225,7 +227,7 @@ function FiltersPanel({
               PRICE_OPTIONS[Number(event.currentTarget.value)]?.value ?? null;
             onChange({ ...filters, precio: nextPrice });
           }}
-          className="block w-full accent-[var(--gold)]"
+          className="block w-full accent-(--gold)"
         />
         <div className="mt-1 grid grid-cols-5 text-[10px] font-medium text-muted">
           <span className="text-left">40k</span>
@@ -236,7 +238,7 @@ function FiltersPanel({
         </div>
       </div>
 
-      <div className={cn(isMobile ? "w-full" : "w-[220px] shrink-0")}>
+      <div className={cn(isMobile ? "w-full" : "w-55 shrink-0")}>
         <label
           htmlFor={`ciudad-${variant}`}
           className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-muted"
@@ -249,7 +251,7 @@ function FiltersPanel({
           onChange={(event) =>
             onChange({ ...filters, ciudad: event.currentTarget.value })
           }
-          className="h-10 w-full rounded-[2px] border border-[var(--line)] bg-[var(--ivory)] px-3 text-[13px] text-primary outline-none transition-colors duration-150 focus:border-[var(--gold)]"
+          className="h-10 w-full rounded-xs border border-(--line) bg-(--ivory) px-3 text-[13px] text-primary outline-none transition-colors duration-150 focus:border-(--gold)"
         >
           <option value={ALL_CITIES}>Todas</option>
           {cityOptions.map((city) => (
@@ -265,7 +267,7 @@ function FiltersPanel({
           type="button"
           onClick={onClear}
           className={cn(
-            "inline-flex h-10 items-center justify-center gap-2 rounded-[2px] border border-[var(--line)] px-4 text-[12px] font-semibold uppercase tracking-[0.06em] text-primary transition-colors duration-150 hover:border-[var(--gold)] hover:text-[var(--gold)]",
+            "inline-flex h-10 items-center justify-center gap-2 rounded-xs border border-(--line) px-4 text-[12px] font-semibold uppercase tracking-[0.06em] text-primary transition-colors duration-150 hover:border-(--gold) hover:text-(--gold)",
             isMobile ? "w-full" : "shrink-0",
           )}
         >
@@ -392,8 +394,8 @@ export function RealEstatePropertiesClient({
 
   return (
     <>
-      <div className="sticky top-16 z-40 border-b-[0.5px] border-[rgba(191,168,130,0.35)] bg-[var(--ivory)] px-4 py-3 md:px-6">
-        <div className="mx-auto max-w-[1280px]">
+      <div className="sticky top-16 z-40 border-b-[0.5px] border-[rgba(191,168,130,0.35)] bg-(--ivory) px-4 py-3 md:px-6">
+        <div className="mx-auto max-w-7xl">
           <div className="hidden items-end gap-6 xl:flex">
             <div className="min-w-0 flex-1">
               <FiltersPanel
@@ -419,7 +421,7 @@ export function RealEstatePropertiesClient({
             <button
               type="button"
               onClick={() => setSheetOpen(true)}
-              className="inline-flex items-center gap-2 rounded-[2px] border border-[var(--line)] px-4 py-2 text-[13px] font-semibold uppercase tracking-[0.06em] text-primary"
+              className="inline-flex items-center gap-2 rounded-xs border border-(--line) px-4 py-2 text-[13px] font-semibold uppercase tracking-[0.06em] text-primary"
             >
               <SlidersHorizontal
                 size={16}
@@ -447,11 +449,11 @@ export function RealEstatePropertiesClient({
         </div>
       </div>
 
-      <section className="bg-[var(--ivory)] px-4 py-10 md:px-6 md:py-14">
-        <div className="mx-auto max-w-[1280px]">
+      <section className="bg-(--ivory) px-4 py-10 md:px-6 md:py-14">
+        <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.15em] text-[var(--gold)]">
+              <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.15em] text-(--gold)">
                 Portafolio
               </p>
               <h2 className="font-cormorant text-[28px] font-normal leading-[1.15] text-primary md:text-[40px]">
@@ -463,7 +465,7 @@ export function RealEstatePropertiesClient({
               <button
                 type="button"
                 onClick={clearFilters}
-                className="inline-flex w-fit items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-primary transition-colors hover:text-[var(--gold)]"
+                className="inline-flex w-fit items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-primary transition-colors hover:text-(--gold)"
               >
                 Limpiar filtros
                 <X size={14} strokeWidth={1.8} aria-hidden="true" />
@@ -482,11 +484,11 @@ export function RealEstatePropertiesClient({
               ))}
             </div>
           ) : (
-            <div className="mt-8 flex min-h-[320px] flex-col items-center justify-center rounded-[4px] border border-[var(--line)] bg-[var(--stone)] px-6 py-12 text-center">
+            <div className="mt-8 flex min-h-80 flex-col items-center justify-center rounded-sm border border-(--line) bg-(--stone) px-6 py-12 text-center">
               <SearchX
                 size={34}
                 strokeWidth={1.6}
-                className="text-[var(--gold)]"
+                className="text-(--gold)"
                 aria-hidden="true"
               />
               <h3 className="mt-5 font-cormorant text-[26px] font-normal text-primary">
@@ -495,7 +497,7 @@ export function RealEstatePropertiesClient({
               <button
                 type="button"
                 onClick={clearFilters}
-                className="mt-6 inline-flex items-center justify-center rounded-[2px] bg-[var(--carbon)] px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--ivory)] transition-colors duration-150 hover:bg-[var(--gold)] hover:text-[var(--carbon)]"
+                className="mt-6 inline-flex items-center justify-center rounded-xs bg-(--carbon) px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.08em] text-(--ivory) transition-colors duration-150 hover:bg-(--gold) hover:text-(--carbon)"
               >
                 Limpiar filtros
               </button>
@@ -505,7 +507,7 @@ export function RealEstatePropertiesClient({
       </section>
 
       {sheetOpen ? (
-        <div className="fixed inset-0 z-[70] xl:hidden">
+        <div className="fixed inset-0 z-70 xl:hidden">
           <button
             type="button"
             aria-label="Cerrar filtros"
@@ -513,7 +515,7 @@ export function RealEstatePropertiesClient({
             onClick={() => setSheetOpen(false)}
           />
 
-          <div className="absolute inset-x-0 bottom-0 max-h-[86vh] overflow-y-auto rounded-t-[16px] border-t border-[var(--line)] bg-[var(--ivory)] px-4 pb-6 pt-4 shadow-[0_-18px_48px_rgba(10,10,10,0.18)]">
+          <div className="absolute inset-x-0 bottom-0 max-h-[86vh] overflow-y-auto rounded-t-2xl border-t border-(--line) bg-(--ivory) px-4 pb-6 pt-4 shadow-[0_-18px_48px_rgba(10,10,10,0.18)]">
             <div className="mb-5 flex items-center justify-between gap-3">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted">
@@ -526,7 +528,7 @@ export function RealEstatePropertiesClient({
               <button
                 type="button"
                 onClick={() => setSheetOpen(false)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-[var(--line)] text-primary"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xs border border-(--line) text-primary"
                 aria-label="Cerrar filtros"
               >
                 <X size={17} strokeWidth={1.8} />
@@ -541,7 +543,6 @@ export function RealEstatePropertiesClient({
               onClear={clearFilters}
               variant="mobile"
             />
-
           </div>
         </div>
       ) : null}

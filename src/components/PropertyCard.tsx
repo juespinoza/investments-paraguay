@@ -61,7 +61,10 @@ function PropertyCardImage({
   return <ImageCloudinary imageUrl={src} alt={alt} />;
 }
 
-export function PropertyCard({ property, priority = false }: PropertyCardProps) {
+export function PropertyCard({
+  property,
+  priority = false,
+}: PropertyCardProps) {
   const price = formatPrice(property.priceUsd);
   const roi = formatRoi(property.roiAnnualPct);
   const location = formatLocation(property);
@@ -71,10 +74,10 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
   const listingType = resolvePropertyListingType(property);
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[4px] border border-soft bg-[var(--ivory)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-sm border border-soft bg-(--ivory)">
       <Link
         href={href}
-        className="relative block aspect-[4/3] overflow-hidden rounded-t-[4px] bg-[var(--stone)]"
+        className="relative block aspect-4/3 overflow-hidden rounded-t-sm bg-(--stone)"
         aria-label={`Ver propiedad ${property.title}`}
       >
         <PropertyCardImage
@@ -82,7 +85,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
           alt={property.title}
           priority={priority}
         />
-        <span className="absolute left-4 top-4 rounded-[2px] bg-[rgba(10,10,10,0.72)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-white backdrop-blur-sm">
+        <span className="absolute left-4 top-4 rounded-xs bg-[rgba(10,10,10,0.72)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-white backdrop-blur-sm">
           {getPropertyListingLabel(listingType)}
         </span>
       </Link>
@@ -97,7 +100,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
             ) : null}
 
             {roi ? (
-              <span className="inline-flex w-fit rounded-[2px] bg-[rgba(191,168,130,0.22)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.05em] text-[var(--carbon)]">
+              <span className="inline-flex w-fit rounded-xs bg-[rgba(191,168,130,0.22)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.05em] text-(--carbon)">
                 {roi}
               </span>
             ) : null}
@@ -110,10 +113,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
             hasInvestmentData && "mt-4",
           )}
         >
-          <Link
-            href={href}
-            className="transition-colors hover:text-[var(--gold)]"
-          >
+          <Link href={href} className="transition-colors hover:text-(--gold)">
             {property.title}
           </Link>
         </h3>
@@ -123,7 +123,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
             <MapPin
               size={14}
               strokeWidth={1.8}
-              className="shrink-0 text-[var(--gold)]"
+              className="shrink-0 text-(--gold)"
               aria-hidden="true"
             />
             <span>{location}</span>
@@ -131,11 +131,11 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
         ) : null}
 
         <div className="mt-auto pt-5">
-          <div className="h-px bg-[var(--line)]" />
+          <div className="h-px bg-(--line)" />
 
           <Link
             href={href}
-            className="mt-4 inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-primary transition-colors hover:text-[var(--gold)]"
+            className="mt-4 inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-primary transition-colors hover:text-(--gold)"
           >
             Ver propiedad
             <ArrowRight size={15} strokeWidth={1.8} aria-hidden="true" />

@@ -226,7 +226,8 @@ export function InmobiliariaForm({
                     advisorsTitle: values.advisorsTitle.trim() || null,
                     advisorsSubtitle: values.advisorsSubtitle.trim() || null,
                     propertiesTitle: values.propertiesTitle.trim() || null,
-                    propertiesSubtitle: values.propertiesSubtitle.trim() || null,
+                    propertiesSubtitle:
+                      values.propertiesSubtitle.trim() || null,
                     featuredPropertyIds: values.featuredPropertyIds,
                   },
                 },
@@ -262,15 +263,15 @@ export function InmobiliariaForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <div className="sticky top-0 z-20 -mx-4 rounded-b-[1.5rem] border-b border-[rgba(24,39,63,0.08)] bg-[rgba(255,253,250,0.9)] px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+      <div className="sticky top-0 z-20 -mx-4 rounded-b-3xl border-b border-[rgba(24,39,63,0.08)] bg-[rgba(255,253,250,0.9)] px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-zinc-950">
-              {formTitle}
-            </h2>
+            <h2 className="text-lg font-semibold text-zinc-950">{formTitle}</h2>
             <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-zinc-600">
               <span>{formDescription}</span>
-              {isDirty ? <Badge tone="warning">Cambios sin guardar</Badge> : null}
+              {isDirty ? (
+                <Badge tone="warning">Cambios sin guardar</Badge>
+              ) : null}
             </div>
           </div>
           <button
@@ -294,222 +295,225 @@ export function InmobiliariaForm({
       {error ? <InlineAlert type="error" message={error} /> : null}
 
       {showCore ? (
-      <FormSection
-        title="Identidad"
-        description="Configura el nombre visible y el slug que servirá como base pública del tenant."
-      >
-        <div className="grid gap-4 md:grid-cols-2">
-          <Field label="Nombre">
-            <input
-              required
-              value={values.name}
-              onChange={(e) => {
-                const nextName = e.target.value;
-                update("name", nextName);
-                if (!values.slug.trim()) update("slug", toSlug(nextName));
-              }}
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="SkyOne"
-            />
-          </Field>
+        <FormSection
+          title="Identidad"
+          description="Configura el nombre visible y el slug que servirá como base pública del tenant."
+        >
+          <div className="grid gap-4 md:grid-cols-2">
+            <Field label="Nombre">
+              <input
+                required
+                value={values.name}
+                onChange={(e) => {
+                  const nextName = e.target.value;
+                  update("name", nextName);
+                  if (!values.slug.trim()) update("slug", toSlug(nextName));
+                }}
+                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                placeholder="SkyOne"
+              />
+            </Field>
 
-          <Field label="Slug" hint="Se usa en la URL">
-            <input
-              required
-              value={values.slug}
-              onChange={(e) => update("slug", toSlug(e.target.value))}
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="skyone"
-            />
-          </Field>
-        </div>
-      </FormSection>
+            <Field label="Slug" hint="Se usa en la URL">
+              <input
+                required
+                value={values.slug}
+                onChange={(e) => update("slug", toSlug(e.target.value))}
+                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                placeholder="skyone"
+              />
+            </Field>
+          </div>
+        </FormSection>
       ) : null}
 
       {showCore ? (
-      <FormSection
-        title="Presentación"
-        description="Estos campos ayudan a que la inmobiliaria se entienda rápido cuando se vea desde el panel o el sitio."
-      >
-        <div className="grid gap-4">
-          <Field label="Descripción">
-            <textarea
-              value={values.description}
-              onChange={(e) => update("description", e.target.value)}
-              className="min-h-32 w-full rounded-xl border border-zinc-200 px-3 py-2"
-              placeholder="Resumen público de la inmobiliaria."
-            />
-          </Field>
+        <FormSection
+          title="Presentación"
+          description="Estos campos ayudan a que la inmobiliaria se entienda rápido cuando se vea desde el panel o el sitio."
+        >
+          <div className="grid gap-4">
+            <Field label="Descripción">
+              <textarea
+                value={values.description}
+                onChange={(e) => update("description", e.target.value)}
+                className="min-h-32 w-full rounded-xl border border-zinc-200 px-3 py-2"
+                placeholder="Resumen público de la inmobiliaria."
+              />
+            </Field>
 
-          <Field label="Logo (Cloudinary)" hint="Opcional">
-            <input
-              value={values.logoUrl}
-              onChange={(e) => update("logoUrl", e.target.value)}
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="carpeta/logo"
-            />
-          </Field>
-        </div>
-      </FormSection>
+            <Field label="Logo (Cloudinary)" hint="Opcional">
+              <input
+                value={values.logoUrl}
+                onChange={(e) => update("logoUrl", e.target.value)}
+                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                placeholder="carpeta/logo"
+              />
+            </Field>
+          </div>
+        </FormSection>
       ) : null}
 
       {showLanding ? (
-      <FormSection
-        title="Landing pública"
-        description="Controla el mensaje principal y los títulos visibles en la página pública de la inmobiliaria."
-      >
-        <div className="grid gap-4">
-          <Field label="Título principal del hero">
-            <input
-              value={values.heroTitle}
-              onChange={(e) => update("heroTitle", e.target.value)}
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="Inversiones inmobiliarias con respaldo local"
-            />
-          </Field>
-
-          <Field label="Subtítulo del hero">
-            <textarea
-              value={values.heroSubtitle}
-              onChange={(e) => update("heroSubtitle", e.target.value)}
-              className="min-h-28 w-full rounded-xl border border-zinc-200 px-3 py-2"
-              placeholder="Describe la propuesta de valor, el foco geográfico y el tipo de oportunidades que ofrece la inmobiliaria."
-            />
-          </Field>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <Field label="CTA principal">
+        <FormSection
+          title="Landing pública"
+          description="Controla el mensaje principal y los títulos visibles en la página pública de la inmobiliaria."
+        >
+          <div className="grid gap-4">
+            <Field label="Título principal del hero">
               <input
-                value={values.heroCtaLabel}
-                onChange={(e) => update("heroCtaLabel", e.target.value)}
+                value={values.heroTitle}
+                onChange={(e) => update("heroTitle", e.target.value)}
                 className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-                placeholder="Ver propiedades"
+                placeholder="Inversiones inmobiliarias con respaldo local"
               />
             </Field>
 
-            <Field label="Destino del CTA" hint="Ancla o URL">
-              <input
-                value={values.heroCtaHref}
-                onChange={(e) => update("heroCtaHref", e.target.value)}
-                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-                placeholder="#propiedades"
-              />
-            </Field>
-          </div>
-
-          <Field label="Background del hero" hint="Cloudinary public_id o URL">
-            <input
-              value={values.heroBackgroundUrl}
-              onChange={(e) => update("heroBackgroundUrl", e.target.value)}
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="/backgrounds/background.png"
-            />
-          </Field>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Título de asesores">
-              <input
-                value={values.advisorsTitle}
-                onChange={(e) => update("advisorsTitle", e.target.value)}
-                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-                placeholder="Equipo de asesores"
-              />
-            </Field>
-
-            <Field label="Título de propiedades">
-              <input
-                value={values.propertiesTitle}
-                onChange={(e) => update("propertiesTitle", e.target.value)}
-                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-                placeholder="Propiedades de la inmobiliaria"
-              />
-            </Field>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Subtítulo de asesores">
+            <Field label="Subtítulo del hero">
               <textarea
-                value={values.advisorsSubtitle}
-                onChange={(e) => update("advisorsSubtitle", e.target.value)}
-                className="min-h-24 w-full rounded-xl border border-zinc-200 px-3 py-2"
-                placeholder="Conectá con profesionales que conocen el mercado y las oportunidades activas."
+                value={values.heroSubtitle}
+                onChange={(e) => update("heroSubtitle", e.target.value)}
+                className="min-h-28 w-full rounded-xl border border-zinc-200 px-3 py-2"
+                placeholder="Describe la propuesta de valor, el foco geográfico y el tipo de oportunidades que ofrece la inmobiliaria."
               />
             </Field>
 
-            <Field label="Subtítulo de propiedades">
-              <textarea
-                value={values.propertiesSubtitle}
-                onChange={(e) => update("propertiesSubtitle", e.target.value)}
-                className="min-h-24 w-full rounded-xl border border-zinc-200 px-3 py-2"
-                placeholder="Presenta el tipo de inventario y propuesta comercial que la inmobiliaria quiere destacar."
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="CTA principal">
+                <input
+                  value={values.heroCtaLabel}
+                  onChange={(e) => update("heroCtaLabel", e.target.value)}
+                  className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                  placeholder="Ver propiedades"
+                />
+              </Field>
+
+              <Field label="Destino del CTA" hint="Ancla o URL">
+                <input
+                  value={values.heroCtaHref}
+                  onChange={(e) => update("heroCtaHref", e.target.value)}
+                  className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                  placeholder="#propiedades"
+                />
+              </Field>
+            </div>
+
+            <Field
+              label="Background del hero"
+              hint="Cloudinary public_id o URL"
+            >
+              <input
+                value={values.heroBackgroundUrl}
+                onChange={(e) => update("heroBackgroundUrl", e.target.value)}
+                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                placeholder="/backgrounds/background.png"
               />
             </Field>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="Título de asesores">
+                <input
+                  value={values.advisorsTitle}
+                  onChange={(e) => update("advisorsTitle", e.target.value)}
+                  className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                  placeholder="Equipo de asesores"
+                />
+              </Field>
+
+              <Field label="Título de propiedades">
+                <input
+                  value={values.propertiesTitle}
+                  onChange={(e) => update("propertiesTitle", e.target.value)}
+                  className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                  placeholder="Propiedades de la inmobiliaria"
+                />
+              </Field>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="Subtítulo de asesores">
+                <textarea
+                  value={values.advisorsSubtitle}
+                  onChange={(e) => update("advisorsSubtitle", e.target.value)}
+                  className="min-h-24 w-full rounded-xl border border-zinc-200 px-3 py-2"
+                  placeholder="Conectá con profesionales que conocen el mercado y las oportunidades activas."
+                />
+              </Field>
+
+              <Field label="Subtítulo de propiedades">
+                <textarea
+                  value={values.propertiesSubtitle}
+                  onChange={(e) => update("propertiesSubtitle", e.target.value)}
+                  className="min-h-24 w-full rounded-xl border border-zinc-200 px-3 py-2"
+                  placeholder="Presenta el tipo de inventario y propuesta comercial que la inmobiliaria quiere destacar."
+                />
+              </Field>
+            </div>
           </div>
-        </div>
-      </FormSection>
+        </FormSection>
       ) : null}
 
       {showLanding ? (
-      <FormSection
-        title="Contacto público"
-        description="Estos datos se mostrarán al público para facilitar consultas comerciales y coordinación de visitas."
-      >
-        <div className="grid gap-4 md:grid-cols-2">
-          <Field label="Título del bloque de contacto">
-            <input
-              value={values.contactTitle}
-              onChange={(e) => update("contactTitle", e.target.value)}
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="Contacto de la inmobiliaria"
-            />
-          </Field>
+        <FormSection
+          title="Contacto público"
+          description="Estos datos se mostrarán al público para facilitar consultas comerciales y coordinación de visitas."
+        >
+          <div className="grid gap-4 md:grid-cols-2">
+            <Field label="Título del bloque de contacto">
+              <input
+                value={values.contactTitle}
+                onChange={(e) => update("contactTitle", e.target.value)}
+                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                placeholder="Contacto de la inmobiliaria"
+              />
+            </Field>
 
-          <Field label="Email público">
-            <input
-              value={values.contactEmail}
-              onChange={(e) => update("contactEmail", e.target.value)}
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="contacto@inmobiliaria.com"
-            />
-          </Field>
+            <Field label="Email público">
+              <input
+                value={values.contactEmail}
+                onChange={(e) => update("contactEmail", e.target.value)}
+                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                placeholder="contacto@inmobiliaria.com"
+              />
+            </Field>
 
-          <Field label="Teléfono">
-            <input
-              value={values.contactPhone}
-              onChange={(e) => update("contactPhone", e.target.value)}
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="+595..."
-            />
-          </Field>
+            <Field label="Teléfono">
+              <input
+                value={values.contactPhone}
+                onChange={(e) => update("contactPhone", e.target.value)}
+                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                placeholder="+595..."
+              />
+            </Field>
 
-          <Field label="WhatsApp">
-            <input
-              value={values.contactWhatsapp}
-              onChange={(e) => update("contactWhatsapp", e.target.value)}
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="+595..."
-            />
-          </Field>
+            <Field label="WhatsApp">
+              <input
+                value={values.contactWhatsapp}
+                onChange={(e) => update("contactWhatsapp", e.target.value)}
+                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                placeholder="+595..."
+              />
+            </Field>
 
-          <Field label="Web">
-            <input
-              value={values.contactWebsite}
-              onChange={(e) => update("contactWebsite", e.target.value)}
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="https://..."
-            />
-          </Field>
+            <Field label="Web">
+              <input
+                value={values.contactWebsite}
+                onChange={(e) => update("contactWebsite", e.target.value)}
+                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                placeholder="https://..."
+              />
+            </Field>
 
-          <Field label="Dirección">
-            <input
-              value={values.contactAddress}
-              onChange={(e) => update("contactAddress", e.target.value)}
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="Av. principal, ciudad"
-            />
-          </Field>
-        </div>
-      </FormSection>
+            <Field label="Dirección">
+              <input
+                value={values.contactAddress}
+                onChange={(e) => update("contactAddress", e.target.value)}
+                className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+                placeholder="Av. principal, ciudad"
+              />
+            </Field>
+          </div>
+        </FormSection>
       ) : null}
 
       {showLanding && mode === "edit" ? (
@@ -525,7 +529,9 @@ export function InmobiliariaForm({
           ) : (
             <div className="grid gap-3 md:grid-cols-2">
               {propertyOptions.map((property) => {
-                const checked = values.featuredPropertyIds.includes(property.id);
+                const checked = values.featuredPropertyIds.includes(
+                  property.id,
+                );
                 return (
                   <label
                     key={property.id}
@@ -535,7 +541,9 @@ export function InmobiliariaForm({
                       type="checkbox"
                       checked={checked}
                       onChange={() => toggleFeaturedProperty(property.id)}
-                      disabled={!checked && values.featuredPropertyIds.length >= 6}
+                      disabled={
+                        !checked && values.featuredPropertyIds.length >= 6
+                      }
                     />
                     <span>
                       <span className="block font-medium text-zinc-900">

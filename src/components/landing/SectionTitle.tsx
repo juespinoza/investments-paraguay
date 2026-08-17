@@ -14,7 +14,7 @@ export function SectionTitle({
       <h2
         className={
           tone === "dark"
-            ? "text-3xl font-semibold tracking-tight text-[var(--ivory)] md:text-5xl"
+            ? "text-3xl font-semibold tracking-tight text-(--ivory) md:text-5xl"
             : "text-3xl font-semibold tracking-tight text-primary md:text-5xl"
         }
       >

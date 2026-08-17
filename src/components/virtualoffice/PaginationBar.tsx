@@ -41,7 +41,7 @@ export default function PaginationBar({
   const to = Math.min(page * perPage, totalItems);
 
   return (
-    <div className="flex flex-col gap-3 rounded-[1.5rem] border border-[rgba(24,39,63,0.08)] bg-white/90 p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex flex-col gap-3 rounded-3xl border border-[rgba(24,39,63,0.08)] bg-white/90 p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
       <div className="text-sm text-zinc-600">
         Mostrando <span className="font-medium text-zinc-900">{from}</span> a{" "}
         <span className="font-medium text-zinc-900">{to}</span> de{" "}
@@ -51,7 +51,12 @@ export default function PaginationBar({
 
       <div className="flex flex-wrap items-center gap-2">
         <Link
-          href={buildHref(pathname, searchParams, Math.max(1, page - 1), perPage)}
+          href={buildHref(
+            pathname,
+            searchParams,
+            Math.max(1, page - 1),
+            perPage,
+          )}
           aria-disabled={page <= 1}
           className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-800 hover:bg-zinc-50 aria-disabled:pointer-events-none aria-disabled:opacity-50"
         >

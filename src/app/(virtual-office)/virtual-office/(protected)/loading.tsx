@@ -1,9 +1,7 @@
-function Pulse({
-  className,
-}: {
-  className: string;
-}) {
-  return <div className={`animate-pulse rounded-2xl bg-zinc-200/70 ${className}`} />;
+function Pulse({ className }: { className: string }) {
+  return (
+    <div className={`animate-pulse rounded-2xl bg-zinc-200/70 ${className}`} />
+  );
 }
 
 export default function VirtualOfficeLoading() {
@@ -28,7 +26,7 @@ export default function VirtualOfficeLoading() {
         ))}
       </div>
 
-      <div className="rounded-[1.5rem] border border-[rgba(24,39,63,0.08)] bg-white p-4 shadow-sm">
+      <div className="rounded-3xl border border-[rgba(24,39,63,0.08)] bg-white p-4 shadow-sm">
         <div className="flex flex-col gap-3 lg:flex-row">
           <Pulse className="h-11 flex-1" />
           <Pulse className="h-11 w-40" />

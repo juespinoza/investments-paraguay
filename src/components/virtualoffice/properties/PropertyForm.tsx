@@ -121,13 +121,17 @@ function toPayload(values: PropertyFormValues): PropertyPayload {
       ? appreciationAnnualPct
       : null,
     isFeatured: values.isFeatured === "true",
-    featuredOrder: Number.isFinite(featuredOrder) ? Math.floor(featuredOrder) : null,
+    featuredOrder: Number.isFinite(featuredOrder)
+      ? Math.floor(featuredOrder)
+      : null,
     priceUsd:
       Number.isFinite(priceNum) && priceNum > 0 ? Math.floor(priceNum) : null,
     propertyType: values.propertyType.trim() || null,
     bedrooms: values.bedrooms.trim() || null,
     bathrooms:
-      Number.isFinite(bathrooms) && bathrooms > 0 ? Math.floor(bathrooms) : null,
+      Number.isFinite(bathrooms) && bathrooms > 0
+        ? Math.floor(bathrooms)
+        : null,
     areaM2: Number.isFinite(areaM2) && areaM2 > 0 ? areaM2 : null,
     description: values.description.trim() || null,
     coverImageUrl: values.coverImageUrl.trim() || null,
@@ -194,15 +198,13 @@ export function PropertyForm({
   const [error, setError] = useState<string | null>(null);
   const selectedAdvisor =
     advisors.find((advisor) => advisor.id === values.advisorId) ?? null;
-  const derivedInmobiliariaLabel =
-    selectedAdvisor?.inmobiliariaId
-      ? inmobiliarias.find(
-          (inmobiliaria) => inmobiliaria.id === selectedAdvisor.inmobiliariaId,
-        )?.label ?? "Inmobiliaria asignada por asesor"
-      : "Propiedad independiente / sin inmobiliaria";
+  const derivedInmobiliariaLabel = selectedAdvisor?.inmobiliariaId
+    ? (inmobiliarias.find(
+        (inmobiliaria) => inmobiliaria.id === selectedAdvisor.inmobiliariaId,
+      )?.label ?? "Inmobiliaria asignada por asesor")
+    : "Propiedad independiente / sin inmobiliaria";
 
-  const isDirty =
-    JSON.stringify(values) !== JSON.stringify(initialValues);
+  const isDirty = JSON.stringify(values) !== JSON.stringify(initialValues);
 
   const update = (key: keyof PropertyFormValues, value: string) =>
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -249,7 +251,7 @@ export function PropertyForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <div className="sticky top-0 z-20 -mx-4 rounded-b-[1.5rem] border-b border-[rgba(24,39,63,0.08)] bg-[rgba(255,253,250,0.9)] px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+      <div className="sticky top-0 z-20 -mx-4 rounded-b-3xl border-b border-[rgba(24,39,63,0.08)] bg-[rgba(255,253,250,0.9)] px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-lg font-semibold text-zinc-950">
@@ -257,7 +259,9 @@ export function PropertyForm({
             </h2>
             <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-zinc-600">
               <span>Identidad, ubicación, inversión y asignaciones.</span>
-              {isDirty ? <Badge tone="warning">Cambios sin guardar</Badge> : null}
+              {isDirty ? (
+                <Badge tone="warning">Cambios sin guardar</Badge>
+              ) : null}
             </div>
           </div>
           <button
@@ -481,10 +485,7 @@ export function PropertyForm({
                 placeholder="carpeta/imagen"
               />
             </Field>
-            <Field
-              label="Galería (CSV)"
-              hint="Separar con coma"
-            >
+            <Field label="Galería (CSV)" hint="Separar con coma">
               <input
                 value={values.galleryCsv}
                 onChange={(e) => update("galleryCsv", e.target.value)}
@@ -527,8 +528,8 @@ export function PropertyForm({
             ) : (
               <input
                 value={
-                  advisors.find((advisor) => advisor.id === values.advisorId)?.label ??
-                  "Mi perfil"
+                  advisors.find((advisor) => advisor.id === values.advisorId)
+                    ?.label ?? "Mi perfil"
                 }
                 disabled
                 className="h-11 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-zinc-500"

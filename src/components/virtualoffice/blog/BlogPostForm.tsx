@@ -117,7 +117,7 @@ export default function BlogPostForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <div className="sticky top-0 z-20 -mx-4 rounded-b-[1.5rem] border-b border-[rgba(24,39,63,0.08)] bg-[rgba(255,253,250,0.9)] px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+      <div className="sticky top-0 z-20 -mx-4 rounded-b-3xl border-b border-[rgba(24,39,63,0.08)] bg-[rgba(255,253,250,0.9)] px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-lg font-semibold text-zinc-950">
@@ -125,7 +125,9 @@ export default function BlogPostForm({
             </h2>
             <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-zinc-600">
               <span>Título, autoría, contenido y portada.</span>
-              {isDirty ? <Badge tone="warning">Cambios sin guardar</Badge> : null}
+              {isDirty ? (
+                <Badge tone="warning">Cambios sin guardar</Badge>
+              ) : null}
             </div>
           </div>
           <button
@@ -150,7 +152,9 @@ export default function BlogPostForm({
       >
         <div className="grid gap-4 md:grid-cols-2">
           <label className="block">
-            <div className="mb-1.5 text-sm font-medium text-zinc-800">Título</div>
+            <div className="mb-1.5 text-sm font-medium text-zinc-800">
+              Título
+            </div>
             <input
               required
               value={values.title}
@@ -231,7 +235,9 @@ export default function BlogPostForm({
                 Owner / entidad
               </div>
               <select
-                value={values.ownerType === "inmobiliaria" ? values.ownerId : ""}
+                value={
+                  values.ownerType === "inmobiliaria" ? values.ownerId : ""
+                }
                 onChange={(e) => {
                   const nextOwnerId = e.target.value;
                   setValues((prev) => ({

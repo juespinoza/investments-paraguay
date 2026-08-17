@@ -1,8 +1,5 @@
 import Link from "next/link";
-import {
-  can,
-  canCreateInmobiliaria,
-} from "@/lib/auth/permissions";
+import { can, canCreateInmobiliaria } from "@/lib/auth/permissions";
 import { Role } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth/require-session";
@@ -288,9 +285,9 @@ export default async function AdminHome() {
             <p className="mt-3 text-sm leading-6 text-zinc-600">
               {onboardingByRole[session.role]}
             </p>
-            <div className="mt-5 rounded-[1.5rem] border border-[rgba(24,39,63,0.08)] bg-[#fcfaf6] p-4 text-sm leading-6 text-zinc-600">
-              Prioriza registros completos, asignaciones correctas y consistencia
-              entre tenant, asesor y contenido público.
+            <div className="mt-5 rounded-3xl border border-[rgba(24,39,63,0.08)] bg-[#fcfaf6] p-4 text-sm leading-6 text-zinc-600">
+              Prioriza registros completos, asignaciones correctas y
+              consistencia entre tenant, asesor y contenido público.
             </div>
           </CardBody>
         </Card>

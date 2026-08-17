@@ -34,7 +34,9 @@ export async function generateMetadata({
   });
 }
 
-function buildAuthor(post: NonNullable<Awaited<ReturnType<typeof getPublicBlogPostBySlug>>>) {
+function buildAuthor(
+  post: NonNullable<Awaited<ReturnType<typeof getPublicBlogPostBySlug>>>,
+) {
   return post.advisor?.fullName ?? post.inmobiliaria?.name ?? post.authorRole;
 }
 
@@ -55,8 +57,8 @@ export default async function PublicBlogPostPage({ params }: PageProps) {
     <div className="px-4 py-10">
       <div className="container-page">
         <article className="mx-auto max-w-4xl">
-          <div className="section-shell bg-[linear-gradient(135deg,var(--carbon)_0%,var(--onyx)_100%)] px-6 py-10 text-[var(--ivory)] shadow-[0_24px_80px_rgba(10,10,10,0.18)] md:px-10 md:py-14">
-            <div className="eyebrow border-[rgba(191,168,130,0.35)] bg-[rgba(250,250,248,0.08)] text-[var(--ivory)]">
+          <div className="section-shell bg-[linear-gradient(135deg,var(--carbon)_0%,var(--onyx)_100%)] px-6 py-10 text-(--ivory) shadow-[0_24px_80px_rgba(10,10,10,0.18)] md:px-10 md:py-14">
+            <div className="eyebrow border-[rgba(191,168,130,0.35)] bg-[rgba(250,250,248,0.08)] text-(--ivory)">
               Artículo
             </div>
             <h1 className="mt-6 text-4xl font-semibold tracking-tight md:text-6xl">
@@ -72,7 +74,7 @@ export default async function PublicBlogPostPage({ params }: PageProps) {
             </div>
           </div>
 
-          <div className="surface-card mt-8 rounded-[2rem] px-6 py-8 md:px-10 md:py-10">
+          <div className="surface-card mt-8 rounded-4xl px-6 py-8 md:px-10 md:py-10">
             {paragraphs.map((paragraph, index) => (
               <p
                 key={`${post.id}-${index}`}

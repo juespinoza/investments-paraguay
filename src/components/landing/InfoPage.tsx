@@ -18,8 +18,8 @@ export function InfoPageIntro({
     <section className="px-4 py-8 md:py-10">
       <div className="container-page">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
-          <div className="section-shell bg-[linear-gradient(135deg,var(--carbon)_0%,var(--onyx)_100%)] px-6 py-8 text-[var(--ivory)] shadow-[0_24px_80px_rgba(10,10,10,0.18)] md:px-10 md:py-12">
-            <div className="eyebrow border-[rgba(191,168,130,0.35)] bg-[rgba(250,250,248,0.08)] text-[var(--ivory)]">
+          <div className="section-shell bg-[linear-gradient(135deg,var(--carbon)_0%,var(--onyx)_100%)] px-6 py-8 text-(--ivory) shadow-[0_24px_80px_rgba(10,10,10,0.18)] md:px-10 md:py-12">
+            <div className="eyebrow border-[rgba(191,168,130,0.35)] bg-[rgba(250,250,248,0.08)] text-(--ivory)">
               {eyebrow}
             </div>
             <h1 className="mt-6 max-w-4xl text-4xl font-semibold tracking-tight md:text-6xl">
@@ -75,10 +75,7 @@ export function InfoCards({
     <section className="px-4 py-4 md:py-5">
       <div className="container-page grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {items.map((item) => (
-          <div
-            key={item.title}
-            className="surface-card rounded-[1.5rem] p-5 md:p-6"
-          >
+          <div key={item.title} className="surface-card rounded-3xl p-5 md:p-6">
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent1">
               {item.title}
             </p>
