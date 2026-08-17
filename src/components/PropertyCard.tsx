@@ -1,9 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import { ArrowRight, MapPin } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { ImageCloudinary } from "@/components/ui/ImageCloudinary";
 import { cn } from "@/lib/cn";
 import type { PublicPropertyListItem } from "@/lib/api/types";
+import {
+  getPropertyListingLabel,
+  resolvePropertyListingType,
+} from "@/lib/properties/listing-type";
 
 type PropertyCardProps = {
   property: PublicPropertyListItem;
@@ -62,6 +68,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
   const href = `/bienes-raices/propiedades/${property.slug}`;
   const imageUrl = property.coverImageUrl ?? "intentoPortada_wku8ef";
   const hasInvestmentData = Boolean(price || roi);
+  const listingType = resolvePropertyListingType(property);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[4px] border border-soft bg-[var(--ivory)]">
@@ -76,7 +83,7 @@ export function PropertyCard({ property, priority = false }: PropertyCardProps) 
           priority={priority}
         />
         <span className="absolute left-4 top-4 rounded-[2px] bg-[rgba(10,10,10,0.72)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-white backdrop-blur-sm">
-          Venta
+          {getPropertyListingLabel(listingType)}
         </span>
       </Link>
 
