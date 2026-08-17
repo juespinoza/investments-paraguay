@@ -5,7 +5,7 @@
     "blog": "Blog",
     "cta": "Falar com um consultor",
     "ctaLabel": "Contato direto",
-    "tagline": "Estratégia local, oportunidades curadas e uma experiência clara pensada primeiro para o celular.",
+    "tagline": "Estratégia local, oportunidades exclusivas e uma experiência clara pensada primeiro para o celular.",
     "openMenu": "Abrir menu",
     "closeMenu": "Fechar menu",
     "mobileEyebrow": "Navegação",
@@ -33,7 +33,7 @@
   "heroPanel": {
     "eyebrow": "Acesso estratégico",
     "item1": {
-      "label": "Oportunidades curadas",
+      "label": "Oportunidades exclusivas",
       "value": "Ativos com tese de investimento clara"
     },
     "item2": {
@@ -61,7 +61,7 @@
     "pillarsEyebrow": "Vantagem",
     "pillars": {
       "curation": {
-        "title": "Seleção curada",
+        "title": "Seleção exclusiva",
         "description": "Apresentamos oportunidades concretas, com menos ruído visual e uma narrativa mais clara de valor."
       },
       "localKnowledge": {

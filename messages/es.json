@@ -6,7 +6,7 @@
     "blog": "Blog",
     "cta": "Hablar con un asesor",
     "ctaLabel": "Contacto directo",
-    "tagline": "Estrategia local, oportunidades curadas y una experiencia clara desde el móvil.",
+    "tagline": "Estrategia local, oportunidades exclusivas y una experiencia clara desde el móvil.",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
     "mobileEyebrow": "Navegación",
@@ -34,7 +34,7 @@
   "heroPanel": {
     "eyebrow": "Acceso estratégico",
     "item1": {
-      "label": "Oportunidades curadas",
+      "label": "Oportunidades exclusivas",
       "value": "Activos con tesis de inversión clara"
     },
     "item2": {
@@ -62,7 +62,7 @@
     "pillarsEyebrow": "Ventaja",
     "pillars": {
       "curation": {
-        "title": "Selección curada",
+        "title": "Selección exclusiva",
         "description": "Presentamos oportunidades concretas, con menos ruido visual y una narrativa enfocada en valor real."
       },
       "localKnowledge": {

@@ -38,16 +38,7 @@ export function HomePageContent() {
   return (
     <>
       <StructuredData data={[organizationJsonLd, websiteJsonLd]} />
-      <HeroSplit
-        brandLeft="INVESTMENTS"
-        brandRight="PARAGUAY"
-        menuActive="Inicio"
-        title={t("heroTitle")}
-        subtitle={t("heroDescription")}
-        ctaLabel={t("heroCta")}
-        ctaHref="https://wa.me/595985444801"
-        backgroundImageUrl="/backgrounds/background.png"
-      />
+      <HeroSplit backgroundImageUrl="/backgrounds/asuncion-hero-1672.webp" />
 
       <CTAWide line1={t("bannerText")} highlight={t("bannerTextHighlight")} />
 

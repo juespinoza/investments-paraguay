@@ -744,7 +744,7 @@ export const aboutPageContent: Record<AppLocale, PageContent> = {
     ],
     cards: [
       {
-        title: "Oportunidades curadas",
+        title: "Oportunidades exclusivas",
         description:
           "Buscamos mostrar propiedades y oportunidades con el contexto suficiente para iniciar una conversación seria.",
       },
@@ -801,7 +801,7 @@ export const aboutPageContent: Record<AppLocale, PageContent> = {
     ],
     cards: [
       {
-        title: "Oportunidades curadas",
+        title: "Oportunidades exclusivas",
         description:
           "Buscamos mostrar propriedades e oportunidades com contexto suficiente para iniciar uma conversa séria.",
       },
@@ -927,7 +927,8 @@ export const contactPageContent: Record<AppLocale, ContactContent> = {
         label: "Instagram",
         value: "@investmentsparaguay",
         href: "https://www.instagram.com/investmentsparaguay",
-        description: "Public channel for updates, contact and brand visibility.",
+        description:
+          "Public channel for updates, contact and brand visibility.",
       },
       {
         label: "Website",
@@ -996,13 +997,15 @@ export const contactPageContent: Record<AppLocale, ContactContent> = {
         label: "WhatsApp",
         value: "+595 985 444 801",
         href: "https://wa.me/595985444801",
-        description: "Canal principal de contacto directo para seguimiento comercial.",
+        description:
+          "Canal principal de contacto directo para seguimiento comercial.",
       },
       {
         label: "Instagram",
         value: "@investmentsparaguay",
         href: "https://www.instagram.com/investmentsparaguay",
-        description: "Canal público para novedades, contacto y presencia de marca.",
+        description:
+          "Canal público para novedades, contacto y presencia de marca.",
       },
       {
         label: "Sitio web",
@@ -1071,13 +1074,15 @@ export const contactPageContent: Record<AppLocale, ContactContent> = {
         label: "WhatsApp",
         value: "+595 985 444 801",
         href: "https://wa.me/595985444801",
-        description: "Canal principal de contato direto para acompanhamento comercial.",
+        description:
+          "Canal principal de contato direto para acompanhamento comercial.",
       },
       {
         label: "Instagram",
         value: "@investmentsparaguay",
         href: "https://www.instagram.com/investmentsparaguay",
-        description: "Canal público para novidades, contato e presença de marca.",
+        description:
+          "Canal público para novidades, contato e presença de marca.",
       },
       {
         label: "Site",
@@ -1146,13 +1151,15 @@ export const contactPageContent: Record<AppLocale, ContactContent> = {
         label: "WhatsApp",
         value: "+595 985 444 801",
         href: "https://wa.me/595985444801",
-        description: "Primärer direkter Kanal für die geschäftliche Nachverfolgung.",
+        description:
+          "Primärer direkter Kanal für die geschäftliche Nachverfolgung.",
       },
       {
         label: "Instagram",
         value: "@investmentsparaguay",
         href: "https://www.instagram.com/investmentsparaguay",
-        description: "Öffentlicher Kanal für Neuigkeiten, Kontakt und Markenpräsenz.",
+        description:
+          "Öffentlicher Kanal für Neuigkeiten, Kontakt und Markenpräsenz.",
       },
       {
         label: "Website",

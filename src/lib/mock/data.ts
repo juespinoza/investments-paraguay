@@ -9,7 +9,7 @@ export const mockAdvisorLanding = {
     "Asegurando inversiones inmobiliarias inteligentes en Paraguay.",
   heroCtaLabel: "Contactar",
   heroCtaHref: "/bienes-raices/asesores/julia-espinoza",
-  heroBg: "/backgrounds/background.png",
+  heroBg: "/backgrounds/asuncion-hero-1672.webp",
 
   metadata: {
     title: `Julia Espinoza - ${metadata.title}`,
@@ -114,7 +114,7 @@ export const mockAgencyLanding = {
   heroSubtitle: "El cielo no es el límite, tu mente lo es.",
   heroCtaLabel: "Contactar",
   heroCtaHref: "#contacto",
-  heroBg: "/backgrounds/background.png",
+  heroBg: "/backgrounds/asuncion-hero-1672.webp",
   logoUrl: "/images/skyone-logo.png",
 
   about: {
@@ -222,7 +222,7 @@ export const mockAgencyLanding = {
 export const mockPropertyLanding = {
   title: "Oga - Ciudad Jardín",
   subtitle: "Vivir con espacio real, bien pensado, en una zona con proyección.",
-  heroBg: "/backgrounds/background.png",
+  heroBg: "/backgrounds/asuncion-hero-1672.webp",
   imageUrl: "/images/prop1.jpg",
   location: "Asunción / Central",
   price: "USD 97.900",

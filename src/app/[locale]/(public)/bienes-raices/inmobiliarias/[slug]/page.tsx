@@ -170,7 +170,7 @@ export default async function AgencyLandingPage({ params }: PageProps) {
         ctaLabel={landingTheme?.heroCtaLabel ?? "Ver propiedades"}
         ctaHref={landingTheme?.heroCtaHref ?? "#propiedades"}
         backgroundImageUrl={
-          landingTheme?.heroBackgroundUrl ?? "/backgrounds/background.png"
+          landingTheme?.heroBackgroundUrl ?? "/backgrounds/asuncion-hero-1672.webp"
         }
         logoLeftUrl={agency.logoUrl ?? undefined}
       />

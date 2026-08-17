@@ -65,23 +65,16 @@ export async function Footer() {
     { href: "/contacto", label: t("footer.contact") },
   ];
 
-  const informationLinks: FooterLink[] = [
-    { href: "/legales", label: t("footer.legal") },
-    { href: "/nosotros", label: t("footer.us") },
-    { href: "/cookies", label: t("footer.cookies") },
-    { href: "/contacto", label: t("footer.contact") },
-  ];
-
   return (
     <footer className="bg-[linear-gradient(180deg,var(--carbon)_0%,var(--onyx)_100%)] text-[var(--ivory)]">
       <div className="border-t border-[var(--gold)]">
-        <div className="mx-auto grid max-w-[1280px] gap-10 px-4 py-12 md:px-6 lg:grid-cols-[1.25fr_1fr_1fr] lg:gap-14 lg:py-14">
+        <div className="mx-auto grid max-w-[1280px] gap-10 px-4 py-12 md:px-6 md:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr] lg:gap-14 lg:py-14">
           <section>
             <div className="brand text-ivory">
               Investments<span>Paraguay</span>
             </div>
             <p className="mt-5 max-w-sm text-sm leading-7 text-[var(--stone)] opacity-80">
-              Oportunidades curadas, contexto local y una forma más clara de
+              Oportunidades exclusivas, contexto local y una forma más clara de
               invertir en Paraguay.
             </p>
             <p className="mt-5 text-xs uppercase tracking-[0.08em] text-muted">
@@ -89,20 +82,19 @@ export async function Footer() {
             </p>
           </section>
 
-          <section className="grid gap-8 sm:grid-cols-2 lg:grid-cols-1">
+          <section className="grid gap-8 sm:grid-cols-2 md:col-span-2 lg:col-span-1 lg:grid-cols-1">
             <div>
               <SectionTitle>Plataforma</SectionTitle>
               <FooterLinks links={platformLinks} locale={locale} />
-              <FooterLinks links={legalLinks} locale={locale} />
             </div>
 
-            {/* <div>
+            <div>
               <SectionTitle>Legal</SectionTitle>
               <FooterLinks links={legalLinks} locale={locale} />
-            </div> */}
+            </div>
           </section>
 
-          <section className="grid gap-8 sm:grid-cols-2 lg:grid-cols-1">
+          <section className="md:justify-self-end lg:justify-self-auto">
             <div>
               <SectionTitle>Contacto directo</SectionTitle>
               <div className="mt-4 space-y-3">
@@ -127,11 +119,6 @@ export async function Footer() {
                 </a>
               </div>
             </div>
-
-            {/* <div>
-              <SectionTitle>Informaciones</SectionTitle>
-              <FooterLinks links={informationLinks} locale={locale} />
-            </div> */}
           </section>
         </div>
       </div>
