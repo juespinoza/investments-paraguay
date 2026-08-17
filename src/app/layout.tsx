@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-// import "./globals.css";
+import "./globals.css";
 import { cormorantGaramond, dmSans } from "./fonts";
 import { getLocale } from "next-intl/server";
 import { buildMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
