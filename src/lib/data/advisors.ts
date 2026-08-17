@@ -1,4 +1,5 @@
 import type { Advisor } from "./types";
+import { DEFAULT_WHATSAPP_HREF } from "@/lib/whatsapp";
 
 export const ADVISORS: Advisor[] = [
   {
@@ -7,7 +8,7 @@ export const ADVISORS: Advisor[] = [
     headline: "Asegurando inversiones inmobiliarias inteligentes en Paraguay.",
     heroBg: "/backgrounds/office.jpg",
     heroCtaLabel: "Contactar",
-    heroCtaHref: "https://wa.me/595985444801",
+    heroCtaHref: DEFAULT_WHATSAPP_HREF,
 
     about: {
       imageUrl: "/images/profile.jpg",
@@ -49,7 +50,7 @@ export const ADVISORS: Advisor[] = [
       {
         label: "WhatsApp",
         value: "+595 985 444 801",
-        href: "https://wa.me/595985444801",
+        href: DEFAULT_WHATSAPP_HREF,
         icon: "whatsapp",
         platform: "WHATSAPP",
       },

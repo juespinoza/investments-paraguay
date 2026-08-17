@@ -1,160 +1,179 @@
-import { Button } from "@/components/ui/Button";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { buildWhatsAppHref } from "@/lib/whatsapp";
 
 type Props = {
-  brandLeft: string;
-  brandRight: string;
-  menuActive?: string;
-  title: string;
-  subtitle: string;
-  ctaLabel: string;
-  ctaHref: string;
   backgroundImageUrl: string;
+  brandLeft?: string;
+  brandRight?: string;
+  menuActive?: string;
+  title?: string;
+  subtitle?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
   logoLeftUrl?: string;
+  locale?: string;
 };
 
+const ASUNCION_HERO_IMAGES = {
+  sm: "/backgrounds/asuncion-hero-768.webp",
+  md: "/backgrounds/asuncion-hero-1280.webp",
+  lg: "/backgrounds/asuncion-hero-1672.webp",
+} as const;
+
+function isInternalPath(href: string) {
+  return href.startsWith("/") && !href.startsWith("//");
+}
+
+function isWhatsAppHref(href: string) {
+  return href.includes("wa.me/") || href.includes("api.whatsapp.com/");
+}
+
+function normalizeWhatsAppHref(href: string, locale?: string) {
+  return isWhatsAppHref(href) ? buildWhatsAppHref(href, locale) : href;
+}
+
+function PrimaryCta({
+  href,
+  locale,
+  children,
+}: {
+  href: string;
+  locale?: string;
+  children: React.ReactNode;
+}) {
+  const normalizedHref = normalizeWhatsAppHref(href, locale);
+  const className =
+    "inline-flex items-center justify-center rounded-xs bg-(--gold) px-8 py-3.5 text-[13px] font-medium uppercase tracking-[0.06em] text-(--carbon) transition-colors duration-150 hover:bg-(--ivory)";
+
+  if (isInternalPath(normalizedHref)) {
+    return (
+      <Link
+        href={normalizedHref}
+        className={className}
+        data-analytics-event="cta_click"
+        data-analytics-category="hero"
+        data-analytics-label="primary"
+        data-analytics-location="hero"
+      >
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <a
+      href={normalizedHref}
+      className={className}
+      target={normalizedHref.startsWith("http") ? "_blank" : undefined}
+      rel={
+        normalizedHref.startsWith("http") ? "noopener noreferrer" : undefined
+      }
+      data-analytics-event="cta_click"
+      data-analytics-category="hero"
+      data-analytics-label="primary"
+      data-analytics-location="hero"
+    >
+      {children}
+    </a>
+  );
+}
+
 export function HeroSplit({
+  backgroundImageUrl,
   brandLeft,
   brandRight,
   title,
   subtitle,
   ctaLabel,
   ctaHref,
-  backgroundImageUrl,
-  logoLeftUrl,
+  locale,
 }: Props) {
-  const t = useTranslations();
+  const eyebrow =
+    brandLeft || brandRight
+      ? [brandLeft, brandRight].filter(Boolean).join(" ")
+      : "Inversión en Paraguay";
+  const headline =
+    title ?? "Vivir, crecer e invertir donde el mercado aún tiene margen real.";
+  const subheadline =
+    subtitle ??
+    "Selección exclusiva de propiedades e inversiones en Paraguay, con acompañamiento estratégico local.";
+  const primaryHref = ctaHref ?? "/bienes-raices";
+  const primaryLabel = ctaLabel ?? "Ver propiedades";
+  const useAsuncionSources = backgroundImageUrl === ASUNCION_HERO_IMAGES.lg;
 
   return (
-    <section className="relative overflow-hidden px-4 pb-8 pt-2 md:pb-12">
-      <div className="absolute inset-0">
-        <div
-          className="h-full w-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${backgroundImageUrl})` }}
+    <section className="relative flex min-h-[85vh] overflow-hidden md:min-h-[92vh]">
+      <picture className="absolute inset-0">
+        {useAsuncionSources ? (
+          <>
+            <source
+              media="(max-width: 767px)"
+              srcSet={ASUNCION_HERO_IMAGES.sm}
+              type="image/webp"
+            />
+            <source
+              media="(max-width: 1279px)"
+              srcSet={ASUNCION_HERO_IMAGES.md}
+              type="image/webp"
+            />
+            <source srcSet={ASUNCION_HERO_IMAGES.lg} type="image/webp" />
+          </>
+        ) : null}
+        <Image
+          src={backgroundImageUrl}
+          alt=""
+          fill
+          priority
+          unoptimized={useAsuncionSources}
+          sizes="100vw"
+          className="hero-background-placeholder object-cover"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(10,10,10,0.9)_0%,rgba(10,10,10,0.62)_42%,rgba(10,10,10,0.22)_100%)]" />
-      </div>
+      </picture>
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.45)_0%,rgba(0,0,0,0.65)_100%)]" />
 
-      <div className="container-page relative">
-        <div className="section-shell grid min-h-[calc(100vh-8.5rem)] items-end gap-10 border border-[rgba(191,168,130,0.24)] bg-[rgba(10,10,10,0.2)] px-6 py-10 shadow-[0_32px_90px_rgba(10,10,10,0.26)] backdrop-blur-[2px] md:grid-cols-[minmax(0,1.3fr)_minmax(300px,0.7fr)] md:px-10 md:py-14 lg:px-14">
-          <div className="max-w-3xl text-[var(--ivory)]">
-            {logoLeftUrl ? (
-              <div className="mb-6 flex items-center gap-3">
-                <Image
-                  src={logoLeftUrl}
-                  alt="logo"
-                  width={120}
-                  height={32}
-                  className="h-8 w-auto"
-                />
-              </div>
-            ) : null}
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl items-center px-4 py-24 md:px-6">
+        <div className="mx-auto max-w-170 text-center">
+          <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.15em] text-(--gold)">
+            {eyebrow}
+          </p>
 
-            <div className="eyebrow border-[rgba(191,168,130,0.4)] bg-[rgba(10,10,10,0.22)] text-[var(--ivory)]">
-              <span>{brandLeft + " "}</span>
-              <span className="h-1 w-1 rounded-full bg-[var(--gold)]"> </span>
-              <span> {" " + brandRight}</span>
-            </div>
+          <h1 className="mb-6 font-cormorant text-[36px] font-normal leading-[1.15] text-(--ivory) md:text-[56px]">
+            {headline}
+          </h1>
 
-            <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-[0.98] tracking-tight md:text-7xl">
-              {title}
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg font-light leading-8 text-[rgba(250,250,248,0.78)] md:text-xl">
-              {subtitle}
-            </p>
+          <p className="mx-auto mb-10 max-w-155 text-[18px] leading-8 text-(--ivory) opacity-80">
+            {subheadline}
+          </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button
-                href={ctaHref}
-                target="_blank"
-                data-analytics-event="cta_click"
-                data-analytics-category="hero"
-                data-analytics-label="primary_contact"
-                data-analytics-location="hero"
-              >
-                {ctaLabel}
-              </Button>
-              <Button
-                href="/bienes-raices"
-                variant="secondary"
-                data-analytics-event="cta_click"
-                data-analytics-category="hero"
-                data-analytics-label="portfolio"
-                data-analytics-location="hero"
-              >
-                {t("heroPortfolioCta")}
-              </Button>
-            </div>
-
-            <div className="mt-10 grid gap-3 text-sm text-[rgba(250,250,248,0.78)] md:max-w-2xl md:grid-cols-3">
-              {[
-                t("heroFocusItems.advisory"),
-                t("heroFocusItems.realEstate"),
-                t("heroFocusItems.business"),
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="rounded-2xl border border-[rgba(191,168,130,0.22)] bg-[rgba(250,250,248,0.1)] px-4 py-4 backdrop-blur-sm"
-                >
-                  <div className="mb-3 h-px w-12 bg-[var(--gold)]" />
-                  <p className="text-[11px] uppercase tracking-[0.26em] text-[rgba(250,250,248,0.55)]">
-                    {t("heroFocusLabel")}
-                  </p>
-                  <p className="mt-2 text-base font-medium text-[var(--ivory)]">
-                    {item}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="md:ml-auto w-full max-w-md mx-auto">
-            <div className="rounded-[2rem] border border-[rgba(191,168,130,0.24)] bg-[rgba(10,10,10,0.42)] p-6 text-[var(--ivory)] shadow-[0_18px_60px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-8">
-              <p className="text-[11px] uppercase tracking-[0.32em] text-[rgba(250,250,248,0.58)]">
-                {t("heroPanel.eyebrow")}
-              </p>
-              <div className="mt-5 space-y-5">
-                <div className="border-b border-[rgba(191,168,130,0.16)] pb-4">
-                  <p className="text-sm text-[rgba(250,250,248,0.58)]">
-                    {t("heroPanel.item1.label")}
-                  </p>
-                  <p className="mt-2 text-2xl font-semibold">
-                    {t("heroPanel.item1.value")}
-                  </p>
-                </div>
-                <div className="border-b border-[rgba(191,168,130,0.16)] pb-4">
-                  <p className="text-sm text-[rgba(250,250,248,0.58)]">
-                    {t("heroPanel.item2.label")}
-                  </p>
-                  <p className="mt-2 text-2xl font-semibold">
-                    {t("heroPanel.item2.value")}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-[rgba(250,250,248,0.58)]">
-                    {t("heroPanel.item3.label")}
-                  </p>
-                  <p className="mt-2 text-2xl font-semibold">
-                    {t("heroPanel.item3.value")}
-                  </p>
-                </div>
-              </div>
-
-              <Link
-                href="/blog"
-                className="mt-8 inline-flex text-sm font-medium uppercase tracking-[0.18em] text-[var(--gold)]"
-                data-analytics-event="cta_click"
-                data-analytics-category="hero"
-                data-analytics-label="blog_panel"
-                data-analytics-location="hero_panel"
-              >
-                {t("heroPanel.link")}
-              </Link>
-            </div>
+          <div className="flex flex-col justify-center gap-3 sm:flex-row">
+            <PrimaryCta href={primaryHref} locale={locale}>
+              {primaryLabel}
+            </PrimaryCta>
+            <a
+              href={buildWhatsAppHref(undefined, locale)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center rounded-xs border border-(--ivory) bg-transparent px-8 py-3.5 text-[13px] font-medium uppercase tracking-[0.06em] text-(--ivory) transition-colors duration-150 hover:bg-[rgba(255,255,255,0.12)]"
+              data-analytics-event="cta_click"
+              data-analytics-category="hero"
+              data-analytics-label="advisor"
+              data-analytics-location="hero"
+            >
+              Hablar con un asesor
+            </a>
           </div>
         </div>
+      </div>
+
+      <div className="pointer-events-none absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-(--ivory) opacity-60">
+        <ChevronDown
+          size={28}
+          strokeWidth={1.5}
+          className="animate-hero-scroll-bounce"
+          aria-hidden="true"
+        />
       </div>
     </section>
   );

@@ -220,6 +220,10 @@ a {
     background: var(--stone);
     transform: translateY(-1px);
   }
+
+  .animate-hero-scroll-bounce {
+    animation: hero-scroll-bounce 1.8s ease-in-out infinite;
+  }
 }
 
 .brand {
@@ -231,4 +235,20 @@ a {
 
 .brand > span {
   color: var(--copper);
+}
+
+@keyframes hero-scroll-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-scroll-bounce {
+    animation: none;
+  }
 }

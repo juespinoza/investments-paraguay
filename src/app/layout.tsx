@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import "./globals.css";
+// import "./globals.css";
 import { cormorantGaramond, dmSans } from "./fonts";
 import { getLocale } from "next-intl/server";
 import { buildMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { buildOrganizationJsonLd } from "@/lib/structured-data";
+import { WhatsAppFloat } from "@/components/landing/WhatsAppFloat";
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -12,6 +15,7 @@ export const metadata: Metadata = {
       "Explore real estate investment opportunities, business ideas and strategic advisory for investors in Paraguay.",
     pathname: "/",
     locale: "en",
+    image: "/images/og-home.jpg",
     keywords: [
       "investments in Paraguay",
       "real estate Paraguay",
@@ -40,7 +44,9 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className={`${dmSans.variable} ${cormorantGaramond.variable}`}>
+        <StructuredData data={buildOrganizationJsonLd()} />
         {children}
+        <WhatsAppFloat />
       </body>
     </html>
   );

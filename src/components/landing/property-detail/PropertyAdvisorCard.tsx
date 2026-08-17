@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { ImageCloudinary } from "@/components/ui/ImageCloudinary";
+import { buildWhatsAppHref } from "@/lib/whatsapp";
 
 function initials(name: string) {
   return name
@@ -13,20 +14,6 @@ function initials(name: string) {
 
 function phoneHref(phone: string) {
   return `tel:${phone.replace(/[^\d+]/g, "")}`;
-}
-
-function whatsappHref(value: string) {
-  const trimmed = value.trim();
-  if (
-    trimmed.startsWith("http") ||
-    trimmed.startsWith("mailto:") ||
-    trimmed.startsWith("tel:")
-  ) {
-    return trimmed;
-  }
-
-  const digits = trimmed.replace(/\D/g, "");
-  return digits ? `https://wa.me/${digits}` : trimmed;
 }
 
 export function PropertyAdvisorCard({
@@ -45,7 +32,7 @@ export function PropertyAdvisorCard({
     <aside className="surface-card rounded-[1.75rem] p-6">
       <div className="eyebrow">Asesor inmobiliario</div>
       <div className="mt-5 flex items-center gap-4">
-        <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-soft bg-[var(--stone)] text-lg font-semibold text-primary">
+        <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-soft bg-(--stone) text-lg font-semibold text-primary">
           {advisor.photoUrl ? (
             <ImageCloudinary imageUrl={advisor.photoUrl} alt={advisor.fullName} />
           ) : (
@@ -75,7 +62,7 @@ export function PropertyAdvisorCard({
       <div className="mt-6 flex flex-col gap-3">
         {advisor.whatsapp ? (
           <Button
-            href={whatsappHref(advisor.whatsapp)}
+            href={buildWhatsAppHref(advisor.whatsapp)}
             target="_blank"
             className="w-full"
           >

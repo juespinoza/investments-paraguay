@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import {
   DEFAULT_LOCALE,
-  SUPPORTED_LOCALES,
   type AppLocale,
 } from "@/lib/i18n";
 
 export const SITE_URL = "https://www.investmentsparaguay.com";
 export const SITE_NAME = "Investments Paraguay";
+export const SEO_LOCALES = ["es", "en"] as const;
 
 type SeoInput = {
   title: string;
@@ -31,12 +31,36 @@ function withLocalePrefix(locale: AppLocale, pathname: string) {
 
 function buildLanguageAlternates(pathname: string) {
   const languages = Object.fromEntries(
-    SUPPORTED_LOCALES.map((locale) => [locale, withLocalePrefix(locale, pathname)]),
+    SEO_LOCALES.map((locale) => [
+      locale,
+      normalizeUrl(withLocalePrefix(locale, pathname)),
+    ]),
   );
   return {
     ...languages,
-    "x-default": withLocalePrefix(DEFAULT_LOCALE, pathname),
+    "x-default": normalizeUrl(withLocalePrefix(DEFAULT_LOCALE, pathname)),
   };
+}
+
+function resolveMetadataImageUrl(image: string) {
+  if (image.startsWith("http://") || image.startsWith("https://")) {
+    return image;
+  }
+
+  if (image.startsWith("/")) {
+    return `${SITE_URL}${image}`;
+  }
+
+  const cloudName =
+    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "din9bhvas";
+  const publicId = image
+    .split("/")
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+  const versionPrefix = /^v\d+\//.test(publicId) ? "" : "v1/";
+
+  return `https://res.cloudinary.com/${cloudName}/image/upload/c_fill,w_1200,h_630,g_center/f_auto/q_auto/${versionPrefix}${publicId}`;
 }
 
 export function buildMetadata({
@@ -50,7 +74,7 @@ export function buildMetadata({
 }: SeoInput): Metadata {
   const localizedPath = withLocalePrefix(locale, pathname);
   const url = normalizeUrl(localizedPath);
-  const imageUrl = image.startsWith("http") ? image : `${SITE_URL}${image}`;
+  const imageUrl = resolveMetadataImageUrl(image);
 
   return {
     metadataBase: new URL(SITE_URL),

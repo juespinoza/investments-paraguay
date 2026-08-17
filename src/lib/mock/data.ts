@@ -1,4 +1,5 @@
 import { metadata } from "@/app/layout";
+import { DEFAULT_WHATSAPP_HREF } from "@/lib/whatsapp";
 import { title } from "process";
 import { FaWhatsapp, FaInstagram, FaFacebookF, FaTiktok } from "react-icons/fa";
 import { SocialLink } from "../data/types";
@@ -9,7 +10,7 @@ export const mockAdvisorLanding = {
     "Asegurando inversiones inmobiliarias inteligentes en Paraguay.",
   heroCtaLabel: "Contactar",
   heroCtaHref: "/bienes-raices/asesores/julia-espinoza",
-  heroBg: "/backgrounds/background.png",
+  heroBg: "/backgrounds/asuncion-hero-1672.webp",
 
   metadata: {
     title: `Julia Espinoza - ${metadata.title}`,
@@ -85,7 +86,7 @@ export const mockAdvisorLanding = {
     {
       label: "WhatsApp",
       value: "+595 985 444 801",
-      href: "https://wa.me/595985444801",
+      href: DEFAULT_WHATSAPP_HREF,
       icon: "whatsapp",
     },
     {
@@ -114,7 +115,7 @@ export const mockAgencyLanding = {
   heroSubtitle: "El cielo no es el límite, tu mente lo es.",
   heroCtaLabel: "Contactar",
   heroCtaHref: "#contacto",
-  heroBg: "/backgrounds/background.png",
+  heroBg: "/backgrounds/asuncion-hero-1672.webp",
   logoUrl: "/images/skyone-logo.png",
 
   about: {
@@ -222,7 +223,7 @@ export const mockAgencyLanding = {
 export const mockPropertyLanding = {
   title: "Oga - Ciudad Jardín",
   subtitle: "Vivir con espacio real, bien pensado, en una zona con proyección.",
-  heroBg: "/backgrounds/background.png",
+  heroBg: "/backgrounds/asuncion-hero-1672.webp",
   imageUrl: "/images/prop1.jpg",
   location: "Asunción / Central",
   price: "USD 97.900",
