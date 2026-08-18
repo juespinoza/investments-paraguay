@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth/session";
 import {
+  assignCategoriesInTransaction,
   buildPropertyListWhere,
   canCreateProperty,
   PropertyRepoError,
@@ -80,31 +81,39 @@ export async function POST(req: Request) {
   try {
     const assignments = await resolvePropertyAssignments(session, data);
 
-    const created = await prisma.property.create({
-      data: {
-        title: data.title,
-        slug: data.slug,
-        city: data.city ?? null,
-        neighborhood: data.neighborhood ?? null,
-        address: data.address ?? null,
-        latitude: data.latitude ?? null,
-        longitude: data.longitude ?? null,
-        roiAnnualPct: data.roiAnnualPct ?? null,
-        appreciationAnnualPct: data.appreciationAnnualPct ?? null,
-        isFeatured: assignments.isFeatured,
-        featuredOrder: assignments.featuredOrder,
-        priceUsd: data.priceUsd ?? null,
-        propertyType: data.propertyType ?? null,
-        bedrooms: data.bedrooms ?? null,
-        bathrooms: data.bathrooms ?? null,
-        areaM2: data.areaM2 ?? null,
-        description: data.description ?? null,
-        coverImageUrl: data.coverImageUrl ?? null,
-        gallery: data.gallery,
-        advisorId: assignments.advisorId,
-        inmobiliariaId: assignments.inmobiliariaId,
-      },
-      select: { id: true },
+    const created = await prisma.$transaction(async (tx) => {
+      const property = await tx.property.create({
+        data: {
+          title: data.title,
+          slug: data.slug,
+          city: data.city ?? null,
+          neighborhood: data.neighborhood ?? null,
+          address: data.address ?? null,
+          latitude: data.latitude ?? null,
+          longitude: data.longitude ?? null,
+          roiAnnualPct: data.roiAnnualPct ?? null,
+          appreciationAnnualPct: data.appreciationAnnualPct ?? null,
+          isFeatured: assignments.isFeatured,
+          featuredOrder: assignments.featuredOrder,
+          priceUsd: data.priceUsd ?? null,
+          propertyType: data.propertyType ?? null,
+          bedrooms: data.bedrooms ?? null,
+          bathrooms: data.bathrooms ?? null,
+          areaM2: data.areaM2 ?? null,
+          description: data.description ?? null,
+          coverImageUrl: data.coverImageUrl ?? null,
+          gallery: data.gallery,
+          advisorId: assignments.advisorId,
+          inmobiliariaId: assignments.inmobiliariaId,
+        },
+        select: { id: true },
+      });
+
+      if (data.categories) {
+        await assignCategoriesInTransaction(tx, property.id, data.categories);
+      }
+
+      return property;
     });
 
     return NextResponse.json({ id: created.id }, { status: 201 });

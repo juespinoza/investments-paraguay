@@ -39,6 +39,12 @@ enum SocialPlatform {
   TIKTOK
 }
 
+enum Supercategory {
+  CONOCER
+  VIVIR
+  INVERTIR
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -128,6 +134,7 @@ model Property {
   inmobiliaria   Inmobiliaria? @relation(fields: [inmobiliariaId], references: [id])
   advisorId       String?
   advisor         Advisor? @relation(fields: [advisorId], references: [id])
+  categories      PropertyCategory[]
   featuredInLandings LandingAdvisorFeaturedProperty[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -135,6 +142,17 @@ model Property {
 
   @@index([city])
   @@index([isFeatured, featuredOrder, updatedAt])
+}
+
+model PropertyCategory {
+  id         String        @id @default(cuid())
+  propertyId String
+  property   Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  category   Supercategory
+  createdAt  DateTime      @default(now())
+
+  @@unique([propertyId, category])
+  @@index([category])
 }
 
 model BlogPost {
