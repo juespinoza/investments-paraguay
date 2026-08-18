@@ -1,7 +1,7 @@
 import { apiGet } from "@/lib/api/public";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, SITE_URL } from "@/lib/seo";
 import { resolveLocale } from "@/lib/content/public-pages";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { PropertyContactSidebar } from "@/components/landing/property-detail/PropertyContactSidebar";
@@ -91,15 +91,16 @@ export async function generateMetadata({
     property.subtitle ??
     `Propiedad en ${property.city ?? "Paraguay"} con potencial de inversión.`;
   const description = toPlainPropertyText(descriptionSource);
+  const ogImageUrl =
+    buildCloudinaryOpenGraphImageUrl(property.coverImageUrl) ??
+    `${SITE_URL}/images/og-home.jpg`;
 
   return buildMetadata({
     title: `${property.title} | Inversión inmobiliaria en Paraguay`,
     description,
     pathname: `/bienes-raices/propiedades/${slug}`,
     locale: resolvedLocale,
-    image:
-      buildCloudinaryOpenGraphImageUrl(property.coverImageUrl) ||
-      "/images/logo.png",
+    image: ogImageUrl,
     keywords: [
       property.title,
       property.city ?? "paraguay",

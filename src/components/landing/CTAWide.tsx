@@ -10,7 +10,7 @@ export function CTAWide({
       <div className="container-page">
         <div className="section-shell bg-[linear-gradient(135deg,var(--carbon)_0%,var(--onyx)_100%)] px-6 py-8 text-center shadow-[0_24px_80px_rgba(10,10,10,0.2)] md:px-12 md:py-10">
           <div className="mx-auto max-w-4xl">
-            <p className="text-2xl font-semibold leading-tight text-[var(--ivory)] md:text-4xl">
+            <p className="text-2xl font-semibold leading-tight text-(--ivory) md:text-4xl">
               {line1} <span className="text-accent1">{highlight}</span>
             </p>
           </div>

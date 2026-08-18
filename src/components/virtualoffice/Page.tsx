@@ -80,7 +80,7 @@ export function CardSection({
   return (
     <section
       className={cn(
-        "rounded-[1.5rem] border border-[rgba(24,39,63,0.08)] bg-[linear-gradient(180deg,#ffffff_0%,#fcfaf6_100%)] p-5",
+        "rounded-3xl border border-[rgba(24,39,63,0.08)] bg-[linear-gradient(180deg,#ffffff_0%,#fcfaf6_100%)] p-5",
         className,
       )}
     >
@@ -109,7 +109,7 @@ export function FormSection({
   return (
     <div
       className={cn(
-        "rounded-[1.5rem] border border-[rgba(24,39,63,0.08)] bg-white/90 p-5 shadow-sm",
+        "rounded-3xl border border-[rgba(24,39,63,0.08)] bg-white/90 p-5 shadow-sm",
         className,
       )}
     >
@@ -160,7 +160,7 @@ export function FilterBar({
   return (
     <div
       className={cn(
-        "mb-5 flex flex-col gap-3 rounded-[1.5rem] border border-[rgba(24,39,63,0.08)] bg-white/90 p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between",
+        "mb-5 flex flex-col gap-3 rounded-3xl border border-[rgba(24,39,63,0.08)] bg-white/90 p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between",
         className,
       )}
     >
@@ -199,12 +199,10 @@ export function InlineAlert({
   message: string;
 }) {
   const styles = {
-    success:
-      "border-emerald-200 bg-emerald-50 text-emerald-800",
+    success: "border-emerald-200 bg-emerald-50 text-emerald-800",
     error: "border-red-200 bg-red-50 text-red-700",
     info: "border-sky-200 bg-sky-50 text-sky-800",
-    warning:
-      "border-amber-200 bg-amber-50 text-amber-800",
+    warning: "border-amber-200 bg-amber-50 text-amber-800",
   } satisfies Record<string, string>;
 
   return (

@@ -154,13 +154,10 @@ export function WhyParaguaySection() {
   const { ref, hasEntered } = useHasEnteredViewport<HTMLElement>();
 
   return (
-    <section
-      ref={ref}
-      className="bg-[var(--stone)] px-4 py-16 md:px-6 md:py-24"
-    >
-      <div className="mx-auto max-w-[1280px]">
-        <div className="max-w-[520px]">
-          <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.15em] text-[var(--gold)]">
+    <section ref={ref} className="bg-(--stone) px-4 py-16 md:px-6 md:py-24">
+      <div className="mx-auto max-w-7xl">
+        <div className="max-w-130">
+          <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.15em] text-(--gold)">
             El mercado
           </p>
           <h2 className="font-cormorant text-[28px] font-normal leading-[1.15] text-primary md:text-[40px]">
@@ -171,7 +168,7 @@ export function WhyParaguaySection() {
         <div className="mt-12 grid gap-8 md:grid-cols-3">
           {STATS.map((stat) => (
             <article key={stat.id}>
-              <p className="font-cormorant text-[48px] font-normal leading-none text-[var(--gold)]">
+              <p className="font-cormorant text-[48px] font-normal leading-none text-(--gold)">
                 <AnimatedStatValue stat={stat} start={hasEntered} />
               </p>
               <p className="mt-4 text-[14px] font-medium leading-6 text-muted">
@@ -184,7 +181,7 @@ export function WhyParaguaySection() {
           ))}
         </div>
 
-        <div className="my-12 h-px bg-[var(--line)] md:my-14" />
+        <div className="my-12 h-px bg-(--line) md:my-14" />
 
         <div className="grid gap-8 md:grid-cols-3">
           {VALUE_PROPS.map((item) => {
@@ -195,7 +192,7 @@ export function WhyParaguaySection() {
                 <Icon
                   size={24}
                   strokeWidth={1.7}
-                  className="text-[var(--gold)]"
+                  className="text-(--gold)"
                   aria-hidden="true"
                 />
                 <h3 className="mt-5 text-[15px] font-medium text-primary">

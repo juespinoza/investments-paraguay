@@ -189,7 +189,7 @@ a {
     backdrop-filter: blur(20px);
   }
   .section-shell {
-    @apply relative overflow-hidden rounded-[2rem];
+    @apply relative overflow-hidden rounded-4xl;
   }
   .eyebrow {
     @apply inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.34em];

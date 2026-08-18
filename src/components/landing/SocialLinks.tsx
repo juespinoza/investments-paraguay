@@ -79,7 +79,7 @@ export function SocialLinks({
                 rel="noreferrer"
                 className="group surface-card flex items-center gap-4 rounded-3xl p-4 hover:-translate-y-0.5"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--carbon)] text-[var(--ivory)] transition group-hover:bg-[var(--gold)] group-hover:text-[var(--carbon)]">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-(--carbon) text-(--ivory) transition group-hover:bg-(--gold) group-hover:text-(--carbon)">
                   <Icon size={17} />
                 </span>
 

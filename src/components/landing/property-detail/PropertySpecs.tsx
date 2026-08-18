@@ -40,7 +40,9 @@ export function PropertySpecs({
     {
       label: "Superficie",
       value:
-        validAreaM2 !== null ? `${validAreaM2.toLocaleString("es-PY")} m²` : null,
+        validAreaM2 !== null
+          ? `${validAreaM2.toLocaleString("es-PY")} m²`
+          : null,
       icon: Maximize2,
     },
   ].filter((spec) => spec.value);
@@ -55,7 +57,7 @@ export function PropertySpecs({
             const Icon = spec.icon;
             return (
               <div key={spec.label} className="flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-soft bg-[var(--stone)] text-accent1">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-soft bg-(--stone) text-accent1">
                   <Icon size={19} />
                 </div>
                 <div className="min-w-0">

@@ -49,7 +49,7 @@ export function FeaturedGrid({
                   alt={p.title}
                   className="h-72 w-full object-cover"
                 />
-                <span className="absolute left-4 top-4 rounded-full bg-[rgba(10,10,10,0.78)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--ivory)] backdrop-blur-sm">
+                <span className="absolute left-4 top-4 rounded-full bg-[rgba(10,10,10,0.78)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-(--ivory) backdrop-blur-sm">
                   {p.badge ?? t("realEstate.badges.sale")}
                 </span>
               </div>

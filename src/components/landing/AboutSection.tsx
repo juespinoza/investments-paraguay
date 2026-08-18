@@ -26,11 +26,11 @@ export function AboutSection({
     <section className="px-4 py-8 md:py-10">
       <div className="container-page">
         <div className="grid gap-8 md:grid-cols-2 md:items-center">
-          <div className="surface-card relative aspect-[4/3] overflow-hidden rounded-[2rem]">
+          <div className="surface-card relative aspect-4/3 overflow-hidden rounded-4xl">
             <ImageCloudinary imageUrl={leftImageUrl} alt={leftImageAlt} />
           </div>
 
-          <div className="surface-card rounded-[2rem] p-6 md:p-8">
+          <div className="surface-card rounded-4xl p-6 md:p-8">
             <div className="eyebrow">{eyebrow}</div>
             <h2 className="mt-5 text-3xl font-semibold tracking-tight text-primary md:text-5xl">
               {title}
