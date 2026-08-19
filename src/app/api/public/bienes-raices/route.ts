@@ -46,6 +46,14 @@ export async function GET(req: Request) {
       updatedAt: true,
       isFeatured: true,
       featuredOrder: true,
+      propertyType: {
+        select: {
+          code: true,
+          label: true,
+          isProject: true,
+          hasResidentialDetails: true,
+        },
+      },
       advisor: {
         select: {
           slug: true,
@@ -68,6 +76,10 @@ export async function GET(req: Request) {
     updatedAt: p.updatedAt,
     isFeatured: p.isFeatured,
     featuredOrder: p.featuredOrder,
+    propertyType: p.propertyType.label,
+    propertyTypeCode: p.propertyType.code,
+    isProject: p.propertyType.isProject,
+    hasResidentialDetails: p.propertyType.hasResidentialDetails,
     roiAnnualPct: p.roiAnnualPct ? Number(p.roiAnnualPct) : null,
     appreciationAnnualPct: p.appreciationAnnualPct
       ? Number(p.appreciationAnnualPct)

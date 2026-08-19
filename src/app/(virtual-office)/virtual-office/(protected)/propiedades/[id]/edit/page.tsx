@@ -79,7 +79,7 @@ export default async function EditPropertyPage({
       isFeatured: true,
       featuredOrder: true,
       priceUsd: true,
-      propertyType: true,
+      propertyTypeId: true,
       bedrooms: true,
       bathrooms: true,
       areaM2: true,
@@ -140,7 +140,7 @@ export default async function EditPropertyPage({
                   ? String(property.featuredOrder)
                   : "",
               priceUsd: property.priceUsd ? String(property.priceUsd) : "",
-              propertyType: property.propertyType ?? "",
+              propertyTypeId: property.propertyTypeId,
               bedrooms: property.bedrooms ?? "",
               bathrooms:
                 property.bathrooms !== null ? String(property.bathrooms) : "",
@@ -161,6 +161,7 @@ export default async function EditPropertyPage({
               id: item.id,
               label: item.name,
             }))}
+            propertyTypes={options.propertyTypes}
             lockedAdvisorId={isAdvisor(session) ? session.advisorId ?? "" : undefined}
           />
         </CardBody>

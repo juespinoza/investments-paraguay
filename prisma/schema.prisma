@@ -46,17 +46,17 @@ enum Supercategory {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
-  role      Role     @default(ASESOR)
+  id       String  @id @default(cuid())
+  email    String  @unique
+  name     String?
+  password String
+  role     Role    @default(ASESOR)
 
   inmobiliariaId String?
-  advisorId       String?
+  advisorId      String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
@@ -68,80 +68,94 @@ model Inmobiliaria {
   logoUrl     String?
   themeJson   Json?
 
-  landing     InmobiliariaLanding?
-  blogs       BlogPost[]
-  properties  Property[]
-  advisors    Advisor[]
+  landing    InmobiliariaLanding?
+  blogs      BlogPost[]
+  properties Property[]
+  advisors   Advisor[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
 model Advisor {
-  id          String  @id @default(cuid())
-  fullName    String
-  slug        String  @unique
-  bio         String?
-  phone       String?
-  whatsapp    String?
-  instagram   String?
-  photoUrl    String?
+  id        String  @id @default(cuid())
+  fullName  String
+  slug      String  @unique
+  bio       String?
+  phone     String?
+  whatsapp  String?
+  instagram String?
+  photoUrl  String?
 
-  blogs       BlogPost[]
-  properties  Property[]
+  blogs      BlogPost[]
+  properties Property[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   // Landing base fields
-  headline   String?  // slogan
-  heroBgUrl  String?  // background puede ser null
-  ctaLabel   String?  // por defecto lo setearás desde UI
-  ctaHref    String?
+  headline  String? // slogan
+  heroBgUrl String? // background puede ser null
+  ctaLabel  String? // por defecto lo setearás desde UI
+  ctaHref   String?
 
   // Relación opcional con inmobiliaria
   inmobiliariaId String?
   inmobiliaria   Inmobiliaria? @relation(fields: [inmobiliariaId], references: [id])
 
   // 1:1 landing editable
-  landing   LandingAdvisor?
+  landing LandingAdvisor?
 }
 
 model Property {
-  id             String   @id @default(cuid())
-  title          String
-  slug           String   @unique
-  priceUsd       Int?
-  propertyType   String?
-  bedrooms       String?
-  bathrooms      Int?
-  areaM2         Decimal? @db.Decimal(8, 2)
-  city           String?
-  neighborhood   String?
-  address        String?
-  latitude       Decimal? @db.Decimal(9, 6)
-  longitude      Decimal? @db.Decimal(9, 6)
-  roiAnnualPct   Decimal? @db.Decimal(5, 2)
-  appreciationAnnualPct Decimal? @db.Decimal(5, 2)
-  isFeatured     Boolean  @default(false)
-  featuredOrder  Int?
-  description    String?
-  coverImageUrl  String?
-  gallery        String[] // simple
-  inmobiliariaId String?
-  inmobiliaria   Inmobiliaria? @relation(fields: [inmobiliariaId], references: [id])
-  advisorId       String?
-  advisor         Advisor? @relation(fields: [advisorId], references: [id])
-  categories      PropertyCategory[]
-  featuredInLandings LandingAdvisorFeaturedProperty[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
+  id                    String                           @id @default(cuid())
+  title                 String
+  slug                  String                           @unique
+  priceUsd              Int?
+  propertyTypeId        String
+  propertyType          PropertyType                     @relation(fields: [propertyTypeId], references: [id], onDelete: Restrict)
+  bedrooms              String?
+  bathrooms             Int?
+  areaM2                Decimal?                         @db.Decimal(8, 2)
+  city                  String?
+  neighborhood          String?
+  address               String?
+  latitude              Decimal?                         @db.Decimal(9, 6)
+  longitude             Decimal?                         @db.Decimal(9, 6)
+  roiAnnualPct          Decimal?                         @db.Decimal(5, 2)
+  appreciationAnnualPct Decimal?                         @db.Decimal(5, 2)
+  isFeatured            Boolean                          @default(false)
+  featuredOrder         Int?
+  description           String?
+  coverImageUrl         String?
+  gallery               String[] // simple
+  inmobiliariaId        String?
+  inmobiliaria          Inmobiliaria?                    @relation(fields: [inmobiliariaId], references: [id])
+  advisorId             String?
+  advisor               Advisor?                         @relation(fields: [advisorId], references: [id])
+  categories            PropertyCategory[]
+  featuredInLandings    LandingAdvisorFeaturedProperty[]
+  createdAt             DateTime                         @default(now())
+  updatedAt             DateTime                         @updatedAt
+  deletedAt             DateTime?
 
   @@index([city])
+  @@index([propertyTypeId])
   @@index([isFeatured, featuredOrder, updatedAt])
+}
+
+model PropertyType {
+  id                    String     @id @default(cuid())
+  code                  String     @unique
+  label                 String
+  isProject             Boolean    @default(false)
+  hasResidentialDetails Boolean    @default(false)
+  isActive              Boolean    @default(true)
+  properties            Property[]
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
 }
 
 model PropertyCategory {
@@ -156,24 +170,24 @@ model PropertyCategory {
 }
 
 model BlogPost {
-  id             String   @id @default(cuid())
-  title          String
-  slug           String   @unique
-  content        String
-  coverImageUrl  String?
-  ownerType      BlogOwnerType?
-  ownerId        String?
+  id            String         @id @default(cuid())
+  title         String
+  slug          String         @unique
+  content       String
+  coverImageUrl String?
+  ownerType     BlogOwnerType?
+  ownerId       String?
 
   inmobiliariaId String?
   inmobiliaria   Inmobiliaria? @relation(fields: [inmobiliariaId], references: [id])
 
-  advisorId       String?
-  advisor         Advisor? @relation(fields: [advisorId], references: [id])
+  advisorId String?
+  advisor   Advisor? @relation(fields: [advisorId], references: [id])
 
-  authorRole     Role
+  authorRole Role
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   @@index([ownerType, ownerId])
@@ -181,20 +195,20 @@ model BlogPost {
 }
 
 model InmobiliariaLanding {
-  id             String   @id @default(cuid())
-  inmobiliariaId String   @unique
+  id             String       @id @default(cuid())
+  inmobiliariaId String       @unique
   inmobiliaria   Inmobiliaria @relation(fields: [inmobiliariaId], references: [id], onDelete: Cascade)
   themeJson      Json?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
 model LandingAdvisor {
-  id        String   @id @default(cuid())
-  advisorId  String   @unique
-  advisor    Advisor   @relation(fields: [advisorId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  advisorId String  @unique
+  advisor   Advisor @relation(fields: [advisorId], references: [id], onDelete: Cascade)
 
   // ABOUT
   aboutImageUrl    String
@@ -209,25 +223,25 @@ model LandingAdvisor {
   servicesParagraph1 String
   servicesParagraph2 String
 
-  propertyTypes  LandingAdvisorPropertyType[]
-  clientTypes    LandingAdvisorClientType[]
-  areas          LandingAdvisorArea[]
-  serviceList    LandingAdvisorServiceItem[]
+  propertyTypes LandingAdvisorPropertyType[]
+  clientTypes   LandingAdvisorClientType[]
+  areas         LandingAdvisorArea[]
+  serviceList   LandingAdvisorServiceItem[]
 
   // Featured properties (máx 3 por regla en backend)
   featuredProperties LandingAdvisorFeaturedProperty[]
 
   // Testimonios y redes (pueden estar acá para mantener "la landing" completa)
-  testimonies  AdvisorTestimonial[]
-  socialMedia  AdvisorSocialLink[]
+  testimonies AdvisorTestimonial[]
+  socialMedia AdvisorSocialLink[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
 model LandingAdvisorPropertyType {
-  id        String @id @default(cuid())
+  id        String         @id @default(cuid())
   value     String
   landingId String
   landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
@@ -236,7 +250,7 @@ model LandingAdvisorPropertyType {
 }
 
 model LandingAdvisorClientType {
-  id        String @id @default(cuid())
+  id        String         @id @default(cuid())
   value     String
   landingId String
   landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
@@ -245,7 +259,7 @@ model LandingAdvisorClientType {
 }
 
 model LandingAdvisorArea {
-  id        String @id @default(cuid())
+  id        String         @id @default(cuid())
   value     String
   landingId String
   landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
@@ -254,7 +268,7 @@ model LandingAdvisorArea {
 }
 
 model LandingAdvisorServiceItem {
-  id        String @id @default(cuid())
+  id        String         @id @default(cuid())
   value     String
   landingId String
   landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
@@ -269,7 +283,7 @@ model LandingAdvisorFeaturedProperty {
   order      Int
 
   landing  LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
-  property Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  property Property       @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   @@unique([landingId, propertyId])
   @@unique([landingId, order])
@@ -277,9 +291,9 @@ model LandingAdvisorFeaturedProperty {
 }
 
 model AdvisorTestimonial {
-  id        String @id @default(cuid())
-  name      String
-  text      String
+  id   String @id @default(cuid())
+  name String
+  text String
 
   landingId String
   landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
@@ -288,11 +302,11 @@ model AdvisorTestimonial {
 }
 
 model AdvisorSocialLink {
-  id        String @id @default(cuid())
-  label     String
-  value     String
-  href      String
-  platform  SocialPlatform
+  id       String         @id @default(cuid())
+  label    String
+  value    String
+  href     String
+  platform SocialPlatform
 
   landingId String
   landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)

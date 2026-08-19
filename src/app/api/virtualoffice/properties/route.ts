@@ -96,7 +96,7 @@ export async function POST(req: Request) {
           isFeatured: assignments.isFeatured,
           featuredOrder: assignments.featuredOrder,
           priceUsd: data.priceUsd ?? null,
-          propertyType: data.propertyType ?? null,
+          propertyTypeId: data.propertyTypeId,
           bedrooms: data.bedrooms ?? null,
           bathrooms: data.bathrooms ?? null,
           areaM2: data.areaM2 ?? null,

@@ -12,6 +12,14 @@ export async function GET(_req: Request, { params }: Params) {
   const property = await prisma.property.findFirst({
     where: { slug, deletedAt: null },
     include: {
+      propertyType: {
+        select: {
+          code: true,
+          label: true,
+          isProject: true,
+          hasResidentialDetails: true,
+        },
+      },
       advisor: {
         select: {
           slug: true,
@@ -40,7 +48,10 @@ export async function GET(_req: Request, { params }: Params) {
     coverImageUrl: property.coverImageUrl,
     gallery: property.gallery,
     priceUsd: property.priceUsd,
-    propertyType: property.propertyType,
+    propertyType: property.propertyType.label,
+    propertyTypeCode: property.propertyType.code,
+    isProject: property.propertyType.isProject,
+    hasResidentialDetails: property.propertyType.hasResidentialDetails,
     bedrooms: property.bedrooms,
     bathrooms: property.bathrooms,
     areaM2: property.areaM2 ? Number(property.areaM2) : null,

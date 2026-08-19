@@ -41,7 +41,7 @@ export const PropertyUpsertSchema = z.object({
   isFeatured: z.boolean().optional(),
   featuredOrder: z.number().int().nullable().optional(),
   priceUsd: z.number().int().positive().nullable().optional(),
-  propertyType: z.string().trim().nullable().optional(),
+  propertyTypeId: z.string().trim().min(1),
   bedrooms: z.string().trim().nullable().optional(),
   bathrooms: z.number().int().positive().nullable().optional(),
   areaM2: z.number().positive().nullable().optional(),
@@ -121,7 +121,7 @@ export function canEditProperty(session: SessionPayload) {
 }
 
 export async function getPropertyFormOptions(session: SessionPayload) {
-  const [inmobiliarias, advisors] = await Promise.all([
+  const [inmobiliarias, advisors, propertyTypes] = await Promise.all([
     isAdmin(session)
       ? prisma.inmobiliaria.findMany({
           where: { deletedAt: null },
@@ -141,9 +141,20 @@ export async function getPropertyFormOptions(session: SessionPayload) {
       orderBy: { fullName: "asc" },
       select: { id: true, fullName: true, inmobiliariaId: true },
     }),
+    prisma.propertyType.findMany({
+      where: { isActive: true },
+      orderBy: { label: "asc" },
+      select: {
+        id: true,
+        code: true,
+        label: true,
+        isProject: true,
+        hasResidentialDetails: true,
+      },
+    }),
   ]);
 
-  return { inmobiliarias, advisors };
+  return { inmobiliarias, advisors, propertyTypes };
 }
 
 export async function assertPropertyScope(

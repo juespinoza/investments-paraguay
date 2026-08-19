@@ -8,6 +8,10 @@ export type PublicPropertyListItem = {
   neighborhood: string | null;
   latitude: number | null;
   longitude: number | null;
+  propertyType: string | null;
+  propertyTypeCode: string | null;
+  isProject: boolean;
+  hasResidentialDetails: boolean;
   isFeatured: boolean;
   featuredOrder: number | null;
   updatedAt: string;
@@ -24,6 +28,10 @@ export type PublicPropertyDetail = {
   coverImageUrl: string | null;
   gallery: string[];
   priceUsd: number | null;
+  propertyType: string | null;
+  propertyTypeCode: string | null;
+  isProject: boolean;
+  hasResidentialDetails: boolean;
   city: string | null;
   neighborhood: string | null;
   address: string | null;

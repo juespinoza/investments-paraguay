@@ -21,7 +21,7 @@ type PropertyFormValues = {
   isFeatured: string;
   featuredOrder: string;
   priceUsd: string;
-  propertyType: string;
+  propertyTypeId: string;
   bedrooms: string;
   bathrooms: string;
   areaM2: string;
@@ -37,6 +37,14 @@ type PropertyOption = {
   inmobiliariaId?: string | null;
 };
 
+type PropertyTypeOption = {
+  id: string;
+  code: string;
+  label: string;
+  isProject: boolean;
+  hasResidentialDetails: boolean;
+};
+
 type PropertyPayload = {
   title: string;
   slug: string;
@@ -50,7 +58,7 @@ type PropertyPayload = {
   isFeatured: boolean;
   featuredOrder: number | null;
   priceUsd: number | null;
-  propertyType: string | null;
+  propertyTypeId: string;
   bedrooms: string | null;
   bathrooms: number | null;
   areaM2: number | null;
@@ -73,7 +81,7 @@ const EMPTY_VALUES: PropertyFormValues = {
   isFeatured: "false",
   featuredOrder: "",
   priceUsd: "",
-  propertyType: "",
+  propertyTypeId: "",
   bedrooms: "",
   bathrooms: "",
   areaM2: "",
@@ -126,7 +134,7 @@ function toPayload(values: PropertyFormValues): PropertyPayload {
       : null,
     priceUsd:
       Number.isFinite(priceNum) && priceNum > 0 ? Math.floor(priceNum) : null,
-    propertyType: values.propertyType.trim() || null,
+    propertyTypeId: values.propertyTypeId.trim(),
     bedrooms: values.bedrooms.trim() || null,
     bathrooms:
       Number.isFinite(bathrooms) && bathrooms > 0
@@ -168,6 +176,7 @@ export function PropertyForm({
   canManageFeatured = false,
   advisors = [],
   inmobiliarias = [],
+  propertyTypes = [],
   lockedAdvisorId,
   redirectOnSuccess = true,
   onSuccess,
@@ -179,6 +188,7 @@ export function PropertyForm({
   canManageFeatured?: boolean;
   advisors?: PropertyOption[];
   inmobiliarias?: PropertyOption[];
+  propertyTypes?: PropertyTypeOption[];
   lockedAdvisorId?: string;
   redirectOnSuccess?: boolean;
   onSuccess?: (result: { id: string; values: PropertyFormValues }) => void;
@@ -427,12 +437,20 @@ export function PropertyForm({
       >
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Field label="Tipo de propiedad">
-            <input
-              value={values.propertyType}
-              onChange={(e) => update("propertyType", e.target.value)}
+            <select
+              required
+              value={values.propertyTypeId}
+              onChange={(e) => update("propertyTypeId", e.target.value)}
               className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="Loft / Apart-hotel"
-            />
+            >
+              <option value="">Seleccionar tipo</option>
+              {propertyTypes.map((propertyType) => (
+                <option key={propertyType.id} value={propertyType.id}>
+                  {propertyType.label}
+                  {propertyType.isProject ? " · Proyecto" : ""}
+                </option>
+              ))}
+            </select>
           </Field>
           <Field label="Habitaciones">
             <input
