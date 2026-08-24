@@ -60,6 +60,23 @@ enum PropertyStatus {
   RETIRADA
 }
 
+enum Orientation {
+  NORTE
+  SUR
+  ESTE
+  OESTE
+}
+
+enum FeatureCategory {
+  EQUIPMENT
+  AMENITY
+  SECURITY
+  GENERAL_SERVICE
+  PAYMENT_METHOD
+  FINANCING_TYPE
+  REQUIRED_DOCUMENT
+}
+
 model User {
   id       String  @id @default(cuid())
   email    String  @unique
@@ -153,6 +170,8 @@ model Property {
   advisorId             String?
   advisor               Advisor?                         @relation(fields: [advisorId], references: [id])
   categories            PropertyCategory[]
+  residentialDetails    PropertyResidentialDetails?
+  features              PropertyFeature[]
   featuredInLandings    LandingAdvisorFeaturedProperty[]
   createdAt             DateTime                         @default(now())
   updatedAt             DateTime                         @updatedAt
@@ -185,6 +204,39 @@ model PropertyCategory {
 
   @@unique([propertyId, category])
   @@index([category])
+}
+
+model PropertyResidentialDetails {
+  id          String       @id @default(cuid())
+  propertyId  String       @unique
+  property    Property     @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  bedrooms    Int?
+  bathrooms   Int?
+  garages     Int?
+  orientation Orientation?
+  petFriendly Boolean      @default(false)
+}
+
+model Feature {
+  id         String            @id @default(cuid())
+  category   FeatureCategory
+  code       String
+  label      String
+  isActive   Boolean           @default(true)
+  properties PropertyFeature[]
+
+  @@unique([category, code])
+}
+
+model PropertyFeature {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  featureId  String
+  feature    Feature  @relation(fields: [featureId], references: [id])
+
+  @@unique([propertyId, featureId])
+  @@index([featureId])
 }
 
 model BlogPost {
