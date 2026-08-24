@@ -311,9 +311,10 @@ export function RealEstatePropertiesClient({
           return false;
         }
 
+        const propertyPrice = property.price ?? property.priceUsd;
         if (
           filters.precio !== null &&
-          (property.priceUsd === null || property.priceUsd > filters.precio)
+          (propertyPrice === null || propertyPrice > filters.precio)
         ) {
           return false;
         }

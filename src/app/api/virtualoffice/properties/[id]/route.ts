@@ -37,13 +37,17 @@ export async function GET(_req: Request, { params }: Params) {
       city: true,
       neighborhood: true,
       address: true,
+      locationUrl: true,
       latitude: true,
       longitude: true,
       roiAnnualPct: true,
       appreciationAnnualPct: true,
       isFeatured: true,
       featuredOrder: true,
-      priceUsd: true,
+      price: true,
+      currency: true,
+      status: true,
+      hasPropertyDocuments: true,
       propertyTypeId: true,
       propertyType: {
         select: {
@@ -54,8 +58,6 @@ export async function GET(_req: Request, { params }: Params) {
           hasResidentialDetails: true,
         },
       },
-      bedrooms: true,
-      bathrooms: true,
       areaM2: true,
       description: true,
       coverImageUrl: true,
@@ -115,16 +117,18 @@ export async function PATCH(req: Request, { params }: Params) {
           city: data.city ?? null,
           neighborhood: data.neighborhood ?? null,
           address: data.address ?? null,
+          locationUrl: data.locationUrl ?? null,
           latitude: data.latitude ?? null,
           longitude: data.longitude ?? null,
           roiAnnualPct: data.roiAnnualPct ?? null,
           appreciationAnnualPct: data.appreciationAnnualPct ?? null,
           isFeatured: assignments.isFeatured,
           featuredOrder: assignments.featuredOrder,
-          priceUsd: data.priceUsd ?? null,
+          price: data.price ?? null,
+          currency: data.currency,
+          status: data.status,
+          hasPropertyDocuments: data.hasPropertyDocuments ?? false,
           propertyTypeId: data.propertyTypeId,
-          bedrooms: data.bedrooms ?? null,
-          bathrooms: data.bathrooms ?? null,
           areaM2: data.areaM2 ?? null,
           description: data.description ?? null,
           coverImageUrl: data.coverImageUrl ?? null,
@@ -177,7 +181,7 @@ export async function DELETE(_req: Request, { params }: Params) {
 
   await prisma.property.update({
     where: { id },
-    data: { deletedAt: new Date() },
+    data: { deletedAt: new Date(), status: "RETIRADA" },
   });
 
   return NextResponse.json({ ok: true });

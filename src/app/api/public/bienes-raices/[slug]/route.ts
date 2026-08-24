@@ -10,7 +10,11 @@ type Params = {
 export async function GET(_req: Request, { params }: Params) {
   const { slug } = await params;
   const property = await prisma.property.findFirst({
-    where: { slug, deletedAt: null },
+    where: {
+      slug,
+      deletedAt: null,
+      status: { notIn: ["BORRADOR", "RETIRADA"] },
+    },
     include: {
       propertyType: {
         select: {
@@ -47,17 +51,22 @@ export async function GET(_req: Request, { params }: Params) {
     description: property.description,
     coverImageUrl: property.coverImageUrl,
     gallery: property.gallery,
-    priceUsd: property.priceUsd,
+    price: property.price ? Number(property.price) : null,
+    priceUsd: property.price ? Number(property.price) : null,
+    currency: property.currency,
+    status: property.status,
+    hasPropertyDocuments: property.hasPropertyDocuments,
     propertyType: property.propertyType.label,
     propertyTypeCode: property.propertyType.code,
     isProject: property.propertyType.isProject,
     hasResidentialDetails: property.propertyType.hasResidentialDetails,
-    bedrooms: property.bedrooms,
-    bathrooms: property.bathrooms,
+    bedrooms: null,
+    bathrooms: null,
     areaM2: property.areaM2 ? Number(property.areaM2) : null,
     city: property.city,
     neighborhood: property.neighborhood,
     address: property.address,
+    locationUrl: property.locationUrl,
     latitude: property.latitude ? Number(property.latitude) : null,
     longitude: property.longitude ? Number(property.longitude) : null,
     roiAnnualPct: property.roiAnnualPct ? Number(property.roiAnnualPct) : null,

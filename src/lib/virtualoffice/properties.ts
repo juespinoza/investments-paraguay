@@ -28,22 +28,36 @@ export const PropertySupercategorySchema = z.enum([
   "INVERTIR",
 ]);
 
+export const CurrencySchema = z.enum(["GS", "USD"]);
+
+export const PropertyStatusSchema = z.enum([
+  "EN_VENTA",
+  "EN_ALQUILER",
+  "RESERVADA",
+  "BORRADOR",
+  "VENDIDA",
+  "ALQUILADA",
+  "RETIRADA",
+]);
+
 export const PropertyUpsertSchema = z.object({
   title: z.string().trim().min(3),
   slug: z.string().trim().min(3),
   city: z.string().trim().nullable().optional(),
   neighborhood: z.string().trim().nullable().optional(),
   address: z.string().trim().nullable().optional(),
+  locationUrl: z.string().trim().nullable().optional(),
   latitude: z.number().min(-90).max(90).nullable().optional(),
   longitude: z.number().min(-180).max(180).nullable().optional(),
   roiAnnualPct: z.number().min(0).max(100).nullable().optional(),
   appreciationAnnualPct: z.number().min(0).max(100).nullable().optional(),
   isFeatured: z.boolean().optional(),
   featuredOrder: z.number().int().nullable().optional(),
-  priceUsd: z.number().int().positive().nullable().optional(),
+  price: z.number().positive().nullable().optional(),
+  currency: CurrencySchema.default("USD"),
+  status: PropertyStatusSchema.default("BORRADOR"),
+  hasPropertyDocuments: z.boolean().optional(),
   propertyTypeId: z.string().trim().min(1),
-  bedrooms: z.string().trim().nullable().optional(),
-  bathrooms: z.number().int().positive().nullable().optional(),
   areaM2: z.number().positive().nullable().optional(),
   description: z.string().trim().nullable().optional(),
   coverImageUrl: z.string().trim().nullable().optional(),
@@ -167,7 +181,7 @@ export async function assertPropertyScope(
   }
 
   const property = await prisma.property.findFirst({
-    where: { id: propertyId, deletedAt: null },
+    where: { id: propertyId, deletedAt: null, status: { not: "RETIRADA" } },
     select: {
       id: true,
       inmobiliariaId: true,
@@ -266,7 +280,10 @@ export function buildPropertyListWhere(
     throw new PropertyRepoError("Forbidden", 403);
   }
 
-  const where: Prisma.PropertyWhereInput = { deletedAt: null };
+  const where: Prisma.PropertyWhereInput = {
+    deletedAt: null,
+    status: { not: "RETIRADA" },
+  };
   const scope = scopeFor(session, "properties", "read");
 
   if (scope === "advisor_properties") {

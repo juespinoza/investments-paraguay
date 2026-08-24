@@ -2,6 +2,8 @@ export type PropertyOption = {
   id: string;
   title: string;
   city?: string | null;
+  price?: number | string | null;
+  currency?: "GS" | "USD";
   priceUsd?: number | null;
 };
 

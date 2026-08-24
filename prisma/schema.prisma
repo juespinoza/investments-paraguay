@@ -45,6 +45,21 @@ enum Supercategory {
   INVERTIR
 }
 
+enum Currency {
+  GS
+  USD
+}
+
+enum PropertyStatus {
+  EN_VENTA
+  EN_ALQUILER
+  RESERVADA
+  BORRADOR
+  VENDIDA
+  ALQUILADA
+  RETIRADA
+}
+
 model User {
   id       String  @id @default(cuid())
   email    String  @unique
@@ -113,15 +128,17 @@ model Property {
   id                    String                           @id @default(cuid())
   title                 String
   slug                  String                           @unique
-  priceUsd              Int?
+  price                 Decimal?                         @db.Decimal(14, 2)
+  currency              Currency                         @default(USD)
+  status                PropertyStatus                   @default(BORRADOR)
+  hasPropertyDocuments  Boolean                          @default(false)
   propertyTypeId        String
   propertyType          PropertyType                     @relation(fields: [propertyTypeId], references: [id], onDelete: Restrict)
-  bedrooms              String?
-  bathrooms             Int?
   areaM2                Decimal?                         @db.Decimal(8, 2)
   city                  String?
   neighborhood          String?
   address               String?
+  locationUrl           String?
   latitude              Decimal?                         @db.Decimal(9, 6)
   longitude             Decimal?                         @db.Decimal(9, 6)
   roiAnnualPct          Decimal?                         @db.Decimal(5, 2)
@@ -142,6 +159,7 @@ model Property {
   deletedAt             DateTime?
 
   @@index([city])
+  @@index([status])
   @@index([propertyTypeId])
   @@index([isFeatured, featuredOrder, updatedAt])
 }

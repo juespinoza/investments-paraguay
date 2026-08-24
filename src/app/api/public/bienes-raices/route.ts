@@ -14,6 +14,7 @@ export async function GET(req: Request) {
   const properties = await prisma.property.findMany({
     where: {
       deletedAt: null,
+      status: { notIn: ["BORRADOR", "RETIRADA"] },
       ...(q
         ? {
             OR: [
@@ -24,7 +25,7 @@ export async function GET(req: Request) {
             ],
           }
         : {}),
-      ...(Object.keys(priceFilter).length ? { priceUsd: priceFilter } : {}),
+      ...(Object.keys(priceFilter).length ? { price: priceFilter } : {}),
     },
     orderBy: [
       { isFeatured: "desc" },
@@ -36,9 +37,13 @@ export async function GET(req: Request) {
       title: true,
       description: true,
       coverImageUrl: true,
-      priceUsd: true,
+      price: true,
+      currency: true,
+      status: true,
+      hasPropertyDocuments: true,
       city: true,
       neighborhood: true,
+      locationUrl: true,
       latitude: true,
       longitude: true,
       roiAnnualPct: true,
@@ -68,9 +73,14 @@ export async function GET(req: Request) {
     title: p.title,
     subtitle: p.description,
     coverImageUrl: p.coverImageUrl,
-    priceUsd: p.priceUsd,
+    price: p.price ? Number(p.price) : null,
+    priceUsd: p.price ? Number(p.price) : null,
+    currency: p.currency,
+    status: p.status,
+    hasPropertyDocuments: p.hasPropertyDocuments,
     city: p.city,
     neighborhood: p.neighborhood,
+    locationUrl: p.locationUrl,
     latitude: p.latitude ? Number(p.latitude) : null,
     longitude: p.longitude ? Number(p.longitude) : null,
     updatedAt: p.updatedAt,

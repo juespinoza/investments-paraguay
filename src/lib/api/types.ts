@@ -3,9 +3,21 @@ export type PublicPropertyListItem = {
   title: string;
   subtitle: string | null;
   coverImageUrl: string | null;
+  price: number | null;
   priceUsd: number | null;
+  currency: "GS" | "USD";
+  status:
+    | "EN_VENTA"
+    | "EN_ALQUILER"
+    | "RESERVADA"
+    | "BORRADOR"
+    | "VENDIDA"
+    | "ALQUILADA"
+    | "RETIRADA";
+  hasPropertyDocuments: boolean;
   city: string | null;
   neighborhood: string | null;
+  locationUrl: string | null;
   latitude: number | null;
   longitude: number | null;
   propertyType: string | null;
@@ -27,7 +39,18 @@ export type PublicPropertyDetail = {
   description: string | null;
   coverImageUrl: string | null;
   gallery: string[];
+  price: number | null;
   priceUsd: number | null;
+  currency: "GS" | "USD";
+  status:
+    | "EN_VENTA"
+    | "EN_ALQUILER"
+    | "RESERVADA"
+    | "BORRADOR"
+    | "VENDIDA"
+    | "ALQUILADA"
+    | "RETIRADA";
+  hasPropertyDocuments: boolean;
   propertyType: string | null;
   propertyTypeCode: string | null;
   isProject: boolean;
@@ -35,6 +58,7 @@ export type PublicPropertyDetail = {
   city: string | null;
   neighborhood: string | null;
   address: string | null;
+  locationUrl: string | null;
   latitude: number | null;
   longitude: number | null;
   roiAnnualPct: number | null;

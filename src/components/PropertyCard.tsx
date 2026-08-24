@@ -16,11 +16,11 @@ type PropertyCardProps = {
   priority?: boolean;
 };
 
-function formatPrice(priceUsd: number | null) {
-  if (priceUsd === null) return null;
+function formatPrice(price: number | null, currency: "GS" | "USD") {
+  if (price === null) return null;
 
-  return `USD ${priceUsd.toLocaleString("es-PY", {
-    maximumFractionDigits: 0,
+  return `${currency} ${price.toLocaleString(currency === "USD" ? "en-US" : "es-PY", {
+    maximumFractionDigits: currency === "USD" ? 2 : 0,
   })}`;
 }
 
@@ -65,7 +65,7 @@ export function PropertyCard({
   property,
   priority = false,
 }: PropertyCardProps) {
-  const price = formatPrice(property.priceUsd);
+  const price = formatPrice(property.price ?? property.priceUsd, property.currency);
   const roi = formatRoi(property.roiAnnualPct);
   const location = formatLocation(property);
   const href = `/bienes-raices/propiedades/${property.slug}`;

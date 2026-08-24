@@ -72,16 +72,18 @@ export default async function EditPropertyPage({
       city: true,
       neighborhood: true,
       address: true,
+      locationUrl: true,
       latitude: true,
       longitude: true,
       roiAnnualPct: true,
       appreciationAnnualPct: true,
       isFeatured: true,
       featuredOrder: true,
-      priceUsd: true,
+      price: true,
+      currency: true,
+      status: true,
+      hasPropertyDocuments: true,
       propertyTypeId: true,
-      bedrooms: true,
-      bathrooms: true,
       areaM2: true,
       description: true,
       coverImageUrl: true,
@@ -122,6 +124,7 @@ export default async function EditPropertyPage({
               city: property.city ?? "",
               neighborhood: property.neighborhood ?? "",
               address: property.address ?? "",
+              locationUrl: property.locationUrl ?? "",
               latitude:
                 property.latitude !== null ? String(property.latitude) : "",
               longitude:
@@ -139,11 +142,13 @@ export default async function EditPropertyPage({
                 property.featuredOrder !== null
                   ? String(property.featuredOrder)
                   : "",
-              priceUsd: property.priceUsd ? String(property.priceUsd) : "",
+              price: property.price !== null ? String(property.price) : "",
+              currency: property.currency,
+              status: property.status,
+              hasPropertyDocuments: property.hasPropertyDocuments
+                ? "true"
+                : "false",
               propertyTypeId: property.propertyTypeId,
-              bedrooms: property.bedrooms ?? "",
-              bathrooms:
-                property.bathrooms !== null ? String(property.bathrooms) : "",
               areaM2: property.areaM2 !== null ? String(property.areaM2) : "",
               description: property.description ?? "",
               coverImageUrl: property.coverImageUrl ?? "",

@@ -127,6 +127,11 @@ export const FeaturedPicker = React.memo(function FeaturedPicker({
   const Row = useCallback(({ index, style, data }: ListChildComponentProps) => {
     const p = (data.items as PropertyOption[])[index];
     const isSelected = data.selectedSet.has(p.id);
+    const price = p.price ?? p.priceUsd ?? null;
+    const priceLabel =
+      price !== null
+        ? `• ${p.currency ?? "USD"} ${Number(price).toLocaleString("es-PY")}`
+        : "";
 
     return (
       <div style={style} className="px-1">
@@ -139,7 +144,7 @@ export const FeaturedPicker = React.memo(function FeaturedPicker({
         >
           <div className="font-medium">{p.title}</div>
           <div className="text-sm text-secondary">
-            {p.city ?? "-"} {p.priceUsd ? `• USD ${p.priceUsd}` : ""}
+            {p.city ?? "-"} {priceLabel}
           </div>
           {isSelected ? (
             <div className="mt-1 text-xs text-secondary">Seleccionada</div>

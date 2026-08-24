@@ -17,7 +17,9 @@ type Advisor = {
 };
 
 type PropertyContactSidebarProps = {
+  price: number | null;
   priceUsd: number | null;
+  currency: "GS" | "USD";
   roiAnnualPct: number | null;
   propertySlug: string;
   advisor: Advisor | null;
@@ -33,10 +35,12 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-function formatPrice(priceUsd: number | null) {
-  if (priceUsd === null) return "Precio a consultar";
+function formatPrice(price: number | null, currency: "GS" | "USD") {
+  if (price === null) return "Precio a consultar";
 
-  return `USD ${priceUsd.toLocaleString("en-US")}`;
+  return `${currency} ${price.toLocaleString(currency === "USD" ? "en-US" : "es-PY", {
+    maximumFractionDigits: currency === "USD" ? 2 : 0,
+  })}`;
 }
 
 function formatRoi(roiAnnualPct: number | null) {
@@ -48,7 +52,9 @@ function formatRoi(roiAnnualPct: number | null) {
 }
 
 export function PropertyContactSidebar({
+  price,
   priceUsd,
+  currency,
   roiAnnualPct,
   propertySlug,
   advisor,
@@ -108,7 +114,7 @@ export function PropertyContactSidebar({
   return (
     <aside className="rounded-lg border border-soft bg-(--ivory) p-6 shadow-[0_18px_48px_rgba(10,10,10,0.08)]">
       <p className="font-cormorant text-[32px] font-normal leading-none text-primary">
-        {formatPrice(priceUsd)}
+        {formatPrice(price ?? priceUsd, currency)}
       </p>
 
       {roi ? (

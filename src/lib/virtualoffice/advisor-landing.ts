@@ -337,7 +337,7 @@ export function mapAdvisorToPublicLanding(
       slug: item.property.slug,
       title: item.property.title,
       coverImageUrl: item.property.coverImageUrl ?? null,
-      priceUsd: item.property.priceUsd ?? null,
+      priceUsd: item.property.price ? Number(item.property.price) : null,
       city: item.property.city ?? null,
     })),
     testimonies: advisor.landing.testimonies.map((item) => ({
@@ -406,7 +406,7 @@ export function mapAdvisorToPublicLandingV2(
       slug: item.property.slug,
       title: item.property.title,
       coverImageUrl: item.property.coverImageUrl ?? null,
-      priceUsd: item.property.priceUsd ?? null,
+      priceUsd: item.property.price ? Number(item.property.price) : null,
       city: item.property.city ?? null,
     })),
     socialLinks: normalized.socialLinks.map((item) => ({
