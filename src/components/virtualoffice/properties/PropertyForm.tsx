@@ -20,12 +20,14 @@ type PropertyFormValues = {
   appreciationAnnualPct: string;
   isFeatured: string;
   featuredOrder: string;
-  priceUsd: string;
-  propertyType: string;
-  bedrooms: string;
-  bathrooms: string;
+  price: string;
+  currency: string;
+  status: string;
+  hasPropertyDocuments: string;
+  propertyTypeId: string;
   areaM2: string;
   description: string;
+  locationUrl: string;
   coverImageUrl: string;
   galleryCsv: string;
   advisorId: string;
@@ -35,6 +37,14 @@ type PropertyOption = {
   id: string;
   label: string;
   inmobiliariaId?: string | null;
+};
+
+type PropertyTypeOption = {
+  id: string;
+  code: string;
+  label: string;
+  isProject: boolean;
+  hasResidentialDetails: boolean;
 };
 
 type PropertyPayload = {
@@ -49,12 +59,14 @@ type PropertyPayload = {
   appreciationAnnualPct: number | null;
   isFeatured: boolean;
   featuredOrder: number | null;
-  priceUsd: number | null;
-  propertyType: string | null;
-  bedrooms: string | null;
-  bathrooms: number | null;
+  price: number | null;
+  currency: string;
+  status: string;
+  hasPropertyDocuments: boolean;
+  propertyTypeId: string;
   areaM2: number | null;
   description: string | null;
+  locationUrl: string | null;
   coverImageUrl: string | null;
   gallery: string[];
   advisorId: string | null;
@@ -72,12 +84,14 @@ const EMPTY_VALUES: PropertyFormValues = {
   appreciationAnnualPct: "",
   isFeatured: "false",
   featuredOrder: "",
-  priceUsd: "",
-  propertyType: "",
-  bedrooms: "",
-  bathrooms: "",
+  price: "",
+  currency: "USD",
+  status: "BORRADOR",
+  hasPropertyDocuments: "false",
+  propertyTypeId: "",
   areaM2: "",
   description: "",
+  locationUrl: "",
   coverImageUrl: "",
   galleryCsv: "",
   advisorId: "",
@@ -99,13 +113,12 @@ function toPayload(values: PropertyFormValues): PropertyPayload {
     .map((item) => item.trim())
     .filter(Boolean);
 
-  const priceNum = Number(values.priceUsd);
+  const priceNum = Number(values.price);
   const latitude = Number(values.latitude);
   const longitude = Number(values.longitude);
   const roiAnnualPct = Number(values.roiAnnualPct);
   const appreciationAnnualPct = Number(values.appreciationAnnualPct);
   const featuredOrder = Number(values.featuredOrder);
-  const bathrooms = Number(values.bathrooms);
   const areaM2 = Number(values.areaM2);
 
   return {
@@ -124,16 +137,14 @@ function toPayload(values: PropertyFormValues): PropertyPayload {
     featuredOrder: Number.isFinite(featuredOrder)
       ? Math.floor(featuredOrder)
       : null,
-    priceUsd:
-      Number.isFinite(priceNum) && priceNum > 0 ? Math.floor(priceNum) : null,
-    propertyType: values.propertyType.trim() || null,
-    bedrooms: values.bedrooms.trim() || null,
-    bathrooms:
-      Number.isFinite(bathrooms) && bathrooms > 0
-        ? Math.floor(bathrooms)
-        : null,
+    price: Number.isFinite(priceNum) && priceNum > 0 ? priceNum : null,
+    currency: values.currency,
+    status: values.status,
+    hasPropertyDocuments: values.hasPropertyDocuments === "true",
+    propertyTypeId: values.propertyTypeId.trim(),
     areaM2: Number.isFinite(areaM2) && areaM2 > 0 ? areaM2 : null,
     description: values.description.trim() || null,
+    locationUrl: values.locationUrl.trim() || null,
     coverImageUrl: values.coverImageUrl.trim() || null,
     gallery,
     advisorId: values.advisorId.trim() || null,
@@ -168,6 +179,7 @@ export function PropertyForm({
   canManageFeatured = false,
   advisors = [],
   inmobiliarias = [],
+  propertyTypes = [],
   lockedAdvisorId,
   redirectOnSuccess = true,
   onSuccess,
@@ -179,6 +191,7 @@ export function PropertyForm({
   canManageFeatured?: boolean;
   advisors?: PropertyOption[];
   inmobiliarias?: PropertyOption[];
+  propertyTypes?: PropertyTypeOption[];
   lockedAdvisorId?: string;
   redirectOnSuccess?: boolean;
   onSuccess?: (result: { id: string; values: PropertyFormValues }) => void;
@@ -364,18 +377,53 @@ export function PropertyForm({
       </FormSection>
 
       <FormSection
-        title="Inversión y rentabilidad"
-        description="Carga los datos financieros clave para que el equipo compare y priorice oportunidades."
+        title="Inversión y estado"
+        description="Carga precio, moneda, estado comercial y documentación base de la propiedad."
       >
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Field label="Inversión (USD)">
+          <Field label="Precio">
             <input
-              value={values.priceUsd}
-              onChange={(e) => update("priceUsd", e.target.value)}
-              inputMode="numeric"
+              value={values.price}
+              onChange={(e) => update("price", e.target.value)}
+              inputMode="decimal"
               className="h-11 w-full rounded-xl border border-zinc-200 px-3"
               placeholder="85000"
             />
+          </Field>
+          <Field label="Moneda">
+            <select
+              value={values.currency}
+              onChange={(e) => update("currency", e.target.value)}
+              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+            >
+              <option value="USD">USD</option>
+              <option value="GS">GS</option>
+            </select>
+          </Field>
+          <Field label="Estado">
+            <select
+              value={values.status}
+              onChange={(e) => update("status", e.target.value)}
+              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+            >
+              <option value="BORRADOR">Borrador</option>
+              <option value="EN_VENTA">En venta</option>
+              <option value="EN_ALQUILER">En alquiler</option>
+              <option value="RESERVADA">Reservada</option>
+              <option value="VENDIDA">Vendida</option>
+              <option value="ALQUILADA">Alquilada</option>
+              <option value="RETIRADA">Retirada</option>
+            </select>
+          </Field>
+          <Field label="Documentos">
+            <select
+              value={values.hasPropertyDocuments}
+              onChange={(e) => update("hasPropertyDocuments", e.target.value)}
+              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+            >
+              <option value="false">Pendientes</option>
+              <option value="true">Disponibles</option>
+            </select>
           </Field>
           <Field label="ROI anual (%)">
             <input
@@ -427,29 +475,20 @@ export function PropertyForm({
       >
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Field label="Tipo de propiedad">
-            <input
-              value={values.propertyType}
-              onChange={(e) => update("propertyType", e.target.value)}
+            <select
+              required
+              value={values.propertyTypeId}
+              onChange={(e) => update("propertyTypeId", e.target.value)}
               className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="Loft / Apart-hotel"
-            />
-          </Field>
-          <Field label="Habitaciones">
-            <input
-              value={values.bedrooms}
-              onChange={(e) => update("bedrooms", e.target.value)}
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="1 (Loft)"
-            />
-          </Field>
-          <Field label="Baños">
-            <input
-              value={values.bathrooms}
-              onChange={(e) => update("bathrooms", e.target.value)}
-              inputMode="numeric"
-              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-              placeholder="1"
-            />
+            >
+              <option value="">Seleccionar tipo</option>
+              {propertyTypes.map((propertyType) => (
+                <option key={propertyType.id} value={propertyType.id}>
+                  {propertyType.label}
+                  {propertyType.isProject ? " · Proyecto" : ""}
+                </option>
+              ))}
+            </select>
           </Field>
           <Field label="Superficie (m²)">
             <input
@@ -458,6 +497,14 @@ export function PropertyForm({
               inputMode="decimal"
               className="h-11 w-full rounded-xl border border-zinc-200 px-3"
               placeholder="35"
+            />
+          </Field>
+          <Field label="URL Google Maps">
+            <input
+              value={values.locationUrl}
+              onChange={(e) => update("locationUrl", e.target.value)}
+              className="h-11 w-full rounded-xl border border-zinc-200 px-3"
+              placeholder="https://maps.google.com/..."
             />
           </Field>
         </div>

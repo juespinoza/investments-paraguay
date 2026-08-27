@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth/session";
 import {
+  assignCategoriesInTransaction,
   assertPropertyScope,
   canDeleteProperty,
   canEditProperty,
@@ -36,16 +37,27 @@ export async function GET(_req: Request, { params }: Params) {
       city: true,
       neighborhood: true,
       address: true,
+      locationUrl: true,
       latitude: true,
       longitude: true,
       roiAnnualPct: true,
       appreciationAnnualPct: true,
       isFeatured: true,
       featuredOrder: true,
-      priceUsd: true,
-      propertyType: true,
-      bedrooms: true,
-      bathrooms: true,
+      price: true,
+      currency: true,
+      status: true,
+      hasPropertyDocuments: true,
+      propertyTypeId: true,
+      propertyType: {
+        select: {
+          id: true,
+          code: true,
+          label: true,
+          isProject: true,
+          hasResidentialDetails: true,
+        },
+      },
       areaM2: true,
       description: true,
       coverImageUrl: true,
@@ -96,32 +108,41 @@ export async function PATCH(req: Request, { params }: Params) {
   try {
     const assignments = await resolvePropertyAssignments(session, data, scope);
 
-    await prisma.property.update({
-      where: { id },
-      data: {
-        title: data.title,
-        slug: data.slug,
-        city: data.city ?? null,
-        neighborhood: data.neighborhood ?? null,
-        address: data.address ?? null,
-        latitude: data.latitude ?? null,
-        longitude: data.longitude ?? null,
-        roiAnnualPct: data.roiAnnualPct ?? null,
-        appreciationAnnualPct: data.appreciationAnnualPct ?? null,
-        isFeatured: assignments.isFeatured,
-        featuredOrder: assignments.featuredOrder,
-        priceUsd: data.priceUsd ?? null,
-        propertyType: data.propertyType ?? null,
-        bedrooms: data.bedrooms ?? null,
-        bathrooms: data.bathrooms ?? null,
-        areaM2: data.areaM2 ?? null,
-        description: data.description ?? null,
-        coverImageUrl: data.coverImageUrl ?? null,
-        gallery: data.gallery,
-        advisorId: assignments.advisorId,
-        inmobiliariaId: assignments.inmobiliariaId,
-      },
+    await prisma.$transaction(async (tx) => {
+      await tx.property.update({
+        where: { id },
+        data: {
+          title: data.title,
+          slug: data.slug,
+          city: data.city ?? null,
+          neighborhood: data.neighborhood ?? null,
+          address: data.address ?? null,
+          locationUrl: data.locationUrl ?? null,
+          latitude: data.latitude ?? null,
+          longitude: data.longitude ?? null,
+          roiAnnualPct: data.roiAnnualPct ?? null,
+          appreciationAnnualPct: data.appreciationAnnualPct ?? null,
+          isFeatured: assignments.isFeatured,
+          featuredOrder: assignments.featuredOrder,
+          price: data.price ?? null,
+          currency: data.currency,
+          status: data.status,
+          hasPropertyDocuments: data.hasPropertyDocuments ?? false,
+          propertyTypeId: data.propertyTypeId,
+          areaM2: data.areaM2 ?? null,
+          description: data.description ?? null,
+          coverImageUrl: data.coverImageUrl ?? null,
+          gallery: data.gallery,
+          advisorId: assignments.advisorId,
+          inmobiliariaId: assignments.inmobiliariaId,
+        },
+      });
+
+      if (data.categories) {
+        await assignCategoriesInTransaction(tx, id, data.categories);
+      }
     });
+
     return NextResponse.json({ ok: true });
   } catch (e: unknown) {
     if (
@@ -160,7 +181,7 @@ export async function DELETE(_req: Request, { params }: Params) {
 
   await prisma.property.update({
     where: { id },
-    data: { deletedAt: new Date() },
+    data: { deletedAt: new Date(), status: "RETIRADA" },
   });
 
   return NextResponse.json({ ok: true });

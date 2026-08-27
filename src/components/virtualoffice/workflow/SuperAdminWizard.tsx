@@ -18,6 +18,14 @@ type AdvisorOption = {
   inmobiliariaId?: string | null;
 };
 
+type PropertyTypeOption = {
+  id: string;
+  code: string;
+  label: string;
+  isProject: boolean;
+  hasResidentialDetails: boolean;
+};
+
 type PropertyValues = {
   title: string;
 };
@@ -122,9 +130,11 @@ function SummaryItem({
 export function SuperAdminWizard({
   initialInmobiliarias,
   initialAdvisors,
+  propertyTypes,
 }: {
   initialInmobiliarias: InmobiliariaOption[];
   initialAdvisors: AdvisorOption[];
+  propertyTypes: PropertyTypeOption[];
 }) {
   const [step, setStep] = useState<WizardStep>("inmobiliaria");
   const [workflow, setWorkflow] = useState<WorkflowState>(INITIAL_WORKFLOW);
@@ -501,6 +511,7 @@ export function SuperAdminWizard({
                 redirectOnSuccess={false}
                 advisors={advisorOptions}
                 inmobiliarias={inmobiliariaOptions}
+                propertyTypes={propertyTypes}
                 initialData={{
                   advisorId: workflow.advisorId ?? "",
                 }}

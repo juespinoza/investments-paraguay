@@ -1,6 +1,14 @@
 import { prisma } from "@/lib/prisma";
-import { InlineAlert, PageHeader, StatCard } from "@/components/virtualoffice/Page";
-import { UserRepoError, listUserFormOptions, requireAdminSession } from "@/lib/auth/users";
+import {
+  InlineAlert,
+  PageHeader,
+  StatCard,
+} from "@/components/virtualoffice/Page";
+import {
+  UserRepoError,
+  listUserFormOptions,
+  requireAdminSession,
+} from "@/lib/auth/users";
 import { SuperAdminWizard } from "@/components/virtualoffice/workflow/SuperAdminWizard";
 
 export default async function SuperAdminWorkflowPage() {
@@ -26,13 +34,25 @@ export default async function SuperAdminWorkflowPage() {
     throw error;
   }
 
-  const [inmobiliarias, advisors, properties, users, options] = await Promise.all([
-    prisma.inmobiliaria.count({ where: { deletedAt: null } }),
-    prisma.advisor.count({ where: { deletedAt: null } }),
-    prisma.property.count({ where: { deletedAt: null } }),
-    prisma.user.count({ where: { deletedAt: null } }),
-    listUserFormOptions(),
-  ]);
+  const [inmobiliarias, advisors, properties, users, options, propertyTypes] =
+    await Promise.all([
+      prisma.inmobiliaria.count({ where: { deletedAt: null } }),
+      prisma.advisor.count({ where: { deletedAt: null } }),
+      prisma.property.count({ where: { deletedAt: null } }),
+      prisma.user.count({ where: { deletedAt: null } }),
+      listUserFormOptions(),
+      prisma.propertyType.findMany({
+        where: { isActive: true },
+        orderBy: { label: "asc" },
+        select: {
+          id: true,
+          code: true,
+          label: true,
+          isProject: true,
+          hasResidentialDetails: true,
+        },
+      }),
+    ]);
 
   return (
     <div className="space-y-6">
@@ -43,7 +63,11 @@ export default async function SuperAdminWorkflowPage() {
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Inmobiliarias" value={inmobiliarias} hint="Tenants activos." />
+        <StatCard
+          label="Inmobiliarias"
+          value={inmobiliarias}
+          hint="Tenants activos."
+        />
         <StatCard label="Asesores" value={advisors} hint="Perfiles operativos." />
         <StatCard label="Propiedades" value={properties} hint="Inventario actual." />
         <StatCard label="Usuarios" value={users} hint="Accesos activos." />
@@ -59,6 +83,7 @@ export default async function SuperAdminWorkflowPage() {
           label: item.fullName,
           inmobiliariaId: item.inmobiliariaId,
         }))}
+        propertyTypes={propertyTypes}
       />
     </div>
   );

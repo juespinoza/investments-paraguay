@@ -14,6 +14,7 @@ export async function GET(req: Request) {
   const properties = await prisma.property.findMany({
     where: {
       deletedAt: null,
+      status: { notIn: ["BORRADOR", "RETIRADA"] },
       ...(q
         ? {
             OR: [
@@ -24,7 +25,7 @@ export async function GET(req: Request) {
             ],
           }
         : {}),
-      ...(Object.keys(priceFilter).length ? { priceUsd: priceFilter } : {}),
+      ...(Object.keys(priceFilter).length ? { price: priceFilter } : {}),
     },
     orderBy: [
       { isFeatured: "desc" },
@@ -36,9 +37,13 @@ export async function GET(req: Request) {
       title: true,
       description: true,
       coverImageUrl: true,
-      priceUsd: true,
+      price: true,
+      currency: true,
+      status: true,
+      hasPropertyDocuments: true,
       city: true,
       neighborhood: true,
+      locationUrl: true,
       latitude: true,
       longitude: true,
       roiAnnualPct: true,
@@ -46,6 +51,14 @@ export async function GET(req: Request) {
       updatedAt: true,
       isFeatured: true,
       featuredOrder: true,
+      propertyType: {
+        select: {
+          code: true,
+          label: true,
+          isProject: true,
+          hasResidentialDetails: true,
+        },
+      },
       advisor: {
         select: {
           slug: true,
@@ -60,14 +73,23 @@ export async function GET(req: Request) {
     title: p.title,
     subtitle: p.description,
     coverImageUrl: p.coverImageUrl,
-    priceUsd: p.priceUsd,
+    price: p.price ? Number(p.price) : null,
+    priceUsd: p.price ? Number(p.price) : null,
+    currency: p.currency,
+    status: p.status,
+    hasPropertyDocuments: p.hasPropertyDocuments,
     city: p.city,
     neighborhood: p.neighborhood,
+    locationUrl: p.locationUrl,
     latitude: p.latitude ? Number(p.latitude) : null,
     longitude: p.longitude ? Number(p.longitude) : null,
     updatedAt: p.updatedAt,
     isFeatured: p.isFeatured,
     featuredOrder: p.featuredOrder,
+    propertyType: p.propertyType.label,
+    propertyTypeCode: p.propertyType.code,
+    isProject: p.propertyType.isProject,
+    hasResidentialDetails: p.propertyType.hasResidentialDetails,
     roiAnnualPct: p.roiAnnualPct ? Number(p.roiAnnualPct) : null,
     appreciationAnnualPct: p.appreciationAnnualPct
       ? Number(p.appreciationAnnualPct)
