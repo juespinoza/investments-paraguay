@@ -12,7 +12,7 @@
     "mobileEyebrow": "Navegación",
     "mobileDescription": "Explora inversiones, propiedades y análisis con una experiencia pensada primero para móvil.",
     "localeLabel": "Idioma",
-    "localeDescription": "Contenido disponible en español."
+    "localeDescription": "Contenido disponible en español, inglés y portugués."
   },
   "footer": {
     "legal": "Legal",
@@ -148,6 +148,146 @@
       "airbnbParaguay": "Airbnb en Paraguay: zonas con potencial, números clave y errores frecuentes al invertir",
       "terrenosVsDepartamento": "Terrenos o departamentos: cómo elegir el activo correcto según su estrategia de inversión",
       "guiaInversores": "Guía para inversores extranjeros: cómo invertir legalmente en Paraguay paso a paso"
+    }
+  },
+  "site": {
+    "hero": {
+      "eyebrow": "Inversión en Paraguay",
+      "title": "Vivir, crecer e invertir donde el mercado aún tiene margen real.",
+      "subtitle": "Selección exclusiva de propiedades e inversiones en Paraguay, con acompañamiento estratégico local.",
+      "primaryCta": "Ver propiedades",
+      "advisorCta": "Hablar con un asesor"
+    },
+    "market": {
+      "eyebrow": "El mercado",
+      "title": "Paraguay: el mercado que los inversores regionales ya descubrieron.",
+      "dividendsSuffix": "% impuesto a dividendos",
+      "dividendsLabel": "para no residentes en fuente extranjera",
+      "dividendsDescription": "Estructura fiscal competitiva para capital internacional.",
+      "entryLabel": "precio de entrada en proyectos de renta del portafolio actual",
+      "entryDescription": "Ticket de entrada competitivo para renta dolarizada.",
+      "freedomPrefix": "Top ",
+      "freedomSuffix": " LATAM",
+      "freedomLabel": "en libertad económica según el Index of Economic Freedom 2024",
+      "freedomDescription": "Marco macroeconómico atractivo frente a la región.",
+      "valueProps": {
+        "curated": {
+          "title": "Propiedades seleccionadas",
+          "description": "Solo incluimos proyectos con tesis de inversión clara y documentación en orden."
+        },
+        "documented": {
+          "title": "Rentabilidad documentada",
+          "description": "Cada oportunidad incluye proyección de ROI, análisis de zona y comparables."
+        },
+        "local": {
+          "title": "Acompañamiento local",
+          "description": "Desde la consulta hasta la escritura, con asesoría en el idioma del inversor."
+        }
+      }
+    },
+    "featured": {
+      "eyebrow": "Portafolio",
+      "title": "Inversiones seleccionadas",
+      "viewAll": "Ver todas las propiedades"
+    },
+    "property": {
+      "sale": "Venta",
+      "rent": "Alquiler",
+      "viewProperty": "Ver propiedad",
+      "viewPropertyAria": "Ver propiedad {title}",
+      "priceOnRequest": "Precio a consultar",
+      "roi": "ROI bruto est. ~{value} % anual",
+      "coverAlt": "{title}, foto de portada",
+      "photoAlt": "{title}, foto {index} de {total}"
+    },
+    "detail": {
+      "breadcrumbLabel": "Ruta de navegación",
+      "home": "Inicio",
+      "realEstate": "Bienes raíces",
+      "forSale": "En venta",
+      "about": "Sobre la propiedad",
+      "location": "Ubicación",
+      "locationNote": "Ubicación exacta por coordenadas geográficas.",
+      "type": "Tipo",
+      "area": "Superficie",
+      "bedrooms": "Dormitorios",
+      "bathrooms": "Baños",
+      "originalLanguage": "La descripción detallada de esta propiedad está disponible en español. Escribinos y te la explicamos en tu idioma.",
+      "metaTitle": "{title} | Inversión inmobiliaria en Paraguay",
+      "metaFallbackTitle": "Propiedad en Paraguay | Investments Paraguay",
+      "metaFallbackDescription": "Explorá oportunidades inmobiliarias en Paraguay con asesoría profesional.",
+      "metaLocation": "{title} en {location}.",
+      "metaPrice": "Precio: USD {price}.",
+      "metaRoi": "ROI bruto estimado ~{roi} % anual.",
+      "keywordSale": "propiedad en venta paraguay",
+      "keywordInvestment": "inversión inmobiliaria paraguay"
+    },
+    "contact": {
+      "advisorRole": "Asesora inmobiliaria",
+      "companyRole": "Asesoría inmobiliaria",
+      "whatsapp": "Consultar por WhatsApp",
+      "message": "Enviar mensaje",
+      "name": "Nombre",
+      "email": "Email",
+      "notes": "Mensaje",
+      "sending": "Enviando...",
+      "send": "Enviar consulta",
+      "success": "Consulta enviada. Te contactaremos a la brevedad.",
+      "error": "No pudimos enviar tu consulta.",
+      "privacy": "Tus datos se usan solo para responder tu consulta."
+    },
+    "gallery": {
+      "label": "Galería de {title}",
+      "close": "Cerrar galería",
+      "previous": "Imagen anterior",
+      "next": "Imagen siguiente",
+      "open": "Abrir imagen {index} de {title}",
+      "openMain": "Abrir imagen principal de {title}",
+      "viewAll": "Ver todas ({count} fotos)"
+    },
+    "listing": {
+      "eyebrow": "Portafolio",
+      "type": "Tipo",
+      "all": "Todos",
+      "sale": "Venta",
+      "rent": "Alquiler",
+      "maxPrice": "Precio máximo",
+      "noLimit": "Sin límite",
+      "location": "Ubicación",
+      "allLocations": "Todas",
+      "clear": "Limpiar",
+      "clearFilters": "Limpiar filtros",
+      "filters": "Filtros",
+      "closeFilters": "Cerrar filtros",
+      "empty": "No encontramos propiedades con estos filtros",
+      "counter": "{count, plural, one {# propiedad encontrada} other {# propiedades encontradas}}"
+    },
+    "footer": {
+      "tagline": "Oportunidades seleccionadas, contexto local y una forma más clara de invertir en Paraguay.",
+      "location": "Asunción, Paraguay",
+      "platform": "Plataforma",
+      "legal": "Legal",
+      "contact": "Contacto directo",
+      "hours": "Lunes a viernes, 8:00 – 18:00",
+      "rights": "Todos los derechos reservados"
+    },
+    "whatsapp": {
+      "floatLabel": "Hablar con un asesor por WhatsApp",
+      "floatTooltip": "Hablar con un asesor"
+    },
+    "blog": {
+      "all": "Todos",
+      "market": "Mercado",
+      "strategy": "Estrategia",
+      "guides": "Guías",
+      "emptyTitle": "Análisis en preparación",
+      "emptySubtitle": "Pronto publicaremos guías de mercado, análisis de zonas y estrategias para inversores en Paraguay.",
+      "emptyCta": "Ver propiedades disponibles",
+      "categoryEmpty": "No hay artículos publicados en esta categoría todavía.",
+      "spanishOnly": "Artículo en español"
+    },
+    "locale": {
+      "current": "Idioma actual: {locale}"
     }
   }
 }

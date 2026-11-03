@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicProperties } from "@/lib/cache/revalidate";
 import {
   buildPropertyListWhere,
   canCreateProperty,
@@ -106,6 +107,7 @@ export async function POST(req: Request) {
       },
       select: { id: true },
     });
+    revalidatePublicProperties();
 
     return NextResponse.json({ id: created.id }, { status: 201 });
   } catch (e: unknown) {

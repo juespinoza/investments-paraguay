@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { setRequestLocale } from "next-intl/server";
 import { HomePageContent } from "@/components/landing/HomePageContent";
 import { buildMetadata } from "@/lib/seo";
 import { DEFAULT_LOCALE, isSupportedLocale, type AppLocale } from "@/lib/i18n";
+
+export const revalidate = 300;
 
 export default async function HomePage({
   params,
@@ -10,6 +13,7 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   const resolvedLocale = isSupportedLocale(locale) ? locale : DEFAULT_LOCALE;
+  setRequestLocale(resolvedLocale);
 
   return <HomePageContent locale={resolvedLocale} />;
 }

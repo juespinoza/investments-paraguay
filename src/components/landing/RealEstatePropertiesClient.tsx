@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { SearchX, SlidersHorizontal, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { PropertyCard } from "@/components/PropertyCard";
 import { cn } from "@/lib/cn";
 import { usePathname, useRouter } from "@/i18n/navigation";
@@ -13,7 +14,7 @@ import {
 
 type ListingFilter = "todos" | PropertyListingType;
 type PriceOption = {
-  label: string;
+  label: string | null;
   value: number | null;
 };
 
@@ -36,10 +37,13 @@ type RealEstatePropertiesClientProps = {
 const FILTER_KEYS = ["tipo", "precio", "ciudad"] as const;
 const ALL_CITIES = "Todas";
 
-const TYPE_OPTIONS: Array<{ label: string; value: ListingFilter }> = [
-  { label: "Todos", value: "todos" },
-  { label: "Venta", value: "venta" },
-  { label: "Alquiler", value: "alquiler" },
+const TYPE_OPTIONS: Array<{
+  labelKey: "all" | "sale" | "rent";
+  value: ListingFilter;
+}> = [
+  { labelKey: "all", value: "todos" },
+  { labelKey: "sale", value: "venta" },
+  { labelKey: "rent", value: "alquiler" },
 ];
 
 const PRICE_OPTIONS: PriceOption[] = [
@@ -47,7 +51,8 @@ const PRICE_OPTIONS: PriceOption[] = [
   { label: "USD 100k", value: 100000 },
   { label: "USD 200k", value: 200000 },
   { label: "USD 500k", value: 500000 },
-  { label: "Sin límite", value: null },
+  // null = sin límite (la etiqueta se traduce en el componente).
+  { label: null, value: null },
 ];
 
 const CITY_ORDER = [
@@ -111,10 +116,6 @@ function getActiveFilterCount(filters: Filters) {
   ].filter(Boolean).length;
 }
 
-function formatCounter(count: number) {
-  return `${count} ${count === 1 ? "propiedad encontrada" : "propiedades encontradas"}`;
-}
-
 function getSortedCities(properties: PublicPropertyListItem[]) {
   const cities = Array.from(
     new Set(
@@ -164,8 +165,9 @@ function FiltersPanel({
   onClear: () => void;
   variant?: "desktop" | "mobile";
 }) {
+  const t = useTranslations("site.listing");
   const priceIndex = getPriceIndex(filters.precio);
-  const priceLabel = PRICE_OPTIONS[priceIndex]?.label ?? "Sin límite";
+  const priceLabel = PRICE_OPTIONS[priceIndex]?.label ?? t("noLimit");
   const isMobile = variant === "mobile";
 
   return (
@@ -177,7 +179,7 @@ function FiltersPanel({
     >
       <fieldset className={cn("min-w-0", isMobile ? "w-full" : "shrink-0")}>
         <legend className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
-          Tipo
+          {t("type")}
         </legend>
         <div className="flex flex-wrap gap-2">
           {TYPE_OPTIONS.map((option) => {
@@ -196,7 +198,7 @@ function FiltersPanel({
                     : "border-(--line) bg-transparent text-primary hover:border-(--gold) hover:text-(--gold)",
                 )}
               >
-                {option.label}
+                {t(option.labelKey)}
               </button>
             );
           })}
@@ -209,7 +211,7 @@ function FiltersPanel({
             htmlFor={`precio-maximo-${variant}`}
             className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted"
           >
-            Precio máximo
+            {t("maxPrice")}
           </label>
           <span className="text-[12px] font-semibold text-primary">
             {priceLabel}
@@ -234,7 +236,7 @@ function FiltersPanel({
           <span className="text-center">100k</span>
           <span className="text-center">200k</span>
           <span className="text-center">500k</span>
-          <span className="text-right">Sin límite</span>
+          <span className="text-right">{t("noLimit")}</span>
         </div>
       </div>
 
@@ -243,7 +245,7 @@ function FiltersPanel({
           htmlFor={`ciudad-${variant}`}
           className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-muted"
         >
-          Ubicación
+          {t("location")}
         </label>
         <select
           id={`ciudad-${variant}`}
@@ -253,7 +255,7 @@ function FiltersPanel({
           }
           className="h-10 w-full rounded-xs border border-(--line) bg-(--ivory) px-3 text-[13px] text-primary outline-none transition-colors duration-150 focus:border-(--gold)"
         >
-          <option value={ALL_CITIES}>Todas</option>
+          <option value={ALL_CITIES}>{t("allLocations")}</option>
           {cityOptions.map((city) => (
             <option key={city} value={city}>
               {city}
@@ -271,7 +273,7 @@ function FiltersPanel({
             isMobile ? "w-full" : "shrink-0",
           )}
         >
-          Limpiar
+          {t("clear")}
           <X size={14} strokeWidth={1.8} aria-hidden="true" />
         </button>
       ) : null}
@@ -284,6 +286,7 @@ export function RealEstatePropertiesClient({
   title,
   initialQuery,
 }: RealEstatePropertiesClientProps) {
+  const t = useTranslations("site.listing");
   const router = useRouter();
   const pathname = usePathname();
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -328,7 +331,7 @@ export function RealEstatePropertiesClient({
   );
 
   const activeFilterCount = getActiveFilterCount(filters);
-  const counterLabel = formatCounter(filteredProperties.length);
+  const counterLabel = t("counter", { count: filteredProperties.length });
 
   const pushFilters = useCallback(
     (nextFilters: Filters) => {
@@ -428,7 +431,7 @@ export function RealEstatePropertiesClient({
                 strokeWidth={1.8}
                 aria-hidden="true"
               />
-              Filtros
+              {t("filters")}
               <FilterBadge count={activeFilterCount} />
             </button>
 
@@ -442,7 +445,7 @@ export function RealEstatePropertiesClient({
                 onClick={clearFilters}
                 className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary"
               >
-                Limpiar
+                {t("clear")}
               </button>
             ) : null}
           </div>
@@ -454,7 +457,7 @@ export function RealEstatePropertiesClient({
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.15em] text-(--gold)">
-                Portafolio
+                {t("eyebrow")}
               </p>
               <h2 className="font-cormorant text-[28px] font-normal leading-[1.15] text-primary md:text-[40px]">
                 {title}
@@ -467,7 +470,7 @@ export function RealEstatePropertiesClient({
                 onClick={clearFilters}
                 className="inline-flex w-fit items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-primary transition-colors hover:text-(--gold)"
               >
-                Limpiar filtros
+                {t("clearFilters")}
                 <X size={14} strokeWidth={1.8} aria-hidden="true" />
               </button>
             ) : null}
@@ -492,14 +495,14 @@ export function RealEstatePropertiesClient({
                 aria-hidden="true"
               />
               <h3 className="mt-5 font-cormorant text-[26px] font-normal text-primary">
-                No encontramos propiedades con estos filtros
+                {t("empty")}
               </h3>
               <button
                 type="button"
                 onClick={clearFilters}
                 className="mt-6 inline-flex items-center justify-center rounded-xs bg-(--carbon) px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.08em] text-(--ivory) transition-colors duration-150 hover:bg-(--gold) hover:text-(--carbon)"
               >
-                Limpiar filtros
+                {t("clearFilters")}
               </button>
             </div>
           )}
@@ -510,7 +513,7 @@ export function RealEstatePropertiesClient({
         <div className="fixed inset-0 z-70 xl:hidden">
           <button
             type="button"
-            aria-label="Cerrar filtros"
+            aria-label={t("closeFilters")}
             className="absolute inset-0 bg-[rgba(10,10,10,0.42)]"
             onClick={() => setSheetOpen(false)}
           />
@@ -519,7 +522,7 @@ export function RealEstatePropertiesClient({
             <div className="mb-5 flex items-center justify-between gap-3">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted">
-                  Filtros
+                  {t("filters")}
                 </p>
                 <p className="mt-1 text-sm font-medium text-primary">
                   {counterLabel}
@@ -529,7 +532,7 @@ export function RealEstatePropertiesClient({
                 type="button"
                 onClick={() => setSheetOpen(false)}
                 className="inline-flex h-10 w-10 items-center justify-center rounded-xs border border-(--line) text-primary"
-                aria-label="Cerrar filtros"
+                aria-label={t("closeFilters")}
               >
                 <X size={17} strokeWidth={1.8} />
               </button>

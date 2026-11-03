@@ -2,6 +2,8 @@
 
 import { Building2, ShieldCheck, TrendingUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { formatLocale } from "@/lib/i18n";
 
 type Stat = {
   id: string;
@@ -14,60 +16,22 @@ type Stat = {
   format?: "currency" | "integer";
 };
 
-const STATS: Stat[] = [
-  {
-    id: "dividends",
-    value: 0,
-    suffix: "% impuesto a dividendos",
-    label: "para no residentes en fuente extranjera",
-    description: "Estructura fiscal competitiva para capital internacional.",
-    animate: false,
-  },
-  {
-    id: "entry-price",
-    prefix: "USD ",
-    value: 43000,
-    label: "desde este precio en proyectos de renta con 8% ROI anual estimado",
-    description: "Ticket de entrada competitivo para renta dolarizada.",
-    animate: true,
-    format: "currency",
-  },
-  {
-    id: "freedom",
-    prefix: "Top ",
-    value: 5,
-    suffix: " LATAM",
-    label: "en libertad económica según Index of Economic Freedom 2024",
-    description: "Marco macroeconómico atractivo frente a la región.",
-    animate: true,
-    format: "integer",
-  },
-];
+// Respaldo si todavía no hay propiedades con precio y ROI cargados.
+const FALLBACK_ENTRY_PRICE_USD = 46500;
 
 const VALUE_PROPS = [
-  {
-    icon: Building2,
-    title: "Propiedades exclusivas",
-    description:
-      "Solo incluimos proyectos con tesis de inversión clara y documentación en orden.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Rentabilidad documentada",
-    description:
-      "Cada oportunidad incluye proyección de ROI, análisis de zona y comparables.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Acompañamiento local",
-    description:
-      "Desde la consulta hasta la escritura, con asesoría en el idioma del inversor.",
-  },
-];
+  { icon: Building2, key: "curated" },
+  { icon: TrendingUp, key: "documented" },
+  { icon: ShieldCheck, key: "local" },
+] as const;
 
-function formatStatValue(value: number, format: Stat["format"]) {
+function formatStatValue(
+  value: number,
+  format: Stat["format"],
+  numberFormat: string,
+) {
   if (format === "currency") {
-    return new Intl.NumberFormat("es-PY", {
+    return new Intl.NumberFormat(numberFormat, {
       maximumFractionDigits: 0,
     }).format(value);
   }
@@ -100,17 +64,23 @@ function useHasEnteredViewport<T extends HTMLElement>() {
   return { ref, hasEntered };
 }
 
-function AnimatedStatValue({ stat, start }: { stat: Stat; start: boolean }) {
-  const [value, setValue] = useState(stat.animate ? 0 : stat.value);
+// El HTML del servidor siempre trae el valor final (lo que ven Google, las
+// vistas previas de WhatsApp y quien navega sin JavaScript). La animación
+// desde 0 solo corre en el navegador cuando la sección entra en pantalla.
+function AnimatedStatValue({
+  stat,
+  start,
+  numberFormat,
+}: {
+  stat: Stat;
+  start: boolean;
+  numberFormat: string;
+}) {
+  const [value, setValue] = useState(stat.value);
 
   useEffect(() => {
-    if (!stat.animate) {
+    if (!stat.animate || !start) {
       setValue(stat.value);
-      return;
-    }
-
-    if (!start) {
-      setValue(0);
       return;
     }
 
@@ -139,37 +109,77 @@ function AnimatedStatValue({ stat, start }: { stat: Stat; start: boolean }) {
 
     frame = window.requestAnimationFrame(tick);
     return () => window.cancelAnimationFrame(frame);
-  }, [start, stat]);
+  }, [start, stat.animate, stat.value]);
 
   return (
     <>
       {stat.prefix}
-      {formatStatValue(value, stat.format)}
+      {formatStatValue(value, stat.format, numberFormat)}
       {stat.suffix}
     </>
   );
 }
 
-export function WhyParaguaySection() {
+export function WhyParaguaySection({
+  entryPriceUsd,
+}: {
+  entryPriceUsd: number | null;
+}) {
+  const t = useTranslations("site.market");
+  const numberFormat = formatLocale(useLocale());
   const { ref, hasEntered } = useHasEnteredViewport<HTMLElement>();
+
+  const stats: Stat[] = [
+    {
+      id: "dividends",
+      value: 0,
+      suffix: t("dividendsSuffix"),
+      label: t("dividendsLabel"),
+      description: t("dividendsDescription"),
+      animate: false,
+    },
+    {
+      id: "entry-price",
+      prefix: "USD ",
+      value: entryPriceUsd ?? FALLBACK_ENTRY_PRICE_USD,
+      label: t("entryLabel"),
+      description: t("entryDescription"),
+      animate: true,
+      format: "currency",
+    },
+    {
+      id: "freedom",
+      prefix: t("freedomPrefix"),
+      value: 5,
+      suffix: t("freedomSuffix"),
+      label: t("freedomLabel"),
+      description: t("freedomDescription"),
+      animate: true,
+      format: "integer",
+    },
+  ];
 
   return (
     <section ref={ref} className="bg-(--stone) px-4 py-16 md:px-6 md:py-24">
       <div className="mx-auto max-w-7xl">
         <div className="max-w-130">
           <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.15em] text-(--gold)">
-            El mercado
+            {t("eyebrow")}
           </p>
           <h2 className="font-cormorant text-[28px] font-normal leading-[1.15] text-primary md:text-[40px]">
-            Paraguay: el mercado que los inversores regionales ya descubrieron.
+            {t("title")}
           </h2>
         </div>
 
         <div className="mt-12 grid gap-8 md:grid-cols-3">
-          {STATS.map((stat) => (
+          {stats.map((stat) => (
             <article key={stat.id}>
               <p className="font-cormorant text-[48px] font-normal leading-none text-(--gold)">
-                <AnimatedStatValue stat={stat} start={hasEntered} />
+                <AnimatedStatValue
+                  stat={stat}
+                  start={hasEntered}
+                  numberFormat={numberFormat}
+                />
               </p>
               <p className="mt-4 text-[14px] font-medium leading-6 text-muted">
                 {stat.label}
@@ -188,7 +198,7 @@ export function WhyParaguaySection() {
             const Icon = item.icon;
 
             return (
-              <article key={item.title} className="max-w-sm">
+              <article key={item.key} className="max-w-sm">
                 <Icon
                   size={24}
                   strokeWidth={1.7}
@@ -196,10 +206,10 @@ export function WhyParaguaySection() {
                   aria-hidden="true"
                 />
                 <h3 className="mt-5 text-[15px] font-medium text-primary">
-                  {item.title}
+                  {t(`valueProps.${item.key}.title`)}
                 </h3>
                 <p className="mt-2 line-clamp-2 text-[13px] leading-5 text-muted">
-                  {item.description}
+                  {t(`valueProps.${item.key}.description`)}
                 </p>
               </article>
             );
