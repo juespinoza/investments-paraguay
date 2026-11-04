@@ -23,6 +23,9 @@ export type BlogIndexPost = {
   updatedAt: string;
   author: string;
   category: Exclude<BlogCategory, "all">;
+  // Idioma en que está escrito el título y el texto que se muestran.
+  // Si coincide con el de la página, no se muestra el aviso "en español".
+  contentLocale?: string;
 };
 
 type TopicCard = {
@@ -133,7 +136,8 @@ function ArticleCard({
   const locale = useLocale();
   const t = useTranslations("site.blog");
   const categoryLabel = useCategoryLabel()(post.category);
-  const isTranslated = locale === DEFAULT_LOCALE;
+  const contentLocale = post.contentLocale ?? DEFAULT_LOCALE;
+  const isTranslated = locale === contentLocale;
 
   return (
     <article
@@ -186,7 +190,7 @@ function ArticleCard({
         </div>
 
         <h3
-          lang={DEFAULT_LOCALE}
+          lang={contentLocale}
           className={cn(
             "mt-4 font-cormorant font-normal leading-tight text-primary",
             featured ? "text-[28px] md:text-[34px]" : "text-[20px]",

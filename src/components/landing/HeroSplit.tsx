@@ -16,6 +16,8 @@ type Props = {
   locale?: string;
   eyebrowLabel?: string;
   advisorLabel?: string;
+  // Enlace de bajo compromiso al formulario de la guía (#guia).
+  guideLabel?: string;
 };
 
 const ASUNCION_HERO_IMAGES = {
@@ -89,6 +91,7 @@ export function HeroSplit({
   locale,
   eyebrowLabel,
   advisorLabel,
+  guideLabel,
 }: Props) {
   const eyebrow =
     brandLeft || brandRight
@@ -164,6 +167,20 @@ export function HeroSplit({
               {advisorLabel ?? "Hablar con un asesor"}
             </a>
           </div>
+
+          {guideLabel ? (
+            <a
+              href="#guia"
+              className="mt-6 inline-flex items-center gap-2 text-[14px] text-(--ivory) underline decoration-(--gold) decoration-1 underline-offset-[6px] opacity-90 transition-opacity hover:opacity-100"
+              data-analytics-event="cta_click"
+              data-analytics-category="hero"
+              data-analytics-label="guide"
+              data-analytics-location="hero"
+            >
+              {guideLabel}
+              <span aria-hidden="true">→</span>
+            </a>
+          ) : null}
         </div>
       </div>
 

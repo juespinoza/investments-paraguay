@@ -3,6 +3,7 @@ import { HeroSplit } from "@/components/landing/HeroSplit";
 import { FeaturedPropertiesSection } from "@/components/landing/FeaturedPropertiesSection";
 import { WhyParaguaySection } from "@/components/landing/WhyParaguaySection";
 import { StructuredData } from "@/components/seo/StructuredData";
+import { GuideLeadMagnet } from "@/components/leads/GuideLeadMagnet";
 import { SITE_URL } from "@/lib/seo";
 import {
   getEntryPriceUsd,
@@ -32,9 +33,11 @@ export async function HomePageContent({ locale }: { locale: string }) {
         subtitle={t("subtitle")}
         ctaLabel={t("primaryCta")}
         advisorLabel={t("advisorCta")}
+        guideLabel={t("guideCta")}
       />
       <WhyParaguaySection entryPriceUsd={getEntryPriceUsd(properties)} />
       <FeaturedPropertiesSection properties={properties} />
+      <GuideLeadMagnet location="home" />
     </>
   );
 }

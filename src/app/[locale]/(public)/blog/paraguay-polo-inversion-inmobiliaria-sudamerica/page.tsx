@@ -1,4 +1,5 @@
 import { StructuredData } from "@/components/seo/StructuredData";
+import { GuideLeadMagnet } from "@/components/leads/GuideLeadMagnet";
 import { SITE_URL } from "@/lib/seo";
 import { Link } from "@/i18n/navigation";
 
@@ -293,6 +294,10 @@ export default function BlogPostPage() {
             </ul>
           </div>
         </article>
+
+        <div className="mx-auto mt-10 max-w-4xl">
+          <GuideLeadMagnet location="blog" variant="card" />
+        </div>
       </div>
     </div>
   );

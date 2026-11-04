@@ -2,6 +2,8 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { resolveLocale } from "@/lib/content/public-pages";
 import { buildWhatsAppHref } from "@/lib/whatsapp";
+import { listZoneNames } from "@/lib/content/zones";
+import { toSupportedLocale } from "@/lib/i18n";
 
 type FooterLink = {
   href:
@@ -11,7 +13,8 @@ type FooterLink = {
     | "/nosotros"
     | "/legales"
     | "/cookies"
-    | "/contacto";
+    | "/contacto"
+    | `/invertir-en/${string}`;
   label: string;
 };
 
@@ -60,6 +63,10 @@ export async function Footer() {
     { href: "/nosotros", label: t("footer.us") },
   ];
 
+  const zoneLinks: FooterLink[] = listZoneNames(toSupportedLocale(locale)).map(
+    (zone) => ({ href: `/invertir-en/${zone.slug}`, label: zone.name }),
+  );
+
   const legalLinks: FooterLink[] = [
     { href: "/legales", label: t("footer.legal") },
     { href: "/cookies", label: t("footer.cookies") },
@@ -86,6 +93,11 @@ export async function Footer() {
             <div>
               <SectionTitle>{t("site.footer.platform")}</SectionTitle>
               <FooterLinks links={platformLinks} locale={locale} />
+            </div>
+
+            <div>
+              <SectionTitle>{t("site.footer.zones")}</SectionTitle>
+              <FooterLinks links={zoneLinks} locale={locale} />
             </div>
 
             <div>

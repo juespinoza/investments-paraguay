@@ -156,7 +156,8 @@
       "title": "Vivir, crecer e invertir donde el mercado aún tiene margen real.",
       "subtitle": "Selección exclusiva de propiedades e inversiones en Paraguay, con acompañamiento estratégico local.",
       "primaryCta": "Ver propiedades",
-      "advisorCta": "Hablar con un asesor"
+      "advisorCta": "Hablar con un asesor",
+      "guideCta": "o descargá gratis la guía para invertir en Asunción"
     },
     "market": {
       "eyebrow": "El mercado",
@@ -268,7 +269,8 @@
       "legal": "Legal",
       "contact": "Contacto directo",
       "hours": "Lunes a viernes, 8:00 – 18:00",
-      "rights": "Todos los derechos reservados"
+      "rights": "Todos los derechos reservados",
+      "zones": "Invertir por zona"
     },
     "whatsapp": {
       "floatLabel": "Hablar con un asesor por WhatsApp",
@@ -296,6 +298,60 @@
       "VENDIDA": "Vendida",
       "ALQUILADA": "Alquilada",
       "RETIRADA": "Retirada"
+    },
+    "about": {
+      "eyebrow": "Quién está detrás",
+      "name": "Julia Espinoza",
+      "roles": "Asesora inmobiliaria en SkyOne · Ingeniera en sistemas · Business Owner",
+      "photoAlt": "Julia Espinoza, asesora inmobiliaria en Asunción",
+      "stat1Value": "2 años",
+      "stat1Label": "asesorando compradores",
+      "stat2Value": "4 años",
+      "stat2Label": "invirtiendo en inmuebles en Paraguay",
+      "p1": "Antes de recomendar una inversión, la miro con los números que usaría para mí: precio, costos reales, renta neta y quién la construye. Los números que comparto salen de departamentos que compré y alquilo.",
+      "p2": "Además administro alquileres temporarios en Airbnb y desarrollo software y automatizaciones para empresas. Armar y operar negocios propios me enseñó a mirar cada propiedad como lo que es: un negocio, con ingresos, costos y un plan si algo sale distinto.",
+      "whatsapp": "Hablar por WhatsApp",
+      "properties": "Ver propiedades"
+    },
+    "guide": {
+      "eyebrow": "Guía gratuita",
+      "title": "Cómo invertir en departamentos en Asunción",
+      "description": "Riesgos, costos reales y un caso con números propios. Se lee en 10 minutos.",
+      "point1": "Cuánto rinde de verdad un monoambiente en Airbnb",
+      "point2": "Los 5 errores del inversionista primerizo",
+      "point3": "El checklist de 10 puntos para elegir un departamento",
+      "name": "Nombre",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "contactHint": "Dejá tu email o tu WhatsApp.",
+      "needContact": "Dejá un email o un WhatsApp para recibir la guía.",
+      "submit": "Recibir la guía",
+      "sending": "Enviando...",
+      "success": "Listo, ya podés descargarla.",
+      "download": "Descargar la guía (PDF)",
+      "error": "No pudimos registrar tus datos. Probá de nuevo.",
+      "privacy": "Usamos tus datos solo para enviarte la guía y responder tus consultas.",
+      "languageNote": "",
+      "notes": "Descarga de la guía: invertir en departamentos en Asunción",
+      "needName": "Escribí tu nombre para recibir la guía."
+    },
+    "zone": {
+      "breadcrumb": "Zonas",
+      "factsTitle": "La zona en números",
+      "propertiesTitle": "Propiedades en {zone}",
+      "fromPrice": "Desde {price}",
+      "count": "{count, plural, one {# propiedad disponible} other {# propiedades disponibles}}",
+      "emptyTitle": "Pronto vamos a publicar propiedades en {zone}",
+      "emptyText": "Mientras tanto, contame qué buscás y te aviso apenas tenga una opción que pase mi checklist.",
+      "emptyCta": "Avisame por WhatsApp",
+      "allProperties": "Ver todas las propiedades",
+      "whatsapp": "Consultar por {zone}",
+      "guideLink": "Descargar la guía gratuita",
+      "sourcesTitle": "Fuentes",
+      "sourceLabel": "Fuente",
+      "otherZones": "Otras zonas",
+      "disclaimer": "Datos de mercado orientativos según las fuentes citadas. Cada propiedad se analiza por separado.",
+      "emptyWhatsappMessage": "Hola Julia, busco invertir en {zone}. Avisame cuando tengas una opción."
     }
   }
 }

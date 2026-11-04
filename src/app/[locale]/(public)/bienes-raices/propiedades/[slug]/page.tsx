@@ -7,6 +7,7 @@ import { StructuredData } from "@/components/seo/StructuredData";
 import { PropertyContactSidebar } from "@/components/landing/property-detail/PropertyContactSidebar";
 import { PropertyImageGallery } from "@/components/landing/property-detail/PropertyImageGallery";
 import { PropertyMap } from "@/components/PropertyMap";
+import { GuideLeadMagnet } from "@/components/leads/GuideLeadMagnet";
 import { buildCloudinaryOpenGraphImageUrl } from "@/lib/cloudinary";
 import { buildRealEstateListingJsonLd } from "@/lib/structured-data";
 import { getPublicProperty } from "@/lib/properties/public";
@@ -287,6 +288,14 @@ export default async function PropertyPage({ params }: PageProps) {
                 </div>
               </section>
             ) : null}
+
+            <div className="mt-10">
+              <GuideLeadMagnet
+                location="property"
+                propertySlug={property.slug}
+                variant="card"
+              />
+            </div>
           </div>
 
           <div className="hidden lg:block">

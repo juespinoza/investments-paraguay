@@ -155,7 +155,8 @@
       "title": "Viver, crescer e investir onde o mercado ainda tem margem real.",
       "subtitle": "Seleção exclusiva de imóveis e investimentos no Paraguai, com acompanhamento estratégico local.",
       "primaryCta": "Ver imóveis",
-      "advisorCta": "Falar com um consultor"
+      "advisorCta": "Falar com um consultor",
+      "guideCta": "ou baixe grátis o guia para investir em Assunção"
     },
     "market": {
       "eyebrow": "O mercado",
@@ -267,7 +268,8 @@
       "legal": "Legal",
       "contact": "Contato direto",
       "hours": "Segunda a sexta, 8:00 – 18:00 (horário do Paraguai)",
-      "rights": "Todos os direitos reservados"
+      "rights": "Todos os direitos reservados",
+      "zones": "Investir por região"
     },
     "whatsapp": {
       "floatLabel": "Falar com um consultor pelo WhatsApp",
@@ -295,6 +297,60 @@
       "VENDIDA": "Vendido",
       "ALQUILADA": "Alugado",
       "RETIRADA": "Retirado"
+    },
+    "about": {
+      "eyebrow": "Quem está por trás",
+      "name": "Julia Espinoza",
+      "roles": "Consultora imobiliária na SkyOne · Engenheira de sistemas · Business Owner",
+      "photoAlt": "Julia Espinoza, consultora imobiliária em Assunção",
+      "stat1Value": "2 anos",
+      "stat1Label": "assessorando compradores",
+      "stat2Value": "4 anos",
+      "stat2Label": "investindo em imóveis no Paraguai",
+      "p1": "Antes de recomendar um investimento, faço as contas que faria para mim: preço, custos reais, renda líquida e quem está construindo. Os números que compartilho vêm de apartamentos que comprei e alugo.",
+      "p2": "Também administro aluguéis de temporada no Airbnb e desenvolvo software e automações para empresas. Montar e operar negócios próprios me ensinou a olhar cada imóvel como ele é: um negócio, com receitas, custos e um plano para quando algo sai diferente.",
+      "whatsapp": "Falar pelo WhatsApp",
+      "properties": "Ver imóveis"
+    },
+    "guide": {
+      "eyebrow": "Guia gratuito",
+      "title": "Como investir em apartamentos em Assunção",
+      "description": "Riscos, custos reais e um caso com números próprios. Leitura de 10 minutos.",
+      "point1": "Quanto rende de verdade um studio no Airbnb",
+      "point2": "Os 5 erros do investidor de primeira viagem",
+      "point3": "O checklist de 10 pontos para escolher um apartamento",
+      "name": "Nome",
+      "email": "E-mail",
+      "whatsapp": "WhatsApp",
+      "contactHint": "Deixe seu e-mail ou seu WhatsApp.",
+      "needContact": "Deixe um e-mail ou um WhatsApp para receber o guia.",
+      "submit": "Receber o guia",
+      "sending": "Enviando...",
+      "success": "Pronto, você já pode baixar.",
+      "download": "Baixar o guia (PDF)",
+      "error": "Não conseguimos registrar seus dados. Tente de novo.",
+      "privacy": "Usamos seus dados só para enviar o guia e responder suas dúvidas.",
+      "languageNote": "O guia está em espanhol.",
+      "notes": "Descarga de la guía: invertir en departamentos en Asunción",
+      "needName": "Escreva seu nome para receber o guia."
+    },
+    "zone": {
+      "breadcrumb": "Regiões",
+      "factsTitle": "A região em números",
+      "propertiesTitle": "Imóveis em {zone}",
+      "fromPrice": "A partir de {price}",
+      "count": "{count, plural, one {# imóvel disponível} other {# imóveis disponíveis}}",
+      "emptyTitle": "Em breve vamos publicar imóveis em {zone}",
+      "emptyText": "Enquanto isso, me conte o que você procura e eu aviso assim que tiver uma opção que passe no meu checklist.",
+      "emptyCta": "Me avise pelo WhatsApp",
+      "allProperties": "Ver todos os imóveis",
+      "whatsapp": "Perguntar sobre {zone}",
+      "guideLink": "Baixar o guia gratuito",
+      "sourcesTitle": "Fontes",
+      "sourceLabel": "Fonte",
+      "otherZones": "Outras regiões",
+      "disclaimer": "Dados de mercado de referência segundo as fontes citadas. Cada imóvel é analisado separadamente.",
+      "emptyWhatsappMessage": "Olá Julia, quero investir em {zone}. Me avise quando tiver uma opção."
     }
   }
 }

@@ -6,6 +6,13 @@ import {
   type BlogIndexPost,
 } from "@/components/landing/BlogIndexClient";
 import { buildMetadata } from "@/lib/seo";
+import { GuideLeadMagnet } from "@/components/leads/GuideLeadMagnet";
+import { toSupportedLocale } from "@/lib/i18n";
+import {
+  ARTICLE_SLUG as FOREIGN_ARTICLE_SLUG,
+  ARTICLE_UPDATED as FOREIGN_ARTICLE_UPDATED,
+  getLocalizedArticle,
+} from "@/lib/content/articles/invertir-siendo-extranjero";
 import { listPublicBlogPosts } from "@/lib/virtualoffice/blog";
 import { resolveLocale } from "@/lib/content/public-pages";
 
@@ -125,7 +132,27 @@ function toBlogIndexPost(post: PublicBlogPost): BlogIndexPost {
 
 // Artículos escritos como páginas estáticas en el código (no en la base).
 // Se suman al índice para que el blog no aparezca vacío.
-const STATIC_POSTS: BlogIndexPost[] = [
+function getStaticPosts(locale: string): BlogIndexPost[] {
+  const supportedLocale = toSupportedLocale(locale);
+  const foreignArticle = getLocalizedArticle(supportedLocale);
+
+  return [
+    {
+      id: "static-invertir-siendo-extranjero",
+      title: foreignArticle.title,
+      slug: FOREIGN_ARTICLE_SLUG,
+      excerpt: foreignArticle.excerpt,
+      coverImageUrl: null,
+      updatedAt: new Date(FOREIGN_ARTICLE_UPDATED).toISOString(),
+      author: "Julia Espinoza",
+      category: "guides",
+      contentLocale: supportedLocale,
+    },
+    ...STATIC_SPANISH_POSTS,
+  ];
+}
+
+const STATIC_SPANISH_POSTS: BlogIndexPost[] = [
   {
     id: "static-paraguay-polo",
     title:
@@ -148,7 +175,7 @@ export default async function BlogPage({ params }: PageProps) {
   const dbSlugs = new Set(dbPosts.map((post) => post.slug));
   const posts = [
     ...dbPosts,
-    ...STATIC_POSTS.filter((post) => !dbSlugs.has(post.slug)),
+    ...getStaticPosts(locale).filter((post) => !dbSlugs.has(post.slug)),
   ].sort(
     (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
   );
@@ -161,20 +188,25 @@ export default async function BlogPage({ params }: PageProps) {
   );
 
   return (
-    <BlogIndexClient
-      posts={posts}
-      topics={topics}
-      dictionary={{
-        eyebrow: t("blog.eyebrow"),
-        title: t("blog.title"),
-        subtitle: t("blog.subtitle"),
-        all: t("site.blog.all"),
-        readMore: t("blog.readMore"),
-        featuredLabel: t("blog.featuredLabel"),
-        emptyTitle: t("site.blog.emptyTitle"),
-        emptySubtitle: t("site.blog.emptySubtitle"),
-        emptyCta: t("site.blog.emptyCta"),
-      }}
-    />
+    <>
+      <BlogIndexClient
+        posts={posts}
+        topics={topics}
+        dictionary={{
+          eyebrow: t("blog.eyebrow"),
+          title: t("blog.title"),
+          subtitle: t("blog.subtitle"),
+          all: t("site.blog.all"),
+          readMore: t("blog.readMore"),
+          featuredLabel: t("blog.featuredLabel"),
+          emptyTitle: t("site.blog.emptyTitle"),
+          emptySubtitle: t("site.blog.emptySubtitle"),
+          emptyCta: t("site.blog.emptyCta"),
+        }}
+      />
+      <div className="mt-12">
+        <GuideLeadMagnet location="blog" />
+      </div>
+    </>
   );
 }

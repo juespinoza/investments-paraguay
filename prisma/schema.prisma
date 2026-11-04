@@ -189,7 +189,11 @@ model Property {
   createdAt             DateTime                         @default(now())
   updatedAt             DateTime                         @updatedAt
   deletedAt             DateTime?
+  // Origen externo (API del publicador): sistema de origen + id en ese sistema.
+  externalSource        String?
+  externalId            String?
 
+  @@unique([externalSource, externalId])
   @@index([city])
   @@index([status])
   @@index([propertyTypeId])

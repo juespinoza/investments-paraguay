@@ -4,6 +4,9 @@ import { buildMetadata } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { resolveLocale } from "@/lib/content/public-pages";
 import { listPublicProperties } from "@/lib/properties/public";
+import { listZoneNames } from "@/lib/content/zones";
+import { toSupportedLocale } from "@/lib/i18n";
+import { Link } from "@/i18n/navigation";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -110,6 +113,23 @@ export default async function BienesRaicesPage({
           <p className="mt-4 max-w-2xl text-base text-secondary md:text-lg">
             {t("realEstate.description")}
           </p>
+          <nav
+            aria-label={t("site.footer.zones")}
+            className="mt-6 flex flex-wrap items-center gap-2"
+          >
+            <span className="mr-1 text-[12px] font-semibold uppercase tracking-[0.1em] text-muted">
+              {t("site.footer.zones")}
+            </span>
+            {listZoneNames(toSupportedLocale(locale)).map((zone) => (
+              <Link
+                key={zone.slug}
+                href={`/invertir-en/${zone.slug}`}
+                className="rounded-full border border-(--line) px-4 py-1.5 text-[13px] text-primary transition-colors hover:border-(--gold) hover:text-(--gold)"
+              >
+                {zone.name}
+              </Link>
+            ))}
+          </nav>
         </div>
       </section>
 
