@@ -4,7 +4,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import type {
   ArticleBlock,
   LocalizedArticle,
-} from "@/lib/content/articles/invertir-siendo-extranjero";
+} from "@/lib/content/articles/types";
 import { SCHEDULE_CALL_URL, buildWhatsAppMessageHref } from "@/lib/contact";
 
 // Texto con **negrita** y [enlaces](https://...). Solo para contenido propio.
@@ -158,7 +158,7 @@ function Block({
                             : "px-4 py-3 text-secondary"
                         }
                       >
-                        {cell}
+                        <RichInline text={cell} />
                       </td>
                     ))}
                   </tr>

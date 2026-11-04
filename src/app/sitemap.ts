@@ -4,10 +4,7 @@ import { listPublicBlogPosts } from "@/lib/virtualoffice/blog";
 import { SEO_LOCALES, SITE_URL } from "@/lib/seo";
 import { DEFAULT_LOCALE } from "@/lib/i18n";
 import { HIDDEN_PUBLIC_STATUSES } from "@/lib/properties/public";
-import {
-  ARTICLE_SLUG as FOREIGN_ARTICLE_SLUG,
-  ARTICLE_UPDATED as FOREIGN_ARTICLE_UPDATED,
-} from "@/lib/content/articles/invertir-siendo-extranjero";
+import { TRANSLATED_ARTICLES } from "@/lib/content/articles";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
@@ -196,13 +193,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
-  // Artículo traducido a todos los idiomas: una URL por idioma con hreflang.
-  const translatedArticleEntries = localizedEntries({
-    path: `/blog/${FOREIGN_ARTICLE_SLUG}`,
-    lastModified: new Date(FOREIGN_ARTICLE_UPDATED),
-    changeFrequency: "monthly",
-    priority: 0.8,
-  });
+  // Artículos traducidos a todos los idiomas: una URL por idioma con hreflang.
+  const translatedArticleEntries = TRANSLATED_ARTICLES.flatMap((article) =>
+    localizedEntries({
+      path: `/blog/${article.slug}`,
+      lastModified: new Date(article.updated),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    }),
+  );
 
   return uniqueByUrl([
     ...staticEntries,

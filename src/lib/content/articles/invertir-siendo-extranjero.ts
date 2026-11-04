@@ -1,42 +1,11 @@
 import type { SupportedLocale } from "@/lib/i18n";
+import type {
+  ArticleDefinition,
+  ArticleSource,
+  LocalizedArticle,
+} from "@/lib/content/articles/types";
 
-// Artículo fijo, traducido a es/en/pt. El texto admite **negrita** y
-// [enlaces](https://...). Bloques "cta" muestran el llamado a la acción
-// intermedio (guía + llamada).
-
-export type ArticleBlock =
-  | { type: "h2"; id: string; text: string }
-  | { type: "p"; text: string }
-  | { type: "ul"; items: string[] }
-  | { type: "ol"; items: string[] }
-  | { type: "table"; head: string[]; rows: string[][]; note?: string }
-  | { type: "callout"; title: string; text: string }
-  | { type: "cta" };
-
-export type ArticleSource = { label: string; url: string };
-
-export type LocalizedArticle = {
-  title: string;
-  metaTitle: string;
-  description: string;
-  excerpt: string;
-  lead: string;
-  readingTime: string;
-  updatedLabel: string;
-  authorRole: string;
-  tocTitle: string;
-  sourcesTitle: string;
-  disclaimer: string;
-  cta: {
-    title: string;
-    text: string;
-    guide: string;
-    call: string;
-    whatsapp: string;
-    whatsappMessage: string;
-  };
-  blocks: ArticleBlock[];
-};
+export type { ArticleBlock, ArticleSource, LocalizedArticle } from "@/lib/content/articles/types";
 
 export const ARTICLE_SLUG = "invertir-en-paraguay-siendo-extranjero";
 export const ARTICLE_PUBLISHED = "2026-11-04";
@@ -467,6 +436,15 @@ const pt: LocalizedArticle = {
 };
 
 const ARTICLES: Record<SupportedLocale, LocalizedArticle> = { es, en, pt };
+
+export const foreignInvestorArticle: ArticleDefinition = {
+  slug: ARTICLE_SLUG,
+  published: ARTICLE_PUBLISHED,
+  updated: ARTICLE_UPDATED,
+  category: "guides",
+  sources: SOURCES,
+  content: ARTICLES,
+};
 
 export function getLocalizedArticle(locale: SupportedLocale) {
   return ARTICLES[locale];
