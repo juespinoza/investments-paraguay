@@ -269,7 +269,8 @@
       "legal": "Legal",
       "contact": "Direct contact",
       "hours": "Monday to Friday, 8:00 – 18:00 (Paraguay time)",
-      "rights": "All rights reserved"
+      "rights": "All rights reserved",
+      "zones": "Invest by area"
     },
     "whatsapp": {
       "floatLabel": "Talk to an advisor on WhatsApp",
@@ -333,6 +334,24 @@
       "languageNote": "The guide is in Spanish.",
       "notes": "Descarga de la guía: invertir en departamentos en Asunción",
       "needName": "Enter your name to get the guide."
+    },
+    "zone": {
+      "breadcrumb": "Areas",
+      "factsTitle": "The area in numbers",
+      "propertiesTitle": "Properties in {zone}",
+      "fromPrice": "From {price}",
+      "count": "{count, plural, one {# property available} other {# properties available}}",
+      "emptyTitle": "We will publish properties in {zone} soon",
+      "emptyText": "In the meantime, tell me what you are looking for and I will let you know as soon as I have an option that passes my checklist.",
+      "emptyCta": "Let me know on WhatsApp",
+      "allProperties": "View all properties",
+      "whatsapp": "Ask about {zone}",
+      "guideLink": "Download the free guide",
+      "sourcesTitle": "Sources",
+      "sourceLabel": "Source",
+      "otherZones": "Other areas",
+      "disclaimer": "Indicative market data from the sources cited. Every property is analyzed separately.",
+      "emptyWhatsappMessage": "Hi Julia, I am looking to invest in {zone}. Let me know when you have an option."
     }
   }
 }

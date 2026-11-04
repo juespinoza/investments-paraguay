@@ -17,6 +17,22 @@ const STATIC_PAGES = [
     changeFrequency: "daily",
     priority: 1,
   },
+  // Landings por zona (src/lib/content/zones.ts).
+  {
+    path: "/invertir-en/asuncion",
+    changeFrequency: "weekly",
+    priority: 0.8,
+  },
+  {
+    path: "/invertir-en/mariano-roque-alonso",
+    changeFrequency: "weekly",
+    priority: 0.8,
+  },
+  {
+    path: "/invertir-en/luque",
+    changeFrequency: "weekly",
+    priority: 0.8,
+  },
   {
     path: "/bienes-raices",
     changeFrequency: "weekly",

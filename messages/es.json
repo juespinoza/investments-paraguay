@@ -269,7 +269,8 @@
       "legal": "Legal",
       "contact": "Contacto directo",
       "hours": "Lunes a viernes, 8:00 – 18:00",
-      "rights": "Todos los derechos reservados"
+      "rights": "Todos los derechos reservados",
+      "zones": "Invertir por zona"
     },
     "whatsapp": {
       "floatLabel": "Hablar con un asesor por WhatsApp",
@@ -333,6 +334,24 @@
       "languageNote": "",
       "notes": "Descarga de la guía: invertir en departamentos en Asunción",
       "needName": "Escribí tu nombre para recibir la guía."
+    },
+    "zone": {
+      "breadcrumb": "Zonas",
+      "factsTitle": "La zona en números",
+      "propertiesTitle": "Propiedades en {zone}",
+      "fromPrice": "Desde {price}",
+      "count": "{count, plural, one {# propiedad disponible} other {# propiedades disponibles}}",
+      "emptyTitle": "Pronto vamos a publicar propiedades en {zone}",
+      "emptyText": "Mientras tanto, contame qué buscás y te aviso apenas tenga una opción que pase mi checklist.",
+      "emptyCta": "Avisame por WhatsApp",
+      "allProperties": "Ver todas las propiedades",
+      "whatsapp": "Consultar por {zone}",
+      "guideLink": "Descargar la guía gratuita",
+      "sourcesTitle": "Fuentes",
+      "sourceLabel": "Fuente",
+      "otherZones": "Otras zonas",
+      "disclaimer": "Datos de mercado orientativos según las fuentes citadas. Cada propiedad se analiza por separado.",
+      "emptyWhatsappMessage": "Hola Julia, busco invertir en {zone}. Avisame cuando tengas una opción."
     }
   }
 }
