@@ -4,6 +4,10 @@ import { listPublicBlogPosts } from "@/lib/virtualoffice/blog";
 import { SEO_LOCALES, SITE_URL } from "@/lib/seo";
 import { DEFAULT_LOCALE } from "@/lib/i18n";
 import { HIDDEN_PUBLIC_STATUSES } from "@/lib/properties/public";
+import {
+  ARTICLE_SLUG as FOREIGN_ARTICLE_SLUG,
+  ARTICLE_UPDATED as FOREIGN_ARTICLE_UPDATED,
+} from "@/lib/content/articles/invertir-siendo-extranjero";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
@@ -176,8 +180,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
+  // Artículo traducido a todos los idiomas: una URL por idioma con hreflang.
+  const translatedArticleEntries = localizedEntries({
+    path: `/blog/${FOREIGN_ARTICLE_SLUG}`,
+    lastModified: new Date(FOREIGN_ARTICLE_UPDATED),
+    changeFrequency: "monthly",
+    priority: 0.8,
+  });
+
   return uniqueByUrl([
     ...staticEntries,
+    ...translatedArticleEntries,
     ...propertyEntries,
     ...dynamicBlogEntries,
     ...staticBlogEntries,
