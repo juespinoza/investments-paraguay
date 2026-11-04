@@ -8,11 +8,7 @@ import {
 import { buildMetadata } from "@/lib/seo";
 import { GuideLeadMagnet } from "@/components/leads/GuideLeadMagnet";
 import { toSupportedLocale } from "@/lib/i18n";
-import {
-  ARTICLE_SLUG as FOREIGN_ARTICLE_SLUG,
-  ARTICLE_UPDATED as FOREIGN_ARTICLE_UPDATED,
-  getLocalizedArticle,
-} from "@/lib/content/articles/invertir-siendo-extranjero";
+import { TRANSLATED_ARTICLES } from "@/lib/content/articles";
 import { listPublicBlogPosts } from "@/lib/virtualoffice/blog";
 import { resolveLocale } from "@/lib/content/public-pages";
 
@@ -134,20 +130,22 @@ function toBlogIndexPost(post: PublicBlogPost): BlogIndexPost {
 // Se suman al índice para que el blog no aparezca vacío.
 function getStaticPosts(locale: string): BlogIndexPost[] {
   const supportedLocale = toSupportedLocale(locale);
-  const foreignArticle = getLocalizedArticle(supportedLocale);
 
   return [
-    {
-      id: "static-invertir-siendo-extranjero",
-      title: foreignArticle.title,
-      slug: FOREIGN_ARTICLE_SLUG,
-      excerpt: foreignArticle.excerpt,
-      coverImageUrl: null,
-      updatedAt: new Date(FOREIGN_ARTICLE_UPDATED).toISOString(),
-      author: "Julia Espinoza",
-      category: "guides",
-      contentLocale: supportedLocale,
-    },
+    ...TRANSLATED_ARTICLES.map((definition) => {
+      const article = definition.content[supportedLocale];
+      return {
+        id: `static-${definition.slug}`,
+        title: article.title,
+        slug: definition.slug,
+        excerpt: article.excerpt,
+        coverImageUrl: null,
+        updatedAt: new Date(definition.updated).toISOString(),
+        author: "Julia Espinoza",
+        category: definition.category,
+        contentLocale: supportedLocale,
+      } satisfies BlogIndexPost;
+    }),
     ...STATIC_SPANISH_POSTS,
   ];
 }
