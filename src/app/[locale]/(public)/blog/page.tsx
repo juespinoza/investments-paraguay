@@ -6,6 +6,7 @@ import {
   type BlogIndexPost,
 } from "@/components/landing/BlogIndexClient";
 import { buildMetadata } from "@/lib/seo";
+import { GuideLeadMagnet } from "@/components/leads/GuideLeadMagnet";
 import { listPublicBlogPosts } from "@/lib/virtualoffice/blog";
 import { resolveLocale } from "@/lib/content/public-pages";
 
@@ -161,20 +162,25 @@ export default async function BlogPage({ params }: PageProps) {
   );
 
   return (
-    <BlogIndexClient
-      posts={posts}
-      topics={topics}
-      dictionary={{
-        eyebrow: t("blog.eyebrow"),
-        title: t("blog.title"),
-        subtitle: t("blog.subtitle"),
-        all: t("site.blog.all"),
-        readMore: t("blog.readMore"),
-        featuredLabel: t("blog.featuredLabel"),
-        emptyTitle: t("site.blog.emptyTitle"),
-        emptySubtitle: t("site.blog.emptySubtitle"),
-        emptyCta: t("site.blog.emptyCta"),
-      }}
-    />
+    <>
+      <BlogIndexClient
+        posts={posts}
+        topics={topics}
+        dictionary={{
+          eyebrow: t("blog.eyebrow"),
+          title: t("blog.title"),
+          subtitle: t("blog.subtitle"),
+          all: t("site.blog.all"),
+          readMore: t("blog.readMore"),
+          featuredLabel: t("blog.featuredLabel"),
+          emptyTitle: t("site.blog.emptyTitle"),
+          emptySubtitle: t("site.blog.emptySubtitle"),
+          emptyCta: t("site.blog.emptyCta"),
+        }}
+      />
+      <div className="mt-12">
+        <GuideLeadMagnet location="blog" />
+      </div>
+    </>
   );
 }

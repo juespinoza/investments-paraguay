@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { GuideLeadMagnet } from "@/components/leads/GuideLeadMagnet";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 import { getPublicBlogPostBySlug } from "@/lib/virtualoffice/blog";
@@ -86,6 +87,10 @@ export default async function PublicBlogPostPage({ params }: PageProps) {
             ))}
           </div>
         </article>
+
+        <div className="mx-auto mt-10 max-w-4xl">
+          <GuideLeadMagnet location="blog" variant="card" />
+        </div>
       </div>
     </div>
   );

@@ -296,6 +296,42 @@
       "VENDIDA": "Sold",
       "ALQUILADA": "Rented",
       "RETIRADA": "Withdrawn"
+    },
+    "about": {
+      "eyebrow": "Who is behind it",
+      "name": "Julia Espinoza",
+      "roles": "Real estate advisor at SkyOne · Systems engineer · Business Owner",
+      "photoAlt": "Julia Espinoza, real estate advisor in Asunción",
+      "stat1Value": "2 years",
+      "stat1Label": "advising buyers",
+      "stat2Value": "4 years",
+      "stat2Label": "investing in real estate in Paraguay",
+      "p1": "Before I recommend an investment, I run the numbers I would use for myself: price, real costs, net rent and who is building it. The figures I share come from apartments I bought and rent out.",
+      "p2": "I also manage short-term rentals on Airbnb and build software and automations for companies. Building and running my own businesses taught me to see every property for what it is: a business, with income, costs and a plan for when things go differently.",
+      "whatsapp": "Message on WhatsApp",
+      "properties": "View properties"
+    },
+    "guide": {
+      "eyebrow": "Free guide",
+      "title": "How to invest in apartments in Asunción",
+      "description": "Risks, real costs and a case study with my own numbers. A 10-minute read.",
+      "point1": "What a studio really earns on Airbnb",
+      "point2": "The 5 mistakes first-time investors make",
+      "point3": "A 10-point checklist to choose an apartment",
+      "name": "Name",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "contactHint": "Leave your email or your WhatsApp.",
+      "needContact": "Leave an email or a WhatsApp number to get the guide.",
+      "submit": "Get the guide",
+      "sending": "Sending...",
+      "success": "Done, you can download it now.",
+      "download": "Download the guide (PDF)",
+      "error": "We could not save your details. Please try again.",
+      "privacy": "We only use your details to send you the guide and answer your questions.",
+      "languageNote": "The guide is in Spanish.",
+      "notes": "Descarga de la guía: invertir en departamentos en Asunción",
+      "needName": "Enter your name to get the guide."
     }
   }
 }
