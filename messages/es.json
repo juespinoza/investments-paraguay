@@ -296,6 +296,42 @@
       "VENDIDA": "Vendida",
       "ALQUILADA": "Alquilada",
       "RETIRADA": "Retirada"
+    },
+    "about": {
+      "eyebrow": "Quién está detrás",
+      "name": "Julia Espinoza",
+      "roles": "Asesora inmobiliaria en SkyOne · Ingeniera en sistemas · Business Owner",
+      "photoAlt": "Julia Espinoza, asesora inmobiliaria en Asunción",
+      "stat1Value": "2 años",
+      "stat1Label": "asesorando compradores",
+      "stat2Value": "4 años",
+      "stat2Label": "invirtiendo en inmuebles en Paraguay",
+      "p1": "Antes de recomendar una inversión, la miro con los números que usaría para mí: precio, costos reales, renta neta y quién la construye. Los números que comparto salen de departamentos que compré y alquilo.",
+      "p2": "Además administro alquileres temporarios en Airbnb y desarrollo software y automatizaciones para empresas. Armar y operar negocios propios me enseñó a mirar cada propiedad como lo que es: un negocio, con ingresos, costos y un plan si algo sale distinto.",
+      "whatsapp": "Hablar por WhatsApp",
+      "properties": "Ver propiedades"
+    },
+    "guide": {
+      "eyebrow": "Guía gratuita",
+      "title": "Cómo invertir en departamentos en Asunción",
+      "description": "Riesgos, costos reales y un caso con números propios. Se lee en 10 minutos.",
+      "point1": "Cuánto rinde de verdad un monoambiente en Airbnb",
+      "point2": "Los 5 errores del inversionista primerizo",
+      "point3": "El checklist de 10 puntos para elegir un departamento",
+      "name": "Nombre",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "contactHint": "Dejá tu email o tu WhatsApp.",
+      "needContact": "Dejá un email o un WhatsApp para recibir la guía.",
+      "submit": "Recibir la guía",
+      "sending": "Enviando...",
+      "success": "Listo, ya podés descargarla.",
+      "download": "Descargar la guía (PDF)",
+      "error": "No pudimos registrar tus datos. Probá de nuevo.",
+      "privacy": "Usamos tus datos solo para enviarte la guía y responder tus consultas.",
+      "languageNote": "",
+      "notes": "Descarga de la guía: invertir en departamentos en Asunción",
+      "needName": "Escribí tu nombre para recibir la guía."
     }
   }
 }
