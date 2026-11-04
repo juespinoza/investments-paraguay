@@ -33,6 +33,7 @@ export async function HomePageContent({ locale }: { locale: string }) {
         subtitle={t("subtitle")}
         ctaLabel={t("primaryCta")}
         advisorLabel={t("advisorCta")}
+        guideLabel={t("guideCta")}
       />
       <WhyParaguaySection entryPriceUsd={getEntryPriceUsd(properties)} />
       <FeaturedPropertiesSection properties={properties} />
