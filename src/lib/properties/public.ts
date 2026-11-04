@@ -2,7 +2,10 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import type { PublicPropertyListItem } from "@/lib/api/types";
+import type {
+  PublicPropertyDetail,
+  PublicPropertyListItem,
+} from "@/lib/api/types";
 
 // Etiqueta de caché compartida por home, listado, fichas y API pública.
 // La oficina virtual la invalida al crear, editar o borrar una propiedad
@@ -14,25 +17,13 @@ export const PUBLIC_PROPERTIES_TAG = "public-properties";
 // (por ejemplo, directo en la base).
 const PUBLIC_PROPERTIES_REVALIDATE_SECONDS = 300;
 
-export type PublicPropertyDetailRecord = {
-  slug: string;
-  title: string;
-  subtitle: string | null;
-  description: string | null;
-  coverImageUrl: string | null;
-  gallery: string[];
-  priceUsd: number | null;
-  propertyType: string | null;
+// Estados que nunca se muestran en el sitio público.
+export const HIDDEN_PUBLIC_STATUSES = ["BORRADOR", "RETIRADA"] as const;
+
+export type PublicPropertyDetailRecord = PublicPropertyDetail & {
+  areaM2: number | null;
   bedrooms: string | null;
   bathrooms: number | null;
-  areaM2: number | null;
-  city: string | null;
-  neighborhood: string | null;
-  address: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  roiAnnualPct: number | null;
-  appreciationAnnualPct: number | null;
   advisor: {
     slug: string;
     fullName: string;
@@ -49,9 +40,21 @@ function toNumber(value: { toString(): string } | null | undefined) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+const propertyTypeSelect = {
+  select: {
+    code: true,
+    label: true,
+    isProject: true,
+    hasResidentialDetails: true,
+  },
+} as const;
+
 async function queryPublicProperties(): Promise<PublicPropertyListItem[]> {
   const properties = await prisma.property.findMany({
-    where: { deletedAt: null },
+    where: {
+      deletedAt: null,
+      status: { notIn: [...HIDDEN_PUBLIC_STATUSES] },
+    },
     orderBy: [
       { isFeatured: "desc" },
       { featuredOrder: "asc" },
@@ -62,9 +65,13 @@ async function queryPublicProperties(): Promise<PublicPropertyListItem[]> {
       title: true,
       description: true,
       coverImageUrl: true,
-      priceUsd: true,
+      price: true,
+      currency: true,
+      status: true,
+      hasPropertyDocuments: true,
       city: true,
       neighborhood: true,
+      locationUrl: true,
       latitude: true,
       longitude: true,
       roiAnnualPct: true,
@@ -72,6 +79,7 @@ async function queryPublicProperties(): Promise<PublicPropertyListItem[]> {
       updatedAt: true,
       isFeatured: true,
       featuredOrder: true,
+      propertyType: propertyTypeSelect,
       advisor: {
         select: {
           slug: true,
@@ -81,25 +89,38 @@ async function queryPublicProperties(): Promise<PublicPropertyListItem[]> {
     },
   });
 
-  const items = properties.map((p) => ({
-    slug: p.slug,
-    title: p.title,
-    subtitle: p.description,
-    coverImageUrl: p.coverImageUrl,
-    priceUsd: p.priceUsd,
-    city: p.city,
-    neighborhood: p.neighborhood,
-    latitude: toNumber(p.latitude),
-    longitude: toNumber(p.longitude),
-    updatedAt: p.updatedAt.toISOString(),
-    isFeatured: p.isFeatured,
-    featuredOrder: p.featuredOrder,
-    roiAnnualPct: toNumber(p.roiAnnualPct),
-    appreciationAnnualPct: toNumber(p.appreciationAnnualPct),
-    advisor: p.advisor
-      ? { slug: p.advisor.slug, fullName: p.advisor.fullName }
-      : null,
-  }));
+  const items: PublicPropertyListItem[] = properties.map((p) => {
+    const price = toNumber(p.price);
+    return {
+      slug: p.slug,
+      title: p.title,
+      subtitle: p.description,
+      coverImageUrl: p.coverImageUrl,
+      price,
+      // Se mantiene por compatibilidad: componentes viejos leen priceUsd.
+      priceUsd: price,
+      currency: p.currency,
+      status: p.status,
+      hasPropertyDocuments: p.hasPropertyDocuments,
+      city: p.city,
+      neighborhood: p.neighborhood,
+      locationUrl: p.locationUrl,
+      latitude: toNumber(p.latitude),
+      longitude: toNumber(p.longitude),
+      propertyType: p.propertyType.label,
+      propertyTypeCode: p.propertyType.code,
+      isProject: p.propertyType.isProject,
+      hasResidentialDetails: p.propertyType.hasResidentialDetails,
+      updatedAt: p.updatedAt.toISOString(),
+      isFeatured: p.isFeatured,
+      featuredOrder: p.featuredOrder,
+      roiAnnualPct: toNumber(p.roiAnnualPct),
+      appreciationAnnualPct: toNumber(p.appreciationAnnualPct),
+      advisor: p.advisor
+        ? { slug: p.advisor.slug, fullName: p.advisor.fullName }
+        : null,
+    };
+  });
 
   // Postgres ordena los NULL de featuredOrder al final en ASC, pero lo
   // repetimos acá para que el orden no dependa del motor.
@@ -116,8 +137,13 @@ async function queryPublicProperty(
   slug: string,
 ): Promise<PublicPropertyDetailRecord | null> {
   const property = await prisma.property.findFirst({
-    where: { slug, deletedAt: null },
+    where: {
+      slug,
+      deletedAt: null,
+      status: { notIn: [...HIDDEN_PUBLIC_STATUSES] },
+    },
     include: {
+      propertyType: propertyTypeSelect,
       advisor: {
         select: {
           slug: true,
@@ -133,6 +159,8 @@ async function queryPublicProperty(
 
   if (!property) return null;
 
+  const price = toNumber(property.price);
+
   return {
     slug: property.slug,
     title: property.title,
@@ -140,14 +168,24 @@ async function queryPublicProperty(
     description: property.description,
     coverImageUrl: property.coverImageUrl,
     gallery: property.gallery,
-    priceUsd: property.priceUsd,
-    propertyType: property.propertyType,
-    bedrooms: property.bedrooms,
-    bathrooms: property.bathrooms,
+    price,
+    priceUsd: price,
+    currency: property.currency,
+    status: property.status,
+    hasPropertyDocuments: property.hasPropertyDocuments,
+    propertyType: property.propertyType.label,
+    propertyTypeCode: property.propertyType.code,
+    isProject: property.propertyType.isProject,
+    hasResidentialDetails: property.propertyType.hasResidentialDetails,
+    // Dormitorios y baños pasan a los detalles residenciales del rediseño;
+    // la ficha pública todavía no los muestra.
+    bedrooms: null,
+    bathrooms: null,
     areaM2: toNumber(property.areaM2),
     city: property.city,
     neighborhood: property.neighborhood,
     address: property.address,
+    locationUrl: property.locationUrl,
     latitude: toNumber(property.latitude),
     longitude: toNumber(property.longitude),
     roiAnnualPct: toNumber(property.roiAnnualPct),
@@ -183,12 +221,15 @@ export const getPublicProperty = unstable_cache(
   },
 );
 
-// Precio de entrada más bajo entre propiedades con ROI cargado. Se usa en
-// la home para que el dato "desde USD X" coincida con el inventario real.
+// Precio de entrada más bajo entre propiedades en dólares con ROI cargado.
+// Se usa en la home para que el dato "USD X" coincida con el inventario real.
 export function getEntryPriceUsd(properties: PublicPropertyListItem[]) {
   const prices = properties
-    .filter((property) => property.roiAnnualPct !== null)
-    .map((property) => property.priceUsd)
+    .filter(
+      (property) =>
+        property.currency === "USD" && property.roiAnnualPct !== null,
+    )
+    .map((property) => property.price)
     .filter((price): price is number => typeof price === "number" && price > 0);
 
   return prices.length ? Math.min(...prices) : null;

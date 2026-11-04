@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { listPublicBlogPosts } from "@/lib/virtualoffice/blog";
 import { SEO_LOCALES, SITE_URL } from "@/lib/seo";
 import { DEFAULT_LOCALE } from "@/lib/i18n";
+import { HIDDEN_PUBLIC_STATUSES } from "@/lib/properties/public";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
@@ -116,7 +117,10 @@ function uniqueByUrl(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
 
 async function listPropertySitemapItems() {
   return prisma.property.findMany({
-    where: { deletedAt: null },
+    where: {
+      deletedAt: null,
+      status: { notIn: [...HIDDEN_PUBLIC_STATUSES] },
+    },
     orderBy: [
       { isFeatured: "desc" },
       { featuredOrder: "asc" },

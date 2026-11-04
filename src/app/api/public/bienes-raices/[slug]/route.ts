@@ -9,6 +9,7 @@ type Params = {
 
 export async function GET(_req: Request, { params }: Params) {
   const { slug } = await params;
+  // Ya excluye borradores, retiradas y eliminadas.
   const property = await getPublicProperty(slug);
 
   if (!property) {

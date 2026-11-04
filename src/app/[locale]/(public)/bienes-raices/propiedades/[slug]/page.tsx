@@ -11,14 +11,13 @@ import { buildCloudinaryOpenGraphImageUrl } from "@/lib/cloudinary";
 import { buildRealEstateListingJsonLd } from "@/lib/structured-data";
 import { getPublicProperty } from "@/lib/properties/public";
 import { DEFAULT_LOCALE, formatLocale } from "@/lib/i18n";
+import { formatPropertyPrice } from "@/lib/properties/format";
 import {
   RichPropertyText,
   toPlainPropertyText,
 } from "@/components/landing/property-detail/RichPropertyText";
 import { Link } from "@/i18n/navigation";
 import {
-  Bath,
-  Bed,
   Building2,
   MapPin,
   Maximize2,
@@ -57,6 +56,11 @@ export async function generateMetadata({
   }
 
   const numberFormat = formatLocale(locale);
+  const priceLabel = formatPropertyPrice(
+    property.price,
+    property.currency,
+    locale,
+  );
   const location = [property.neighborhood, property.city]
     .filter(Boolean)
     .join(", ");
@@ -66,11 +70,7 @@ export async function generateMetadata({
     location
       ? t("metaLocation", { title: property.title, location })
       : `${property.title}.`,
-    property.priceUsd !== null
-      ? t("metaPrice", {
-          price: property.priceUsd.toLocaleString(numberFormat),
-        })
-      : null,
+    priceLabel ? t("metaPrice", { price: priceLabel }) : null,
     property.roiAnnualPct !== null
       ? t("metaRoi", {
           roi: property.roiAnnualPct.toLocaleString(numberFormat, {
@@ -108,6 +108,7 @@ export default async function PropertyPage({ params }: PageProps) {
   setRequestLocale(locale);
   const resolvedLocale = resolveLocale(locale);
   const t = await getTranslations("site.detail");
+  const tStatus = await getTranslations("site.status");
   const numberFormat = formatLocale(locale);
 
   const property = await getPublicProperty(slug);
@@ -126,7 +127,9 @@ export default async function PropertyPage({ params }: PageProps) {
             slug: property.slug,
             title: property.title,
             coverImageUrl: property.coverImageUrl,
+            price: property.price,
             priceUsd: property.priceUsd,
+            currency: property.currency,
             latitude: property.latitude,
             longitude: property.longitude,
           },
@@ -134,7 +137,6 @@ export default async function PropertyPage({ params }: PageProps) {
       : [];
   const hasCoordinates = mapProperties.length > 0;
   const validAreaM2 = numberValue(property.areaM2);
-  const validBathrooms = numberValue(property.bathrooms);
   const featureTags = [
     textValue(property.propertyType)
       ? {
@@ -148,20 +150,6 @@ export default async function PropertyPage({ params }: PageProps) {
           label: t("area"),
           value: `${validAreaM2.toLocaleString(numberFormat)} m²`,
           icon: Maximize2,
-        }
-      : null,
-    textValue(property.bedrooms)
-      ? {
-          label: t("bedrooms"),
-          value: textValue(property.bedrooms),
-          icon: Bed,
-        }
-      : null,
-    validBathrooms !== null
-      ? {
-          label: t("bathrooms"),
-          value: String(validBathrooms),
-          icon: Bath,
         }
       : null,
   ].filter(Boolean) as Array<{
@@ -207,7 +195,7 @@ export default async function PropertyPage({ params }: PageProps) {
 
             <div className="mt-6">
               <span className="inline-flex rounded-xs bg-[rgba(10,10,10,0.72)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-white">
-                {t("forSale")}
+                {tStatus(property.status)}
               </span>
             </div>
 
@@ -252,7 +240,9 @@ export default async function PropertyPage({ params }: PageProps) {
 
             <div className="mt-8 lg:hidden">
               <PropertyContactSidebar
+                price={property.price}
                 priceUsd={property.priceUsd}
+                currency={property.currency}
                 roiAnnualPct={property.roiAnnualPct}
                 propertySlug={property.slug}
                 propertyTitle={property.title}
@@ -302,7 +292,9 @@ export default async function PropertyPage({ params }: PageProps) {
           <div className="hidden lg:block">
             <div className="lg:sticky lg:top-22">
               <PropertyContactSidebar
+                price={property.price}
                 priceUsd={property.priceUsd}
+                currency={property.currency}
                 roiAnnualPct={property.roiAnnualPct}
                 propertySlug={property.slug}
                 propertyTitle={property.title}

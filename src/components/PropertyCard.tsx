@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 import type { PublicPropertyListItem } from "@/lib/api/types";
 import { resolvePropertyListingType } from "@/lib/properties/listing-type";
 import { formatLocale } from "@/lib/i18n";
+import { formatPropertyPrice } from "@/lib/properties/format";
 
 type PropertyCardProps = {
   property: PublicPropertyListItem;
@@ -49,13 +50,14 @@ export function PropertyCard({
   priority = false,
 }: PropertyCardProps) {
   const t = useTranslations("site.property");
-  const numberFormat = formatLocale(useLocale());
-  const price =
-    property.priceUsd === null
-      ? null
-      : `USD ${property.priceUsd.toLocaleString(numberFormat, {
-          maximumFractionDigits: 0,
-        })}`;
+  const tStatus = useTranslations("site.status");
+  const locale = useLocale();
+  const numberFormat = formatLocale(locale);
+  const price = formatPropertyPrice(
+    property.price ?? property.priceUsd,
+    property.currency,
+    locale,
+  );
   const roi =
     property.roiAnnualPct === null
       ? null
@@ -83,7 +85,11 @@ export function PropertyCard({
           priority={priority}
         />
         <span className="absolute left-4 top-4 rounded-xs bg-[rgba(10,10,10,0.72)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-white backdrop-blur-sm">
-          {listingType === "alquiler" ? t("rent") : t("sale")}
+          {property.status
+            ? tStatus(property.status)
+            : listingType === "alquiler"
+              ? t("rent")
+              : t("sale")}
         </span>
       </Link>
 

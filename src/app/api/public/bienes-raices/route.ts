@@ -14,15 +14,16 @@ export async function GET(req: Request) {
   const min = Number(url.searchParams.get("min") ?? "");
   const max = Number(url.searchParams.get("max") ?? "");
 
+  // Ya excluye borradores, retiradas y eliminadas.
   const properties = await listPublicProperties();
 
   const response = properties.filter((property) => {
     if (Number.isFinite(min) && min > 0) {
-      if (property.priceUsd === null || property.priceUsd < min) return false;
+      if (property.price === null || property.price < min) return false;
     }
 
     if (Number.isFinite(max) && max > 0) {
-      if (property.priceUsd === null || property.priceUsd > max) return false;
+      if (property.price === null || property.price > max) return false;
     }
 
     if (q) {

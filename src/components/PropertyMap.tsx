@@ -7,7 +7,9 @@ export type PropertyMapItem = {
   slug: string;
   title: string;
   coverImageUrl: string | null;
+  price: number | null;
   priceUsd: number | null;
+  currency: "GS" | "USD";
   latitude: number;
   longitude: number;
 };
@@ -63,11 +65,11 @@ function escapeHtml(value: string) {
     .replace(/'/g, "&#039;");
 }
 
-function formatPrice(priceUsd: number | null) {
-  if (priceUsd === null) return "Precio a consultar";
+function formatPrice(price: number | null, currency: "GS" | "USD") {
+  if (price === null) return "Precio a consultar";
 
-  return `USD ${priceUsd.toLocaleString("es-PY", {
-    maximumFractionDigits: 0,
+  return `${currency} ${price.toLocaleString(currency === "USD" ? "en-US" : "es-PY", {
+    maximumFractionDigits: currency === "USD" ? 2 : 0,
   })}`;
 }
 
@@ -119,7 +121,9 @@ function createInfoOverlay(
   const imageUrl = resolveImageUrl(property.coverImageUrl);
   const href = getPropertyHref(property.slug);
   const title = escapeHtml(property.title);
-  const price = escapeHtml(formatPrice(property.priceUsd));
+  const price = escapeHtml(
+    formatPrice(property.price ?? property.priceUsd, property.currency),
+  );
 
   class PropertyInfoOverlay extends google.maps.OverlayView {
     private element: HTMLDivElement | null = null;

@@ -8,6 +8,7 @@ import { ImageCloudinary } from "@/components/ui/ImageCloudinary";
 import { buildWhatsAppHref } from "@/lib/whatsapp";
 import { KEY_EVENTS, trackEvent } from "@/lib/analytics";
 import { formatLocale } from "@/lib/i18n";
+import { formatPropertyPrice } from "@/lib/properties/format";
 import { SITE_URL } from "@/lib/seo";
 
 type Advisor = {
@@ -20,7 +21,9 @@ type Advisor = {
 };
 
 type PropertyContactSidebarProps = {
+  price: number | null;
   priceUsd: number | null;
+  currency: "GS" | "USD";
   roiAnnualPct: number | null;
   propertySlug: string;
   propertyTitle: string;
@@ -37,9 +40,10 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-
 export function PropertyContactSidebar({
+  price,
   priceUsd,
+  currency,
   roiAnnualPct,
   propertySlug,
   propertyTitle,
@@ -57,10 +61,9 @@ export function PropertyContactSidebar({
     text: string;
   } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const price =
-    priceUsd === null
-      ? t("property.priceOnRequest")
-      : `USD ${priceUsd.toLocaleString(numberFormat, { maximumFractionDigits: 0 })}`;
+  const priceLabel =
+    formatPropertyPrice(price ?? priceUsd, currency, locale) ??
+    t("property.priceOnRequest");
   const roi =
     roiAnnualPct === null
       ? null
@@ -125,7 +128,7 @@ export function PropertyContactSidebar({
   return (
     <aside className="rounded-lg border border-soft bg-(--ivory) p-6 shadow-[0_18px_48px_rgba(10,10,10,0.08)]">
       <p className="font-cormorant text-[32px] font-normal leading-none text-primary">
-        {price}
+        {priceLabel}
       </p>
 
       {roi ? (

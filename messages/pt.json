@@ -203,7 +203,6 @@
       "breadcrumbLabel": "Navegação",
       "home": "Início",
       "realEstate": "Imóveis",
-      "forSale": "À venda",
       "about": "Sobre o imóvel",
       "location": "Localização",
       "locationNote": "Localização exata por coordenadas geográficas.",
@@ -216,7 +215,7 @@
       "metaFallbackTitle": "Imóvel no Paraguai | Investments Paraguay",
       "metaFallbackDescription": "Explore oportunidades imobiliárias no Paraguai com assessoria profissional.",
       "metaLocation": "{title} em {location}.",
-      "metaPrice": "Preço: USD {price}.",
+      "metaPrice": "Preço: {price}.",
       "metaRoi": "ROI bruto estimado ~{roi}% ao ano.",
       "keywordSale": "imóvel à venda paraguai",
       "keywordInvestment": "investimento imobiliário paraguai"
@@ -287,6 +286,15 @@
     },
     "locale": {
       "current": "Idioma atual: {locale}"
+    },
+    "status": {
+      "EN_VENTA": "À venda",
+      "EN_ALQUILER": "Para alugar",
+      "RESERVADA": "Reservado",
+      "BORRADOR": "Rascunho",
+      "VENDIDA": "Vendido",
+      "ALQUILADA": "Alugado",
+      "RETIRADA": "Retirado"
     }
   }
 }

@@ -31,12 +31,17 @@ async function getProperty(slug: string) {
   return (await response.json()) as PublicPropertyDetail;
 }
 
-function formatPrice(value: number | null | undefined) {
+function formatPrice(
+  value: number | null | undefined,
+  currency: "GS" | "USD" = "USD",
+) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return "Consultar precio";
   }
 
-  return `USD ${value.toLocaleString("en-US")}`;
+  return `${currency} ${value.toLocaleString(currency === "USD" ? "en-US" : "es-PY", {
+    maximumFractionDigits: currency === "USD" ? 2 : 0,
+  })}`;
 }
 
 function formatLocation(property: PublicPropertyDetail | null) {
@@ -135,7 +140,7 @@ export default async function OpenGraphImage({ params }: ImageProps) {
                 color: "#0A0A0A",
               }}
             >
-              {formatPrice(property?.priceUsd)}
+              {formatPrice(property?.price ?? property?.priceUsd, property?.currency)}
             </div>
 
             {location ? (
