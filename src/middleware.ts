@@ -18,6 +18,7 @@ const LEGACY_PUBLIC_PATHS = [
   /^\/cookies$/,
   /^\/legales$/,
   /^\/nosotros$/,
+  /^\/invertir-en(?:\/.*)?$/,
 ] as const;
 
 // Orden de preferencia para rutas sin prefijo de idioma:

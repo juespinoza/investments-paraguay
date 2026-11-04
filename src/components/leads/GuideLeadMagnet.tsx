@@ -12,7 +12,7 @@ export const GUIDE_PDF_PATH = "/guias/guia-invertir-departamentos-asuncion.pdf";
 // Quien ya dejó sus datos ve directamente el botón de descarga.
 const UNLOCK_STORAGE_KEY = "ip_guide_unlocked";
 
-export type GuideLocation = "home" | "property" | "blog" | "about";
+export type GuideLocation = "home" | "property" | "blog" | "about" | "zone";
 
 function readUnlocked() {
   try {
