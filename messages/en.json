@@ -12,7 +12,7 @@
     "mobileEyebrow": "Navigation",
     "mobileDescription": "Explore investments, properties and analysis through a mobile-first experience.",
     "localeLabel": "Language",
-    "localeDescription": "Choose how you want to browse the site."
+    "localeDescription": "Content available in Spanish, English and Portuguese."
   },
   "footer": {
     "legal": "Legal",
@@ -148,6 +148,154 @@
       "airbnbParaguay": "Airbnb in Paraguay: promising areas, key numbers and common investment mistakes",
       "terrenosVsDepartamento": "Land or apartments: how to choose the right asset for your investment strategy",
       "guiaInversores": "Guide for foreign investors: how to invest legally in Paraguay step by step"
+    }
+  },
+  "site": {
+    "hero": {
+      "eyebrow": "Investing in Paraguay",
+      "title": "Live, grow and invest where the market still has real upside.",
+      "subtitle": "A curated selection of properties and investments in Paraguay, with strategic local guidance.",
+      "primaryCta": "View properties",
+      "advisorCta": "Talk to an advisor"
+    },
+    "market": {
+      "eyebrow": "The market",
+      "title": "Paraguay: the market regional investors have already discovered.",
+      "dividendsSuffix": "% dividend tax",
+      "dividendsLabel": "for non-residents on foreign-source income",
+      "dividendsDescription": "A competitive tax structure for international capital.",
+      "entryLabel": "entry price for rental projects in the current portfolio",
+      "entryDescription": "A competitive ticket for dollar-denominated rental income.",
+      "freedomPrefix": "Top ",
+      "freedomSuffix": " LATAM",
+      "freedomLabel": "in economic freedom according to the 2024 Index of Economic Freedom",
+      "freedomDescription": "An attractive macroeconomic framework compared with the region.",
+      "valueProps": {
+        "curated": {
+          "title": "Curated properties",
+          "description": "We only list projects with a clear investment thesis and paperwork in order."
+        },
+        "documented": {
+          "title": "Documented returns",
+          "description": "Every opportunity includes an ROI projection, area analysis and comparables."
+        },
+        "local": {
+          "title": "Local support",
+          "description": "From the first call to the title deed, with advice in the investor's language."
+        }
+      }
+    },
+    "featured": {
+      "eyebrow": "Portfolio",
+      "title": "Selected investments",
+      "viewAll": "View all properties"
+    },
+    "property": {
+      "sale": "For sale",
+      "rent": "For rent",
+      "viewProperty": "View property",
+      "viewPropertyAria": "View property {title}",
+      "priceOnRequest": "Price on request",
+      "roi": "Est. gross ROI ~{value}% per year",
+      "coverAlt": "{title}, cover photo",
+      "photoAlt": "{title}, photo {index} of {total}"
+    },
+    "detail": {
+      "breadcrumbLabel": "Breadcrumb",
+      "home": "Home",
+      "realEstate": "Real estate",
+      "about": "About the property",
+      "location": "Location",
+      "locationNote": "Exact location by geographic coordinates.",
+      "type": "Type",
+      "area": "Area",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "originalLanguage": "The detailed description of this property is available in Spanish. Message us and we will walk you through it in English.",
+      "metaTitle": "{title} | Real estate investment in Paraguay",
+      "metaFallbackTitle": "Property in Paraguay | Investments Paraguay",
+      "metaFallbackDescription": "Explore real estate opportunities in Paraguay with professional advisory.",
+      "metaLocation": "{title} in {location}.",
+      "metaPrice": "Price: {price}.",
+      "metaRoi": "Estimated gross ROI ~{roi}% per year.",
+      "keywordSale": "property for sale paraguay",
+      "keywordInvestment": "real estate investment paraguay"
+    },
+    "contact": {
+      "advisorRole": "Real estate advisor",
+      "companyRole": "Real estate advisory",
+      "whatsapp": "Ask on WhatsApp",
+      "message": "Send a message",
+      "name": "Name",
+      "email": "Email",
+      "notes": "Message",
+      "sending": "Sending...",
+      "send": "Send inquiry",
+      "success": "Inquiry sent. We will get back to you shortly.",
+      "error": "We could not send your inquiry.",
+      "privacy": "Your details are only used to answer your inquiry."
+    },
+    "gallery": {
+      "label": "{title} gallery",
+      "close": "Close gallery",
+      "previous": "Previous image",
+      "next": "Next image",
+      "open": "Open image {index} of {title}",
+      "openMain": "Open main image of {title}",
+      "viewAll": "View all ({count} photos)"
+    },
+    "listing": {
+      "eyebrow": "Portfolio",
+      "type": "Type",
+      "all": "All",
+      "sale": "Sale",
+      "rent": "Rent",
+      "maxPrice": "Max price",
+      "noLimit": "No limit",
+      "location": "Location",
+      "allLocations": "All",
+      "clear": "Clear",
+      "clearFilters": "Clear filters",
+      "filters": "Filters",
+      "closeFilters": "Close filters",
+      "empty": "No properties match these filters",
+      "counter": "{count, plural, one {# property found} other {# properties found}}"
+    },
+    "footer": {
+      "tagline": "Curated opportunities, local context and a clearer way to invest in Paraguay.",
+      "location": "Asunción, Paraguay",
+      "platform": "Platform",
+      "legal": "Legal",
+      "contact": "Direct contact",
+      "hours": "Monday to Friday, 8:00 – 18:00 (Paraguay time)",
+      "rights": "All rights reserved"
+    },
+    "whatsapp": {
+      "floatLabel": "Talk to an advisor on WhatsApp",
+      "floatTooltip": "Talk to an advisor"
+    },
+    "blog": {
+      "all": "All",
+      "market": "Market",
+      "strategy": "Strategy",
+      "guides": "Guides",
+      "emptyTitle": "Analysis in progress",
+      "emptySubtitle": "We will soon publish market guides, area analysis and strategies for investors in Paraguay.",
+      "emptyCta": "View available properties",
+      "categoryEmpty": "No articles in this category yet.",
+      "spanishOnly": "Article in Spanish"
+    },
+    "locale": {
+      "current": "Current language: {locale}"
+    },
+    "status": {
+      "EN_VENTA": "For sale",
+      "EN_ALQUILER": "For rent",
+      "RESERVADA": "Reserved",
+      "BORRADOR": "Draft",
+      "VENDIDA": "Sold",
+      "ALQUILADA": "Rented",
+      "RETIRADA": "Withdrawn"
     }
   }
 }

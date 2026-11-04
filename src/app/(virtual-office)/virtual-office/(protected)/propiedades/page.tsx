@@ -61,7 +61,9 @@ export default async function Page({ searchParams }: PageProps) {
       title: true,
       slug: true,
       city: true,
-      priceUsd: true,
+      price: true,
+      currency: true,
+      status: true,
       roiAnnualPct: true,
       appreciationAnnualPct: true,
       isFeatured: true,
@@ -202,7 +204,12 @@ export default async function Page({ searchParams }: PageProps) {
                   </Td>
                   <Td>
                     <div className="text-sm font-medium text-zinc-950">
-                      {property.priceUsd ? `USD ${property.priceUsd}` : "-"}
+                      {property.price
+                        ? `${property.currency} ${Number(property.price).toLocaleString("es-PY")}`
+                        : "-"}
+                    </div>
+                    <div className="mt-1 text-xs text-zinc-500">
+                      {property.status}
                     </div>
                     {property.isFeatured ? (
                       <div className="mt-2">

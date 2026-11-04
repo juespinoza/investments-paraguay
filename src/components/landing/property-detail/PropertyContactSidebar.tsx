@@ -1,11 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Send } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { ImageCloudinary } from "@/components/ui/ImageCloudinary";
 import { buildWhatsAppHref } from "@/lib/whatsapp";
+import { KEY_EVENTS, trackEvent } from "@/lib/analytics";
+import { formatLocale } from "@/lib/i18n";
+import { formatPropertyPrice } from "@/lib/properties/format";
+import { SITE_URL } from "@/lib/seo";
 
 type Advisor = {
   slug: string;
@@ -17,9 +21,12 @@ type Advisor = {
 };
 
 type PropertyContactSidebarProps = {
+  price: number | null;
   priceUsd: number | null;
+  currency: "GS" | "USD";
   roiAnnualPct: number | null;
   propertySlug: string;
+  propertyTitle: string;
   advisor: Advisor | null;
 };
 
@@ -33,27 +40,18 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-function formatPrice(priceUsd: number | null) {
-  if (priceUsd === null) return "Precio a consultar";
-
-  return `USD ${priceUsd.toLocaleString("en-US")}`;
-}
-
-function formatRoi(roiAnnualPct: number | null) {
-  if (roiAnnualPct === null) return null;
-
-  return `ROI ~${roiAnnualPct.toLocaleString("es-PY", {
-    maximumFractionDigits: 1,
-  })}% anual`;
-}
-
 export function PropertyContactSidebar({
+  price,
   priceUsd,
+  currency,
   roiAnnualPct,
   propertySlug,
+  propertyTitle,
   advisor,
 }: PropertyContactSidebarProps) {
   const locale = useLocale();
+  const t = useTranslations("site");
+  const numberFormat = formatLocale(locale);
   const [formOpen, setFormOpen] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -63,7 +61,23 @@ export function PropertyContactSidebar({
     text: string;
   } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const roi = formatRoi(roiAnnualPct);
+  const priceLabel =
+    formatPropertyPrice(price ?? priceUsd, currency, locale) ??
+    t("property.priceOnRequest");
+  const roi =
+    roiAnnualPct === null
+      ? null
+      : t("property.roi", {
+          value: roiAnnualPct.toLocaleString(numberFormat, {
+            maximumFractionDigits: 1,
+          }),
+        });
+  const propertyUrl = `${SITE_URL}/${locale}/bienes-raices/propiedades/${propertySlug}`;
+  const whatsappHref = buildWhatsAppHref(
+    advisor?.whatsapp ?? advisor?.phone ?? undefined,
+    locale,
+    { title: propertyTitle, url: propertyUrl },
+  );
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -80,7 +94,7 @@ export function PropertyContactSidebar({
           notes,
           propertySlug,
           advisorSlug: advisor?.slug,
-          sourcePage: `/bienes-raices/propiedades/${propertySlug}`,
+          sourcePage: `/${locale}/bienes-raices/propiedades/${propertySlug}`,
         }),
       });
       const data = await response.json().catch(() => ({}));
@@ -88,14 +102,20 @@ export function PropertyContactSidebar({
       if (!response.ok) {
         setStatus({
           type: "error",
-          text: data?.error ?? "No pudimos enviar tu consulta.",
+          text: data?.error ?? t("contact.error"),
         });
         return;
       }
 
+      trackEvent(KEY_EVENTS.lead, {
+        method: "form",
+        location: "property_sidebar",
+        property_slug: propertySlug,
+        locale,
+      });
       setStatus({
         type: "success",
-        text: "Consulta enviada. Te contactaremos a la brevedad.",
+        text: t("contact.success"),
       });
       setFullName("");
       setEmail("");
@@ -108,7 +128,7 @@ export function PropertyContactSidebar({
   return (
     <aside className="rounded-lg border border-soft bg-(--ivory) p-6 shadow-[0_18px_48px_rgba(10,10,10,0.08)]">
       <p className="font-cormorant text-[32px] font-normal leading-none text-primary">
-        {formatPrice(priceUsd)}
+        {priceLabel}
       </p>
 
       {roi ? (
@@ -136,7 +156,7 @@ export function PropertyContactSidebar({
               {advisor.fullName}
             </p>
             <p className="mt-0.5 text-[12px] text-muted">
-              Asesora inmobiliaria
+              {t("contact.advisorRole")}
             </p>
           </div>
         </div>
@@ -145,22 +165,24 @@ export function PropertyContactSidebar({
           <p className="text-sm font-semibold text-primary">
             Investments Paraguay
           </p>
-          <p className="mt-0.5 text-[12px] text-muted">Asesoría inmobiliaria</p>
+          <p className="mt-0.5 text-[12px] text-muted">
+            {t("contact.companyRole")}
+          </p>
         </div>
       )}
 
       <div className="mt-6 grid gap-3">
         <a
-          href={buildWhatsAppHref(
-            advisor?.whatsapp ?? advisor?.phone ?? undefined,
-            locale,
-          )}
+          href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
+          data-analytics-label="property_whatsapp"
+          data-analytics-location="property_sidebar"
+          data-property-slug={propertySlug}
           className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xs bg-(--gold) px-4 text-[13px] font-semibold uppercase tracking-[0.06em] text-(--carbon) transition-colors duration-150 hover:bg-(--carbon) hover:text-(--ivory)"
         >
           <FaWhatsapp size={17} aria-hidden="true" />
-          Consultar por WhatsApp
+          {t("contact.whatsapp")}
         </a>
 
         <button
@@ -170,7 +192,7 @@ export function PropertyContactSidebar({
           aria-expanded={formOpen}
         >
           <Send size={15} strokeWidth={1.8} aria-hidden="true" />
-          Enviar mensaje
+          {t("contact.message")}
         </button>
       </div>
 
@@ -181,7 +203,9 @@ export function PropertyContactSidebar({
             value={fullName}
             onChange={(event) => setFullName(event.currentTarget.value)}
             className="h-11 rounded-xs border border-soft bg-white/80 px-3 text-sm outline-none transition-colors focus:border-(--gold)"
-            placeholder="Nombre"
+            placeholder={t("contact.name")}
+            aria-label={t("contact.name")}
+            autoComplete="name"
           />
           <input
             required
@@ -189,13 +213,16 @@ export function PropertyContactSidebar({
             value={email}
             onChange={(event) => setEmail(event.currentTarget.value)}
             className="h-11 rounded-xs border border-soft bg-white/80 px-3 text-sm outline-none transition-colors focus:border-(--gold)"
-            placeholder="Email"
+            placeholder={t("contact.email")}
+            aria-label={t("contact.email")}
+            autoComplete="email"
           />
           <textarea
             value={notes}
             onChange={(event) => setNotes(event.currentTarget.value)}
             className="min-h-24 resize-none rounded-xs border border-soft bg-white/80 px-3 py-3 text-sm outline-none transition-colors focus:border-(--gold)"
-            placeholder="Mensaje"
+            placeholder={t("contact.notes")}
+            aria-label={t("contact.notes")}
             rows={3}
           />
 
@@ -216,13 +243,13 @@ export function PropertyContactSidebar({
             disabled={isSubmitting}
             className="inline-flex h-11 items-center justify-center rounded-xs bg-(--carbon) px-4 text-[12px] font-semibold uppercase tracking-[0.08em] text-(--ivory) transition-colors duration-150 hover:bg-(--gold) hover:text-(--carbon) disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isSubmitting ? "Enviando..." : "Enviar consulta"}
+            {isSubmitting ? t("contact.sending") : t("contact.send")}
           </button>
         </form>
       ) : null}
 
       <p className="mt-5 text-[11px] leading-5 text-muted">
-        Tus datos se usan solo para responder tu consulta.
+        {t("contact.privacy")}
       </p>
     </aside>
   );

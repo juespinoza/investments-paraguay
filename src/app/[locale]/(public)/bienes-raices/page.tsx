@@ -1,10 +1,9 @@
-import { apiGet } from "@/lib/api/public";
 import { RealEstatePropertiesClient } from "@/components/landing/RealEstatePropertiesClient";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { resolveLocale } from "@/lib/content/public-pages";
-import type { PublicPropertyListItem } from "@/lib/api/types";
+import { listPublicProperties } from "@/lib/properties/public";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -90,13 +89,15 @@ export async function generateMetadata({
 
 export const revalidate = 60;
 
-export default async function BienesRaicesPage({ searchParams }: PageProps) {
+export default async function BienesRaicesPage({
+  params: routeParams,
+  searchParams,
+}: PageProps) {
+  const { locale } = await routeParams;
+  setRequestLocale(locale);
   const t = await getTranslations();
   const params = await searchParams;
-  const properties = await apiGet<PublicPropertyListItem[]>(
-    "/api/public/bienes-raices",
-    60,
-  );
+  const properties = await listPublicProperties();
 
   return (
     <>
@@ -113,7 +114,7 @@ export default async function BienesRaicesPage({ searchParams }: PageProps) {
       </section>
 
       <RealEstatePropertiesClient
-        properties={properties ?? []}
+        properties={properties}
         title={t("realEstate.availableTitle")}
         initialQuery={{
           tipo: params.tipo ?? null,

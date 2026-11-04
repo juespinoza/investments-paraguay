@@ -62,6 +62,7 @@ export default async function NewPropertyPage({
               id: item.id,
               label: item.name,
             }))}
+            propertyTypes={options.propertyTypes}
             initialData={{
               advisorId: defaultAdvisorId,
             }}

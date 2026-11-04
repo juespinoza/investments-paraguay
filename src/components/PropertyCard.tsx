@@ -1,36 +1,20 @@
 "use client";
 
 import Image from "next/image";
+import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight, MapPin } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { ImageCloudinary } from "@/components/ui/ImageCloudinary";
 import { cn } from "@/lib/cn";
 import type { PublicPropertyListItem } from "@/lib/api/types";
-import {
-  getPropertyListingLabel,
-  resolvePropertyListingType,
-} from "@/lib/properties/listing-type";
+import { resolvePropertyListingType } from "@/lib/properties/listing-type";
+import { formatLocale } from "@/lib/i18n";
+import { formatPropertyPrice } from "@/lib/properties/format";
 
 type PropertyCardProps = {
   property: PublicPropertyListItem;
   priority?: boolean;
 };
-
-function formatPrice(priceUsd: number | null) {
-  if (priceUsd === null) return null;
-
-  return `USD ${priceUsd.toLocaleString("es-PY", {
-    maximumFractionDigits: 0,
-  })}`;
-}
-
-function formatRoi(roiAnnualPct: number | null) {
-  if (roiAnnualPct === null) return null;
-
-  return `ROI ~${roiAnnualPct.toLocaleString("es-PY", {
-    maximumFractionDigits: 1,
-  })}% anual`;
-}
 
 function formatLocation(property: PublicPropertyListItem) {
   return [property.neighborhood, property.city].filter(Boolean).join(", ");
@@ -65,8 +49,23 @@ export function PropertyCard({
   property,
   priority = false,
 }: PropertyCardProps) {
-  const price = formatPrice(property.priceUsd);
-  const roi = formatRoi(property.roiAnnualPct);
+  const t = useTranslations("site.property");
+  const tStatus = useTranslations("site.status");
+  const locale = useLocale();
+  const numberFormat = formatLocale(locale);
+  const price = formatPropertyPrice(
+    property.price ?? property.priceUsd,
+    property.currency,
+    locale,
+  );
+  const roi =
+    property.roiAnnualPct === null
+      ? null
+      : t("roi", {
+          value: property.roiAnnualPct.toLocaleString(numberFormat, {
+            maximumFractionDigits: 1,
+          }),
+        });
   const location = formatLocation(property);
   const href = `/bienes-raices/propiedades/${property.slug}`;
   const imageUrl = property.coverImageUrl ?? "intentoPortada_wku8ef";
@@ -78,15 +77,19 @@ export function PropertyCard({
       <Link
         href={href}
         className="relative block aspect-4/3 overflow-hidden rounded-t-sm bg-(--stone)"
-        aria-label={`Ver propiedad ${property.title}`}
+        aria-label={t("viewPropertyAria", { title: property.title })}
       >
         <PropertyCardImage
           src={imageUrl}
-          alt={property.title}
+          alt={t("coverAlt", { title: property.title })}
           priority={priority}
         />
         <span className="absolute left-4 top-4 rounded-xs bg-[rgba(10,10,10,0.72)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-white backdrop-blur-sm">
-          {getPropertyListingLabel(listingType)}
+          {property.status
+            ? tStatus(property.status)
+            : listingType === "alquiler"
+              ? t("rent")
+              : t("sale")}
         </span>
       </Link>
 
@@ -137,7 +140,7 @@ export function PropertyCard({
             href={href}
             className="mt-4 inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-primary transition-colors hover:text-(--gold)"
           >
-            Ver propiedad
+            {t("viewProperty")}
             <ArrowRight size={15} strokeWidth={1.8} aria-hidden="true" />
           </Link>
         </div>

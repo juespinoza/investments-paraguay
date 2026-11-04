@@ -7,7 +7,9 @@ import {
   AnalyticsEventPayload,
   GA_MEASUREMENT_ID,
   isAnalyticsEnabled,
+  KEY_EVENTS,
 } from "@/lib/analytics";
+import { isWhatsAppHref } from "@/lib/whatsapp";
 
 declare global {
   interface Window {
@@ -39,7 +41,16 @@ function trackAnalyticsEvent(payload: AnalyticsEventPayload) {
     link_url: payload.href,
     locale: payload.locale,
     page_path: payload.path,
+    property_slug: payload.propertySlug,
   });
+}
+
+// Deduce dónde está el enlace cuando no tiene data-analytics-location.
+function inferLocation(element: Element) {
+  if (element.closest("header")) return "header";
+  if (element.closest("footer")) return "footer";
+  if (element.closest("aside")) return "property_sidebar";
+  return "page";
 }
 
 export default function GoogleAnalytics({ locale }: { locale: string }) {
@@ -69,12 +80,27 @@ export default function GoogleAnalytics({ locale }: { locale: string }) {
       const target = event.target;
       if (!(target instanceof Element)) return;
 
-      const tracked = target.closest<HTMLElement>("[data-analytics-event]");
-      if (!tracked) return;
-
       const path = searchParams.toString()
         ? `${pathname}?${searchParams.toString()}`
         : pathname;
+
+      // Todo enlace a WhatsApp cuenta como lead, tenga o no atributos de
+      // analítica. Es el evento clave principal del sitio.
+      const anchor = target.closest<HTMLAnchorElement>("a[href]");
+      if (anchor && isWhatsAppHref(anchor.href)) {
+        trackAnalyticsEvent({
+          event: KEY_EVENTS.whatsappClick,
+          category: "contact",
+          label: anchor.dataset.analyticsLabel ?? "whatsapp",
+          location: anchor.dataset.analyticsLocation ?? inferLocation(anchor),
+          propertySlug: anchor.dataset.propertySlug ?? undefined,
+          locale,
+          path,
+        });
+      }
+
+      const tracked = target.closest<HTMLElement>("[data-analytics-event]");
+      if (!tracked) return;
 
       const href =
         tracked instanceof HTMLAnchorElement
@@ -86,6 +112,7 @@ export default function GoogleAnalytics({ locale }: { locale: string }) {
         category: tracked.dataset.analyticsCategory ?? undefined,
         label: tracked.dataset.analyticsLabel ?? undefined,
         location: tracked.dataset.analyticsLocation ?? undefined,
+        propertySlug: tracked.dataset.propertySlug ?? undefined,
         href,
         locale,
         path,

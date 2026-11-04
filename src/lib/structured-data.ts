@@ -10,7 +10,9 @@ type RealEstateListingInput = {
   description?: string | null;
   coverImageUrl?: string | null;
   gallery?: string[];
+  price?: number | null;
   priceUsd?: number | null;
+  currency?: "GS" | "USD" | null;
   city?: string | null;
   areaM2?: number | null;
 };
@@ -98,7 +100,8 @@ export function buildRealEstateListingJsonLd(
     resolveImageUrl(property.coverImageUrl) ??
     (property.gallery ?? []).map(resolveImageUrl).find(Boolean) ??
     null;
-  const price = numberValue(property.priceUsd);
+  const price = numberValue(property.price ?? property.priceUsd);
+  const currency = textValue(property.currency) ?? "USD";
   const city = textValue(property.city);
   const areaM2 = numberValue(property.areaM2);
 
@@ -114,7 +117,7 @@ export function buildRealEstateListingJsonLd(
         ? {
             "@type": "Offer",
             price,
-            priceCurrency: "USD",
+            priceCurrency: currency,
             availability: "https://schema.org/InStock",
           }
         : undefined,

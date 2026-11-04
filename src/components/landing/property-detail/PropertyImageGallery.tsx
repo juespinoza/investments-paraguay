@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import Image, { type ImageLoaderProps } from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -148,6 +150,7 @@ function Lightbox({
   initialIndex: number;
   onClose: () => void;
 }) {
+  const t = useTranslations("site");
   const [index, setIndex] = useState(initialIndex);
   const touchStartX = useRef<number | null>(null);
 
@@ -181,7 +184,7 @@ function Lightbox({
       className="fixed inset-0 z-90 bg-[rgba(0,0,0,0.95)] text-(--ivory)"
       role="dialog"
       aria-modal="true"
-      aria-label={`Galería de ${title}`}
+      aria-label={t("gallery.label", { title })}
       onTouchStart={(event) => {
         touchStartX.current = event.touches[0]?.clientX ?? null;
       }}
@@ -203,7 +206,7 @@ function Lightbox({
         type="button"
         onClick={onClose}
         className="absolute right-4 top-4 z-20 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-(--ivory) transition-colors hover:bg-white/18 md:right-6 md:top-6"
-        aria-label="Cerrar galería"
+        aria-label={t("gallery.close")}
       >
         <X size={22} strokeWidth={1.8} />
       </button>
@@ -218,7 +221,7 @@ function Lightbox({
             type="button"
             onClick={goToPrevious}
             className="absolute left-4 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-(--ivory) transition-colors hover:bg-white/18 md:inline-flex"
-            aria-label="Imagen anterior"
+            aria-label={t("gallery.previous")}
           >
             <ChevronLeft size={28} strokeWidth={1.7} />
           </button>
@@ -226,7 +229,7 @@ function Lightbox({
             type="button"
             onClick={goToNext}
             className="absolute right-4 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-(--ivory) transition-colors hover:bg-white/18 md:inline-flex"
-            aria-label="Imagen siguiente"
+            aria-label={t("gallery.next")}
           >
             <ChevronRight size={28} strokeWidth={1.7} />
           </button>
@@ -238,7 +241,11 @@ function Lightbox({
           <GalleryImage
             key={images[index]}
             src={images[index]}
-            alt={`${title} ${index + 1}`}
+            alt={t("property.photoAlt", {
+              title,
+              index: index + 1,
+              total: images.length,
+            })}
             sizes="100vw"
             objectFit="contain"
           />
@@ -257,6 +264,7 @@ export function PropertyImageGallery({
   coverImageUrl: string | null;
   gallery: string[];
 }) {
+  const t = useTranslations("site");
   const images = useMemo(
     () => uniqueImages([coverImageUrl, ...gallery]),
     [coverImageUrl, gallery],
@@ -278,9 +286,14 @@ export function PropertyImageGallery({
             type="button"
             onClick={() => setLightboxIndex(0)}
             className="relative block h-90 w-full overflow-hidden rounded-lg bg-(--stone) text-left md:h-120"
-            aria-label={`Abrir imagen de ${title}`}
+            aria-label={t("gallery.openMain", { title })}
           >
-            <GalleryImage src={images[0]} alt={title} priority sizes="100vw" />
+            <GalleryImage
+              src={images[0]}
+              alt={t("property.coverAlt", { title })}
+              priority
+              sizes="100vw"
+            />
           </button>
         ) : (
           <>
@@ -289,11 +302,11 @@ export function PropertyImageGallery({
                 type="button"
                 onClick={() => setLightboxIndex(0)}
                 className="relative overflow-hidden rounded-l-lg bg-(--stone) text-left"
-                aria-label={`Abrir imagen principal de ${title}`}
+                aria-label={t("gallery.openMain", { title })}
               >
                 <GalleryImage
                   src={images[0]}
-                  alt={`${title} 1`}
+                  alt={t("property.coverAlt", { title })}
                   priority
                   sizes="60vw"
                 />
@@ -317,16 +330,16 @@ export function PropertyImageGallery({
                           desktopThumbnails.length,
                         ),
                       )}
-                      aria-label={`Abrir imagen ${imageIndex + 1} de ${title}`}
+                      aria-label={t("gallery.open", { index: imageIndex + 1, title })}
                     >
                       <GalleryImage
                         src={image}
-                        alt={`${title} ${imageIndex + 1}`}
+                        alt={t("property.photoAlt", { title, index: imageIndex + 1, total: images.length })}
                         sizes="20vw"
                       />
                       {shouldShowOverlay ? (
                         <span className="absolute inset-0 flex items-center justify-center bg-[rgba(10,10,10,0.62)] px-4 text-center text-[13px] font-semibold uppercase tracking-[0.08em] text-(--ivory)">
-                          Ver todas ({images.length} fotos)
+                          {t("gallery.viewAll", { count: images.length })}
                         </span>
                       ) : null}
                     </button>
@@ -353,11 +366,11 @@ export function PropertyImageGallery({
                     type="button"
                     onClick={() => setLightboxIndex(index)}
                     className="relative h-90 w-full shrink-0 snap-center"
-                    aria-label={`Abrir imagen ${index + 1} de ${title}`}
+                    aria-label={t("gallery.open", { index: index + 1, title })}
                   >
                     <GalleryImage
                       src={image}
-                      alt={`${title} ${index + 1}`}
+                      alt={t("property.photoAlt", { title, index: index + 1, total: images.length })}
                       priority={index === 0}
                       sizes="100vw"
                     />

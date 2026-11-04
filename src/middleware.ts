@@ -3,9 +3,9 @@ import createMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 import { routing } from "@/i18n/routing";
 import {
-  DEFAULT_LOCALE,
   isSupportedLocale,
-  type AppLocale,
+  pickLocaleFromAcceptLanguage,
+  type SupportedLocale,
 } from "@/lib/i18n";
 
 const intlMiddleware = createMiddleware(routing);
@@ -20,23 +20,17 @@ const LEGACY_PUBLIC_PATHS = [
   /^\/nosotros$/,
 ] as const;
 
-function pickFromAcceptLanguage(value: string | null): AppLocale {
-  // TODO(i18n): Volver a leer Accept-Language cuando se reactiven en/pt/de.
-  // Mientras el contenido siga en español, todas las rutas públicas deben
-  // resolver al locale principal para evitar URLs con contenido inconsistente.
-  void value;
-  return DEFAULT_LOCALE;
-}
-
-function resolveRequestLocale(request: NextRequest): AppLocale {
+// Orden de preferencia para rutas sin prefijo de idioma:
+// 1. Idioma elegido antes con el selector (cookie).
+// 2. Idioma del navegador (Accept-Language).
+// 3. Español.
+function resolveRequestLocale(request: NextRequest): SupportedLocale {
   const cookieLocale = request.cookies.get("locale")?.value;
-  // TODO(i18n): Las cookies de idiomas anteriores pueden quedar en navegadores.
-  // Solo se respetan cuando el locale vuelve a estar activo en SUPPORTED_LOCALES.
-  if (cookieLocale && isSupportedLocale(cookieLocale)) {
+  if (isSupportedLocale(cookieLocale)) {
     return cookieLocale;
   }
 
-  return pickFromAcceptLanguage(request.headers.get("accept-language"));
+  return pickLocaleFromAcceptLanguage(request.headers.get("accept-language"));
 }
 
 function hasLocalePrefix(pathname: string) {
@@ -60,7 +54,11 @@ export default function middleware(request: NextRequest) {
       const locale = resolveRequestLocale(request);
       const nextUrl = request.nextUrl.clone();
       nextUrl.pathname = pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
-      return NextResponse.redirect(nextUrl, 308);
+      // 307: la redirección depende del visitante, no debe cachearse como
+      // permanente ni consolidar señales de SEO en un solo idioma.
+      const response = NextResponse.redirect(nextUrl, 307);
+      response.headers.set("Vary", "Accept-Language, Cookie");
+      return response;
     }
   }
 
