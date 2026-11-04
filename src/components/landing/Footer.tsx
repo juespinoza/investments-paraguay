@@ -50,6 +50,7 @@ function FooterLinks({
 export async function Footer() {
   const t = await getTranslations();
   const locale = resolveLocale(await getLocale());
+  const year = new Date().getFullYear();
   const whatsappHref = buildWhatsAppHref(undefined, locale);
 
   const platformLinks: FooterLink[] = [
@@ -74,29 +75,28 @@ export async function Footer() {
               Investments<span>Paraguay</span>
             </div>
             <p className="mt-5 max-w-sm text-sm leading-7 text-(--stone) opacity-80">
-              Oportunidades exclusivas, contexto local y una forma más clara de
-              invertir en Paraguay.
+              {t("site.footer.tagline")}
             </p>
             <p className="mt-5 text-xs uppercase tracking-[0.08em] text-muted">
-              Asunción, Paraguay
+              {t("site.footer.location")}
             </p>
           </section>
 
           <section className="grid gap-8 sm:grid-cols-2 md:col-span-2 lg:col-span-1 lg:grid-cols-1">
             <div>
-              <SectionTitle>Plataforma</SectionTitle>
+              <SectionTitle>{t("site.footer.platform")}</SectionTitle>
               <FooterLinks links={platformLinks} locale={locale} />
             </div>
 
             <div>
-              <SectionTitle>Legal</SectionTitle>
+              <SectionTitle>{t("site.footer.legal")}</SectionTitle>
               <FooterLinks links={legalLinks} locale={locale} />
             </div>
           </section>
 
           <section className="md:justify-self-end lg:justify-self-auto">
             <div>
-              <SectionTitle>Contacto directo</SectionTitle>
+              <SectionTitle>{t("site.footer.contact")}</SectionTitle>
               <div className="mt-4 space-y-3">
                 <a
                   href={whatsappHref}
@@ -107,7 +107,7 @@ export async function Footer() {
                   +595 985 444 801
                 </a>
                 <p className="text-sm leading-6 text-(--stone) opacity-70">
-                  Lunes a viernes, 8:00 – 18:00
+                  {t("site.footer.hours")}
                 </p>
                 <a
                   href={whatsappHref}
@@ -124,7 +124,7 @@ export async function Footer() {
       </div>
 
       <div className="bg-(--carbon) px-4 py-4 text-center text-xs text-muted md:px-6">
-        © 2025 Investments Paraguay · Todos los derechos reservados
+        © {year} Investments Paraguay · {t("site.footer.rights")}
       </div>
     </footer>
   );

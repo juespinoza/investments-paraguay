@@ -11,7 +11,7 @@
     "mobileEyebrow": "Navegação",
     "mobileDescription": "Explore investimentos, propriedades e análises em uma experiência mobile first.",
     "localeLabel": "Idioma",
-    "localeDescription": "Escolha como deseja navegar no site."
+    "localeDescription": "Conteúdo disponível em espanhol, inglês e português."
   },
   "footer": {
     "legal": "Legal",
@@ -147,6 +147,154 @@
       "airbnbParaguay": "Airbnb no Paraguai: áreas promissoras, números-chave e erros comuns ao investir",
       "terrenosVsDepartamento": "Terrenos ou apartamentos: como escolher o ativo certo para sua estratégia de investimento",
       "guiaInversores": "Guia para investidores estrangeiros: como investir legalmente no Paraguai passo a passo"
+    }
+  },
+  "site": {
+    "hero": {
+      "eyebrow": "Investir no Paraguai",
+      "title": "Viver, crescer e investir onde o mercado ainda tem margem real.",
+      "subtitle": "Seleção exclusiva de imóveis e investimentos no Paraguai, com acompanhamento estratégico local.",
+      "primaryCta": "Ver imóveis",
+      "advisorCta": "Falar com um consultor"
+    },
+    "market": {
+      "eyebrow": "O mercado",
+      "title": "Paraguai: o mercado que os investidores da região já descobriram.",
+      "dividendsSuffix": "% de imposto sobre dividendos",
+      "dividendsLabel": "para não residentes sobre renda de fonte estrangeira",
+      "dividendsDescription": "Estrutura tributária competitiva para capital internacional.",
+      "entryLabel": "preço de entrada em projetos de renda do portfólio atual",
+      "entryDescription": "Ticket de entrada competitivo para renda em dólares.",
+      "freedomPrefix": "Top ",
+      "freedomSuffix": " LATAM",
+      "freedomLabel": "em liberdade econômica segundo o Index of Economic Freedom 2024",
+      "freedomDescription": "Cenário macroeconômico atrativo em relação à região.",
+      "valueProps": {
+        "curated": {
+          "title": "Imóveis selecionados",
+          "description": "Só incluímos projetos com tese de investimento clara e documentação em ordem."
+        },
+        "documented": {
+          "title": "Rentabilidade documentada",
+          "description": "Cada oportunidade inclui projeção de ROI, análise da região e comparáveis."
+        },
+        "local": {
+          "title": "Acompanhamento local",
+          "description": "Da primeira conversa até a escritura, com assessoria no idioma do investidor."
+        }
+      }
+    },
+    "featured": {
+      "eyebrow": "Portfólio",
+      "title": "Investimentos selecionados",
+      "viewAll": "Ver todos os imóveis"
+    },
+    "property": {
+      "sale": "Venda",
+      "rent": "Aluguel",
+      "viewProperty": "Ver imóvel",
+      "viewPropertyAria": "Ver imóvel {title}",
+      "priceOnRequest": "Preço sob consulta",
+      "roi": "ROI bruto est. ~{value}% ao ano",
+      "coverAlt": "{title}, foto de capa",
+      "photoAlt": "{title}, foto {index} de {total}"
+    },
+    "detail": {
+      "breadcrumbLabel": "Navegação",
+      "home": "Início",
+      "realEstate": "Imóveis",
+      "about": "Sobre o imóvel",
+      "location": "Localização",
+      "locationNote": "Localização exata por coordenadas geográficas.",
+      "type": "Tipo",
+      "area": "Área",
+      "bedrooms": "Quartos",
+      "bathrooms": "Banheiros",
+      "originalLanguage": "A descrição detalhada deste imóvel está disponível em espanhol. Fale com a gente e explicamos tudo em português.",
+      "metaTitle": "{title} | Investimento imobiliário no Paraguai",
+      "metaFallbackTitle": "Imóvel no Paraguai | Investments Paraguay",
+      "metaFallbackDescription": "Explore oportunidades imobiliárias no Paraguai com assessoria profissional.",
+      "metaLocation": "{title} em {location}.",
+      "metaPrice": "Preço: {price}.",
+      "metaRoi": "ROI bruto estimado ~{roi}% ao ano.",
+      "keywordSale": "imóvel à venda paraguai",
+      "keywordInvestment": "investimento imobiliário paraguai"
+    },
+    "contact": {
+      "advisorRole": "Consultora imobiliária",
+      "companyRole": "Assessoria imobiliária",
+      "whatsapp": "Consultar pelo WhatsApp",
+      "message": "Enviar mensagem",
+      "name": "Nome",
+      "email": "E-mail",
+      "notes": "Mensagem",
+      "sending": "Enviando...",
+      "send": "Enviar consulta",
+      "success": "Consulta enviada. Entraremos em contato em breve.",
+      "error": "Não foi possível enviar sua consulta.",
+      "privacy": "Seus dados são usados apenas para responder à sua consulta."
+    },
+    "gallery": {
+      "label": "Galeria de {title}",
+      "close": "Fechar galeria",
+      "previous": "Imagem anterior",
+      "next": "Próxima imagem",
+      "open": "Abrir imagem {index} de {title}",
+      "openMain": "Abrir imagem principal de {title}",
+      "viewAll": "Ver todas ({count} fotos)"
+    },
+    "listing": {
+      "eyebrow": "Portfólio",
+      "type": "Tipo",
+      "all": "Todos",
+      "sale": "Venda",
+      "rent": "Aluguel",
+      "maxPrice": "Preço máximo",
+      "noLimit": "Sem limite",
+      "location": "Localização",
+      "allLocations": "Todas",
+      "clear": "Limpar",
+      "clearFilters": "Limpar filtros",
+      "filters": "Filtros",
+      "closeFilters": "Fechar filtros",
+      "empty": "Nenhum imóvel encontrado com esses filtros",
+      "counter": "{count, plural, one {# imóvel encontrado} other {# imóveis encontrados}}"
+    },
+    "footer": {
+      "tagline": "Oportunidades selecionadas, contexto local e uma forma mais clara de investir no Paraguai.",
+      "location": "Assunção, Paraguai",
+      "platform": "Plataforma",
+      "legal": "Legal",
+      "contact": "Contato direto",
+      "hours": "Segunda a sexta, 8:00 – 18:00 (horário do Paraguai)",
+      "rights": "Todos os direitos reservados"
+    },
+    "whatsapp": {
+      "floatLabel": "Falar com um consultor pelo WhatsApp",
+      "floatTooltip": "Falar com um consultor"
+    },
+    "blog": {
+      "all": "Todos",
+      "market": "Mercado",
+      "strategy": "Estratégia",
+      "guides": "Guias",
+      "emptyTitle": "Análises em preparação",
+      "emptySubtitle": "Em breve publicaremos guias de mercado, análises de regiões e estratégias para investidores no Paraguai.",
+      "emptyCta": "Ver imóveis disponíveis",
+      "categoryEmpty": "Ainda não há artigos nesta categoria.",
+      "spanishOnly": "Artigo em espanhol"
+    },
+    "locale": {
+      "current": "Idioma atual: {locale}"
+    },
+    "status": {
+      "EN_VENTA": "À venda",
+      "EN_ALQUILER": "Para alugar",
+      "RESERVADA": "Reservado",
+      "BORRADOR": "Rascunho",
+      "VENDIDA": "Vendido",
+      "ALQUILADA": "Alugado",
+      "RETIRADA": "Retirado"
     }
   }
 }

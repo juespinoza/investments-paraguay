@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicProperties } from "@/lib/cache/revalidate";
 import {
   assignCategoriesInTransaction,
   assertPropertyScope,
@@ -143,6 +144,7 @@ export async function PATCH(req: Request, { params }: Params) {
       }
     });
 
+    revalidatePublicProperties();
     return NextResponse.json({ ok: true });
   } catch (e: unknown) {
     if (
@@ -183,6 +185,7 @@ export async function DELETE(_req: Request, { params }: Params) {
     where: { id },
     data: { deletedAt: new Date(), status: "RETIRADA" },
   });
+  revalidatePublicProperties();
 
   return NextResponse.json({ ok: true });
 }

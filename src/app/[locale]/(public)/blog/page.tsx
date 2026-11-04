@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import {
   BlogIndexClient,
   type BlogCategory,
@@ -123,9 +123,35 @@ function toBlogIndexPost(post: PublicBlogPost): BlogIndexPost {
   };
 }
 
-export default async function BlogPage() {
+// Artículos escritos como páginas estáticas en el código (no en la base).
+// Se suman al índice para que el blog no aparezca vacío.
+const STATIC_POSTS: BlogIndexPost[] = [
+  {
+    id: "static-paraguay-polo",
+    title:
+      "Por qué Paraguay se está consolidando como un nuevo polo de inversión inmobiliaria en Sudamérica",
+    slug: "paraguay-polo-inversion-inmobiliaria-sudamerica",
+    excerpt:
+      "Qué está impulsando la percepción de Paraguay como destino inmobiliario y cómo interpretar esas señales con criterio.",
+    coverImageUrl: null,
+    updatedAt: new Date("2026-01-27").toISOString(),
+    author: "Investments Paraguay",
+    category: "market",
+  },
+];
+
+export default async function BlogPage({ params }: PageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations();
-  const posts = (await listPublicBlogPosts()).map(toBlogIndexPost);
+  const dbPosts = (await listPublicBlogPosts()).map(toBlogIndexPost);
+  const dbSlugs = new Set(dbPosts.map((post) => post.slug));
+  const posts = [
+    ...dbPosts,
+    ...STATIC_POSTS.filter((post) => !dbSlugs.has(post.slug)),
+  ].sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+  );
   const topics = (["market", "strategy", "guides"] as const).map(
     (category) => ({
       category,
@@ -142,13 +168,12 @@ export default async function BlogPage() {
         eyebrow: t("blog.eyebrow"),
         title: t("blog.title"),
         subtitle: t("blog.subtitle"),
-        all: "Todos",
+        all: t("site.blog.all"),
         readMore: t("blog.readMore"),
         featuredLabel: t("blog.featuredLabel"),
-        emptyTitle: "Análisis en preparación",
-        emptySubtitle:
-          "Pronto publicaremos guías de mercado, análisis de zonas y estrategias para inversores en Paraguay.",
-        emptyCta: "Ver propiedades disponibles",
+        emptyTitle: t("site.blog.emptyTitle"),
+        emptySubtitle: t("site.blog.emptySubtitle"),
+        emptyCta: t("site.blog.emptyCta"),
       }}
     />
   );

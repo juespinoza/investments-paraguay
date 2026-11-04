@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { listPublicBlogPosts } from "@/lib/virtualoffice/blog";
 import { SEO_LOCALES, SITE_URL } from "@/lib/seo";
+import { DEFAULT_LOCALE } from "@/lib/i18n";
+import { HIDDEN_PUBLIC_STATUSES } from "@/lib/properties/public";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
@@ -55,10 +57,36 @@ function absoluteUrl(locale: (typeof SEO_LOCALES)[number], path: string) {
 
 function localizedAlternates(path: string) {
   return {
-    languages: Object.fromEntries(
-      SEO_LOCALES.map((locale) => [locale, absoluteUrl(locale, path)]),
-    ),
+    languages: {
+      ...Object.fromEntries(
+        SEO_LOCALES.map((locale) => [locale, absoluteUrl(locale, path)]),
+      ),
+      "x-default": absoluteUrl(DEFAULT_LOCALE, path),
+    },
   };
+}
+
+// Contenido escrito solo en español (artículos del blog): una sola URL, sin
+// alternativas de idioma, para no declarar traducciones que no existen.
+function spanishOnlyEntry({
+  path,
+  lastModified,
+  changeFrequency,
+  priority,
+}: {
+  path: string;
+  lastModified: Date;
+  changeFrequency: SitemapEntry["changeFrequency"];
+  priority: number;
+}): MetadataRoute.Sitemap {
+  return [
+    {
+      url: absoluteUrl(DEFAULT_LOCALE, path),
+      lastModified,
+      changeFrequency,
+      priority,
+    },
+  ];
 }
 
 function localizedEntries({
@@ -89,7 +117,10 @@ function uniqueByUrl(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
 
 async function listPropertySitemapItems() {
   return prisma.property.findMany({
-    where: { deletedAt: null },
+    where: {
+      deletedAt: null,
+      status: { notIn: [...HIDDEN_PUBLIC_STATUSES] },
+    },
     orderBy: [
       { isFeatured: "desc" },
       { featuredOrder: "asc" },
@@ -128,7 +159,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
 
   const dynamicBlogEntries = blogPosts.flatMap((post) =>
-    localizedEntries({
+    spanishOnlyEntry({
       path: `/blog/${post.slug}`,
       lastModified: post.updatedAt ?? now,
       changeFrequency: "monthly",
@@ -137,7 +168,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
 
   const staticBlogEntries = STATIC_BLOG_ARTICLES.flatMap((post) =>
-    localizedEntries({
+    spanishOnlyEntry({
       path: `/blog/${post.slug}`,
       lastModified: post.updatedAt,
       changeFrequency: "monthly",

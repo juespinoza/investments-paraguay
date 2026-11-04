@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { buildWhatsAppHref } from "@/lib/whatsapp";
+import { buildWhatsAppHref, isWhatsAppHref } from "@/lib/whatsapp";
 
 type Props = {
   backgroundImageUrl: string;
@@ -14,6 +14,8 @@ type Props = {
   ctaHref?: string;
   logoLeftUrl?: string;
   locale?: string;
+  eyebrowLabel?: string;
+  advisorLabel?: string;
 };
 
 const ASUNCION_HERO_IMAGES = {
@@ -24,10 +26,6 @@ const ASUNCION_HERO_IMAGES = {
 
 function isInternalPath(href: string) {
   return href.startsWith("/") && !href.startsWith("//");
-}
-
-function isWhatsAppHref(href: string) {
-  return href.includes("wa.me/") || href.includes("api.whatsapp.com/");
 }
 
 function normalizeWhatsAppHref(href: string, locale?: string) {
@@ -89,11 +87,13 @@ export function HeroSplit({
   ctaLabel,
   ctaHref,
   locale,
+  eyebrowLabel,
+  advisorLabel,
 }: Props) {
   const eyebrow =
     brandLeft || brandRight
       ? [brandLeft, brandRight].filter(Boolean).join(" ")
-      : "Inversión en Paraguay";
+      : (eyebrowLabel ?? "Inversión en Paraguay");
   const headline =
     title ?? "Vivir, crecer e invertir donde el mercado aún tiene margen real.";
   const subheadline =
@@ -161,7 +161,7 @@ export function HeroSplit({
               data-analytics-label="advisor"
               data-analytics-location="hero"
             >
-              Hablar con un asesor
+              {advisorLabel ?? "Hablar con un asesor"}
             </a>
           </div>
         </div>

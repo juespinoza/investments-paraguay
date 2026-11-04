@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { PropertyCard } from "@/components/PropertyCard";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { apiGet } from "@/lib/api/public";
 import type { PublicPropertyListItem } from "@/lib/api/types";
 
 function selectFeaturedProperties(properties: PublicPropertyListItem[]) {
@@ -16,12 +16,13 @@ function selectFeaturedProperties(properties: PublicPropertyListItem[]) {
   return properties.slice(0, 3);
 }
 
-export async function FeaturedPropertiesSection() {
-  const properties = await apiGet<PublicPropertyListItem[]>(
-    "/api/public/bienes-raices",
-    60,
-  );
-  const selectedProperties = selectFeaturedProperties(properties ?? []);
+export async function FeaturedPropertiesSection({
+  properties,
+}: {
+  properties: PublicPropertyListItem[];
+}) {
+  const t = await getTranslations("site.featured");
+  const selectedProperties = selectFeaturedProperties(properties);
 
   if (selectedProperties.length === 0) {
     return null;
@@ -32,10 +33,10 @@ export async function FeaturedPropertiesSection() {
       <div className="mx-auto max-w-7xl">
         <div className="max-w-130">
           <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.15em] text-(--gold)">
-            Portafolio
+            {t("eyebrow")}
           </p>
           <h2 className="font-cormorant text-[28px] font-normal leading-[1.15] text-primary md:text-[40px]">
-            Inversiones seleccionadas
+            {t("title")}
           </h2>
         </div>
 
@@ -54,7 +55,7 @@ export async function FeaturedPropertiesSection() {
             href="/bienes-raices"
             className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-primary transition-colors hover:text-(--gold)"
           >
-            Ver todas las propiedades
+            {t("viewAll")}
             <ArrowRight size={16} strokeWidth={1.8} aria-hidden="true" />
           </Link>
         </div>

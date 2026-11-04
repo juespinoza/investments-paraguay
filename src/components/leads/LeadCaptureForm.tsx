@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { KEY_EVENTS, trackEvent } from "@/lib/analytics";
 
 export function LeadCaptureForm({
   sourcePage,
@@ -56,6 +57,12 @@ export function LeadCaptureForm({
         setError(data?.error ?? labels?.error ?? "No se pudo enviar.");
         return;
       }
+      trackEvent(KEY_EVENTS.lead, {
+        method: "form",
+        location: compact ? "contact_form" : "lead_magnet",
+        source_page: sourcePage,
+        property_slug: propertySlug,
+      });
       setMessage(
         labels?.success ?? "Solicitud enviada. Te contactaremos en breve.",
       );

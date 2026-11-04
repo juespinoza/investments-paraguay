@@ -11,6 +11,11 @@ type PropertyWithListingType = PublicPropertyListItem & {
 export function resolvePropertyListingType(
   property: PropertyWithListingType,
 ): PropertyListingType {
+  // El estado de la propiedad (rediseño del modelo) define si es alquiler.
+  if (property.status === "EN_ALQUILER" || property.status === "ALQUILADA") {
+    return "alquiler";
+  }
+
   const rawType =
     property.listingType ?? property.operationType ?? property.transactionType;
   const normalized = rawType?.trim().toLowerCase() ?? "";

@@ -1,12 +1,31 @@
 import type { Metadata } from "next";
 import {
   DEFAULT_LOCALE,
+  OPEN_GRAPH_LOCALES,
+  SUPPORTED_LOCALES,
   type AppLocale,
 } from "@/lib/i18n";
 
 export const SITE_URL = "https://www.investmentsparaguay.com";
 export const SITE_NAME = "Investments Paraguay";
-export const SEO_LOCALES = ["es", "en"] as const;
+export const SEO_LOCALES = SUPPORTED_LOCALES;
+
+const MAX_DESCRIPTION_LENGTH = 155;
+
+// Google corta las descripciones a ~155 caracteres. Cortamos en un límite de
+// palabra para que el fragmento no termine a mitad de palabra.
+export function truncateDescription(
+  value: string,
+  maxLength = MAX_DESCRIPTION_LENGTH,
+) {
+  const normalized = value.replace(/\s+/g, " ").trim();
+  if (normalized.length <= maxLength) return normalized;
+
+  const slice = normalized.slice(0, maxLength - 1);
+  const lastSpace = slice.lastIndexOf(" ");
+  const cut = lastSpace > maxLength * 0.6 ? slice.slice(0, lastSpace) : slice;
+  return `${cut.replace(/[\s.,;:–-]+$/, "")}…`;
+}
 
 type SeoInput = {
   title: string;
@@ -16,6 +35,9 @@ type SeoInput = {
   image?: string;
   noIndex?: boolean;
   keywords?: string[];
+  // Contenido escrito en un solo idioma (artículos del blog): la URL
+  // canónica apunta a ese idioma y no se declaran traducciones inexistentes.
+  contentLocale?: AppLocale;
 };
 
 function normalizeUrl(pathname = "") {
@@ -71,20 +93,24 @@ export function buildMetadata({
   image = "/images/logo.png",
   noIndex = false,
   keywords = [],
+  contentLocale,
 }: SeoInput): Metadata {
-  const localizedPath = withLocalePrefix(locale, pathname);
+  const localizedPath = withLocalePrefix(contentLocale ?? locale, pathname);
+  const metaDescription = truncateDescription(description);
   const url = normalizeUrl(localizedPath);
   const imageUrl = resolveMetadataImageUrl(image);
 
   return {
     metadataBase: new URL(SITE_URL),
     title,
-    description,
+    description: metaDescription,
     keywords,
-    alternates: {
-      canonical: url,
-      languages: buildLanguageAlternates(pathname),
-    },
+    alternates: contentLocale
+      ? { canonical: url }
+      : {
+          canonical: url,
+          languages: buildLanguageAlternates(pathname),
+        },
     robots: noIndex
       ? {
           index: false,
@@ -108,11 +134,14 @@ export function buildMetadata({
         },
     openGraph: {
       type: "website",
-      locale,
+      locale: OPEN_GRAPH_LOCALES[locale],
+      alternateLocale: SEO_LOCALES.filter((item) => item !== locale).map(
+        (item) => OPEN_GRAPH_LOCALES[item],
+      ),
       url,
       siteName: SITE_NAME,
       title,
-      description,
+      description: metaDescription,
       images: [
         {
           url: imageUrl,
@@ -125,7 +154,7 @@ export function buildMetadata({
     twitter: {
       card: "summary_large_image",
       title,
-      description,
+      description: metaDescription,
       images: [imageUrl],
     },
   };

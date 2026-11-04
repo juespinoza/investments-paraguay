@@ -1,42 +1,20 @@
 "use client";
 
 import { cn } from "@/lib/cn";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useTransition } from "react";
 import { useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { isAnalyticsEnabled } from "@/lib/analytics";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { DEFAULT_LOCALE, type AppLocale } from "@/lib/i18n";
+import {
+  LOCALE_LABELS,
+  SUPPORTED_LOCALES,
+  toSupportedLocale,
+  type SupportedLocale,
+} from "@/lib/i18n";
 
-type LocaleOption = { value: AppLocale; label: string };
-
-const LOCALES: LocaleOption[] = [
-  { value: "es", label: "ES" },
-];
-
-const DISPLAY_LOCALES: Array<
-  LocaleOption | { value: "en"; label: string; disabled: true }
-> = [
-  ...LOCALES,
-  // TODO(i18n): Reactivar "en" como AppLocale soportado cuando el contenido
-  // esté traducido. Se muestra para preservar la dirección visual solicitada,
-  // pero no navega mientras routing solo soporte "es".
-  { value: "en", label: "EN", disabled: true },
-];
-
-function isSupportedLocale(value: string | undefined): value is AppLocale {
-  return LOCALES.some((locale) => locale.value === value);
-}
-
-function readCookieLocale(): AppLocale {
-  if (typeof document === "undefined") return DEFAULT_LOCALE;
-
-  const match = document.cookie
-    .split(";")
-    .map((v) => v.trim())
-    .find((v) => v.startsWith("locale="));
-
-  const value = match?.split("=")[1];
-  return isSupportedLocale(value) ? value : DEFAULT_LOCALE;
+function rememberLocale(locale: SupportedLocale) {
+  document.cookie = `locale=${locale}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
 }
 
 export function LocaleSwitcher({
@@ -45,32 +23,27 @@ export function LocaleSwitcher({
   showLabel?: boolean;
   className?: string;
 }) {
+  const t = useTranslations("site.locale");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const current = toSupportedLocale(useLocale());
 
-  const [selected, setSelected] = useState<AppLocale>(DEFAULT_LOCALE);
+  function pick(locale: SupportedLocale) {
+    if (locale === current) return;
 
-  useEffect(() => {
-    setSelected(readCookieLocale());
-  }, []);
-
-  const selectedLocale = useMemo(() => {
-    return LOCALES.find((l) => l.value === selected) ?? LOCALES[0];
-  }, [selected]);
-
-  function pick(locale: AppLocale) {
-    setSelected(locale);
+    rememberLocale(locale);
 
     if (typeof window !== "undefined" && isAnalyticsEnabled() && window.gtag) {
       window.gtag("event", "language_change", {
         event_category: "i18n",
         event_label: locale,
+        from_locale: current,
       });
     }
 
-    startTransition(async () => {
+    startTransition(() => {
       const query = searchParams.toString();
       const nextPath = query ? `${pathname}?${query}` : pathname;
       router.replace(nextPath, { locale });
@@ -83,41 +56,27 @@ export function LocaleSwitcher({
         "inline-flex h-8 items-center gap-2 text-[13px] font-medium uppercase tracking-[0.05em]",
         className,
       )}
-      aria-label={`Idioma actual: ${selectedLocale.label}`}
+      aria-label={t("current", { locale: LOCALE_LABELS[current] })}
     >
-      {DISPLAY_LOCALES.map((locale, index) => {
-        const supported = isSupportedLocale(locale.value);
-        const active = locale.value === selected;
+      {SUPPORTED_LOCALES.map((locale, index) => {
+        const active = locale === current;
 
         return (
-          <span key={locale.value} className="inline-flex items-center gap-2">
+          <span key={locale} className="inline-flex items-center gap-2">
             <button
               type="button"
-              disabled={isPending || !supported}
-              onClick={() => {
-                if (supported) pick(locale.value);
-              }}
+              lang={locale}
+              disabled={isPending}
+              onClick={() => pick(locale)}
               className={cn(
-                "text-[13px] font-medium uppercase tracking-[0.05em] transition-colors duration-150 disabled:cursor-default",
-                active
-                  ? "text-primary"
-                  : "text-muted hover:text-primary disabled:hover:text-muted",
-                !supported && "opacity-55",
+                "text-[13px] font-medium uppercase tracking-[0.05em] transition-colors duration-150 disabled:cursor-wait",
+                active ? "text-primary" : "text-muted hover:text-primary",
               )}
               aria-current={active ? "true" : undefined}
-              aria-disabled={!supported}
-              title={
-                supported
-                  ? locale.label
-                  : "TODO(i18n): habilitar cuando exista contenido en inglés."
-              }
-              data-analytics-event="language_change"
-              data-analytics-category="i18n"
-              data-analytics-label={locale.value}
             >
-              {locale.label}
+              {LOCALE_LABELS[locale]}
             </button>
-            {index < DISPLAY_LOCALES.length - 1 ? (
+            {index < SUPPORTED_LOCALES.length - 1 ? (
               <span aria-hidden className="text-muted opacity-50">
                 |
               </span>

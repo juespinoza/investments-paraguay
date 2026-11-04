@@ -5,8 +5,9 @@ export const routing = defineRouting({
   locales: [...SUPPORTED_LOCALES],
   defaultLocale: DEFAULT_LOCALE,
   localePrefix: "always",
-  // TODO(i18n): Volver a `true` cuando existan traducciones reales para los
-  // idiomas comentados en src/lib/i18n.ts.
+  // La detección por Accept-Language se hace en middleware.ts solo para
+  // rutas sin prefijo (por ejemplo "/"). Las URLs con /es, /en o /pt nunca
+  // se redirigen, así Google indexa cada versión por separado.
   localeDetection: false,
   localeCookie: {
     name: "locale",

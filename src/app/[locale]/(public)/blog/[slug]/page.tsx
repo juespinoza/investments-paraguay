@@ -30,6 +30,7 @@ export async function generateMetadata({
     description: post.content.replace(/\s+/g, " ").trim().slice(0, 160),
     pathname: `/blog/${slug}`,
     locale: resolvedLocale,
+    contentLocale: "es",
     image: "/images/og-home.jpg",
   });
 }

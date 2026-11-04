@@ -3,6 +3,8 @@
 import Image, { type ImageLoaderProps } from "next/image";
 import { ArrowRight, BarChart3, BookOpen, Compass } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { DEFAULT_LOCALE, formatLocale } from "@/lib/i18n";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 
@@ -45,12 +47,12 @@ type BlogIndexClientProps = {
   };
 };
 
-const CATEGORY_LABELS: Record<BlogCategory, string> = {
-  all: "Todos",
-  market: "Mercado",
-  strategy: "Estrategia",
-  guides: "Guías",
-};
+// Los artículos se escriben en español; en otros idiomas se muestran con
+// un aviso hasta que existan traducciones.
+function useCategoryLabel() {
+  const t = useTranslations("site.blog");
+  return (category: BlogCategory) => t(category);
+}
 
 const TOPIC_ICONS = {
   market: BarChart3,
@@ -109,8 +111,8 @@ function BlogImage({
   );
 }
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("es-PY", {
+function formatDate(value: string, locale: string) {
+  return new Intl.DateTimeFormat(formatLocale(locale), {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -128,7 +130,10 @@ function ArticleCard({
   featuredLabel: string;
   featured?: boolean;
 }) {
-  const categoryLabel = CATEGORY_LABELS[post.category];
+  const locale = useLocale();
+  const t = useTranslations("site.blog");
+  const categoryLabel = useCategoryLabel()(post.category);
+  const isTranslated = locale === DEFAULT_LOCALE;
 
   return (
     <article
@@ -139,7 +144,7 @@ function ArticleCard({
     >
       <Link
         href={`/blog/${post.slug}`}
-        aria-label={`Leer ${post.title}`}
+        aria-label={`${readMoreLabel}: ${post.title}`}
         className={cn(
           "relative block aspect-video overflow-hidden bg-(--stone)",
           featured
@@ -171,11 +176,17 @@ function ArticleCard({
             {categoryLabel}
           </span>
           <time className="text-[12px] text-muted" dateTime={post.updatedAt}>
-            {formatDate(post.updatedAt)}
+            {formatDate(post.updatedAt, locale)}
           </time>
+          {!isTranslated ? (
+            <span className="rounded-xs border border-(--line) px-2 py-0.5 text-[11px] text-muted">
+              {t("spanishOnly")}
+            </span>
+          ) : null}
         </div>
 
         <h3
+          lang={DEFAULT_LOCALE}
           className={cn(
             "mt-4 font-cormorant font-normal leading-tight text-primary",
             featured ? "text-[28px] md:text-[34px]" : "text-[20px]",
@@ -230,12 +241,13 @@ function CategoryFilters({
   allLabel: string;
 }) {
   const categories: BlogCategory[] = ["all", "market", "strategy", "guides"];
+  const categoryLabel = useCategoryLabel();
 
   return (
     <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 md:mx-0 md:px-0">
       {categories.map((category) => {
         const isActive = activeCategory === category;
-        const label = category === "all" ? allLabel : CATEGORY_LABELS[category];
+        const label = category === "all" ? allLabel : categoryLabel(category);
 
         return (
           <button
@@ -323,6 +335,7 @@ export function BlogIndexClient({
   dictionary,
 }: BlogIndexClientProps) {
   const [activeCategory, setActiveCategory] = useState<BlogCategory>("all");
+  const categoryEmptyLabel = useTranslations("site.blog")("categoryEmpty");
   const filteredPosts = useMemo(() => {
     if (activeCategory === "all") return posts;
     return posts.filter((post) => post.category === activeCategory);
@@ -379,7 +392,7 @@ export function BlogIndexClient({
 
             {!featuredPost ? (
               <div className="mt-10 rounded-lg border border-soft bg-(--ivory) px-5 py-8 text-center text-[14px] text-muted">
-                No hay artículos publicados en esta categoría todavía.
+                {categoryEmptyLabel}
               </div>
             ) : null}
           </section>

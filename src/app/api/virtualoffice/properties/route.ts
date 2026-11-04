@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth/session";
+import { revalidatePublicProperties } from "@/lib/cache/revalidate";
 import {
   assignCategoriesInTransaction,
   buildPropertyListWhere,
@@ -120,6 +121,7 @@ export async function POST(req: Request) {
 
       return property;
     });
+    revalidatePublicProperties();
 
     return NextResponse.json({ id: created.id }, { status: 201 });
   } catch (e: unknown) {
