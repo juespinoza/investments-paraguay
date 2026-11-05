@@ -173,10 +173,10 @@ export async function upsertPublisherProperty(
     const synced = await syncPublisherImages(source, externalId, input.images);
     warnings.push(...synced.warnings);
 
-    if (synced.publicIds.length || !input.images.length) {
+    if (synced.imageUrls.length || !input.images.length) {
       images = {
-        coverImageUrl: synced.publicIds[0] ?? null,
-        gallery: synced.publicIds,
+        coverImageUrl: synced.imageUrls[0] ?? null,
+        gallery: synced.imageUrls,
       };
     } else if (current?.gallery.length) {
       warnings.push("No se pudo subir ninguna foto: se mantienen las fotos anteriores.");

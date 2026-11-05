@@ -1,7 +1,8 @@
 "use client";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { CldImage } from "next-cloudinary";
+import Image from "next/image";
+import { propertyImageUrl } from "@/lib/image-source";
 import { useTranslations } from "next-intl";
 
 export function FeaturedGrid({
@@ -38,14 +39,11 @@ export function FeaturedGrid({
           {items.map((p) => (
             <Card key={p.slug}>
               <div className="relative overflow-hidden rounded-[1.3rem]">
-                <CldImage
+                <Image
                   src={p.coverImageUrl ?? "intentoPortada_wku8ef"}
-                  width="400"
-                  height="300"
-                  crop={{
-                    type: "auto",
-                    source: true,
-                  }}
+                  width={400}
+                  height={300}
+                  loader={({ src, width, quality }) => propertyImageUrl(src, width, quality)}
                   alt={p.title}
                   className="h-72 w-full object-cover"
                 />

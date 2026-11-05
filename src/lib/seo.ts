@@ -1,3 +1,4 @@
+import { resolveImageSource } from "@/lib/image-source";
 import type { Metadata } from "next";
 import {
   DEFAULT_LOCALE,
@@ -65,6 +66,7 @@ function buildLanguageAlternates(pathname: string) {
 }
 
 function resolveMetadataImageUrl(image: string) {
+  image = resolveImageSource(image);
   if (image.startsWith("http://") || image.startsWith("https://")) {
     return image;
   }
@@ -73,8 +75,8 @@ function resolveMetadataImageUrl(image: string) {
     return `${SITE_URL}${image}`;
   }
 
-  const cloudName =
-    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "din9bhvas";
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  if (!cloudName) return `${SITE_URL}/images/og-home.jpg`;
   const publicId = image
     .split("/")
     .filter(Boolean)

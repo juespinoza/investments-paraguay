@@ -1,4 +1,5 @@
 import "server-only";
+import { resolveImageSource } from "@/lib/image-source";
 
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
@@ -95,7 +96,7 @@ async function queryPublicProperties(): Promise<PublicPropertyListItem[]> {
       slug: p.slug,
       title: p.title,
       subtitle: p.description,
-      coverImageUrl: p.coverImageUrl,
+      coverImageUrl: p.coverImageUrl ? resolveImageSource(p.coverImageUrl) : null,
       price,
       // Se mantiene por compatibilidad: componentes viejos leen priceUsd.
       priceUsd: price,
@@ -166,8 +167,8 @@ async function queryPublicProperty(
     title: property.title,
     subtitle: property.description,
     description: property.description,
-    coverImageUrl: property.coverImageUrl,
-    gallery: property.gallery,
+    coverImageUrl: property.coverImageUrl ? resolveImageSource(property.coverImageUrl) : null,
+    gallery: property.gallery.map(resolveImageSource),
     price,
     priceUsd: price,
     currency: property.currency,

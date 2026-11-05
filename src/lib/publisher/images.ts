@@ -11,23 +11,24 @@ const UPLOAD_CONCURRENCY = 4;
 const UPLOAD_TIMEOUT_MS = 30_000;
 
 export type ImageSyncResult = {
-  publicIds: string[];
+  imageUrls: string[];
   warnings: string[];
 };
 
 export class CloudinaryConfigError extends Error {}
 
 function cloudinaryConfig() {
-  const cloudName =
-    process.env.CLOUDINARY_CLOUD_NAME ||
-    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
-    "";
+  // Cuenta de subida del publicador. Es distinta de la cuenta histórica del
+  // sitio (NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME), así que no se usa esa como
+  // respaldo: con las credenciales de una y el nombre de la otra, todas las
+  // subidas fallarían.
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME || "";
   const apiKey = process.env.CLOUDINARY_API_KEY || "";
   const apiSecret = process.env.CLOUDINARY_API_SECRET || "";
 
   if (!cloudName || !apiKey || !apiSecret) {
     throw new CloudinaryConfigError(
-      "Faltan CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET o el cloud name para subir fotos.",
+      "Faltan CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY o CLOUDINARY_API_SECRET (cuenta del publicador) para subir fotos.",
     );
   }
 
@@ -63,20 +64,26 @@ async function uploadOne(
     );
     const data = (await response.json().catch(() => ({}))) as {
       public_id?: string;
+      secure_url?: string;
       error?: { message?: string };
     };
 
-    if (!response.ok || !data.public_id) {
+    if (!response.ok || !data.public_id || !data.secure_url) {
       throw new Error(data.error?.message ?? `HTTP ${response.status}`);
     }
 
-    return data.public_id;
+    const delivered = new URL(data.secure_url);
+    if (delivered.protocol !== "https:" || delivered.hostname !== "res.cloudinary.com" ||
+        !delivered.pathname.startsWith(`/${config.cloudName}/image/upload/`)) {
+      throw new Error("Cloudinary devolvió una URL de entrega inválida");
+    }
+    return data.secure_url;
   } finally {
     clearTimeout(timer);
   }
 }
 
-// Devuelve los public_id en el mismo orden recibido (la primera es la
+// Devuelve las URLs HTTPS completas en el mismo orden recibido (la primera es la
 // portada). Las fotos que fallan se informan como advertencias.
 export async function syncPublisherImages(
   source: string,
@@ -84,7 +91,7 @@ export async function syncPublisherImages(
   imageUrls: string[],
 ): Promise<ImageSyncResult> {
   const urls = Array.from(new Set(imageUrls.filter(isHttpUrl)));
-  if (!urls.length) return { publicIds: [], warnings: [] };
+  if (!urls.length) return { imageUrls: [], warnings: [] };
 
   const config = cloudinaryConfig();
   const results: Array<string | null> = new Array(urls.length).fill(null);
@@ -98,7 +105,7 @@ export async function syncPublisherImages(
       const existing = ownCloudinaryPublicId(url, config.cloudName);
 
       if (existing) {
-        results[index] = existing;
+        results[index] = url; // Conservar cuenta, versión y formato.
         continue;
       }
 
@@ -120,7 +127,7 @@ export async function syncPublisherImages(
   );
 
   return {
-    publicIds: results.filter((id): id is string => Boolean(id)),
+    imageUrls: results.filter((id): id is string => Boolean(id)),
     warnings,
   };
 }
