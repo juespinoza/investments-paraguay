@@ -119,6 +119,8 @@ function formatDate(value: string, locale: string) {
     day: "2-digit",
     month: "short",
     year: "numeric",
+    // Fecha de Paraguay, igual en el servidor y en el navegador.
+    timeZone: "America/Asuncion",
   }).format(new Date(value));
 }
 
@@ -143,7 +145,10 @@ function ArticleCard({
     <article
       className={cn(
         "group overflow-hidden rounded-lg border border-soft bg-(--ivory)",
-        featured && "lg:grid lg:grid-cols-[45fr_55fr]",
+        // minmax(0, …): las columnas no crecen por el contenido. Sin esto,
+        // un título largo agranda la tarjeta y la imagen (16:9) se ensancha
+        // hasta tapar el texto.
+        featured && "lg:grid lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)]",
       )}
     >
       <Link
@@ -152,7 +157,7 @@ function ArticleCard({
         className={cn(
           "relative block aspect-video overflow-hidden bg-(--stone)",
           featured
-            ? "rounded-t-lg lg:h-full lg:min-h-90 lg:rounded-l-lg lg:rounded-tr-none"
+            ? "rounded-t-lg lg:aspect-auto lg:h-full lg:min-h-90 lg:rounded-l-lg lg:rounded-tr-none"
             : "rounded-t-lg",
         )}
       >
@@ -168,7 +173,7 @@ function ArticleCard({
         />
       </Link>
 
-      <div className={cn("p-5", featured && "lg:p-8")}>
+      <div className={cn("min-w-0 p-5", featured && "lg:p-8")}>
         {featured ? (
           <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-(--gold)">
             {featuredLabel}
