@@ -58,15 +58,15 @@ test("public_id de imagen determinístico por propiedad y URL", () => {
 
 test("reconoce URLs de nuestro Cloudinary y extrae el public_id", () => {
   assert.equal(
-    ownCloudinaryPublicId("https://res.cloudinary.com/din9bhvas/image/upload/v1712/folder/foto.jpg", "din9bhvas"),
+    ownCloudinaryPublicId("https://res.cloudinary.com/legacy-cloud/image/upload/v1712/folder/foto.jpg", "legacy-cloud"),
     "folder/foto",
   );
   assert.equal(
-    ownCloudinaryPublicId("https://res.cloudinary.com/din9bhvas/image/upload/c_fill,w_400/v1/prop2_fwvlnh", "din9bhvas"),
+    ownCloudinaryPublicId("https://res.cloudinary.com/legacy-cloud/image/upload/c_fill,w_400/v1/prop2_fwvlnh", "legacy-cloud"),
     "prop2_fwvlnh",
   );
-  assert.equal(ownCloudinaryPublicId("https://res.cloudinary.com/otra/image/upload/v1/x.jpg", "din9bhvas"), null);
-  assert.equal(ownCloudinaryPublicId("https://skyone.com.py/fotos/1.jpg", "din9bhvas"), null);
+  assert.equal(ownCloudinaryPublicId("https://res.cloudinary.com/otra/image/upload/v1/x.jpg", "legacy-cloud"), null);
+  assert.equal(ownCloudinaryPublicId("https://skyone.com.py/fotos/1.jpg", "legacy-cloud"), null);
 });
 
 test("autenticación por Bearer token", () => {

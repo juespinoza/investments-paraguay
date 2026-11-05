@@ -15,12 +15,13 @@ Permite que el publicador (`publishing_machine`) cree y actualice propiedades en
 | Variable | Obligatoria | Para qué |
 | --- | --- | --- |
 | `PUBLISHER_API_KEY` | Sí | Token que envía el publicador. Generalo con `openssl rand -hex 32`. Sin esta variable la API responde 503 y queda cerrada. |
-| `CLOUDINARY_CLOUD_NAME` | Sí, para fotos | Cuenta donde sube el publicador: `dxpewhtgu`. |
+| `CLOUDINARY_CLOUD_NAME` | Sí, para fotos | Cuenta de Cloudinary donde sube el publicador. |
+| `NEXT_PUBLIC_CLOUDINARY_PUBLISHER_CLOUD_NAME` | Sí, para fotos | La misma cuenta del publicador, para mostrar en el navegador las primeras importaciones guardadas como `publisher/skyone/…`. |
 | `CLOUDINARY_API_KEY` | Sí, para fotos | Credencial de la Upload API **de esa misma cuenta** (Cloudinary → Settings → API Keys). |
 | `CLOUDINARY_API_SECRET` | Sí, para fotos | Secreto de esa credencial. Nunca en el navegador ni en el repo. |
 | `PUBLISHER_DEFAULT_ADVISOR_SLUG` | No | Asesor asignado por defecto a las propiedades nuevas, por ejemplo `julia-espinoza`. |
 
-`NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` sigue siendo la cuenta histórica del sitio, `din9bhvas`. Con ella se muestran las fotos viejas guardadas como public_id, así que **no hay que cambiarla**. El publicador no la usa para subir.
+`NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` sigue siendo la cuenta histórica del sitio. Con ella se muestran las fotos viejas guardadas como public_id, así que **no hay que cambiarla**. El publicador no la usa para subir.
 
 ## Autenticación
 
@@ -144,9 +145,10 @@ Detalles residenciales (dormitorios, baños), equipamiento y datos de proyectos 
 Las nuevas subidas guardan `secure_url` completo en portada y galería. Así la
 cuenta de subida puede diferir de la cuenta pública histórica sin romper fotos.
 Las URLs completas conservan su cuenta. Los IDs antiguos normales siguen usando
-`NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` (históricamente `din9bhvas`). Como compatibilidad
+`NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` (la cuenta histórica). Como compatibilidad
 con las primeras importaciones, los IDs `publisher/skyone/…` sin URL se resuelven
-contra `dxpewhtgu`. No cambiar esa cuenta histórica sin migrar esos registros.
+contra `NEXT_PUBLIC_CLOUDINARY_PUBLISHER_CLOUD_NAME`. No cambiar esa cuenta sin
+migrar esos registros. Los nombres de cuenta van solo en variables de entorno.
 No requiere migración de base ni reenvío: el despliegue corrige su visualización.
 Reenviar una propiedad mediante la API guardará las URLs completas de sus fotos.
 

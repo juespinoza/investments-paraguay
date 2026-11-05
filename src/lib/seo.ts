@@ -75,8 +75,8 @@ function resolveMetadataImageUrl(image: string) {
     return `${SITE_URL}${image}`;
   }
 
-  const cloudName =
-    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "din9bhvas";
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  if (!cloudName) return `${SITE_URL}/images/og-home.jpg`;
   const publicId = image
     .split("/")
     .filter(Boolean)
