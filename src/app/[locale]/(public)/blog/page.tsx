@@ -140,7 +140,8 @@ function getStaticPosts(locale: string): BlogIndexPost[] {
         slug: definition.slug,
         excerpt: article.excerpt,
         coverImageUrl: null,
-        updatedAt: new Date(definition.updated).toISOString(),
+        // Mediodía UTC: "2026-11-05" a medianoche UTC sería el día 4 en Paraguay.
+        updatedAt: new Date(`${definition.updated}T12:00:00Z`).toISOString(),
         author: "Julia Espinoza",
         category: definition.category,
         contentLocale: supportedLocale,
@@ -159,7 +160,7 @@ const STATIC_SPANISH_POSTS: BlogIndexPost[] = [
     excerpt:
       "Qué está impulsando la percepción de Paraguay como destino inmobiliario y cómo interpretar esas señales con criterio.",
     coverImageUrl: null,
-    updatedAt: new Date("2026-01-27").toISOString(),
+    updatedAt: new Date("2026-01-27T12:00:00Z").toISOString(),
     author: "Investments Paraguay",
     category: "market",
   },
