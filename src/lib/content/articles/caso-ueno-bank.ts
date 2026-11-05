@@ -8,7 +8,7 @@ import type {
 // y actualizar UPDATED + updatedLabel en los tres idiomas.
 const SLUG = "caso-ueno-bank-que-significa-para-invertir";
 const PUBLISHED = "2026-11-04";
-const UPDATED = "2026-11-04";
+const UPDATED = "2026-11-05";
 
 const U = {
   abcComunicados: "https://www.abc.com.py/economia/2026/11/04/todos-los-comunicados-del-bcp-sobre-ueno-bank/",
@@ -20,11 +20,23 @@ const U = {
   infobaeRenuncia: "https://www.infobae.com/america/agencias/2026/11/04/renuncia-el-jefe-del-banco-central-de-paraguay-en-medio-del-escandalo-de-ueno-bank/",
   infobaePolitica: "https://www.infobae.com/america/agencias/2026/11/04/la-sonada-intervencion-en-paraguay-de-ueno-bank-que-ha-desatado-una-tormenta-politica/",
   infobaeDetenidos: "https://www.infobae.com/america/america-latina/2026/11/04/escandalo-de-ueno-bank-en-paraguay-ya-son-ocho-los-directivos-detenidos/",
+  abcAvisos: "https://www.abc.com.py/economia/2026/11/04/atencion-clientes-de-ueno-a-partir-de-manana-clientes-recibiran-avisos-para-cobrar-hasta-g-121760000/",
+  abcAcosta: "https://www.abc.com.py/economia/2026/11/04/bcp-designa-nuevo-presidente-interino-y-detalla-como-devolvera-la-plata-a-ahorristas-de-ueno/",
+  ultimahoraAnticipo: "https://www.ultimahora.com/el-bcp-anuncia-el-pago-del-anticipo-a-ahorristas-de-ueno-bank-desde-este-jueves",
+  lanacionPago: "https://www.lanacion.com.py/negocios/2026/11/04/el-bcp-explica-sistema-de-pago-a-ahorristas-de-ueno-bank/",
+  hoyPago: "https://www.hoy.com.py/nacionales/2026/11/04/bcp-anuncia-como-y-cuando-pagara-a-los-ahorristas-de-ueno-bank",
+  milNoticias: "https://1000noticias.com.py/2026/11/04/el-fondo-de-garantia-arrancara-desembolsos-a-depositantes-de-ueno-bank-tras-promulgarse-la-ley/",
   plus: "https://revistaplus.com.py/2026/11/04/crisis-de-ueno-frena-obras-de-viviendas-y-deja-a-familias-sin-respuestas/",
   observador: "https://diarioelobservador.com.ar/moodys-advierte-sobre-la-crisis-de-ueno-bank-impacto-negativo-pero-manejable-para-paraguay/",
 };
 
 const SOURCES: ArticleSource[] = [
+  { label: "ABC Color — Desde el 5 de noviembre, avisos para cobrar hasta Gs. 121.760.000 (4 nov 2026)", url: U.abcAvisos },
+  { label: "ABC Color — Nuevo presidente interino del BCP y cómo devolverá la plata (4 nov 2026)", url: U.abcAcosta },
+  { label: "Última Hora — El BCP anuncia el pago del anticipo desde el jueves (4 nov 2026)", url: U.ultimahoraAnticipo },
+  { label: "La Nación — El BCP explica el sistema de pago a ahorristas (4 nov 2026)", url: U.lanacionPago },
+  { label: "Diario HOY — Cómo y cuándo pagará el BCP a los ahorristas (4 nov 2026)", url: U.hoyPago },
+  { label: "1000 Noticias — El Fondo de Garantía arranca los desembolsos tras promulgarse la ley (4 nov 2026)", url: U.milNoticias },
   { label: "ABC Color — Todos los comunicados del BCP sobre ueno bank (4 nov 2026)", url: U.abcComunicados },
   { label: "ABC Color — El BCP explica la resolución y qué va a pasar ahora (3 nov 2026)", url: U.abcQuePasa },
   { label: "La Nación — El BCP detalló las irregularidades (3 nov 2026)", url: U.lanacion },
@@ -44,11 +56,11 @@ const es: LocalizedArticle = {
   description:
     "Qué pasó con ueno bank, qué pasa con los depósitos y los créditos, cómo afecta al mercado inmobiliario y qué conviene hacer si estás por invertir.",
   excerpt:
-    "La resolución de ueno bank explicada: depósitos, créditos, obras frenadas y qué revisar antes de comprar un inmueble.",
+    "Cómo cobrar el anticipo de hasta Gs. 121.760.000 desde el 5 de noviembre, qué pasa con los créditos y qué revisar antes de comprar un inmueble.",
   lead:
     "El Banco Central del Paraguay (BCP) inició la resolución de ueno bank, el quinto banco privado del país, porque su solvencia cayó por debajo de la mitad del mínimo legal. Te cuento qué se sabe hasta hoy, qué pasa con los depósitos y los créditos, y qué cambia (y qué no) para quien está por comprar un inmueble.",
-  readingTime: "6 min de lectura",
-  updatedLabel: "Actualizado: 4 nov 2026",
+  readingTime: "7 min de lectura",
+  updatedLabel: "Actualizado: 5 nov 2026",
   authorRole: "Asesora inmobiliaria en SkyOne",
   tocTitle: "En este artículo",
   sourcesTitle: "Fuentes",
@@ -67,7 +79,31 @@ const es: LocalizedArticle = {
     {
       type: "callout",
       title: "Situación en desarrollo",
-      text: "Datos actualizados al 4 de noviembre de 2026. Los cronogramas de pago y las decisiones del Congreso pueden cambiar.",
+      text: "Datos actualizados al 5 de noviembre de 2026. Novedad: desde hoy el BCP empieza a pagar un anticipo de hasta Gs. 121.760.000 por ahorrista. Abajo te explico cómo cobrarlo.",
+    },
+    { type: "h2", id: "como-cobrar", text: "Cómo cobrar el anticipo (desde el 5 de noviembre)" },
+    {
+      type: "p",
+      text: `El 4 de noviembre se promulgó la **Ley 7.755/26**, que permite adelantar el pago del Fondo de Garantía de Depósitos. Con esa ley, el BCP empieza a pagar a unos 1,9 millones de clientes de ueno un anticipo de **hasta 40 salarios mínimos: Gs. 121.760.000 por persona**, menos las deudas vencidas que tengas con el banco ([ABC](${U.abcAvisos}), [1000 Noticias](${U.milNoticias})).`,
+    },
+    {
+      type: "ol",
+      items: [
+        "**Esperá el email del BCP.** Desde el 5 de noviembre, cada ahorrista recibe un correo de **fgdpagos@bcp.gov.py** con el monto, los descuentos por deudas y el banco donde se acredita el dinero.",
+        "**Si tenés cuenta en otro banco o financiera,** el anticipo se deposita en la cuenta con mayor saldo disponible.",
+        "**Si solo tenías cuenta en ueno** (unos 280.000 clientes), se abre una caja de ahorro a tu nombre en un banco asignado. Según ABC, es una cuenta temporal de 90 días abierta junto con la Asociación de Bancos.",
+        "**Descargá la app del banco asignado** para mover o retirar el dinero.",
+        `**Si a las 24 horas no te llegó el email,** consultá en la sección FGD pagos de la web del BCP: [bcp.gov.py/web/institucional/fgd-pagos](https://www.bcp.gov.py/web/institucional/fgd-pagos).`,
+      ],
+    },
+    {
+      type: "p",
+      text: `Las acreditaciones empiezan dentro de las 24 horas de la notificación y el proceso no puede pasar de **cinco días hábiles** ([Última Hora](${U.ultimahoraAnticipo}), [Diario HOY](${U.hoyPago})). Lo que supere el anticipo, hasta el tope de 75 salarios mínimos (Gs. 228.300.000), se pagaría después de la conciliación de cuentas que hace la intervención; todavía no hay fecha para ese saldo ([ABC](${U.abcAvisos})).`,
+    },
+    {
+      type: "callout",
+      title: "Cuidado con las estafas",
+      text: "El aviso oficial llega solo desde fgdpagos@bcp.gov.py. No respondas mensajes, llamadas ni links que te pidan claves, códigos o un pago para \"agilizar\" el cobro.",
     },
     { type: "h2", id: "que-paso", text: "Qué pasó" },
     {
@@ -78,8 +114,9 @@ const es: LocalizedArticle = {
       type: "table",
       head: ["Fecha", "Qué pasó"],
       rows: [
-        ["3–4 nov 2026", `La Fiscalía detiene a ocho directivos, entre ellos el CEO, en una causa iniciada por denuncia del BCP por presunta lesión de confianza y otros delitos. Todavía no hay imputación formal ([Infobae](${U.infobaeDetenidos})).`],
-        ["3 nov 2026", `El BCP anuncia la resolución, designa interventores y la entidad deja de operar. El presidente del BCP, Carlos Carvallo, renuncia a pedido del presidente Santiago Peña; asume como interina Liana Caballero ([Infobae/EFE](${U.infobaeRenuncia})).`],
+        ["4–5 nov 2026", `Se promulga la Ley 7.755/26 de anticipos y el BCP anuncia el pago desde el 5 de noviembre. Pedro de Jesús Acosta asume como presidente interino del BCP ([ABC](${U.abcAcosta})). El juez de Garantías admite la imputación contra 27 personas; la audiencia de medidas cautelares de los ocho detenidos está fijada para el 5 de noviembre ([Diario HOY](${U.hoyPago})).`],
+        ["3–4 nov 2026", `La Fiscalía detiene a ocho directivos, entre ellos el CEO, en una causa iniciada por denuncia del BCP por presunta lesión de confianza y otros delitos. ([Infobae](${U.infobaeDetenidos})).`],
+        ["3 nov 2026", `El BCP anuncia la resolución, designa interventores y la entidad deja de operar. El presidente del BCP, Carlos Carvallo, renuncia a pedido del presidente Santiago Peña; asume de forma provisoria Liana Caballero ([Infobae/EFE](${U.infobaeRenuncia})).`],
         ["Octubre 2026", `Se filtra un informe interno de la Superintendencia de Bancos sobre presuntos excesos en préstamos a empresas del mismo grupo. El banco niega irregularidades y sus accionistas anuncian una capitalización de USD 100 millones ([Diario HOY](${U.hoy})).`],
         ["5 jun 2026", `El BCP empieza a analizar la entidad. Los créditos a empresas vinculadas fueron la primera alerta ([La Nación](${U.lanacion})).`],
       ],
@@ -101,7 +138,7 @@ const es: LocalizedArticle = {
       type: "table",
       head: ["Situación", "Qué pasa, según el BCP"],
       rows: [
-        ["Depósitos hasta 75 salarios mínimos", "Cubiertos por el Fondo de Garantía: hasta **Gs. 228.300.000** por persona y por entidad. Un primer pago de hasta Gs. 10.000.000 se hará \"a la brevedad\"; el resto, en un calendario que todavía no se publicó."],
+        ["Depósitos hasta 75 salarios mínimos", "Cubiertos por el Fondo de Garantía: hasta **Gs. 228.300.000** por persona y por entidad. Desde el 5 de noviembre se paga un anticipo de hasta **Gs. 121.760.000** (40 salarios mínimos); el resto, después de la conciliación de cuentas, sin fecha todavía."],
         ["Depósitos por encima del tope", "Se atenderán con el proceso de resolución: los activos y pasivos se transferirían a otras entidades por un proceso competitivo. El balance de exclusión tiene un plazo máximo de 15 días."],
         ["Deudas con ueno (préstamos, tarjetas)", "Siguen vigentes: no se anulan. El BCP va a informar dónde pagarlas. Antes de pagar la garantía, se descuentan las deudas del titular con el banco."],
         ["App, transferencias y tarjetas", "Fuera de servicio hasta que termine el balance de exclusión."],
@@ -111,7 +148,7 @@ const es: LocalizedArticle = {
     },
     {
       type: "p",
-      text: `El Congreso también está discutiendo un anticipo más rápido para los ahorristas: el Senado aprobó un proyecto que Diputados tiene que corregir, así que todavía no está vigente ([Diario HOY](${U.hoy})).`,
+      text: `El anticipo más rápido que discutía el Congreso ya es ley: la **Ley 7.755/26** se promulgó el 4 de noviembre y es la que permite el pago desde el 5 ([ABC](${U.abcAvisos})). Los jubilados y pensionados del IPS que cobraban por ueno tienen garantizados el haber de noviembre y el aguinaldo, que cobrarán de forma transitoria en otro banco asignado por el IPS ([Diario HOY](${U.hoyPago})).`,
     },
     { type: "h2", id: "mercado-inmobiliario", text: "Qué cambia para el mercado inmobiliario" },
     { type: "p", text: "El primer golpe ya se ve en obras financiadas a través de ueno, no en el resto del sistema." },
@@ -137,7 +174,7 @@ const es: LocalizedArticle = {
         "**Si tenés un crédito con ueno, seguí pagando.** La deuda no se anula. Esperá el canal que informe el BCP y guardá todos los comprobantes.",
         "**Si tu crédito de vivienda estaba en trámite con ueno,** consultá con tu constructora o con el programa de vivienda cómo sigue el desembolso antes de firmar nada nuevo.",
         "**Repartí los ahorros grandes entre bancos.** La garantía es por persona y por entidad: el mismo monto en dos bancos queda cubierto dos veces hasta el tope.",
-        "**Informate por canales oficiales.** Los cronogramas de pago los comunica el BCP. Desconfiá de cadenas y de quien te ofrezca \"cobrar antes\" a cambio de un pago.",
+        "**Informate por canales oficiales.** El aviso de pago llega solo desde fgdpagos@bcp.gov.py. Desconfiá de cadenas y de quien te ofrezca \"cobrar antes\" a cambio de un pago o te pida tus claves.",
       ],
     },
     { type: "cta" },
@@ -150,11 +187,11 @@ const en: LocalizedArticle = {
   description:
     "What happened to ueno bank, what happens to deposits and loans, how it affects the real estate market and what to do if you are about to invest.",
   excerpt:
-    "The ueno bank resolution explained: deposits, loans, stalled construction and what to check before buying property.",
+    "How to collect the advance of up to PYG 121,760,000 from November 5, what happens to loans and what to check before buying property.",
   lead:
     "The Central Bank of Paraguay (BCP) started the resolution of ueno bank, the country's fifth-largest private bank, because its solvency fell below half the legal minimum. Here is what we know so far, what happens to deposits and loans, and what changes (and what does not) for anyone about to buy property.",
-  readingTime: "6 min read",
-  updatedLabel: "Updated: Nov 4, 2026",
+  readingTime: "7 min read",
+  updatedLabel: "Updated: Nov 5, 2026",
   authorRole: "Real estate advisor at SkyOne",
   tocTitle: "In this article",
   sourcesTitle: "Sources",
@@ -173,7 +210,31 @@ const en: LocalizedArticle = {
     {
       type: "callout",
       title: "Developing story",
-      text: "Figures as of November 4, 2026. Payment schedules and Congress decisions may change.",
+      text: "Figures as of November 5, 2026. Update: starting today, the BCP begins paying an advance of up to PYG 121,760,000 per saver. See below for how to collect it.",
+    },
+    { type: "h2", id: "como-cobrar", text: "How to collect the advance (from November 5)" },
+    {
+      type: "p",
+      text: `On November 4, **Law 7.755/26** was enacted, allowing the Deposit Guarantee Fund payment to be advanced. Under that law, the BCP is paying some 1.9 million ueno clients an advance of **up to 40 minimum wages: PYG 121,760,000 per person**, minus any overdue debts owed to the bank ([ABC](${U.abcAvisos}), [1000 Noticias](${U.milNoticias})).`,
+    },
+    {
+      type: "ol",
+      items: [
+        "**Wait for the BCP email.** From November 5, each saver receives an email from **fgdpagos@bcp.gov.py** with the amount, any debt deductions and the bank where the money is credited.",
+        "**If you have an account at another bank or finance company,** the advance is deposited into the account with the highest available balance.",
+        "**If you only had an account at ueno** (about 280,000 clients), a savings account is opened in your name at an assigned bank. According to ABC, it is a temporary 90-day account opened together with the Banking Association.",
+        "**Download the assigned bank's app** to move or withdraw the money.",
+        `**If the email has not arrived after 24 hours,** check the FGD pagos section of the BCP website: [bcp.gov.py/web/institucional/fgd-pagos](https://www.bcp.gov.py/web/institucional/fgd-pagos).`,
+      ],
+    },
+    {
+      type: "p",
+      text: `Credits start within 24 hours of the notification and the process cannot exceed **five business days** ([Última Hora](${U.ultimahoraAnticipo}), [Diario HOY](${U.hoyPago})). Any amount above the advance, up to the 75-minimum-wage cap (PYG 228,300,000), would be paid after the administrators reconcile the accounts; there is no date yet for that balance ([ABC](${U.abcAvisos})).`,
+    },
+    {
+      type: "callout",
+      title: "Watch out for scams",
+      text: "The official notice only comes from fgdpagos@bcp.gov.py. Do not answer messages, calls or links asking for passwords, codes or a payment to \"speed up\" your payout.",
     },
     { type: "h2", id: "que-paso", text: "What happened" },
     {
@@ -184,8 +245,9 @@ const en: LocalizedArticle = {
       type: "table",
       head: ["Date", "What happened"],
       rows: [
-        ["Nov 3–4, 2026", `Prosecutors detain eight executives, including the CEO, in a case opened on a BCP complaint for alleged breach of trust and other offenses. No formal charges have been filed yet ([Infobae](${U.infobaeDetenidos})).`],
-        ["Nov 3, 2026", `The BCP announces the resolution, appoints administrators and the bank stops operating. BCP president Carlos Carvallo resigns at the request of President Santiago Peña; Liana Caballero takes over on an interim basis ([Infobae/EFE](${U.infobaeRenuncia})).`],
+        ["Nov 4–5, 2026", `Law 7.755/26 on advance payments is enacted and the BCP announces payouts from November 5. Pedro de Jesús Acosta becomes interim BCP president ([ABC](${U.abcAcosta})). A judge admits charges against 27 people; the hearing on precautionary measures for the eight detainees is set for November 5 ([Diario HOY](${U.hoyPago})).`],
+        ["Nov 3–4, 2026", `Prosecutors detain eight executives, including the CEO, in a case opened on a BCP complaint for alleged breach of trust and other offenses. ([Infobae](${U.infobaeDetenidos})).`],
+        ["Nov 3, 2026", `The BCP announces the resolution, appoints administrators and the bank stops operating. BCP president Carlos Carvallo resigns at the request of President Santiago Peña; Liana Caballero takes over provisionally ([Infobae/EFE](${U.infobaeRenuncia})).`],
         ["October 2026", `An internal Banking Superintendency report on alleged excess lending to companies in the same group is leaked. The bank denies wrongdoing and its shareholders announce a USD 100 million capital injection ([Diario HOY](${U.hoy})).`],
         ["Jun 5, 2026", `The BCP starts reviewing the bank. Loans to related companies were the first warning sign ([La Nación](${U.lanacion})).`],
       ],
@@ -207,7 +269,7 @@ const en: LocalizedArticle = {
       type: "table",
       head: ["Situation", "What happens, according to the BCP"],
       rows: [
-        ["Deposits up to 75 minimum wages", "Covered by the Guarantee Fund: up to **PYG 228,300,000** per person and per institution. A first payment of up to PYG 10,000,000 will be made \"as soon as possible\"; the rest on a schedule not yet published."],
+        ["Deposits up to 75 minimum wages", "Covered by the Guarantee Fund: up to **PYG 228,300,000** per person and per institution. From November 5, an advance of up to **PYG 121,760,000** (40 minimum wages) is paid; the rest after account reconciliation, with no date yet."],
         ["Deposits above the cap", "Handled through the resolution process: assets and liabilities would be transferred to other institutions through a competitive process. The exclusion balance sheet has a maximum deadline of 15 days."],
         ["Debts with ueno (loans, cards)", "Still owed: they are not cancelled. The BCP will announce where to pay them. Any debts the holder owes the bank are deducted before the guarantee is paid."],
         ["App, transfers and cards", "Out of service until the exclusion balance sheet is completed."],
@@ -217,7 +279,7 @@ const en: LocalizedArticle = {
     },
     {
       type: "p",
-      text: `Congress is also debating a faster advance payment for savers: the Senate passed a bill that the Chamber of Deputies must amend, so it is not in force yet ([Diario HOY](${U.hoy})).`,
+      text: `The faster advance payment Congress was debating is now law: **Law 7.755/26** was enacted on November 4 and is what allows payouts from the 5th ([ABC](${U.abcAvisos})). IPS retirees and pensioners who were paid through ueno are guaranteed their November payment and year-end bonus, which they will temporarily collect at another bank assigned by IPS ([Diario HOY](${U.hoyPago})).`,
     },
     { type: "h2", id: "mercado-inmobiliario", text: "What changes for the real estate market" },
     { type: "p", text: "The first impact is already visible in construction financed through ueno, not in the rest of the system." },
@@ -243,7 +305,7 @@ const en: LocalizedArticle = {
         "**If you have a loan with ueno, keep paying.** The debt is not cancelled. Wait for the channel the BCP announces and keep every receipt.",
         "**If your housing loan was in process with ueno,** ask your builder or the housing program how the disbursement will proceed before you sign anything new.",
         "**Spread large savings across banks.** The guarantee is per person and per institution: the same amount split between two banks is covered twice up to the cap.",
-        "**Use official channels.** Payment schedules are announced by the BCP. Be wary of chain messages and of anyone offering to \"get you paid sooner\" for a fee.",
+        "**Use official channels.** The payment notice only comes from fgdpagos@bcp.gov.py. Be wary of chain messages and of anyone offering to \"get you paid sooner\" for a fee or asking for your passwords.",
       ],
     },
     { type: "cta" },
@@ -256,11 +318,11 @@ const pt: LocalizedArticle = {
   description:
     "O que aconteceu com o ueno bank, o que acontece com depósitos e créditos, como afeta o mercado imobiliário e o que fazer se você vai investir.",
   excerpt:
-    "A resolução do ueno bank explicada: depósitos, créditos, obras paradas e o que conferir antes de comprar um imóvel.",
+    "Como receber o adiantamento de até PYG 121.760.000 a partir de 5 de novembro, o que acontece com os créditos e o que conferir antes de comprar um imóvel.",
   lead:
     "O Banco Central do Paraguai (BCP) iniciou a resolução do ueno bank, o quinto maior banco privado do país, porque sua solvência caiu abaixo da metade do mínimo legal. Conto o que se sabe até hoje, o que acontece com depósitos e créditos e o que muda (e o que não muda) para quem vai comprar um imóvel.",
-  readingTime: "6 min de leitura",
-  updatedLabel: "Atualizado: 4 nov 2026",
+  readingTime: "7 min de leitura",
+  updatedLabel: "Atualizado: 5 nov 2026",
   authorRole: "Consultora imobiliária na SkyOne",
   tocTitle: "Neste artigo",
   sourcesTitle: "Fontes",
@@ -279,7 +341,31 @@ const pt: LocalizedArticle = {
     {
       type: "callout",
       title: "Situação em andamento",
-      text: "Dados atualizados em 4 de novembro de 2026. Os cronogramas de pagamento e as decisões do Congresso podem mudar.",
+      text: "Dados atualizados em 5 de novembro de 2026. Novidade: a partir de hoje o BCP começa a pagar um adiantamento de até PYG 121.760.000 por poupador. Veja abaixo como receber.",
+    },
+    { type: "h2", id: "como-cobrar", text: "Como receber o adiantamento (a partir de 5 de novembro)" },
+    {
+      type: "p",
+      text: `Em 4 de novembro foi promulgada a **Lei 7.755/26**, que permite adiantar o pagamento do Fundo de Garantia de Depósitos. Com essa lei, o BCP começa a pagar a cerca de 1,9 milhão de clientes do ueno um adiantamento de **até 40 salários mínimos: PYG 121.760.000 por pessoa**, descontadas as dívidas vencidas com o banco ([ABC](${U.abcAvisos}), [1000 Noticias](${U.milNoticias})).`,
+    },
+    {
+      type: "ol",
+      items: [
+        "**Aguarde o e-mail do BCP.** A partir de 5 de novembro, cada poupador recebe um e-mail de **fgdpagos@bcp.gov.py** com o valor, os descontos por dívidas e o banco onde o dinheiro é creditado.",
+        "**Se você tem conta em outro banco ou financeira,** o adiantamento é depositado na conta com maior saldo disponível.",
+        "**Se você só tinha conta no ueno** (cerca de 280.000 clientes), é aberta uma conta poupança em seu nome em um banco designado. Segundo o ABC, é uma conta temporária de 90 dias aberta junto com a Associação de Bancos.",
+        "**Baixe o app do banco designado** para movimentar ou sacar o dinheiro.",
+        `**Se o e-mail não chegar em 24 horas,** consulte a seção FGD pagos do site do BCP: [bcp.gov.py/web/institucional/fgd-pagos](https://www.bcp.gov.py/web/institucional/fgd-pagos).`,
+      ],
+    },
+    {
+      type: "p",
+      text: `Os créditos começam em até 24 horas após a notificação e o processo não pode passar de **cinco dias úteis** ([Última Hora](${U.ultimahoraAnticipo}), [Diario HOY](${U.hoyPago})). O que ultrapassar o adiantamento, até o teto de 75 salários mínimos (PYG 228.300.000), seria pago depois da conciliação de contas feita pela intervenção; ainda não há data para esse saldo ([ABC](${U.abcAvisos})).`,
+    },
+    {
+      type: "callout",
+      title: "Cuidado com golpes",
+      text: "O aviso oficial chega apenas de fgdpagos@bcp.gov.py. Não responda mensagens, ligações ou links que peçam senhas, códigos ou um pagamento para \"agilizar\" o recebimento.",
     },
     { type: "h2", id: "que-paso", text: "O que aconteceu" },
     {
@@ -290,8 +376,9 @@ const pt: LocalizedArticle = {
       type: "table",
       head: ["Data", "O que aconteceu"],
       rows: [
-        ["3–4 nov 2026", `O Ministério Público detém oito diretores, entre eles o CEO, em um caso aberto por denúncia do BCP por suposta lesão de confiança e outros crimes. Ainda não há denúncia formal ([Infobae](${U.infobaeDetenidos})).`],
-        ["3 nov 2026", `O BCP anuncia a resolução, nomeia interventores e o banco deixa de operar. O presidente do BCP, Carlos Carvallo, renuncia a pedido do presidente Santiago Peña; Liana Caballero assume interinamente ([Infobae/EFE](${U.infobaeRenuncia})).`],
+        ["4–5 nov 2026", `É promulgada a Lei 7.755/26 de adiantamentos e o BCP anuncia o pagamento a partir de 5 de novembro. Pedro de Jesús Acosta assume como presidente interino do BCP ([ABC](${U.abcAcosta})). O juiz de Garantias admite a imputação contra 27 pessoas; a audiência de medidas cautelares dos oito detidos está marcada para 5 de novembro ([Diario HOY](${U.hoyPago})).`],
+        ["3–4 nov 2026", `O Ministério Público detém oito diretores, entre eles o CEO, em um caso aberto por denúncia do BCP por suposta lesão de confiança e outros crimes. ([Infobae](${U.infobaeDetenidos})).`],
+        ["3 nov 2026", `O BCP anuncia a resolução, nomeia interventores e o banco deixa de operar. O presidente do BCP, Carlos Carvallo, renuncia a pedido do presidente Santiago Peña; Liana Caballero assume provisoriamente ([Infobae/EFE](${U.infobaeRenuncia})).`],
         ["Outubro 2026", `Vaza um relatório interno da Superintendência de Bancos sobre supostos excessos em empréstimos a empresas do mesmo grupo. O banco nega irregularidades e seus acionistas anunciam uma capitalização de USD 100 milhões ([Diario HOY](${U.hoy})).`],
         ["5 jun 2026", `O BCP começa a analisar o banco. Os créditos a empresas vinculadas foram o primeiro alerta ([La Nación](${U.lanacion})).`],
       ],
@@ -313,7 +400,7 @@ const pt: LocalizedArticle = {
       type: "table",
       head: ["Situação", "O que acontece, segundo o BCP"],
       rows: [
-        ["Depósitos até 75 salários mínimos", "Cobertos pelo Fundo de Garantia: até **PYG 228.300.000** por pessoa e por instituição. Um primeiro pagamento de até PYG 10.000.000 será feito \"o quanto antes\"; o restante, em um calendário ainda não publicado."],
+        ["Depósitos até 75 salários mínimos", "Cobertos pelo Fundo de Garantia: até **PYG 228.300.000** por pessoa e por instituição. A partir de 5 de novembro é pago um adiantamento de até **PYG 121.760.000** (40 salários mínimos); o restante, depois da conciliação de contas, ainda sem data."],
         ["Depósitos acima do teto", "Serão tratados no processo de resolução: ativos e passivos seriam transferidos a outras instituições por um processo competitivo. O balanço de exclusão tem prazo máximo de 15 dias."],
         ["Dívidas com o ueno (empréstimos, cartões)", "Continuam valendo: não são anuladas. O BCP vai informar onde pagá-las. Antes de pagar a garantia, são descontadas as dívidas do titular com o banco."],
         ["App, transferências e cartões", "Fora de serviço até concluir o balanço de exclusão."],
@@ -323,7 +410,7 @@ const pt: LocalizedArticle = {
     },
     {
       type: "p",
-      text: `O Congresso também discute um adiantamento mais rápido para os poupadores: o Senado aprovou um projeto que a Câmara dos Deputados precisa corrigir, então ainda não está em vigor ([Diario HOY](${U.hoy})).`,
+      text: `O adiantamento mais rápido que o Congresso discutia já é lei: a **Lei 7.755/26** foi promulgada em 4 de novembro e é ela que permite o pagamento a partir do dia 5 ([ABC](${U.abcAvisos})). Os aposentados e pensionistas do IPS que recebiam pelo ueno têm garantidos o pagamento de novembro e o 13º, que receberão temporariamente em outro banco designado pelo IPS ([Diario HOY](${U.hoyPago})).`,
     },
     { type: "h2", id: "mercado-inmobiliario", text: "O que muda para o mercado imobiliário" },
     { type: "p", text: "O primeiro impacto já aparece em obras financiadas pelo ueno, não no resto do sistema." },
@@ -349,7 +436,7 @@ const pt: LocalizedArticle = {
         "**Se você tem um crédito com o ueno, continue pagando.** A dívida não é anulada. Aguarde o canal que o BCP informar e guarde todos os comprovantes.",
         "**Se seu financiamento de moradia estava em andamento com o ueno,** pergunte à construtora ou ao programa habitacional como segue o desembolso antes de assinar algo novo.",
         "**Divida poupanças grandes entre bancos.** A garantia é por pessoa e por instituição: o mesmo valor dividido em dois bancos fica coberto duas vezes até o teto.",
-        "**Informe-se por canais oficiais.** Os cronogramas de pagamento são comunicados pelo BCP. Desconfie de correntes e de quem ofereça \"receber antes\" em troca de um pagamento.",
+        "**Informe-se por canais oficiais.** O aviso de pagamento chega apenas de fgdpagos@bcp.gov.py. Desconfie de correntes e de quem ofereça \"receber antes\" em troca de um pagamento ou peça suas senhas.",
       ],
     },
     { type: "cta" },
