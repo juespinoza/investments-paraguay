@@ -159,7 +159,7 @@ const STATIC_SPANISH_POSTS: BlogIndexPost[] = [
     slug: "paraguay-polo-inversion-inmobiliaria-sudamerica",
     excerpt:
       "Qué está impulsando la percepción de Paraguay como destino inmobiliario y cómo interpretar esas señales con criterio.",
-    coverImageUrl: null,
+    coverImageUrl: "/blog/paraguay-polo-inversion-hero.webp",
     updatedAt: new Date("2026-01-27T12:00:00Z").toISOString(),
     author: "Investments Paraguay",
     category: "market",

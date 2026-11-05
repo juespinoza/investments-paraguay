@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { GuideLeadMagnet } from "@/components/leads/GuideLeadMagnet";
 import { SITE_URL } from "@/lib/seo";
@@ -25,7 +26,7 @@ const articleJsonLd = {
     "Por qué Paraguay se está convirtiendo en el nuevo polo de inversión inmobiliaria en Sudamérica",
   description:
     "Paraguay viene ganando atención como destino de inversión inmobiliaria por su estabilidad macro relativa, una inflación controlada dentro de una meta oficial, incentivos a la inversión y un ciclo de expansión urbana en Asunción y Gran Asunción.",
-  image: `${SITE_URL}/images/logo.png`,
+  image: `${SITE_URL}/blog/paraguay-polo-inversion-og.jpg`,
   datePublished: "2026-01-27",
   dateModified: "2026-01-27",
   author: {
@@ -74,6 +75,18 @@ export default function BlogPostPage() {
               invertir.
             </p>
           </div>
+
+          <figure className="mt-8 overflow-hidden rounded-4xl border border-soft bg-(--stone)">
+            <Image
+              src="/blog/paraguay-polo-inversion-hero.webp"
+              alt="Mapa de Sudamérica en relieve con Paraguay destacado en dorado, junto a la maqueta de dos edificios de departamentos"
+              width={1672}
+              height={941}
+              sizes="(min-width: 960px) 896px, 100vw"
+              priority
+              className="h-auto w-full"
+            />
+          </figure>
 
           <div className="surface-card mt-8 rounded-4xl px-6 py-8 md:px-10 md:py-10">
             <h2 className="mb-4 text-2xl font-semibold text-primary md:text-3xl">
