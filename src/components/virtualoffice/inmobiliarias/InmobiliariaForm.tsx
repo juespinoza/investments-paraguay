@@ -32,7 +32,6 @@ type FormValues = {
   createUser: boolean;
   userName: string;
   userEmail: string;
-  userPassword: string;
 };
 
 const EMPTY_VALUES: FormValues = {
@@ -59,7 +58,6 @@ const EMPTY_VALUES: FormValues = {
   createUser: false,
   userName: "",
   userEmail: "",
-  userPassword: "",
 };
 
 function toSlug(value: string) {
@@ -197,7 +195,6 @@ export function InmobiliariaForm({
                     ? {
                         name: values.userName.trim() || null,
                         email: values.userEmail.trim(),
-                        password: values.userPassword,
                       }
                     : undefined,
               }
@@ -598,17 +595,10 @@ export function InmobiliariaForm({
                 />
               </Field>
 
-              <Field label="Contraseña" hint="Min. 8 caracteres">
-                <input
-                  type="password"
-                  required={values.createUser}
-                  minLength={8}
-                  value={values.userPassword}
-                  onChange={(e) => update("userPassword", e.target.value)}
-                  className="h-11 w-full rounded-xl border border-zinc-200 px-3"
-                  placeholder="********"
-                />
-              </Field>
+              <p className="self-end text-sm text-zinc-600">
+                Recibirá una invitación por email para confirmarlo y elegir
+                su contraseña.
+              </p>
             </div>
           ) : null}
         </FormSection>

@@ -59,6 +59,7 @@ async function login(req: Request) {
       role: true,
       inmobiliariaId: true,
       advisorId: true,
+      emailVerifiedAt: true,
     },
   });
 
@@ -71,6 +72,11 @@ async function login(req: Request) {
   const ok = await bcrypt.compare(parsed.data.password, user.password);
   if (!ok) {
     return fail(401, "invalid_credentials");
+  }
+
+  // Cuenta creada por invitación que todavía no confirmó su email.
+  if (!user.emailVerifiedAt) {
+    return fail(403, "account_not_activated");
   }
 
   const token = await new SignJWT({

@@ -67,3 +67,34 @@ test("la URL del link no depende del Host del pedido", () => {
   assert.equal(resetBaseUrl({ VERCEL_ENV: "production", VERCEL_URL: "ip.vercel.app" }, site), site);
   assert.equal(resetBaseUrl({ NODE_ENV: "development" }, site), "http://localhost:3000");
 });
+
+import {
+  EMAIL_CHANGE_TTL_HOURS,
+  INVITE_TTL_HOURS,
+  emailTokenMatchesUser,
+  expiryAfterHours,
+  maskEmail,
+} from "../src/lib/auth/email-token-core.ts";
+
+test("invitación 72 h, cambio de email 24 h", () => {
+  const now = new Date("2026-11-05T12:00:00Z");
+  assert.equal(expiryAfterHours(INVITE_TTL_HOURS, now).toISOString(), "2026-11-08T12:00:00.000Z");
+  assert.equal(expiryAfterHours(EMAIL_CHANGE_TTL_HOURS, now).toISOString(), "2026-11-06T12:00:00.000Z");
+});
+
+test("el link solo vale para la dirección a la que se envió", () => {
+  const user = { email: "vieja@x.com", pendingEmail: "nueva@x.com" };
+  assert.equal(emailTokenMatchesUser("INVITE", "vieja@x.com", user), true);
+  assert.equal(emailTokenMatchesUser("INVITE", "otra@x.com", user), false);
+  assert.equal(emailTokenMatchesUser("EMAIL_CHANGE", "nueva@x.com", user), true);
+  // Se pidió otro cambio después: el link viejo ya no aplica.
+  assert.equal(emailTokenMatchesUser("EMAIL_CHANGE", "anterior@x.com", user), false);
+  // Cambio cancelado.
+  assert.equal(emailTokenMatchesUser("EMAIL_CHANGE", "nueva@x.com", { ...user, pendingEmail: null }), false);
+});
+
+test("email enmascarado", () => {
+  assert.equal(maskEmail("juespinoza@gmail.com"), "ju***@gmail.com");
+  assert.equal(maskEmail("a@b.com"), "a***@b.com");
+  assert.equal(maskEmail("raro"), "***");
+});

@@ -17,40 +17,22 @@ import {
   type TokenState,
 } from "@/lib/auth/password-reset-core";
 import { EmailNotConfiguredError, sendEmail } from "@/lib/email/send";
+import { buildActionEmail } from "@/lib/email/templates";
 
 export const RESET_PATH = "/virtual-office/restablecer-contrasena";
 
-function escapeHtml(value: string) {
-  return value.replace(/[&<>"']/g, (char) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char] as string,
-  );
-}
-
 function buildResetEmail(name: string | null, link: string) {
-  const greeting = name ? `Hola ${name},` : "Hola,";
-  const text = [
-    greeting,
-    "",
-    `Recibimos un pedido para restablecer tu contraseña de la oficina virtual de ${SITE_NAME}.`,
-    `Abrí este link para elegir una nueva (vence en ${RESET_TOKEN_TTL_MINUTES} minutos y sirve una sola vez):`,
-    "",
-    link,
-    "",
-    "Si no lo pediste vos, ignorá este email: tu contraseña no cambia.",
-  ].join("\n");
-
-  const html = `<!doctype html><html><body style="margin:0;background:#f5f3ef;font-family:Arial,sans-serif;color:#1a1a1a">
-<div style="max-width:520px;margin:0 auto;padding:32px 24px">
-<p style="font-size:18px;margin:0 0 24px"><strong>${escapeHtml(SITE_NAME)}</strong></p>
-<p>${escapeHtml(greeting)}</p>
-<p>Recibimos un pedido para restablecer tu contraseña de la oficina virtual.</p>
-<p style="margin:28px 0"><a href="${escapeHtml(link)}" style="background:#0a0a0a;color:#fafaf8;padding:14px 22px;text-decoration:none;border-radius:2px;display:inline-block">Elegir nueva contraseña</a></p>
-<p style="font-size:14px;color:#555">El link vence en ${RESET_TOKEN_TTL_MINUTES} minutos y sirve una sola vez.</p>
-<p style="font-size:14px;color:#555">Si no lo pediste vos, ignorá este email: tu contraseña no cambia.</p>
-<p style="font-size:12px;color:#888;word-break:break-all">Si el botón no funciona, copiá este link: ${escapeHtml(link)}</p>
-</div></body></html>`;
-
-  return { text, html };
+  return buildActionEmail({
+    name,
+    paragraphs: [
+      `Recibimos un pedido para restablecer tu contraseña de la oficina virtual de ${SITE_NAME}.`,
+    ],
+    action: { label: "Elegir nueva contraseña", url: link },
+    footnotes: [
+      `El link vence en ${RESET_TOKEN_TTL_MINUTES} minutos y sirve una sola vez.`,
+      "Si no lo pediste vos, ignorá este email: tu contraseña no cambia.",
+    ],
+  });
 }
 
 export type ResetRequestResult =
@@ -168,7 +150,7 @@ export async function confirmPasswordReset(token: unknown, password: string) {
         userId: true,
         expiresAt: true,
         usedAt: true,
-        user: { select: { deletedAt: true } },
+        user: { select: { deletedAt: true, emailVerifiedAt: true } },
       },
     });
 
@@ -187,7 +169,13 @@ export async function confirmPasswordReset(token: unknown, password: string) {
 
     await tx.user.update({
       where: { id: record.userId },
-      data: { password: passwordHash, passwordChangedAt: new Date() },
+      // Abrir el link prueba que el email es de la persona: si era una
+      // invitación pendiente, la cuenta queda confirmada.
+      data: {
+        password: passwordHash,
+        passwordChangedAt: new Date(),
+        emailVerifiedAt: record.user.emailVerifiedAt ?? new Date(),
+      },
     });
 
     // Cualquier otro link pendiente del usuario queda anulado.

@@ -1,7 +1,8 @@
 import "server-only";
 
 import { Role, Prisma } from "@/generated/prisma";
-import { hashPassword, normalizeEmail } from "@/lib/auth/user-bootstrap";
+import { normalizeEmail } from "@/lib/auth/user-bootstrap";
+import { inviteCreatedUser, unusablePasswordHash } from "@/lib/auth/email-verification";
 import { prisma } from "@/lib/prisma";
 import {
   canAccessAdvisors,
@@ -47,7 +48,6 @@ export type AdvisorPayload = z.output<typeof FormSchema>;
 export type AdvisorFormData = z.input<typeof FormSchema>;
 export type AdvisorWorkflowUserInput = {
   email: string;
-  password: string;
   name?: string | null;
 };
 
@@ -478,16 +478,8 @@ function normalizeWorkflowUserInput(
     throw new AdvisorRepoError("El email del usuario es obligatorio.", 400);
   }
 
-  if (user.password.trim().length < 8) {
-    throw new AdvisorRepoError(
-      "La contraseña del usuario debe tener al menos 8 caracteres.",
-      400,
-    );
-  }
-
   return {
     email,
-    password: user.password,
     name: user.name?.trim() || null,
   };
 }
@@ -516,6 +508,8 @@ export async function createAdvisor(
   if (!isAdmin(session) && !inmobiliariaId) {
     throw new AdvisorRepoError("Missing inmobiliariaId in session", 403);
   }
+
+  let invitee: { id: string; email: string; name: string | null } | null = null;
 
   try {
     const created = await prisma.$transaction(async (tx) => {
@@ -569,22 +563,25 @@ export async function createAdvisor(
       }
 
       if (user) {
-        await tx.user.create({
+        invitee = await tx.user.create({
           data: {
             email: user.email,
             name: user.name ?? null,
-            password: await hashPassword(user.password),
+            // La persona elige su contraseña al aceptar la invitación.
+            password: await unusablePasswordHash(),
+            emailVerifiedAt: null,
             role: Role.ASESOR,
             inmobiliariaId,
             advisorId: advisor.id,
           },
-          select: { id: true },
+          select: { id: true, email: true, name: true },
         });
       }
 
       return advisor;
     });
 
+    if (invitee) await inviteCreatedUser(invitee);
     return created;
   } catch (error) {
     normalizeRepoError(error);

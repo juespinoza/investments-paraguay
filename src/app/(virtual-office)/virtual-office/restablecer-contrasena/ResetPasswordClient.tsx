@@ -6,7 +6,23 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { AuthCard, authInputClass } from "@/components/virtualoffice/AuthCard";
 
-export default function ResetPasswordClient({ token }: { token: string }) {
+// Formulario de contraseña nueva a partir de un link con token. Lo usan
+// "restablecer contraseña" y "activar cuenta".
+export default function ResetPasswordClient({
+  token,
+  endpoint = "/api/auth/password-reset/confirm",
+  title = "Nueva contraseña",
+  subtitle = "Elegí una contraseña de al menos 8 caracteres.",
+  successPath = "/virtual-office/login?status=password-reset",
+  retryHref = "/virtual-office/olvide-contrasena",
+}: {
+  token: string;
+  endpoint?: string;
+  title?: string;
+  subtitle?: string;
+  successPath?: string;
+  retryHref?: string;
+}) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,7 +45,7 @@ export default function ResetPasswordClient({ token }: { token: string }) {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/password-reset/confirm", {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ token, password }),
@@ -44,7 +60,7 @@ export default function ResetPasswordClient({ token }: { token: string }) {
         return;
       }
 
-      router.replace("/virtual-office/login?status=password-reset");
+      router.replace(successPath);
     } catch {
       setErr("No hay conexión con el servidor. Revisá tu internet y probá de nuevo.");
     } finally {
@@ -53,7 +69,7 @@ export default function ResetPasswordClient({ token }: { token: string }) {
   }
 
   return (
-    <AuthCard title="Nueva contraseña" subtitle="Elegí una contraseña de al menos 8 caracteres.">
+    <AuthCard title={title} subtitle={subtitle}>
       <form onSubmit={onSubmit}>
         <div className="mt-6 space-y-3">
           <input
@@ -89,7 +105,7 @@ export default function ResetPasswordClient({ token }: { token: string }) {
         </div>
         {expired ? (
           <p className="mt-4 text-center text-sm">
-            <NextLink href="/virtual-office/olvide-contrasena" className="text-secondary underline underline-offset-4 hover:text-primary">
+            <NextLink href={retryHref} className="text-secondary underline underline-offset-4 hover:text-primary">
               Pedir un link nuevo
             </NextLink>
           </p>

@@ -22,7 +22,6 @@ const AdvisorWorkflowSchema = z.object({
   user: z
     .object({
       email: z.string().email(),
-      password: z.string().min(8),
       name: z.string().trim().optional().nullable(),
     })
     .optional(),
