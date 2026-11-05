@@ -11,6 +11,8 @@ import { AuthCard, authInputClass } from "@/components/virtualoffice/AuthCard";
 // debe parecer una contraseña incorrecta.
 const LOGIN_ERRORS: Record<string, string> = {
   invalid_credentials: "Email o contraseña incorrectos.",
+  account_not_activated:
+    "Tu cuenta todavía no está activada. Abrí el link de la invitación que te llegó por email.",
   invalid_payload: "Ingresá un email válido y tu contraseña.",
   server_error:
     "No pudimos iniciar sesión por un problema del servidor (no es tu contraseña). Probá de nuevo en unos minutos.",

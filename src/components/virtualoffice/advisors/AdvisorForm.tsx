@@ -82,7 +82,6 @@ export function AdvisorForm({
   const [createLinkedUser, setCreateLinkedUser] = useState(false);
   const [linkedUserName, setLinkedUserName] = useState("");
   const [linkedUserEmail, setLinkedUserEmail] = useState("");
-  const [linkedUserPassword, setLinkedUserPassword] = useState("");
   const showCore = section !== "landing";
   const showLanding = section !== "core";
   const isFull = section === "full";
@@ -266,7 +265,6 @@ export function AdvisorForm({
           user: {
             name: linkedUserName.trim() || null,
             email: linkedUserEmail.trim(),
-            password: linkedUserPassword,
           },
         });
         if (!res.ok) throw new Error(res.error ?? "No se pudo guardar.");
@@ -447,20 +445,10 @@ export function AdvisorForm({
                   />
                 </div>
 
-                <div>
-                  <label className="text-sm text-secondary">
-                    Contraseña inicial
-                  </label>
-                  <input
-                    type="password"
-                    minLength={8}
-                    required={createLinkedUser}
-                    value={linkedUserPassword}
-                    onChange={(e) => setLinkedUserPassword(e.target.value)}
-                    className="mt-1 w-full rounded-md border px-3 py-2"
-                    placeholder="********"
-                  />
-                </div>
+                <p className="text-sm text-secondary md:col-span-2">
+                  Le enviamos una invitación a ese email para que confirme que
+                  es suyo y elija su contraseña.
+                </p>
               </div>
             ) : null}
           </section>

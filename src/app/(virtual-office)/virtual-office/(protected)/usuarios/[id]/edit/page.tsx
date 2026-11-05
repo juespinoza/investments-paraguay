@@ -17,9 +17,12 @@ import {
   UserRepoError,
 } from "@/lib/auth/users";
 import {
+  cancelEmailChangeAction,
+  resendInvitationAction,
   updateUserAction,
   sendPasswordResetLinkAction,
 } from "../../_actions";
+import { emailResultAlert } from "../../_messages";
 
 const ROLE_OPTIONS: Array<{ value: Role; label: string }> = [
   { value: Role.ADMIN, label: "Admin" },
@@ -30,7 +33,12 @@ const ROLE_OPTIONS: Array<{ value: Role; label: string }> = [
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ status?: string; error?: string }>;
+  searchParams: Promise<{
+    status?: string;
+    error?: string;
+    invite?: string;
+    emailChange?: string;
+  }>;
 };
 
 export default async function EditUserPage({
@@ -106,6 +114,27 @@ export default async function EditUserPage({
         />
       ) : null}
 
+      {(() => {
+        const alert =
+          query.status === "updated"
+            ? emailResultAlert("email-change", query.emailChange)
+            : query.status === "invite-resent"
+              ? emailResultAlert("invite", query.invite)
+              : null;
+        return alert ? <InlineAlert type={alert.type} message={alert.message} /> : null;
+      })()}
+
+      {query.status === "email-change-cancelled" ? (
+        <InlineAlert type="success" message="Cambio de email cancelado." />
+      ) : null}
+
+      {user.pendingEmail ? (
+        <InlineAlert
+          type="warning"
+          message={`Cambio de email pendiente: ${user.pendingEmail}. Se aplica cuando se confirme desde esa casilla; mientras tanto la cuenta sigue usando ${user.email}.`}
+        />
+      ) : null}
+
       {query.status === "reset-sent" ? (
         <InlineAlert
           type="success"
@@ -146,6 +175,11 @@ export default async function EditUserPage({
                     defaultValue={user.email}
                     className={inputClassName}
                   />
+                  <span className="block text-xs leading-5 text-zinc-500">
+                    {user.emailVerifiedAt
+                      ? "Si lo cambiás, el nuevo email tiene que confirmarse desde su casilla."
+                      : "Cuenta sin activar: al corregir el email se reenvía la invitación."}
+                  </span>
                 </label>
 
                 {isAdvisorUsersScope ? (
@@ -251,21 +285,51 @@ export default async function EditUserPage({
             <h2 className="text-base font-semibold text-zinc-950">
               Seguridad de acceso
             </h2>
-            <p className="mt-1 text-sm leading-6 text-zinc-600">
-              Por seguridad, la contraseña solo la elige la persona dueña de
-              la cuenta. Si perdió el acceso, enviale un link a{" "}
-              <strong className="text-zinc-900">{user.email}</strong> para que
-              elija una nueva. Si ese email no es correcto, corregilo primero
-              en el formulario de arriba.
-            </p>
+            {user.emailVerifiedAt ? (
+              <p className="mt-1 text-sm leading-6 text-zinc-600">
+                Por seguridad, la contraseña solo la elige la persona dueña de
+                la cuenta. Si perdió el acceso, enviale un link a{" "}
+                <strong className="text-zinc-900">{user.email}</strong> para que
+                elija una nueva. Si ese email no es correcto, corregilo primero
+                en el formulario de arriba.
+              </p>
+            ) : (
+              <p className="mt-1 text-sm leading-6 text-zinc-600">
+                <Badge tone="warning">Invitación pendiente</Badge>{" "}
+                La cuenta se activa cuando la persona abre la invitación enviada
+                a <strong className="text-zinc-900">{user.email}</strong> y elige
+                su contraseña.
+              </p>
+            )}
           </div>
-          <form action={sendPasswordResetLinkAction.bind(null, user.id)}>
-            <FormSubmitButton
-              idleLabel="Enviar link para restablecer contraseña"
-              pendingLabel="Enviando..."
-              className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
-            />
-          </form>
+          <div className="flex flex-wrap gap-3">
+            {user.emailVerifiedAt ? (
+              <form action={sendPasswordResetLinkAction.bind(null, user.id)}>
+                <FormSubmitButton
+                  idleLabel="Enviar link para restablecer contraseña"
+                  pendingLabel="Enviando..."
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+                />
+              </form>
+            ) : (
+              <form action={resendInvitationAction.bind(null, user.id)}>
+                <FormSubmitButton
+                  idleLabel="Reenviar invitación"
+                  pendingLabel="Enviando..."
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+                />
+              </form>
+            )}
+            {user.pendingEmail ? (
+              <form action={cancelEmailChangeAction.bind(null, user.id)}>
+                <FormSubmitButton
+                  idleLabel="Cancelar cambio de email"
+                  pendingLabel="Cancelando..."
+                  className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+                />
+              </form>
+            ) : null}
+          </div>
         </CardBody>
       </Card>
     </div>
