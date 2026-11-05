@@ -3,6 +3,7 @@ import { setRequestLocale } from "next-intl/server";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { ArticleBody } from "@/components/blog/ArticleBody";
 import { GuideLeadMagnet } from "@/components/leads/GuideLeadMagnet";
+import Image from "next/image";
 import { ImageCloudinary } from "@/components/ui/ImageCloudinary";
 import { Link } from "@/i18n/navigation";
 import { buildMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
@@ -23,7 +24,7 @@ export async function buildStaticArticleMetadata(
     description: article.description,
     pathname: PATHNAME,
     locale,
-    image: "/images/og-home.jpg",
+    image: definition.cover?.og ?? "/images/og-home.jpg",
     keywords: [article.metaTitle, "Paraguay", "real estate", "Asunción"],
   });
 
@@ -66,7 +67,7 @@ export function StaticArticlePage({
       inLanguage: locale,
       datePublished: definition.published,
       dateModified: definition.updated,
-      image: `${SITE_URL}/images/og-home.jpg`,
+      image: `${SITE_URL}${definition.cover?.og ?? "/images/og-home.jpg"}`,
       author: {
         "@type": "Person",
         name: "Julia Espinoza",
@@ -124,6 +125,20 @@ export function StaticArticlePage({
               </div>
             </div>
           </header>
+
+          {definition.cover ? (
+            <figure className="mt-8 overflow-hidden rounded-4xl border border-soft bg-(--stone)">
+              <Image
+                src={definition.cover.src}
+                alt={definition.cover.alt[locale]}
+                width={definition.cover.width}
+                height={definition.cover.height}
+                sizes="(min-width: 800px) 768px, 100vw"
+                priority
+                className="h-auto w-full"
+              />
+            </figure>
+          ) : null}
 
           <div className="surface-card mt-8 rounded-4xl px-6 py-8 md:px-10 md:py-10">
             <nav

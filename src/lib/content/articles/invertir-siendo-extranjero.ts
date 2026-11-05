@@ -439,6 +439,17 @@ const ARTICLES: Record<SupportedLocale, LocalizedArticle> = { es, en, pt };
 
 export const foreignInvestorArticle: ArticleDefinition = {
   slug: ARTICLE_SLUG,
+  cover: {
+    src: "/blog/invertir-siendo-extranjero-hero.webp",
+    og: "/blog/invertir-siendo-extranjero-og.jpg",
+    width: 1672,
+    height: 941,
+    alt: {
+      es: "Pasaporte con una llave, una lista de verificación y la maqueta de un edificio de departamentos con la bandera de Paraguay",
+      en: "Passport with a key, a checklist and a scale model of an apartment building with the flag of Paraguay",
+      pt: "Passaporte com uma chave, uma lista de verificação e a maquete de um prédio de apartamentos com a bandeira do Paraguai",
+    },
+  },
   published: ARTICLE_PUBLISHED,
   updated: ARTICLE_UPDATED,
   category: "guides",

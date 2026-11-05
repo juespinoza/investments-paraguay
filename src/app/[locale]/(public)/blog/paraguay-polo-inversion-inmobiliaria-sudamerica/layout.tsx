@@ -12,7 +12,7 @@ const baseMetadata = buildMetadata({
   pathname,
   locale: "es",
   contentLocale: "es",
-  image: "/images/og-home.jpg",
+  image: "/blog/paraguay-polo-inversion-og.jpg",
   keywords: [
     "inversiones Paraguay",
     "inversión inmobiliaria Paraguay",

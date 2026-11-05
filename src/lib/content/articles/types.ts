@@ -38,8 +38,19 @@ export type LocalizedArticle = {
   blocks: ArticleBlock[];
 };
 
+// Imagen principal: portada en el blog, cabecera del artículo y vista previa
+// al compartir. Archivos en /public/blog.
+export type ArticleCover = {
+  src: string; // ancho completo (webp)
+  og: string; // 1200×630 para redes (jpg)
+  width: number;
+  height: number;
+  alt: Record<SupportedLocale, string>;
+};
+
 export type ArticleDefinition = {
   slug: string;
+  cover?: ArticleCover;
   published: string;
   updated: string;
   category: "market" | "strategy" | "guides";
