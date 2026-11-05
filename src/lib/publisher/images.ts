@@ -18,16 +18,17 @@ export type ImageSyncResult = {
 export class CloudinaryConfigError extends Error {}
 
 function cloudinaryConfig() {
-  const cloudName =
-    process.env.CLOUDINARY_CLOUD_NAME ||
-    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
-    "";
+  // Cuenta de subida del publicador (dxpewhtgu). Es distinta de la cuenta
+  // histórica del sitio (NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME, din9bhvas), así
+  // que no se usa esa como respaldo: con las credenciales de una y el nombre
+  // de la otra, todas las subidas fallarían.
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME || "";
   const apiKey = process.env.CLOUDINARY_API_KEY || "";
   const apiSecret = process.env.CLOUDINARY_API_SECRET || "";
 
   if (!cloudName || !apiKey || !apiSecret) {
     throw new CloudinaryConfigError(
-      "Faltan CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET o el cloud name para subir fotos.",
+      "Faltan CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY o CLOUDINARY_API_SECRET (cuenta del publicador) para subir fotos.",
     );
   }
 

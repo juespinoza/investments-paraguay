@@ -15,11 +15,12 @@ Permite que el publicador (`publishing_machine`) cree y actualice propiedades en
 | Variable | Obligatoria | Para qué |
 | --- | --- | --- |
 | `PUBLISHER_API_KEY` | Sí | Token que envía el publicador. Generalo con `openssl rand -hex 32`. Sin esta variable la API responde 503 y queda cerrada. |
-| `CLOUDINARY_API_KEY` | Sí, para fotos | Credencial de la Upload API (Cloudinary → Settings → API Keys). |
+| `CLOUDINARY_CLOUD_NAME` | Sí, para fotos | Cuenta donde sube el publicador: `dxpewhtgu`. |
+| `CLOUDINARY_API_KEY` | Sí, para fotos | Credencial de la Upload API **de esa misma cuenta** (Cloudinary → Settings → API Keys). |
 | `CLOUDINARY_API_SECRET` | Sí, para fotos | Secreto de esa credencial. Nunca en el navegador ni en el repo. |
 | `PUBLISHER_DEFAULT_ADVISOR_SLUG` | No | Asesor asignado por defecto a las propiedades nuevas, por ejemplo `julia-espinoza`. |
 
-El cloud name se toma de `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, que ya existe.
+`NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` sigue siendo la cuenta histórica del sitio, `din9bhvas`. Con ella se muestran las fotos viejas guardadas como public_id, así que **no hay que cambiarla**. El publicador no la usa para subir.
 
 ## Autenticación
 
