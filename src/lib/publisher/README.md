@@ -136,3 +136,19 @@ Flujo sugerido para el publicador:
 ## Fuera de esta versión
 
 Detalles residenciales (dormitorios, baños), equipamiento y datos de proyectos de inversión (constructora, tipologías) se cargan por ahora desde la oficina virtual.
+
+
+### Imágenes de varias cuentas Cloudinary
+
+Las nuevas subidas guardan `secure_url` completo en portada y galería. Así la
+cuenta de subida puede diferir de la cuenta pública histórica sin romper fotos.
+Las URLs completas conservan su cuenta. Los IDs antiguos normales siguen usando
+`NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` (históricamente `din9bhvas`). Como compatibilidad
+con las primeras importaciones, los IDs `publisher/skyone/…` sin URL se resuelven
+contra `dxpewhtgu`. No cambiar esa cuenta histórica sin migrar esos registros.
+No requiere migración de base ni reenvío: el despliegue corrige su visualización.
+Reenviar una propiedad mediante la API guardará las URLs completas de sus fotos.
+
+Verificación posterior al despliegue: abrir una foto antigua y una importada,
+verificar HTTP 200 y visualización en tarjeta, galería y mapa. La visibilidad
+pública sigue dependiendo del estado: BORRADOR no aparece en los listados.

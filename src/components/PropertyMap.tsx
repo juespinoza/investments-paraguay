@@ -1,6 +1,7 @@
 "use client";
 
 import Script from "next/script";
+import { resolveImageSource } from "@/lib/image-source";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 export type PropertyMapItem = {
@@ -75,6 +76,7 @@ function formatPrice(price: number | null, currency: "GS" | "USD") {
 
 function resolveImageUrl(imageUrl: string | null) {
   if (!imageUrl) return null;
+  imageUrl = resolveImageSource(imageUrl);
   if (imageUrl.startsWith("http") || imageUrl.startsWith("/")) return imageUrl;
   if (!CLOUDINARY_CLOUD_NAME) return null;
 

@@ -6,6 +6,7 @@ import Image, { type ImageLoaderProps } from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
+import { resolveImageSource } from "@/lib/image-source";
 
 const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 const SWIPE_THRESHOLD_PX = 48;
@@ -25,6 +26,7 @@ function isCloudinaryUrl(src: string) {
 }
 
 function buildCloudinaryUrl(src: string, width: number) {
+  src = resolveImageSource(src);
   if (isCloudinaryUrl(src)) {
     return src.replace("/upload/", `/upload/f_auto,q_auto,w_${width}/`);
   }

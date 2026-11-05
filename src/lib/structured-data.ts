@@ -1,3 +1,4 @@
+import { resolveImageSource } from "@/lib/image-source";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
 import type { AppLocale } from "@/lib/i18n";
 
@@ -47,7 +48,7 @@ function absoluteUrl(pathOrUrl: string) {
 }
 
 function resolveImageUrl(imageUrl: string | null | undefined) {
-  const value = textValue(imageUrl);
+  const value = imageUrl ? resolveImageSource(imageUrl) : null;
   if (!value) return null;
 
   if (value.startsWith("http://") || value.startsWith("https://")) {

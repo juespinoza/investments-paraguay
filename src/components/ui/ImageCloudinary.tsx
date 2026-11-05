@@ -1,5 +1,6 @@
 "use client";
-import { CldImage } from "next-cloudinary";
+import Image from "next/image";
+import { propertyImageUrl } from "@/lib/image-source";
 
 export function ImageCloudinary({
   imageUrl,
@@ -13,12 +14,11 @@ export function ImageCloudinary({
   alt: string;
 }) {
   return (
-    <CldImage
+    <Image
       src={imageUrl}
       alt={alt}
-      fill
-      crop="fill"
-      gravity="center"
+      fill={!(width && height)}
+      loader={({ src, width, quality }) => propertyImageUrl(src, width, quality)}
       sizes="(min-width: 768px) 300px, 100vw"
       width={width ?? undefined}
       height={height ?? undefined}

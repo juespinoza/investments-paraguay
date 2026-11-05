@@ -1,3 +1,4 @@
+import { resolveImageSource } from "@/lib/image-source";
 import type { Metadata } from "next";
 import {
   DEFAULT_LOCALE,
@@ -65,6 +66,7 @@ function buildLanguageAlternates(pathname: string) {
 }
 
 function resolveMetadataImageUrl(image: string) {
+  image = resolveImageSource(image);
   if (image.startsWith("http://") || image.startsWith("https://")) {
     return image;
   }

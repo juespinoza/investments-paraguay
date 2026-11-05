@@ -1,3 +1,4 @@
+import { resolveImageSource } from "@/lib/image-source";
 import { SITE_URL } from "@/lib/seo";
 
 const DEFAULT_CLOUDINARY_CLOUD_NAME = "din9bhvas";
@@ -56,7 +57,7 @@ export function buildCloudinaryImageUrl(
   src: string | null | undefined,
   options: CloudinaryTransformOptions = {},
 ) {
-  const value = src?.trim();
+  const value = src ? resolveImageSource(src) : null;
   if (!value) return null;
 
   const transform = buildTransform(options);
