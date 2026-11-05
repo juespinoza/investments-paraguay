@@ -61,6 +61,8 @@ async function main() {
       update: {
         name: name || null,
         password: passwordHash,
+        // Cierra las sesiones abiertas con la contraseña anterior.
+        passwordChangedAt: new Date(),
         role: Role.ADMIN,
         inmobiliariaId: null,
         advisorId: null,

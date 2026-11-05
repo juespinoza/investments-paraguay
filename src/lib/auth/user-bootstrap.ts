@@ -30,6 +30,7 @@ export async function ensureBootstrapAdmin(input: {
     update: {
       name: input.name?.trim() || null,
       password,
+      passwordChangedAt: new Date(),
       role: Role.ADMIN,
       inmobiliariaId: null,
       advisorId: null,
