@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { prisma } from "@/lib/prisma";
 import { SessionPayload } from "../data/types";
+import { sessionIssuedBeforePasswordChange } from "@/lib/auth/password-reset-core";
 
 function getSecret() {
   const s = process.env.AUTH_SECRET;
@@ -28,10 +29,14 @@ export async function getSession(): Promise<SessionPayload | null> {
         role: true,
         inmobiliariaId: true,
         advisorId: true,
+        passwordChangedAt: true,
       },
     });
 
     if (!user) return null;
+    if (sessionIssuedBeforePasswordChange(payload.iat, user.passwordChangedAt)) {
+      return null;
+    }
 
     return {
       id: user.id,

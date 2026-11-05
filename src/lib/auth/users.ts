@@ -4,6 +4,7 @@ import { requireSession } from "@/lib/auth/require-session";
 import type { SessionPayload } from "@/lib/data/types";
 import { prisma } from "@/lib/prisma";
 import { hashPassword, normalizeEmail } from "@/lib/auth/user-bootstrap";
+import { sendResetLinkToUser } from "@/lib/auth/password-reset";
 
 export class UserRepoError extends Error {
   status: number;
@@ -429,32 +430,38 @@ export async function updateUser(id: string, input: UserUpdateInput) {
   }
 }
 
-export async function updateUserPassword(id: string, password: string) {
+// El admin (o la inmobiliaria, para sus asesores) no elige la contraseña de
+// otra persona: le envía un link al email registrado de esa cuenta.
+export async function sendUserPasswordResetLink(id: string) {
   const session = await requireUsersSession("update");
-
-  if (password.trim().length < 8) {
-    throw new UserRepoError(
-      "La contraseña debe tener al menos 8 caracteres.",
-      400,
-    );
-  }
 
   const user = await prisma.user.findFirst({
     where: {
       ...(await buildScopedUserWhere(session, "update")),
       id,
     },
-    select: { id: true },
+    select: { id: true, email: true, name: true },
   });
 
   if (!user) {
     throw new UserRepoError("Usuario no encontrado.", 404);
   }
 
-  await prisma.user.update({
-    where: { id },
-    data: { password: await hashPassword(password) },
-  });
+  const result = await sendResetLinkToUser(user);
+  if (result === "rate_limited") {
+    throw new UserRepoError(
+      "Ya se enviaron varios links a esta cuenta en la última hora. Esperá un rato antes de pedir otro.",
+      429,
+    );
+  }
+  if (result === "email_not_configured") {
+    throw new UserRepoError(
+      "El envío de emails no está configurado (faltan RESEND_API_KEY y EMAIL_FROM).",
+      500,
+    );
+  }
+
+  return { email: user.email };
 }
 
 export async function listUserFormOptions(): Promise<UserFormOptions> {

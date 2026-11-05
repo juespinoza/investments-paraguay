@@ -8,7 +8,7 @@ import {
   createUser,
   softDeleteUser,
   updateUser,
-  updateUserPassword,
+  sendUserPasswordResetLink,
 } from "@/lib/auth/users";
 
 function getString(formData: FormData, key: string) {
@@ -100,29 +100,18 @@ export async function updateUserAction(id: string, formData: FormData) {
   }
 }
 
-export async function updateUserPasswordAction(id: string, formData: FormData) {
+export async function sendPasswordResetLinkAction(id: string) {
+  let target: string;
   try {
-    const password = getString(formData, "password");
-    const confirmPassword = getString(formData, "confirmPassword");
-
-    if (password !== confirmPassword) {
-      redirect(
-        `/virtual-office/usuarios/${id}/edit?error=${encodeURIComponent(
-          "Las contraseñas no coinciden.",
-        )}`,
-      );
-    }
-
-    await updateUserPassword(id, password);
-    revalidatePath(`/virtual-office/usuarios/${id}/edit`);
-    redirect(`/virtual-office/usuarios/${id}/edit?status=password-updated`);
+    await sendUserPasswordResetLink(id);
+    target = `/virtual-office/usuarios/${id}/edit?status=reset-sent`;
   } catch (error) {
     const message =
       error instanceof UserRepoError
         ? error.message
-        : "No se pudo actualizar la contraseña.";
-    redirect(
-      `/virtual-office/usuarios/${id}/edit?error=${encodeURIComponent(message)}`,
-    );
+        : "No se pudo enviar el link.";
+    target = `/virtual-office/usuarios/${id}/edit?error=${encodeURIComponent(message)}`;
   }
+  // redirect() fuera del try: lanza una excepción interna de Next.
+  redirect(target);
 }
