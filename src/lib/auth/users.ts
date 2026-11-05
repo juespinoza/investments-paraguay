@@ -3,7 +3,17 @@ import { can, scopeFor } from "@/lib/auth/permissions";
 import { requireSession } from "@/lib/auth/require-session";
 import type { SessionPayload } from "@/lib/data/types";
 import { prisma } from "@/lib/prisma";
-import { hashPassword, normalizeEmail } from "@/lib/auth/user-bootstrap";
+import { normalizeEmail } from "@/lib/auth/user-bootstrap";
+import { sendResetLinkToUser } from "@/lib/auth/password-reset";
+import {
+  EmailChangeError,
+  cancelEmailChange,
+  inviteCreatedUser,
+  requestEmailChange,
+  resendInvitation,
+  unusablePasswordHash,
+  type EmailSendResult,
+} from "@/lib/auth/email-verification";
 
 export class UserRepoError extends Error {
   status: number;
@@ -17,14 +27,13 @@ export class UserRepoError extends Error {
 
 export type UserInput = {
   email: string;
-  password: string;
   name?: string | null;
   role: Role;
   inmobiliariaId?: string | null;
   advisorId?: string | null;
 };
 
-type UserUpdateInput = Omit<UserInput, "password">;
+type UserUpdateInput = UserInput;
 
 type ResolvedAssignments = {
   inmobiliariaId: string | null;
@@ -247,6 +256,8 @@ export async function listUsers() {
       inmobiliariaId: true,
       advisorId: true,
       createdAt: true,
+      emailVerifiedAt: true,
+      pendingEmail: true,
     },
   });
 
@@ -303,6 +314,8 @@ export async function getUserById(id: string) {
       advisorId: true,
       createdAt: true,
       updatedAt: true,
+      emailVerifiedAt: true,
+      pendingEmail: true,
     },
   });
 }
@@ -314,21 +327,19 @@ export async function createUser(input: UserInput) {
   if (!email) {
     throw new UserRepoError("El email es obligatorio.", 400);
   }
-  if (input.password.trim().length < 8) {
-    throw new UserRepoError(
-      "La contraseña debe tener al menos 8 caracteres.",
-      400,
-    );
-  }
 
   const assignments = await resolveAssignmentsForSession(session, "create", input);
 
+  let created: { id: string; email: string; name: string | null };
   try {
-    return await prisma.user.create({
+    created = await prisma.user.create({
       data: {
         email,
         name: input.name?.trim() || null,
-        password: await hashPassword(input.password),
+        // Nadie elige la contraseña por otra persona: la cuenta se activa
+        // desde la invitación que llega al email, que así queda confirmado.
+        password: await unusablePasswordHash(),
+        emailVerifiedAt: null,
         role:
           getUserScope(session, "create") === "advisor_users"
             ? Role.ASESOR
@@ -336,7 +347,7 @@ export async function createUser(input: UserInput) {
         inmobiliariaId: assignments.inmobiliariaId,
         advisorId: assignments.advisorId,
       },
-      select: { id: true },
+      select: { id: true, email: true, name: true },
     });
   } catch (error) {
     if (
@@ -347,6 +358,9 @@ export async function createUser(input: UserInput) {
     }
     throw error;
   }
+
+  const invitation = await inviteCreatedUser(created);
+  return { id: created.id, invitation };
 }
 
 export async function softDeleteUser(id: string) {
@@ -387,11 +401,20 @@ export async function updateUser(id: string, input: UserUpdateInput) {
       ...(await buildScopedUserWhere(session, "update")),
       id,
     },
-    select: { id: true },
+    select: { id: true, email: true, pendingEmail: true },
   });
 
   if (!existing) {
     throw new UserRepoError("Usuario no encontrado.", 404);
+  }
+
+  const emailChanged = email !== existing.email;
+  if (emailChanged) {
+    const taken = await prisma.user.findFirst({
+      where: { email, id: { not: id } },
+      select: { id: true },
+    });
+    if (taken) throw new UserRepoError("Ya existe un usuario con ese email.", 409);
   }
 
   if (session.role === Role.ADMIN && session.id === id && input.role !== Role.ADMIN) {
@@ -404,10 +427,10 @@ export async function updateUser(id: string, input: UserUpdateInput) {
   const assignments = await resolveAssignmentsForSession(session, "update", input);
 
   try {
-    return await prisma.user.update({
+    await prisma.user.update({
       where: { id },
       data: {
-        email,
+        // El email no se cambia acá: ver requestEmailChange más abajo.
         name: input.name?.trim() || null,
         role:
           getUserScope(session, "update") === "advisor_users"
@@ -427,18 +450,26 @@ export async function updateUser(id: string, input: UserUpdateInput) {
     }
     throw error;
   }
-}
 
-export async function updateUserPassword(id: string, password: string) {
-  const session = await requireUsersSession("update");
-
-  if (password.trim().length < 8) {
-    throw new UserRepoError(
-      "La contraseña debe tener al menos 8 caracteres.",
-      400,
-    );
+  // Un email nuevo queda pendiente hasta que se confirme desde esa casilla.
+  // Volver a poner el email vigente cancela un cambio pendiente.
+  let emailChange: EmailSendResult | "unchanged" | null = null;
+  if (emailChanged || existing.pendingEmail) {
+    try {
+      emailChange = await requestEmailChange(id, email);
+    } catch (error) {
+      if (error instanceof EmailChangeError) {
+        throw new UserRepoError(error.message, error.status);
+      }
+      throw error;
+    }
   }
 
+  return { id, emailChange };
+}
+
+async function findScopedUser(id: string) {
+  const session = await requireUsersSession("update");
   const user = await prisma.user.findFirst({
     where: {
       ...(await buildScopedUserWhere(session, "update")),
@@ -446,15 +477,56 @@ export async function updateUserPassword(id: string, password: string) {
     },
     select: { id: true },
   });
+  if (!user) throw new UserRepoError("Usuario no encontrado.", 404);
+  return user;
+}
+
+export async function resendUserInvitation(id: string) {
+  await findScopedUser(id);
+  const result = await resendInvitation(id);
+  if (result === "already_active") {
+    throw new UserRepoError("La cuenta ya está activada.", 400);
+  }
+  return result;
+}
+
+export async function cancelUserEmailChange(id: string) {
+  await findScopedUser(id);
+  await cancelEmailChange(id);
+}
+
+// El admin (o la inmobiliaria, para sus asesores) no elige la contraseña de
+// otra persona: le envía un link al email registrado de esa cuenta.
+export async function sendUserPasswordResetLink(id: string) {
+  const session = await requireUsersSession("update");
+
+  const user = await prisma.user.findFirst({
+    where: {
+      ...(await buildScopedUserWhere(session, "update")),
+      id,
+    },
+    select: { id: true, email: true, name: true },
+  });
 
   if (!user) {
     throw new UserRepoError("Usuario no encontrado.", 404);
   }
 
-  await prisma.user.update({
-    where: { id },
-    data: { password: await hashPassword(password) },
-  });
+  const result = await sendResetLinkToUser(user);
+  if (result === "rate_limited") {
+    throw new UserRepoError(
+      "Ya se enviaron varios links a esta cuenta en la última hora. Esperá un rato antes de pedir otro.",
+      429,
+    );
+  }
+  if (result === "email_not_configured") {
+    throw new UserRepoError(
+      "El envío de emails no está configurado (faltan RESEND_API_KEY y EMAIL_FROM).",
+      500,
+    );
+  }
+
+  return { email: user.email };
 }
 
 export async function listUserFormOptions(): Promise<UserFormOptions> {

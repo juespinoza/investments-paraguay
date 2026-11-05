@@ -98,9 +98,56 @@ model User {
   inmobiliariaId String?
   advisorId      String?
 
+  // Al cambiar la contraseña se invalidan las sesiones emitidas antes.
+  passwordChangedAt   DateTime?
+  passwordResetTokens PasswordResetToken[]
+
+  // null = la persona todavía no confirmó que el email es suyo (invitación
+  // sin aceptar). No puede iniciar sesión hasta confirmarlo.
+  emailVerifiedAt DateTime?
+  // Email nuevo pedido y todavía sin confirmar: el email vigente sigue
+  // siendo `email` hasta que se abra el link enviado al nuevo.
+  pendingEmail    String?
+  emailTokens     EmailToken[]
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+}
+
+enum EmailTokenPurpose {
+  INVITE // alta de usuario: confirmar email y elegir contraseña
+  EMAIL_CHANGE // confirmar un email nuevo
+}
+
+// Links de confirmación de email. Como en PasswordResetToken, solo se
+// guarda el hash del token. `email` es la dirección a la que se envió.
+model EmailToken {
+  id        String            @id @default(cuid())
+  userId    String
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purpose   EmailTokenPurpose
+  email     String
+  tokenHash String            @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime          @default(now())
+
+  @@index([userId, purpose, createdAt])
+}
+
+// Link de "olvidé mi contraseña". Solo se guarda el hash SHA-256 del token:
+// el token en claro viaja únicamente en el email.
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
 }
 
 model Inmobiliaria {

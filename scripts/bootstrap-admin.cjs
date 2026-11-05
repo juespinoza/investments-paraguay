@@ -61,6 +61,9 @@ async function main() {
       update: {
         name: name || null,
         password: passwordHash,
+        emailVerifiedAt: new Date(),
+        // Cierra las sesiones abiertas con la contraseña anterior.
+        passwordChangedAt: new Date(),
         role: Role.ADMIN,
         inmobiliariaId: null,
         advisorId: null,
@@ -70,6 +73,7 @@ async function main() {
         email,
         name: name || null,
         password: passwordHash,
+        emailVerifiedAt: new Date(),
         role: Role.ADMIN,
       },
       select: {

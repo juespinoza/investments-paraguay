@@ -32,6 +32,7 @@ import {
   resolvePagination,
 } from "@/lib/virtualoffice/pagination";
 import { createUserAction, deleteUserAction } from "./_actions";
+import { emailResultAlert } from "./_messages";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +47,7 @@ type UsersPageProps = {
   searchParams: Promise<{
     status?: string;
     error?: string;
+    invite?: string;
     q?: string;
     role?: string;
     page?: string;
@@ -113,6 +115,9 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
         ? "Usuario desactivado correctamente."
         : undefined;
 
+  const inviteAlert =
+    params.status === "created" ? emailResultAlert("invite", params.invite) : null;
+
   const inputClassName =
     "h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100";
   const isAdvisorUsersScope = options.scope === "advisor_users";
@@ -142,6 +147,9 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
       ) : null}
       {successMessage ? (
         <InlineAlert type="success" message={successMessage} />
+      ) : null}
+      {inviteAlert ? (
+        <InlineAlert type={inviteAlert.type} message={inviteAlert.message} />
       ) : null}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -235,17 +243,10 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
                   />
                 </label>
 
-                <label className="space-y-2 text-sm">
-                  <span className="font-medium text-zinc-800">Contraseña</span>
-                  <input
-                    name="password"
-                    type="password"
-                    required
-                    minLength={8}
-                    className={inputClassName}
-                    placeholder="Min. 8 caracteres"
-                  />
-                </label>
+                <p className="self-end text-sm leading-6 text-zinc-600">
+                  La persona recibe una invitación en ese email para confirmarlo
+                  y elegir su contraseña.
+                </p>
               </div>
 
               <FormSection
@@ -373,6 +374,13 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
                         {user.name ?? "Sin nombre"}
                       </div>
                       <div className="text-sm text-zinc-500">{user.email}</div>
+                      {!user.emailVerifiedAt ? (
+                        <Badge tone="warning">Invitación pendiente</Badge>
+                      ) : user.pendingEmail ? (
+                        <div className="text-xs text-amber-700">
+                          Cambio a {user.pendingEmail} sin confirmar
+                        </div>
+                      ) : null}
                     </div>
                   </Td>
                   <Td>

@@ -2,7 +2,8 @@ import "server-only";
 
 import { Role } from "@/generated/prisma";
 import { z } from "zod";
-import { hashPassword, normalizeEmail } from "@/lib/auth/user-bootstrap";
+import { normalizeEmail } from "@/lib/auth/user-bootstrap";
+import { inviteCreatedUser, unusablePasswordHash } from "@/lib/auth/email-verification";
 import { can, scopeFor } from "@/lib/auth/permissions";
 import { prisma } from "@/lib/prisma";
 import {
@@ -52,7 +53,6 @@ export type InmobiliariaLandingInput = z.output<
 
 export type InmobiliariaWorkflowUserInput = {
   email: string;
-  password: string;
   name?: string | null;
 };
 
@@ -381,16 +381,8 @@ function normalizeWorkflowUserInput(
     throw new InmobiliariaRepoError("El email del usuario es obligatorio.", 400);
   }
 
-  if (user.password.trim().length < 8) {
-    throw new InmobiliariaRepoError(
-      "La contraseña del usuario debe tener al menos 8 caracteres.",
-      400,
-    );
-  }
-
   return {
     email,
-    password: user.password,
     name: user.name?.trim() || null,
   };
 }
@@ -405,9 +397,10 @@ export async function createInmobiliaria(
   }
 
   const user = normalizeWorkflowUserInput(workflowUser);
+  let invitee: { id: string; email: string; name: string | null } | null = null;
 
   try {
-    return await prisma.$transaction(async (tx) => {
+    const created = await prisma.$transaction(async (tx) => {
       const inmobiliaria = await tx.inmobiliaria.create({
         data: {
           ...buildInmobiliariaCoreCreateData(input as InmobiliariaCoreInput),
@@ -427,21 +420,26 @@ export async function createInmobiliaria(
       }
 
       if (user) {
-        await tx.user.create({
+        invitee = await tx.user.create({
           data: {
             email: user.email,
             name: user.name ?? null,
-            password: await hashPassword(user.password),
+            // La persona elige su contraseña al aceptar la invitación.
+            password: await unusablePasswordHash(),
+            emailVerifiedAt: null,
             role: Role.INMOBILIARIA,
             inmobiliariaId: inmobiliaria.id,
             advisorId: null,
           },
-          select: { id: true },
+          select: { id: true, email: true, name: true },
         });
       }
 
       return inmobiliaria;
     });
+
+    if (invitee) await inviteCreatedUser(invitee);
+    return created;
   } catch (error: unknown) {
     if (
       typeof error === "object" &&

@@ -43,6 +43,7 @@ async function upsertUser(prisma, input) {
     update: {
       name: input.name || null,
       password: passwordHash,
+      emailVerifiedAt: new Date(),
       role: input.role,
       inmobiliariaId: input.inmobiliariaId ?? null,
       advisorId: input.advisorId ?? null,
@@ -52,6 +53,7 @@ async function upsertUser(prisma, input) {
       email: input.email.toLowerCase(),
       name: input.name || null,
       password: passwordHash,
+      emailVerifiedAt: new Date(),
       role: input.role,
       inmobiliariaId: input.inmobiliariaId ?? null,
       advisorId: input.advisorId ?? null,

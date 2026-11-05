@@ -5,10 +5,12 @@ import { redirect } from "next/navigation";
 import { Role } from "@/generated/prisma";
 import {
   UserRepoError,
+  cancelUserEmailChange,
   createUser,
+  resendUserInvitation,
   softDeleteUser,
   updateUser,
-  updateUserPassword,
+  sendUserPasswordResetLink,
 } from "@/lib/auth/users";
 
 function getString(formData: FormData, key: string) {
@@ -30,9 +32,8 @@ export async function createUserAction(formData: FormData) {
       redirect("/virtual-office/usuarios?error=Rol%20inv%C3%A1lido.");
     }
 
-    await createUser({
+    const { invitation } = await createUser({
       email: getString(formData, "email"),
-      password: getString(formData, "password"),
       name: getOptionalString(formData, "name"),
       role,
       inmobiliariaId: getOptionalString(formData, "inmobiliariaId"),
@@ -40,7 +41,7 @@ export async function createUserAction(formData: FormData) {
     });
 
     revalidatePath("/virtual-office/usuarios");
-    redirect("/virtual-office/usuarios?status=created");
+    redirect(`/virtual-office/usuarios?status=created&invite=${invitation}`);
   } catch (error) {
     const message =
       error instanceof UserRepoError
@@ -78,7 +79,7 @@ export async function updateUserAction(id: string, formData: FormData) {
       redirect("/virtual-office/usuarios?error=Rol%20inv%C3%A1lido.");
     }
 
-    await updateUser(id, {
+    const { emailChange } = await updateUser(id, {
       email: getString(formData, "email"),
       name: getOptionalString(formData, "name"),
       role,
@@ -88,7 +89,11 @@ export async function updateUserAction(id: string, formData: FormData) {
 
     revalidatePath("/virtual-office/usuarios");
     revalidatePath(`/virtual-office/usuarios/${id}/edit`);
-    redirect(`/virtual-office/usuarios/${id}/edit?status=updated`);
+    redirect(
+      `/virtual-office/usuarios/${id}/edit?status=updated${
+        emailChange ? `&emailChange=${emailChange}` : ""
+      }`,
+    );
   } catch (error) {
     const message =
       error instanceof UserRepoError
@@ -100,29 +105,44 @@ export async function updateUserAction(id: string, formData: FormData) {
   }
 }
 
-export async function updateUserPasswordAction(id: string, formData: FormData) {
+export async function sendPasswordResetLinkAction(id: string) {
+  let target: string;
   try {
-    const password = getString(formData, "password");
-    const confirmPassword = getString(formData, "confirmPassword");
-
-    if (password !== confirmPassword) {
-      redirect(
-        `/virtual-office/usuarios/${id}/edit?error=${encodeURIComponent(
-          "Las contraseñas no coinciden.",
-        )}`,
-      );
-    }
-
-    await updateUserPassword(id, password);
-    revalidatePath(`/virtual-office/usuarios/${id}/edit`);
-    redirect(`/virtual-office/usuarios/${id}/edit?status=password-updated`);
+    await sendUserPasswordResetLink(id);
+    target = `/virtual-office/usuarios/${id}/edit?status=reset-sent`;
   } catch (error) {
     const message =
       error instanceof UserRepoError
         ? error.message
-        : "No se pudo actualizar la contraseña.";
-    redirect(
-      `/virtual-office/usuarios/${id}/edit?error=${encodeURIComponent(message)}`,
-    );
+        : "No se pudo enviar el link.";
+    target = `/virtual-office/usuarios/${id}/edit?error=${encodeURIComponent(message)}`;
   }
+  // redirect() fuera del try: lanza una excepción interna de Next.
+  redirect(target);
+}
+
+export async function resendInvitationAction(id: string) {
+  let target: string;
+  try {
+    const result = await resendUserInvitation(id);
+    target = `/virtual-office/usuarios/${id}/edit?status=invite-resent&invite=${result}`;
+  } catch (error) {
+    const message =
+      error instanceof UserRepoError ? error.message : "No se pudo reenviar la invitación.";
+    target = `/virtual-office/usuarios/${id}/edit?error=${encodeURIComponent(message)}`;
+  }
+  redirect(target);
+}
+
+export async function cancelEmailChangeAction(id: string) {
+  let target: string;
+  try {
+    await cancelUserEmailChange(id);
+    target = `/virtual-office/usuarios/${id}/edit?status=email-change-cancelled`;
+  } catch (error) {
+    const message =
+      error instanceof UserRepoError ? error.message : "No se pudo cancelar el cambio.";
+    target = `/virtual-office/usuarios/${id}/edit?error=${encodeURIComponent(message)}`;
+  }
+  redirect(target);
 }
