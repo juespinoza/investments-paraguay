@@ -139,7 +139,7 @@ function getStaticPosts(locale: string): BlogIndexPost[] {
         title: article.title,
         slug: definition.slug,
         excerpt: article.excerpt,
-        coverImageUrl: null,
+        coverImageUrl: definition.cover?.src ?? null,
         // Mediodía UTC: "2026-11-05" a medianoche UTC sería el día 4 en Paraguay.
         updatedAt: new Date(`${definition.updated}T12:00:00Z`).toISOString(),
         author: "Julia Espinoza",

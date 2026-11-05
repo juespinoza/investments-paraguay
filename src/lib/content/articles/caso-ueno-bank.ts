@@ -445,6 +445,17 @@ const pt: LocalizedArticle = {
 
 export const uenoBankArticle: ArticleDefinition = {
   slug: SLUG,
+  cover: {
+    src: "/blog/caso-ueno-bank-hero.webp",
+    og: "/blog/caso-ueno-bank-og.jpg",
+    width: 1672,
+    height: 941,
+    alt: {
+      es: "Bloque verde con el logo de ueno bank junto a una carpeta del BCP y la maqueta de un edificio de departamentos",
+      en: "Green block with the ueno bank logo next to a BCP folder and a scale model of an apartment building",
+      pt: "Bloco verde com o logo do ueno bank ao lado de uma pasta do BCP e a maquete de um prédio de apartamentos",
+    },
+  },
   published: PUBLISHED,
   updated: UPDATED,
   category: "market",
