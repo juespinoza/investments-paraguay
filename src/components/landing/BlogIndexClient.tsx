@@ -8,8 +8,7 @@ import { DEFAULT_LOCALE, formatLocale } from "@/lib/i18n";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 
-const CLOUDINARY_CLOUD_NAME =
-  process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "din9bhvas";
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 const FALLBACK_BLOG_IMAGE = "/backgrounds/asuncion-hero-768.webp";
 
 export type BlogCategory = "all" | "market" | "strategy" | "guides";
@@ -79,6 +78,7 @@ function cloudinaryLoader({ src, width, quality }: ImageLoaderProps) {
   }
 
   if (!isRemoteUrl(src) && !src.startsWith("/")) {
+    if (!CLOUDINARY_CLOUD_NAME) return FALLBACK_BLOG_IMAGE;
     return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${transformation}/v1/${src}`;
   }
 

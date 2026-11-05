@@ -1,8 +1,6 @@
 import { resolveImageSource } from "@/lib/image-source";
 import { SITE_URL } from "@/lib/seo";
 
-const DEFAULT_CLOUDINARY_CLOUD_NAME = "din9bhvas";
-
 type CloudinaryTransformOptions = {
   width?: number;
   height?: number;
@@ -14,10 +12,7 @@ type CloudinaryTransformOptions = {
 };
 
 function cloudName() {
-  return (
-    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
-    DEFAULT_CLOUDINARY_CLOUD_NAME
-  );
+  return process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "";
 }
 
 function isRemoteUrl(src: string) {
@@ -74,12 +69,15 @@ export function buildCloudinaryImageUrl(
     return `${SITE_URL}${value}`;
   }
 
+  const cloud = cloudName();
+  if (!cloud) return null;
+
   const encodedPublicId = encodePublicId(value);
   const versionPrefix = /^v\d+\//.test(encodedPublicId)
     ? ""
     : `${options.version ?? "v1"}/`;
 
-  return `https://res.cloudinary.com/${cloudName()}/image/upload/${transform}/${versionPrefix}${encodedPublicId}`;
+  return `https://res.cloudinary.com/${cloud}/image/upload/${transform}/${versionPrefix}${encodedPublicId}`;
 }
 
 export function buildCloudinaryOpenGraphImageUrl(
