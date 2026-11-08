@@ -413,6 +413,17 @@ const pt: LocalizedArticle = {
 
 export const impeachmentArticle: ArticleDefinition = {
   slug: SLUG,
+  cover: {
+    src: "/blog/juicio-politico-pena-hero.webp",
+    og: "/blog/juicio-politico-pena-og.jpg",
+    width: 1672,
+    height: 941,
+    alt: {
+      es: "Carpeta con el título \"Juicio político, Santiago Peña\" junto a la bandera de Paraguay y la maqueta de un recinto parlamentario",
+      en: "Folder titled \"Juicio político, Santiago Peña\" next to the flag of Paraguay and a scale model of a legislative chamber",
+      pt: "Pasta com o título \"Juicio político, Santiago Peña\" ao lado da bandeira do Paraguai e da maquete de um plenário parlamentar",
+    },
+  },
   published: PUBLISHED,
   updated: UPDATED,
   category: "market",
