@@ -6,11 +6,14 @@ import type {
   LocalizedArticle,
 } from "@/lib/content/articles/types";
 import { SCHEDULE_CALL_URL, buildWhatsAppMessageHref } from "@/lib/contact";
+import { Link } from "@/i18n/navigation";
 
-// Texto con **negrita** y [enlaces](https://...). Solo para contenido propio.
+// Texto con **negrita** y [enlaces](https://...) o [internos](/blog/...).
+// Los internos usan el Link de next-intl: mantienen el idioma de la página.
+// Solo para contenido propio.
 export function RichInline({ text }: { text: string }) {
   const parts: ReactNode[] = [];
-  const pattern = /\*\*(.+?)\*\*|\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g;
+  const pattern = /\*\*(.+?)\*\*|\[([^\]]+)\]\(((?:https?:\/\/|\/)[^)\s]+)\)/g;
   let last = 0;
   let match: RegExpExecArray | null;
   let key = 0;
@@ -22,6 +25,16 @@ export function RichInline({ text }: { text: string }) {
         <strong key={key++} className="font-semibold text-primary">
           {match[1]}
         </strong>,
+      );
+    } else if (match[3].startsWith("/")) {
+      parts.push(
+        <Link
+          key={key++}
+          href={match[3]}
+          className="text-primary underline decoration-(--gold) underline-offset-4 hover:text-(--gold)"
+        >
+          {match[2]}
+        </Link>,
       );
     } else {
       parts.push(
