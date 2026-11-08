@@ -8,7 +8,8 @@ import type {
 // y actualizar UPDATED + updatedLabel en los tres idiomas.
 const SLUG = "caso-ueno-bank-que-significa-para-invertir";
 const PUBLISHED = "2026-11-04";
-const UPDATED = "2026-11-05";
+const UPDATED = "2026-11-08";
+const J = "/blog/juicio-politico-santiago-pena-que-paso-y-repercusiones";
 
 const U = {
   abcComunicados: "https://www.abc.com.py/economia/2026/11/04/todos-los-comunicados-del-bcp-sobre-ueno-bank/",
@@ -26,11 +27,21 @@ const U = {
   lanacionPago: "https://www.lanacion.com.py/negocios/2026/11/04/el-bcp-explica-sistema-de-pago-a-ahorristas-de-ueno-bank/",
   hoyPago: "https://www.hoy.com.py/nacionales/2026/11/04/bcp-anuncia-como-y-cuando-pagara-a-los-ahorristas-de-ueno-bank",
   milNoticias: "https://1000noticias.com.py/2026/11/04/el-fondo-de-garantia-arrancara-desembolsos-a-depositantes-de-ueno-bank-tras-promulgarse-la-ley/",
+  lnPagados: "https://www.lanacion.com.py/politica_edicion_impresa/2026/11/08/bcp-ya-devolvio-ahorros-a-casi-12-millones-de-clientes-de-ueno/",
+  lnLunes: "https://www.lanacion.com.py/negocios/2026/11/07/ueno-bank-desde-el-lunes-pagaran-a-ahorristas-con-deudas-y-cuentas-bloqueadas-anuncio-el-bcp/",
+  abcJuicio: "https://www.abc.com.py/politica/2026/11/06/en-vivo-juicio-politico-a-pena-senado-retoma-proceso-en-medio-de-renuncia-trabada-y-pedido-de-prorroga/",
+  abcPreso: "https://www.abc.com.py/nacionales/2026/11/07/santiago-pena-queda-preso-en-el-regimiento-escolta-presidencial/",
+  infobaeCarvallo: "https://www.infobae.com/america/america-latina/2026/11/07/la-fiscalia-de-paraguay-pidio-la-prision-preventiva-del-ex-presidente-santiago-pena-por-el-colapso-del-ueno-bank/",
   plus: "https://revistaplus.com.py/2026/11/04/crisis-de-ueno-frena-obras-de-viviendas-y-deja-a-familias-sin-respuestas/",
   observador: "https://diarioelobservador.com.ar/moodys-advierte-sobre-la-crisis-de-ueno-bank-impacto-negativo-pero-manejable-para-paraguay/",
 };
 
 const SOURCES: ArticleSource[] = [
+  { label: "La Nación — El BCP ya devolvió ahorros a casi 1,2 millones de clientes de ueno (8 nov 2026)", url: U.lnPagados },
+  { label: "La Nación — Desde el lunes pagarán a ahorristas con deudas y cuentas bloqueadas (7 nov 2026)", url: U.lnLunes },
+  { label: "ABC Color — Cronología del juicio político: destitución de Peña y asunción de Alliana (6 nov 2026)", url: U.abcJuicio },
+  { label: "ABC Color — Santiago Peña queda preso en el Regimiento Escolta Presidencial (7 nov 2026)", url: U.abcPreso },
+  { label: "Infobae — La Fiscalía pidió la prisión preventiva de Peña y de Carvallo (7 nov 2026)", url: U.infobaeCarvallo },
   { label: "ABC Color — Desde el 5 de noviembre, avisos para cobrar hasta Gs. 121.760.000 (4 nov 2026)", url: U.abcAvisos },
   { label: "ABC Color — Nuevo presidente interino del BCP y cómo devolverá la plata (4 nov 2026)", url: U.abcAcosta },
   { label: "Última Hora — El BCP anuncia el pago del anticipo desde el jueves (4 nov 2026)", url: U.ultimahoraAnticipo },
@@ -60,7 +71,7 @@ const es: LocalizedArticle = {
   lead:
     "El Banco Central del Paraguay (BCP) inició la resolución de ueno bank, el quinto banco privado del país, porque su solvencia cayó por debajo de la mitad del mínimo legal. Te cuento qué se sabe hasta hoy, qué pasa con los depósitos y los créditos, y qué cambia (y qué no) para quien está por comprar un inmueble.",
   readingTime: "7 min de lectura",
-  updatedLabel: "Actualizado: 5 nov 2026",
+  updatedLabel: "Actualizado: 8 nov 2026",
   authorRole: "Asesora inmobiliaria en SkyOne",
   tocTitle: "En este artículo",
   sourcesTitle: "Fuentes",
@@ -79,7 +90,17 @@ const es: LocalizedArticle = {
     {
       type: "callout",
       title: "Situación en desarrollo",
-      text: "Datos actualizados al 5 de noviembre de 2026. Novedad: desde hoy el BCP empieza a pagar un anticipo de hasta Gs. 121.760.000 por ahorrista. Abajo te explico cómo cobrarlo.",
+      text: "Datos actualizados al 8 de noviembre de 2026. El BCP ya pagó el anticipo a casi 1,2 millones de cuentas y desde el lunes 9 sigue con quienes tienen deudas, varias cuentas o cuentas bloqueadas.",
+    },
+    { type: "h2", id: "novedades", text: "Novedades al 8 de noviembre" },
+    {
+      type: "ul",
+      items: [
+        `**Pagos:** el BCP ya acreditó el anticipo a unas **1.197.000 cuentas**, por **Gs. 996.000 millones** (unos USD 168 millones), en dos tandas. De 1.867.000 cuentas con saldo que califican, quedan unas 670.000 por pagar ([La Nación](${U.lnPagados})).`,
+        `**Desde el lunes 9 de noviembre:** se paga a quienes tienen **deudas con ueno** (préstamos, sobregiros y tarjetas vencidas se descuentan antes de acreditar), a quienes tienen **varias cuentas** que hay que unificar y a quienes quedaron afuera por **cuentas bloqueadas** u otras verificaciones, como tarde el martes ([La Nación](${U.lnLunes}), [La Nación](${U.lnPagados})).`,
+        `**Consultas sobre montos o pagos:** por correo a **pagosacreditadosfgd@bcp.gov.py**; los reclamos se atienden por orden de llegada ([La Nación](${U.lnLunes})).`,
+        `**Crisis política:** el 6 de noviembre el Senado destituyó al presidente Santiago Peña por mal desempeño de funciones y asumió Pedro Alliana. El 7, un juez ordenó la prisión preventiva de Peña ([ABC](${U.abcJuicio}), [ABC](${U.abcPreso})). Lo explico en detalle en [Juicio político a Santiago Peña: qué pasó y qué puede cambiar](${J}).`,
+      ],
     },
     { type: "h2", id: "como-cobrar", text: "Cómo cobrar el anticipo (desde el 5 de noviembre)" },
     {
@@ -114,8 +135,9 @@ const es: LocalizedArticle = {
       type: "table",
       head: ["Fecha", "Qué pasó"],
       rows: [
+        ["6–7 nov 2026", `El Senado destituye a Peña por mal desempeño de funciones (44 votos) y Pedro Alliana jura como presidente; Antonio Barrios es electo vicepresidente ([ABC](${U.abcJuicio})). La Fiscalía imputa a Peña y al expresidente del BCP Carlos Carvallo y pide su prisión preventiva; el 7, el juez Humberto Otazú la ordena para Peña. Miguel Vásquez, fundador de ueno, y cinco directivos son trasladados a un penal ([ABC](${U.abcPreso}), [Infobae](${U.infobaeCarvallo})).`],
         ["4–5 nov 2026", `Se promulga la Ley 7.755/26 de anticipos y el BCP anuncia el pago desde el 5 de noviembre. Pedro de Jesús Acosta asume como presidente interino del BCP ([ABC](${U.abcAcosta})). El juez de Garantías admite la imputación contra 27 personas; la audiencia de medidas cautelares de los ocho detenidos está fijada para el 5 de noviembre ([Diario HOY](${U.hoyPago})).`],
-        ["3–4 nov 2026", `La Fiscalía detiene a ocho directivos, entre ellos el CEO, en una causa iniciada por denuncia del BCP por presunta lesión de confianza y otros delitos. ([Infobae](${U.infobaeDetenidos})).`],
+        ["3–4 nov 2026", `La Fiscalía detiene a ocho directivos, entre ellos el CEO, en una causa iniciada por denuncia del BCP por presunta lesión de confianza y otros delitos ([Infobae](${U.infobaeDetenidos})).`],
         ["3 nov 2026", `El BCP anuncia la resolución, designa interventores y la entidad deja de operar. El presidente del BCP, Carlos Carvallo, renuncia a pedido del presidente Santiago Peña; asume de forma provisoria Liana Caballero ([Infobae/EFE](${U.infobaeRenuncia})).`],
         ["Octubre 2026", `Se filtra un informe interno de la Superintendencia de Bancos sobre presuntos excesos en préstamos a empresas del mismo grupo. El banco niega irregularidades y sus accionistas anuncian una capitalización de USD 100 millones ([Diario HOY](${U.hoy})).`],
         ["5 jun 2026", `El BCP empieza a analizar la entidad. Los créditos a empresas vinculadas fueron la primera alerta ([La Nación](${U.lanacion})).`],
@@ -127,7 +149,7 @@ const es: LocalizedArticle = {
     },
     {
       type: "p",
-      text: `El caso también abrió un debate político. Carvallo había dirigido antes la Financiera Ueno, y la prensa señaló en 2024 que Peña fue accionista de Ueno Holding; según ABC, vendió esas inversiones en abril de 2025. Peña negó cualquier conflicto de intereses, respaldó al BCP y calificó lo ocurrido como "un caso particular". Un grupo de senadores anunció que impulsará un juicio político contra Peña y el vicepresidente Pedro Alliana ([Infobae/EFE](${U.infobaePolitica})).`,
+      text: `El caso también abrió un debate político. Carvallo había dirigido antes la Financiera Ueno, y la prensa señaló en 2024 que Peña fue accionista de Ueno Holding; según ABC, vendió esas inversiones en abril de 2025. Peña negó cualquier conflicto de intereses, respaldó al BCP y calificó lo ocurrido como "un caso particular". El 5 de noviembre, Diputados aprobó por unanimidad acusar a Peña en juicio político y el 6 el Senado lo destituyó ([ABC](${U.abcJuicio})). Todos los detalles, en [este artículo](${J}).`,
     },
     { type: "h2", id: "depositos-y-creditos", text: "Qué pasa con los depósitos y los créditos" },
     {
@@ -191,7 +213,7 @@ const en: LocalizedArticle = {
   lead:
     "The Central Bank of Paraguay (BCP) started the resolution of ueno bank, the country's fifth-largest private bank, because its solvency fell below half the legal minimum. Here is what we know so far, what happens to deposits and loans, and what changes (and what does not) for anyone about to buy property.",
   readingTime: "7 min read",
-  updatedLabel: "Updated: Nov 5, 2026",
+  updatedLabel: "Updated: Nov 8, 2026",
   authorRole: "Real estate advisor at SkyOne",
   tocTitle: "In this article",
   sourcesTitle: "Sources",
@@ -210,7 +232,17 @@ const en: LocalizedArticle = {
     {
       type: "callout",
       title: "Developing story",
-      text: "Figures as of November 5, 2026. Update: starting today, the BCP begins paying an advance of up to PYG 121,760,000 per saver. See below for how to collect it.",
+      text: "Figures as of November 8, 2026. The BCP has already paid the advance to almost 1.2 million accounts and, from Monday the 9th, continues with savers who have debts, several accounts or blocked accounts.",
+    },
+    { type: "h2", id: "novedades", text: "Updates as of November 8" },
+    {
+      type: "ul",
+      items: [
+        `**Payments:** the BCP has credited the advance to about **1,197,000 accounts**, totaling **PYG 996 billion** (about USD 168 million), in two batches. Of the 1,867,000 eligible accounts with balances, about 670,000 are still pending ([La Nación](${U.lnPagados})).`,
+        `**From Monday, November 9:** payouts go to savers with **debts to ueno** (overdue loans, overdrafts and cards are deducted first), to those with **several accounts** that must be merged, and to those left out because of **blocked accounts** or other checks, by Tuesday at the latest ([La Nación](${U.lnLunes}), [La Nación](${U.lnPagados})).`,
+        `**Questions about amounts or payments:** email **pagosacreditadosfgd@bcp.gov.py**; claims are handled in order of arrival ([La Nación](${U.lnLunes})).`,
+        `**Political crisis:** on November 6 the Senate removed President Santiago Peña for poor performance of his duties and Pedro Alliana took office. On the 7th, a judge ordered Peña's pretrial detention ([ABC](${U.abcJuicio}), [ABC](${U.abcPreso})). Full details in [The impeachment of Santiago Peña: what happened and what may change](${J}).`,
+      ],
     },
     { type: "h2", id: "como-cobrar", text: "How to collect the advance (from November 5)" },
     {
@@ -245,8 +277,9 @@ const en: LocalizedArticle = {
       type: "table",
       head: ["Date", "What happened"],
       rows: [
+        ["Nov 6–7, 2026", `The Senate removes Peña for poor performance of his duties (44 votes) and Pedro Alliana is sworn in as president; Antonio Barrios is elected vice president ([ABC](${U.abcJuicio})). Prosecutors charge Peña and former BCP president Carlos Carvallo and request pretrial detention; on the 7th, Judge Humberto Otazú orders it for Peña. ueno founder Miguel Vásquez and five executives are moved to prison ([ABC](${U.abcPreso}), [Infobae](${U.infobaeCarvallo})).`],
         ["Nov 4–5, 2026", `Law 7.755/26 on advance payments is enacted and the BCP announces payouts from November 5. Pedro de Jesús Acosta becomes interim BCP president ([ABC](${U.abcAcosta})). A judge admits charges against 27 people; the hearing on precautionary measures for the eight detainees is set for November 5 ([Diario HOY](${U.hoyPago})).`],
-        ["Nov 3–4, 2026", `Prosecutors detain eight executives, including the CEO, in a case opened on a BCP complaint for alleged breach of trust and other offenses. ([Infobae](${U.infobaeDetenidos})).`],
+        ["Nov 3–4, 2026", `Prosecutors detain eight executives, including the CEO, in a case opened on a BCP complaint for alleged breach of trust and other offenses ([Infobae](${U.infobaeDetenidos})).`],
         ["Nov 3, 2026", `The BCP announces the resolution, appoints administrators and the bank stops operating. BCP president Carlos Carvallo resigns at the request of President Santiago Peña; Liana Caballero takes over provisionally ([Infobae/EFE](${U.infobaeRenuncia})).`],
         ["October 2026", `An internal Banking Superintendency report on alleged excess lending to companies in the same group is leaked. The bank denies wrongdoing and its shareholders announce a USD 100 million capital injection ([Diario HOY](${U.hoy})).`],
         ["Jun 5, 2026", `The BCP starts reviewing the bank. Loans to related companies were the first warning sign ([La Nación](${U.lanacion})).`],
@@ -258,7 +291,7 @@ const en: LocalizedArticle = {
     },
     {
       type: "p",
-      text: `The case has also sparked a political debate. Carvallo had previously run Financiera Ueno, and the press reported in 2024 that Peña had been a shareholder of Ueno Holding; according to ABC, he sold those holdings in April 2025. Peña denied any conflict of interest, backed the BCP and called it "a particular case". A group of senators announced they will push for impeachment proceedings against Peña and Vice President Pedro Alliana ([Infobae/EFE](${U.infobaePolitica})).`,
+      text: `The case has also sparked a political debate. Carvallo had previously run Financiera Ueno, and the press reported in 2024 that Peña had been a shareholder of Ueno Holding; according to ABC, he sold those holdings in April 2025. Peña denied any conflict of interest, backed the BCP and called it "a particular case". On November 5 the Chamber of Deputies unanimously voted to impeach Peña, and on the 6th the Senate removed him ([ABC](${U.abcJuicio})). Full details in [this article](${J}).`,
     },
     { type: "h2", id: "depositos-y-creditos", text: "What happens to deposits and loans" },
     {
@@ -322,7 +355,7 @@ const pt: LocalizedArticle = {
   lead:
     "O Banco Central do Paraguai (BCP) iniciou a resolução do ueno bank, o quinto maior banco privado do país, porque sua solvência caiu abaixo da metade do mínimo legal. Conto o que se sabe até hoje, o que acontece com depósitos e créditos e o que muda (e o que não muda) para quem vai comprar um imóvel.",
   readingTime: "7 min de leitura",
-  updatedLabel: "Atualizado: 5 nov 2026",
+  updatedLabel: "Atualizado: 8 nov 2026",
   authorRole: "Consultora imobiliária na SkyOne",
   tocTitle: "Neste artigo",
   sourcesTitle: "Fontes",
@@ -341,7 +374,17 @@ const pt: LocalizedArticle = {
     {
       type: "callout",
       title: "Situação em andamento",
-      text: "Dados atualizados em 5 de novembro de 2026. Novidade: a partir de hoje o BCP começa a pagar um adiantamento de até PYG 121.760.000 por poupador. Veja abaixo como receber.",
+      text: "Dados atualizados em 8 de novembro de 2026. O BCP já pagou o adiantamento a quase 1,2 milhão de contas e, a partir de segunda-feira, 9, continua com quem tem dívidas, várias contas ou contas bloqueadas.",
+    },
+    { type: "h2", id: "novedades", text: "Novidades em 8 de novembro" },
+    {
+      type: "ul",
+      items: [
+        `**Pagamentos:** o BCP já creditou o adiantamento a cerca de **1.197.000 contas**, somando **PYG 996 bilhões** (cerca de USD 168 milhões), em dois lotes. Das 1.867.000 contas com saldo que se qualificam, faltam cerca de 670.000 ([La Nación](${U.lnPagados})).`,
+        `**A partir de segunda-feira, 9 de novembro:** recebem os poupadores com **dívidas com o ueno** (empréstimos, cheque especial e cartões vencidos são descontados antes), os que têm **várias contas** a unificar e os que ficaram de fora por **contas bloqueadas** ou outras verificações, no mais tardar na terça-feira ([La Nación](${U.lnLunes}), [La Nación](${U.lnPagados})).`,
+        `**Dúvidas sobre valores ou pagamentos:** pelo e-mail **pagosacreditadosfgd@bcp.gov.py**; as reclamações são atendidas por ordem de chegada ([La Nación](${U.lnLunes})).`,
+        `**Crise política:** em 6 de novembro o Senado destituiu o presidente Santiago Peña por mau desempenho de funções e Pedro Alliana assumiu. No dia 7, um juiz ordenou a prisão preventiva de Peña ([ABC](${U.abcJuicio}), [ABC](${U.abcPreso})). Os detalhes estão em [Julgamento político de Santiago Peña: o que aconteceu e o que pode mudar](${J}).`,
+      ],
     },
     { type: "h2", id: "como-cobrar", text: "Como receber o adiantamento (a partir de 5 de novembro)" },
     {
@@ -376,8 +419,9 @@ const pt: LocalizedArticle = {
       type: "table",
       head: ["Data", "O que aconteceu"],
       rows: [
+        ["6–7 nov 2026", `O Senado destitui Peña por mau desempenho de funções (44 votos) e Pedro Alliana assume como presidente; Antonio Barrios é eleito vice-presidente ([ABC](${U.abcJuicio})). O Ministério Público imputa Peña e o ex-presidente do BCP Carlos Carvallo e pede sua prisão preventiva; no dia 7, o juiz Humberto Otazú a ordena para Peña. Miguel Vásquez, fundador do ueno, e cinco diretores são transferidos para um presídio ([ABC](${U.abcPreso}), [Infobae](${U.infobaeCarvallo})).`],
         ["4–5 nov 2026", `É promulgada a Lei 7.755/26 de adiantamentos e o BCP anuncia o pagamento a partir de 5 de novembro. Pedro de Jesús Acosta assume como presidente interino do BCP ([ABC](${U.abcAcosta})). O juiz de Garantias admite a imputação contra 27 pessoas; a audiência de medidas cautelares dos oito detidos está marcada para 5 de novembro ([Diario HOY](${U.hoyPago})).`],
-        ["3–4 nov 2026", `O Ministério Público detém oito diretores, entre eles o CEO, em um caso aberto por denúncia do BCP por suposta lesão de confiança e outros crimes. ([Infobae](${U.infobaeDetenidos})).`],
+        ["3–4 nov 2026", `O Ministério Público detém oito diretores, entre eles o CEO, em um caso aberto por denúncia do BCP por suposta lesão de confiança e outros crimes ([Infobae](${U.infobaeDetenidos})).`],
         ["3 nov 2026", `O BCP anuncia a resolução, nomeia interventores e o banco deixa de operar. O presidente do BCP, Carlos Carvallo, renuncia a pedido do presidente Santiago Peña; Liana Caballero assume provisoriamente ([Infobae/EFE](${U.infobaeRenuncia})).`],
         ["Outubro 2026", `Vaza um relatório interno da Superintendência de Bancos sobre supostos excessos em empréstimos a empresas do mesmo grupo. O banco nega irregularidades e seus acionistas anunciam uma capitalização de USD 100 milhões ([Diario HOY](${U.hoy})).`],
         ["5 jun 2026", `O BCP começa a analisar o banco. Os créditos a empresas vinculadas foram o primeiro alerta ([La Nación](${U.lanacion})).`],
@@ -389,7 +433,7 @@ const pt: LocalizedArticle = {
     },
     {
       type: "p",
-      text: `O caso também abriu um debate político. Carvallo havia dirigido antes a Financiera Ueno, e a imprensa apontou em 2024 que Peña foi acionista da Ueno Holding; segundo o ABC, ele vendeu essas participações em abril de 2025. Peña negou qualquer conflito de interesses, apoiou o BCP e chamou o ocorrido de "um caso particular". Um grupo de senadores anunciou que vai promover um julgamento político contra Peña e o vice-presidente Pedro Alliana ([Infobae/EFE](${U.infobaePolitica})).`,
+      text: `O caso também abriu um debate político. Carvallo havia dirigido antes a Financiera Ueno, e a imprensa apontou em 2024 que Peña foi acionista da Ueno Holding; segundo o ABC, ele vendeu essas participações em abril de 2025. Peña negou qualquer conflito de interesses, apoiou o BCP e chamou o ocorrido de "um caso particular". Em 5 de novembro, a Câmara dos Deputados aprovou por unanimidade a acusação de Peña em julgamento político e, no dia 6, o Senado o destituiu ([ABC](${U.abcJuicio})). Todos os detalhes [neste artigo](${J}).`,
     },
     { type: "h2", id: "depositos-y-creditos", text: "O que acontece com depósitos e créditos" },
     {
