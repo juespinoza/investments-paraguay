@@ -6,7 +6,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/admin/", "/virtual-office/", "/_next/"],
+        // /_next/ no se bloquea: ahí están el CSS, el JavaScript y las
+        // imágenes optimizadas que Google necesita para ver las páginas.
+        disallow: ["/api/", "/admin/", "/virtual-office/"],
       },
     ],
     sitemap: "https://www.investmentsparaguay.com/sitemap.xml",
