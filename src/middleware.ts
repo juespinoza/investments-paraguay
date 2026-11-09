@@ -26,6 +26,16 @@ const LEGACY_PUBLIC_PATHS = [
 // misma página en inglés para no perder los enlaces ni dar 404.
 const RETIRED_LOCALES: Record<string, SupportedLocale> = { de: "en" };
 
+// Propiedades que cambiaron de slug: la URL vieja sigue en Google y en
+// enlaces compartidos. Agregar acá cada cambio de slug.
+const RENAMED_PROPERTY_SLUGS: Record<string, string> = {
+  "campus-3": "campus-lofts-from-46500",
+};
+
+// URLs del sitio anterior (WordPress) que Google todavía rastrea: 410 le
+// indica que ya no existen y que las saque del índice.
+const LEGACY_WORDPRESS_PATHS = /^\/(?:feed|search|category|tag|author|wp-[a-z-]+|xmlrpc\.php)(?:\/|$)|\/feed\/?$/;
+
 // Orden de preferencia para rutas sin prefijo de idioma:
 // 1. Idioma elegido antes con el selector (cookie).
 // 2. Idioma del navegador (Accept-Language).
@@ -49,6 +59,23 @@ export default function middleware(request: NextRequest) {
 
   if (pathname.startsWith("/virtual-office")) {
     return NextResponse.next();
+  }
+
+  if (LEGACY_WORDPRESS_PATHS.test(pathname)) {
+    return new NextResponse("Gone", { status: 410 });
+  }
+
+  const renamed = pathname.match(
+    /^(?:\/(es|en|pt|de))?\/bienes-raices\/propiedades\/([^/]+)\/?$/,
+  );
+  const newSlug = renamed ? RENAMED_PROPERTY_SLUGS[renamed[2]] : undefined;
+  if (renamed && newSlug) {
+    // Sin prefijo → español; un idioma retirado → su reemplazo.
+    const prefix = renamed[1];
+    const locale = !prefix ? "es" : (RETIRED_LOCALES[prefix] ?? prefix);
+    const nextUrl = request.nextUrl.clone();
+    nextUrl.pathname = `/${locale}/bienes-raices/propiedades/${newSlug}`;
+    return NextResponse.redirect(nextUrl, 308);
   }
 
   const firstSegment = pathname.split("/")[1] ?? "";
