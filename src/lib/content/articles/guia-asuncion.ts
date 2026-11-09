@@ -421,6 +421,17 @@ const pt: LocalizedArticle = {
 
 export const asuncionGuideArticle: ArticleDefinition = {
   slug: SLUG,
+  cover: {
+    src: "/blog/guia-asuncion-hero.webp",
+    og: "/blog/guia-asuncion-og.jpg",
+    width: 1672,
+    height: 941,
+    alt: {
+      es: "Libro \"Asunción Investment Guide\" junto a un pasaporte, una llave y la maqueta de un edificio de departamentos",
+      en: "\"Asunción Investment Guide\" book next to a passport, a key and a scale model of an apartment building",
+      pt: "Livro \"Asunción Investment Guide\" ao lado de um passaporte, uma chave e a maquete de um prédio de apartamentos",
+    },
+  },
   published: PUBLISHED,
   updated: UPDATED,
   category: "guides",
