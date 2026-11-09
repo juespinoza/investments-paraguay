@@ -23,11 +23,14 @@ const homeSeoByLocale: Record<
   { title: string; description: string; keywords: string[] }
 > = {
   en: {
-    title:
-      "Invest in Real Estate and Business in Paraguay | Investments Paraguay",
+    // Alineado con las búsquedas que ya traen impresiones en Search Console:
+    // "invest paraguay", "invest in paraguay", "paraguay real estate".
+    title: "Invest in Paraguay Real Estate | Investments Paraguay",
     description:
-      "Discover profitable real estate investments, business opportunities and strategic advisory services for local and foreign investors in Paraguay.",
+      "Real estate investment in Asunción and Paraguay: apartments with prices, rents and estimated yields, and advice for local and foreign investors.",
     keywords: [
+      "invest in Paraguay",
+      "Asunción real estate investment",
       "investments Paraguay",
       "real estate investment Paraguay",
       "foreign investors Paraguay",
@@ -36,10 +39,9 @@ const homeSeoByLocale: Record<
     ],
   },
   es: {
-    title:
-      "Inversiones inmobiliarias y negocios en Paraguay | Investments Paraguay",
+    title: "Inversión inmobiliaria en Paraguay | Investments Paraguay",
     description:
-      "Descubra oportunidades inmobiliarias rentables, negocios y asesoría estratégica para inversores locales y extranjeros en Paraguay.",
+      "Departamentos para invertir en Asunción y Paraguay con precios, alquileres y rentabilidad estimada, y asesoría para inversores locales y extranjeros.",
     keywords: [
       "inversiones paraguay",
       "inversion inmobiliaria paraguay",
@@ -49,10 +51,9 @@ const homeSeoByLocale: Record<
     ],
   },
   pt: {
-    title:
-      "Investimentos imobiliários e negócios no Paraguai | Investments Paraguay",
+    title: "Investimento imobiliário no Paraguai | Investments Paraguay",
     description:
-      "Descubra oportunidades imobiliárias rentáveis, negócios e assessoria estratégica para investidores locais e estrangeiros no Paraguai.",
+      "Apartamentos para investir em Assunção e no Paraguai com preços, aluguéis e rentabilidade estimada, e assessoria para investidores locais e estrangeiros.",
     keywords: [
       "investimentos paraguai",
       "imoveis paraguai",
