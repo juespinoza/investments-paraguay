@@ -21,6 +21,11 @@ const LEGACY_PUBLIC_PATHS = [
   /^\/invertir-en(?:\/.*)?$/,
 ] as const;
 
+// Idiomas que existieron y se retiraron (el alemán, en agosto de 2026).
+// Google todavía tiene esas URLs: se redirigen de forma permanente a la
+// misma página en inglés para no perder los enlaces ni dar 404.
+const RETIRED_LOCALES: Record<string, SupportedLocale> = { de: "en" };
+
 // Orden de preferencia para rutas sin prefijo de idioma:
 // 1. Idioma elegido antes con el selector (cookie).
 // 2. Idioma del navegador (Accept-Language).
@@ -44,6 +49,14 @@ export default function middleware(request: NextRequest) {
 
   if (pathname.startsWith("/virtual-office")) {
     return NextResponse.next();
+  }
+
+  const firstSegment = pathname.split("/")[1] ?? "";
+  const replacement = RETIRED_LOCALES[firstSegment];
+  if (replacement) {
+    const nextUrl = request.nextUrl.clone();
+    nextUrl.pathname = `/${replacement}${pathname.slice(firstSegment.length + 1)}`;
+    return NextResponse.redirect(nextUrl, 308);
   }
 
   if (!hasLocalePrefix(pathname)) {
