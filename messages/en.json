@@ -197,7 +197,7 @@
       "viewProperty": "View property",
       "viewPropertyAria": "View property {title}",
       "priceOnRequest": "Price on request",
-      "roi": "Est. gross ROI ~{value}% per year",
+      "roi": "Est. net yield ~{value}% per year",
       "coverAlt": "{title}, cover photo",
       "photoAlt": "{title}, photo {index} of {total}"
     },
@@ -218,7 +218,7 @@
       "metaFallbackDescription": "Explore real estate opportunities in Paraguay with professional advisory.",
       "metaLocation": "{title} in {location}.",
       "metaPrice": "Price: {price}.",
-      "metaRoi": "Estimated gross ROI ~{roi}% per year.",
+      "metaRoi": "Estimated net yield ~{roi}% per year.",
       "keywordSale": "property for sale paraguay",
       "keywordInvestment": "real estate investment paraguay",
       "garages": "Parking",

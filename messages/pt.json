@@ -196,7 +196,7 @@
       "viewProperty": "Ver imóvel",
       "viewPropertyAria": "Ver imóvel {title}",
       "priceOnRequest": "Preço sob consulta",
-      "roi": "ROI bruto est. ~{value}% ao ano",
+      "roi": "Rend. líquido est. ~{value}% ao ano",
       "coverAlt": "{title}, foto de capa",
       "photoAlt": "{title}, foto {index} de {total}"
     },
@@ -217,7 +217,7 @@
       "metaFallbackDescription": "Explore oportunidades imobiliárias no Paraguai com assessoria profissional.",
       "metaLocation": "{title} em {location}.",
       "metaPrice": "Preço: {price}.",
-      "metaRoi": "ROI bruto estimado ~{roi}% ao ano.",
+      "metaRoi": "Rendimento líquido estimado ~{roi}% ao ano.",
       "keywordSale": "imóvel à venda paraguai",
       "keywordInvestment": "investimento imobiliário paraguai",
       "garages": "Vagas",
