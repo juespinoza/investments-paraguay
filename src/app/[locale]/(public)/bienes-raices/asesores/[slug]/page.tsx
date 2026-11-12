@@ -15,6 +15,12 @@ import { resolveLocale } from "@/lib/content/public-pages";
 
 export const revalidate = 300;
 
+// Sin rutas en el build: cada página se genera en la primera visita y queda
+// en la caché de Vercel hasta que vence el revalidate o se invalida.
+export function generateStaticParams() {
+  return [];
+}
+
 type PageProps = { params: Promise<{ locale: string; slug: string }> };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

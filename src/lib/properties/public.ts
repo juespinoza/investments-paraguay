@@ -3,6 +3,7 @@ import { resolveImageSource } from "@/lib/image-source";
 
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { formatPropertyTitle, positiveOrNull } from "@/lib/properties/text";
 import type {
   PublicPropertyDetail,
   PublicPropertyListItem,
@@ -94,7 +95,7 @@ async function queryPublicProperties(): Promise<PublicPropertyListItem[]> {
     const price = toNumber(p.price);
     return {
       slug: p.slug,
-      title: p.title,
+      title: formatPropertyTitle(p.title),
       subtitle: p.description,
       coverImageUrl: p.coverImageUrl ? resolveImageSource(p.coverImageUrl) : null,
       price,
@@ -115,8 +116,8 @@ async function queryPublicProperties(): Promise<PublicPropertyListItem[]> {
       updatedAt: p.updatedAt.toISOString(),
       isFeatured: p.isFeatured,
       featuredOrder: p.featuredOrder,
-      roiAnnualPct: toNumber(p.roiAnnualPct),
-      appreciationAnnualPct: toNumber(p.appreciationAnnualPct),
+      roiAnnualPct: positiveOrNull(toNumber(p.roiAnnualPct)),
+      appreciationAnnualPct: positiveOrNull(toNumber(p.appreciationAnnualPct)),
       advisor: p.advisor
         ? { slug: p.advisor.slug, fullName: p.advisor.fullName }
         : null,
@@ -164,7 +165,7 @@ async function queryPublicProperty(
 
   return {
     slug: property.slug,
-    title: property.title,
+    title: formatPropertyTitle(property.title),
     subtitle: property.description,
     description: property.description,
     coverImageUrl: property.coverImageUrl ? resolveImageSource(property.coverImageUrl) : null,
@@ -189,8 +190,8 @@ async function queryPublicProperty(
     locationUrl: property.locationUrl,
     latitude: toNumber(property.latitude),
     longitude: toNumber(property.longitude),
-    roiAnnualPct: toNumber(property.roiAnnualPct),
-    appreciationAnnualPct: toNumber(property.appreciationAnnualPct),
+    roiAnnualPct: positiveOrNull(toNumber(property.roiAnnualPct)),
+    appreciationAnnualPct: positiveOrNull(toNumber(property.appreciationAnnualPct)),
     advisor: property.advisor
       ? {
           slug: property.advisor.slug,

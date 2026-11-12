@@ -43,6 +43,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export const revalidate = 300;
 
+// Sin rutas en el build: cada página se genera en la primera visita y queda
+// en la caché de Vercel hasta que vence el revalidate o se invalida.
+export function generateStaticParams() {
+  return [];
+}
+
 export default async function AgencyLandingPage({ params }: PageProps) {
   const { locale, slug } = await params;
   const resolvedLocale = resolveLocale(locale);
