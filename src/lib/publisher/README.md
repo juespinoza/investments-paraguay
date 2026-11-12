@@ -41,6 +41,9 @@ Base: `https://www.investmentsparaguay.com/api/integrations/publisher`
 | `PUT` | `/properties/{source}/{externalId}` | Crea la propiedad (201) o la actualiza (200). |
 | `GET` | `/properties/{source}/{externalId}` | Devuelve el estado actual de la propiedad. |
 | `DELETE` | `/properties/{source}/{externalId}` | La retira del sitio (`RETIRADA`, baja lógica). Un `PUT` posterior la restaura. |
+| `GET` / `PUT` | `/properties/{source}/{externalId}/strategy` | Lee o guarda la estrategia de inversión (ver abajo). |
+| `GET` / `PUT` | `/strategies/{slug}` | Lo mismo por slug, para propiedades cargadas a mano en la oficina virtual. |
+| `POST` | `/translations?limit=8` | Traduce a EN y PT las propiedades publicadas que lo necesiten, hasta `limit` por llamada. Repetir hasta que `translated` sea 0. |
 
 - `source`: el sistema de origen, en minúsculas, por ejemplo `skyone` (2 a 40 caracteres `a-z`, `0-9`, `-`).
 - `externalId`: el id de la propiedad en ese sistema (1 a 100 caracteres `A-Z`, `a-z`, `0-9`, `.`, `_`, `-`).
@@ -58,8 +61,14 @@ Base: `https://www.investmentsparaguay.com/api/integrations/publisher`
 | `neighborhood`, `address` | string \| null | |
 | `locationUrl` | URL \| null | Link de Google Maps. |
 | `latitude`, `longitude` | number \| null | |
-| `areaM2` | number \| null | |
-| `roiAnnualPct`, `appreciationAnnualPct` | number 0–100 \| null | Si no los enviás, se mantiene lo que cargues en la oficina virtual. |
+| `areaM2` | number \| null | Superficie general. Se usa si no hay `builtM2` ni `landM2`. |
+| `builtM2`, `landM2` | number \| null | v2. Construcción y terreno. El precio por m² usa terreno en lotes y chacras, y construcción en el resto. |
+| `frontM`, `depthM` | number \| null | v2. Frente y fondo en metros. |
+| `bedrooms`, `bathrooms`, `parking` | entero \| null | v2. Se muestran en la ficha. |
+| `amenities` | string[] (máx. 80) | v2. Comodidades tal como vienen del portal. |
+| `sourceUrl` | URL \| null | v2. Ficha en el portal de origen. No se publica. |
+| `agentName`, `office` | string \| null | v2. Asesor y oficina del portal de origen. No se publican. |
+| `roiAnnualPct`, `appreciationAnnualPct` | number 0–100 \| null | Obsoletos: el sitio ya no los muestra. El ROI público sale de la estrategia. |
 | `hasPropertyDocuments` | boolean | |
 | `images` | URL[] (máx. 30) | La primera es la portada. Enviar `[]` borra las fotos. Omitir el campo las mantiene. |
 | `categories` | `("CONOCER"\|"VIVIR"\|"INVERTIR")[]` | |
@@ -67,6 +76,35 @@ Base: `https://www.investmentsparaguay.com/api/integrations/publisher`
 | `status` | `RESERVADA` \| `VENDIDA` \| `ALQUILADA` \| `RETIRADA` | Solo en actualizaciones. Al crear se ignora. |
 
 Campos no listados se rechazan con 422, para detectar a tiempo un error de mapeo en el publicador.
+
+Cada alta o edición dispara, después de responder, la traducción automática del título, la descripción y los textos de la estrategia a inglés y portugués (requiere `ANTHROPIC_API_KEY`). Si el texto en español no cambió, no se vuelve a traducir. La respuesta incluye `strategyStatus` y `translatedLocales`.
+
+## Estrategia de inversión
+
+Toda propiedad nueva nace con la estrategia en `PENDING`: la ficha muestra "Estrategia en preparación", sin cifras de rentabilidad, y un formulario para que el interesado pida el análisis. Con `status: "READY"` la ficha muestra el análisis completo y el ROI pasa a verse en el listado.
+
+Cuerpo del `PUT .../strategy` (todos opcionales; omitido = no se toca, `null` = se borra; montos en la moneda de la propiedad):
+
+| Campo | Tipo | Notas |
+| --- | --- | --- |
+| `status` | `PENDING` \| `READY` | `READY` exige `summary`, `rentStrategy` y, salvo reventa, `rentKind` y `monthlyRent`. Si falta algo responde 422 con `details.missing`. |
+| `summary` | string ≤ 600 | Tesis de inversión en una o dos frases. |
+| `rentStrategy` | `LONG_TERM` \| `SHORT_TERM` \| `COMMERCIAL` \| `RESALE` | |
+| `rentKind` | `ACTUAL` \| `ESTIMATED` | Renta activa (contrato vigente) o estimada. |
+| `monthlyRent` | number | |
+| `occupancyPct` | 0–100 | Sin dato se toma 100 %. Para temporario, la ocupación esperada. |
+| `managementFeePct` | 0–100 | Sobre la renta cobrada. |
+| `monthlyExpenses` | number | Gastos mensuales a cargo del dueño. |
+| `annualTaxes` | number | |
+| `acquisitionCostsPct` | 0–100 | Escribanía, impuestos y comisión, sobre el precio. |
+| `appreciationPct` | 0–100 | Plusvalía anual esperada. |
+| `zonePricePerM2` | number | Promedio de la zona, para comparar. |
+| `zonePriceSource` | string ≤ 300 | De dónde sale ese promedio. |
+| `comparables` | `{ title, price, areaM2?, url? }[]` (máx. 12) | |
+| `businessOptions` | `{ title, description }[]` (máx. 8) | Negocios posibles con la propiedad. |
+| `zoneSummary`, `risks`, `methodology` | string ≤ 3000 | Admiten `**negrita**` y párrafos. |
+
+La ficha calcula: rendimiento bruto = renta × 12 × ocupación ÷ precio; neto = (renta cobrada − administración − gastos − impuestos) ÷ (precio + costos de compra); recupero = inversión total ÷ ingreso neto anual. El cálculo está en `src/lib/properties/investment.ts`.
 
 ## Respuesta
 

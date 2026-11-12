@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
+import { translatePropertyInBackground } from "@/lib/properties/translate";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth/session";
 import { revalidatePublicProperties } from "@/lib/cache/revalidate";
@@ -145,6 +146,7 @@ export async function PATCH(req: Request, { params }: Params) {
     });
 
     revalidatePublicProperties();
+    after(() => translatePropertyInBackground(id));
     return NextResponse.json({ ok: true });
   } catch (e: unknown) {
     if (

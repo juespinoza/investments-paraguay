@@ -239,6 +239,18 @@ model Property {
   // Origen externo (API del publicador): sistema de origen + id en ese sistema.
   externalSource        String?
   externalId            String?
+  // Datos del publicador (v2). Las superficies separadas permiten calcular
+  // el precio por m² correcto según el tipo (terreno vs. construcción).
+  builtM2               Decimal?                         @db.Decimal(10, 2)
+  landM2                Decimal?                         @db.Decimal(12, 2)
+  frontM                Decimal?                         @db.Decimal(8, 2)
+  depthM                Decimal?                         @db.Decimal(8, 2)
+  amenities             String[]                         @default([])
+  sourceUrl             String?
+  sourceAgentName       String?
+  sourceOffice          String?
+  strategy              PropertyStrategy?
+  translations          PropertyTranslation[]
 
   @@unique([externalSource, externalId])
   @@index([city])
@@ -504,4 +516,84 @@ model AdvisorSocialLink {
   landing   LandingAdvisor @relation(fields: [landingId], references: [id], onDelete: Cascade)
 
   @@index([landingId])
+}
+
+// Estrategia de inversión de una propiedad. Mientras está en PENDING la ficha
+// muestra "estrategia en preparación" y ninguna cifra de rentabilidad.
+enum StrategyStatus {
+  PENDING
+  READY
+}
+
+// Renta activa (contrato vigente) o estimada (alquiler de mercado).
+enum RentKind {
+  ACTUAL
+  ESTIMATED
+}
+
+enum RentStrategy {
+  LONG_TERM
+  SHORT_TERM
+  COMMERCIAL
+  RESALE
+}
+
+model PropertyStrategy {
+  id                  String          @id @default(cuid())
+  propertyId          String          @unique
+  property            Property        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  status              StrategyStatus  @default(PENDING)
+  // Tesis de inversión en una o dos frases.
+  summary             String?
+  rentStrategy        RentStrategy?
+  rentKind            RentKind?
+  // Montos en la moneda de la propiedad.
+  monthlyRent         Decimal?        @db.Decimal(14, 2)
+  occupancyPct        Decimal?        @db.Decimal(5, 2)
+  managementFeePct    Decimal?        @db.Decimal(5, 2)
+  monthlyExpenses     Decimal?        @db.Decimal(14, 2)
+  annualTaxes         Decimal?        @db.Decimal(14, 2)
+  acquisitionCostsPct Decimal?        @db.Decimal(5, 2)
+  appreciationPct     Decimal?        @db.Decimal(5, 2)
+  zonePricePerM2      Decimal?        @db.Decimal(14, 2)
+  zonePriceSource     String?
+  // [{ title, price, areaM2, url? }]
+  comparables         Json?
+  // [{ title, description }]
+  businessOptions     Json?
+  zoneSummary         String?
+  risks               String?
+  methodology         String?
+  readyAt             DateTime?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+enum TranslationStatus {
+  AUTO
+  REVIEWED
+}
+
+// Traducción automática (o revisada) del contenido de una propiedad.
+// sourceHash identifica el texto en español traducido: si cambia, se vuelve
+// a traducir; si la traducción fue revisada a mano, no se pisa.
+model PropertyTranslation {
+  id              String            @id @default(cuid())
+  propertyId      String
+  property        Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  locale          String
+  title           String
+  description     String?
+  summary         String?
+  zoneSummary     String?
+  risks           String?
+  methodology     String?
+  businessOptions Json?
+  status          TranslationStatus @default(AUTO)
+  sourceHash      String
+  model           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@unique([propertyId, locale])
 }

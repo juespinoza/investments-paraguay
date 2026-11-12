@@ -17,7 +17,7 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:generate": "prisma generate",
     "db:validate": "prisma validate",
-    "test:qa": "node --test tests/**/*.test.mjs",
+    "test:qa": "node --experimental-strip-types --no-warnings --test tests/**/*.test.mjs",
     "test:integration": "node --env-file=.env scripts/virtual-office-smoke.mjs",
     "test:e2e": "node --env-file=.env ./node_modules/@playwright/test/cli.js test",
     "bootstrap:admin": "node --env-file=.env scripts/bootstrap-admin.cjs",
@@ -30,6 +30,7 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
     "@hookform/resolvers": "^5.2.2",
     "@neondatabase/serverless": "^1.0.2",
     "@prisma/adapter-neon": "^7.2.0",

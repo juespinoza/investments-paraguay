@@ -39,6 +39,9 @@ type SeoInput = {
   // Contenido escrito en un solo idioma (artículos del blog): la URL
   // canónica apunta a ese idioma y no se declaran traducciones inexistentes.
   contentLocale?: AppLocale;
+  // Contenido traducido solo a algunos idiomas (fichas de propiedades): los
+  // hreflang se limitan a esos idiomas.
+  availableLocales?: readonly AppLocale[];
 };
 
 function normalizeUrl(pathname = "") {
@@ -52,9 +55,12 @@ function withLocalePrefix(locale: AppLocale, pathname: string) {
   return `/${locale}${path}`;
 }
 
-function buildLanguageAlternates(pathname: string) {
+function buildLanguageAlternates(
+  pathname: string,
+  locales: readonly AppLocale[] = SEO_LOCALES,
+) {
   const languages = Object.fromEntries(
-    SEO_LOCALES.map((locale) => [
+    locales.map((locale) => [
       locale,
       normalizeUrl(withLocalePrefix(locale, pathname)),
     ]),
@@ -96,6 +102,7 @@ export function buildMetadata({
   noIndex = false,
   keywords = [],
   contentLocale,
+  availableLocales,
 }: SeoInput): Metadata {
   const localizedPath = withLocalePrefix(contentLocale ?? locale, pathname);
   const metaDescription = truncateDescription(description);
@@ -111,7 +118,7 @@ export function buildMetadata({
       ? { canonical: url }
       : {
           canonical: url,
-          languages: buildLanguageAlternates(pathname),
+          languages: buildLanguageAlternates(pathname, availableLocales),
         },
     robots: noIndex
       ? {
