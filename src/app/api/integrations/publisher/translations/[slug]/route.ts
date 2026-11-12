@@ -33,7 +33,7 @@ async function findProperty(params: Params["params"]) {
 }
 
 export async function GET(req: Request, { params }: Params) {
-  const denied = authorize(req);
+  const denied = authorize(req, "content");
   if (denied) return denied;
   const property = await findProperty(params);
   if (!property) return errorResponse(404, "not_found", "No existe una propiedad con ese slug.");
@@ -55,7 +55,7 @@ export async function GET(req: Request, { params }: Params) {
 }
 
 export async function PUT(req: Request, { params }: Params) {
-  const denied = authorize(req);
+  const denied = authorize(req, "content");
   if (denied) return denied;
   const property = await findProperty(params);
   if (!property) return errorResponse(404, "not_found", "No existe una propiedad con ese slug.");

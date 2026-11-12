@@ -23,7 +23,7 @@ async function resolveProperty(params: Params["params"]) {
 }
 
 export async function GET(req: Request, { params }: Params) {
-  const denied = authorize(req);
+  const denied = authorize(req, "content");
   if (denied) return denied;
   const target = await resolveProperty(params);
   if (target.error) return target.error;
@@ -31,7 +31,7 @@ export async function GET(req: Request, { params }: Params) {
 }
 
 export async function PUT(req: Request, { params }: Params) {
-  const denied = authorize(req);
+  const denied = authorize(req, "content");
   if (denied) return denied;
   const target = await resolveProperty(params);
   if (target.error) return target.error;

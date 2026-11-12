@@ -20,7 +20,7 @@ export const maxDuration = 300;
 // cuya traducción quedó vieja porque cambió el texto en español.
 // No necesita ANTHROPIC_API_KEY.
 export async function GET(req: Request) {
-  const denied = authorize(req);
+  const denied = authorize(req, "content");
   if (denied) return denied;
 
   const properties = await prisma.property.findMany({
@@ -52,7 +52,7 @@ export async function GET(req: Request) {
 
 // Traducción automática con Claude (requiere ANTHROPIC_API_KEY con saldo).
 export async function POST(req: Request) {
-  const denied = authorize(req);
+  const denied = authorize(req, "content");
   if (denied) return denied;
 
   const url = new URL(req.url);

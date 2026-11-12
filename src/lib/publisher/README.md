@@ -19,6 +19,7 @@ Permite que el publicador (`publishing_machine`) cree y actualice propiedades en
 | `NEXT_PUBLIC_CLOUDINARY_PUBLISHER_CLOUD_NAME` | Sí, para fotos | La misma cuenta del publicador, para mostrar en el navegador las primeras importaciones guardadas como `publisher/skyone/…`. |
 | `CLOUDINARY_API_KEY` | Sí, para fotos | Credencial de la Upload API **de esa misma cuenta** (Cloudinary → Settings → API Keys). |
 | `CLOUDINARY_API_SECRET` | Sí, para fotos | Secreto de esa credencial. Nunca en el navegador ni en el repo. |
+| `CONTENT_API_KEY` | No | Clave aparte, **solo** para estrategias y traducciones (no puede crear, editar ni retirar propiedades). Para quien prepara contenido; revocarla no afecta al publicador. Generala con `openssl rand -hex 32`. |
 | `PUBLISHER_DEFAULT_ADVISOR_SLUG` | No | Asesor asignado por defecto a las propiedades nuevas, por ejemplo `julia-espinoza`. |
 
 `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` sigue siendo la cuenta histórica del sitio. Con ella se muestran las fotos viejas guardadas como public_id, así que **no hay que cambiarla**. El publicador no la usa para subir.
