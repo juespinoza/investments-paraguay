@@ -117,11 +117,12 @@ function strategyRecord(row: StrategyRow) {
   };
 }
 
-// Un ROI solo se publica cuando la estrategia está lista: es el rendimiento
-// bruto calculado con la renta de la estrategia, no un número suelto.
+// Un ROI solo se publica cuando la estrategia está lista. Es el rendimiento
+// NETO de la estrategia: el bruto infla mucho los alquileres temporarios
+// (administración, servicios y ocupación quedan afuera).
 function publicRoi(strategy: PublicStrategy | null) {
   return strategy?.status === "READY"
-    ? positiveOrNull(strategy.metrics.grossYieldPct)
+    ? positiveOrNull(strategy.metrics.netYieldPct)
     : null;
 }
 
