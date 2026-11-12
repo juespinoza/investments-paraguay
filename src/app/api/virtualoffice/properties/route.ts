@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
+import { translatePropertyInBackground } from "@/lib/properties/translate";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth/session";
 import { revalidatePublicProperties } from "@/lib/cache/revalidate";
@@ -119,9 +120,13 @@ export async function POST(req: Request) {
         await assignCategoriesInTransaction(tx, property.id, data.categories);
       }
 
+      // Toda propiedad nueva entra con la estrategia "en preparación".
+      await tx.propertyStrategy.create({ data: { propertyId: property.id } });
+
       return property;
     });
     revalidatePublicProperties();
+    after(() => translatePropertyInBackground(created.id));
 
     return NextResponse.json({ id: created.id }, { status: 201 });
   } catch (e: unknown) {

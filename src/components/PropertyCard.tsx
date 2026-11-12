@@ -53,6 +53,7 @@ export function PropertyCard({
   const tStatus = useTranslations("site.status");
   const locale = useLocale();
   const numberFormat = formatLocale(locale);
+  const title = property.titleTranslations?.[locale] ?? property.title;
   const price = formatPropertyPrice(
     property.price ?? property.priceUsd,
     property.currency,
@@ -77,11 +78,11 @@ export function PropertyCard({
       <Link
         href={href}
         className="relative block aspect-4/3 overflow-hidden rounded-t-sm bg-(--stone)"
-        aria-label={t("viewPropertyAria", { title: property.title })}
+        aria-label={t("viewPropertyAria", { title })}
       >
         <PropertyCardImage
           src={imageUrl}
-          alt={t("coverAlt", { title: property.title })}
+          alt={t("coverAlt", { title })}
           priority={priority}
         />
         <span className="absolute left-4 top-4 rounded-xs bg-[rgba(10,10,10,0.72)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.06em] text-white backdrop-blur-sm">
@@ -117,7 +118,7 @@ export function PropertyCard({
           )}
         >
           <Link href={href} className="transition-colors hover:text-(--gold)">
-            {property.title}
+            {title}
           </Link>
         </h3>
 

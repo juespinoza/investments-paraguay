@@ -1,6 +1,8 @@
 import "server-only";
 
+import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { translatePropertyInBackground } from "@/lib/properties/translate";
 import { Prisma } from "@/generated/prisma";
 import { revalidatePublicProperties } from "@/lib/cache/revalidate";
 import { assignCategoriesInTransaction } from "@/lib/virtualoffice/properties";
@@ -33,6 +35,8 @@ const propertySelect = {
   gallery: true,
   updatedAt: true,
   deletedAt: true,
+  strategy: { select: { status: true } },
+  translations: { select: { locale: true } },
 } as const;
 
 type StoredProperty = Prisma.PropertyGetPayload<{ select: typeof propertySelect }>;
@@ -47,6 +51,8 @@ export function describeProperty(property: StoredProperty) {
     status: property.status,
     deleted: Boolean(property.deletedAt),
     imageCount: property.gallery.length,
+    strategyStatus: property.strategy?.status ?? "PENDING",
+    translatedLocales: property.translations.map((item) => item.locale),
     // Los borradores no se ven en el sitio: url sirve una vez publicada.
     url: `${SITE_URL}/es/bienes-raices/propiedades/${property.slug}`,
     reviewUrl: `${SITE_URL}/virtual-office/propiedades/${property.id}/edit`,
@@ -127,6 +133,12 @@ function dataFields(input: PublisherPropertyInput) {
     "roiAnnualPct",
     "appreciationAnnualPct",
     "hasPropertyDocuments",
+    "builtM2",
+    "landM2",
+    "frontM",
+    "depthM",
+    "amenities",
+    "sourceUrl",
   ] as const;
 
   for (const key of keys) {
@@ -135,7 +147,19 @@ function dataFields(input: PublisherPropertyInput) {
     }
   }
 
+  if (input.agentName !== undefined) fields.sourceAgentName = input.agentName;
+  if (input.office !== undefined) fields.sourceOffice = input.office;
+
   return fields;
+}
+
+// Dormitorios, baños y cocheras viven en los detalles residenciales.
+function residentialFields(input: PublisherPropertyInput) {
+  const fields: { bedrooms?: number | null; bathrooms?: number | null; garages?: number | null } = {};
+  if (input.bedrooms !== undefined) fields.bedrooms = input.bedrooms;
+  if (input.bathrooms !== undefined) fields.bathrooms = input.bathrooms;
+  if (input.parking !== undefined) fields.garages = input.parking;
+  return Object.keys(fields).length ? fields : null;
 }
 
 export type UpsertResult = {
@@ -221,10 +245,29 @@ export async function upsertPublisherProperty(
       await assignCategoriesInTransaction(tx, property.id, input.categories);
     }
 
-    return property;
+    const residential = residentialFields(input);
+    if (residential) {
+      await tx.propertyResidentialDetails.upsert({
+        where: { propertyId: property.id },
+        create: { propertyId: property.id, ...residential },
+        update: residential,
+      });
+    }
+
+    // Toda propiedad nueva entra con la estrategia "en preparación".
+    if (isCreate) {
+      await tx.propertyStrategy.create({ data: { propertyId: property.id } });
+    }
+
+    return tx.property.findUniqueOrThrow({
+      where: { id: property.id },
+      select: propertySelect,
+    });
   });
 
   revalidatePublicProperties();
+  // La traducción corre después de responder: el publicador no espera.
+  after(() => translatePropertyInBackground(saved.id));
 
   return { created: isCreate, property: describeProperty(saved), warnings };
 }
