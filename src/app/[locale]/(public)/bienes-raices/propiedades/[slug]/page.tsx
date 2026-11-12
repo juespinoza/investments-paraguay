@@ -27,6 +27,12 @@ import {
 
 export const revalidate = 120;
 
+// Sin rutas en el build: cada página se genera en la primera visita y queda
+// en la caché de Vercel hasta que vence el revalidate o se invalida.
+export function generateStaticParams() {
+  return [];
+}
+
 type PageProps = { params: Promise<{ locale: string; slug: string }> };
 
 function textValue(value: string | null | undefined) {
@@ -94,6 +100,11 @@ export async function generateMetadata({
     description: summary,
     pathname: `/bienes-raices/propiedades/${slug}`,
     locale: resolvedLocale,
+    // La descripción de la propiedad todavía existe solo en español: las
+    // versiones EN y PT apuntan su canonical a la española y no declaran
+    // hreflang, para que Google no las marque como duplicadas. Cuando lleguen
+    // las traducciones automáticas, cada idioma tendrá su propia URL canónica.
+    contentLocale: DEFAULT_LOCALE,
     image: ogImageUrl,
     keywords: [
       property.title,

@@ -1,4 +1,5 @@
 import "@/app/globals.css";
+import { cormorantGaramond, dmSans } from "@/app/fonts";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 
@@ -14,5 +15,11 @@ export default async function VirtualOfficeLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <html lang="es">
+      <body className={`${dmSans.variable} ${cormorantGaramond.variable}`}>
+        {children}
+      </body>
+    </html>
+  );
 }

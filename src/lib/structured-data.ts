@@ -1,6 +1,7 @@
 import { resolveImageSource } from "@/lib/image-source";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
 import type { AppLocale } from "@/lib/i18n";
+import { toPlainText, truncateText } from "@/lib/properties/text";
 
 type JsonLdObject = Record<string, unknown>;
 
@@ -96,7 +97,11 @@ export function buildRealEstateListingJsonLd(
   options: RealEstateListingOptions,
 ) {
   const pathname = `/bienes-raices/propiedades/${property.slug}`;
-  const description = textValue(property.description) ?? textValue(property.subtitle);
+  const rawDescription =
+    textValue(property.description) ?? textValue(property.subtitle);
+  const description = rawDescription
+    ? truncateText(toPlainText(rawDescription), 500)
+    : null;
   const primaryImage =
     resolveImageUrl(property.coverImageUrl) ??
     (property.gallery ?? []).map(resolveImageUrl).find(Boolean) ??

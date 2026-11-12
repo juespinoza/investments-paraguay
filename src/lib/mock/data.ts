@@ -1,4 +1,4 @@
-import { metadata } from "@/app/layout";
+import { metadata } from "@/app/[locale]/layout";
 import { DEFAULT_WHATSAPP_HREF } from "@/lib/whatsapp";
 import { title } from "process";
 import { FaWhatsapp, FaInstagram, FaFacebookF, FaTiktok } from "react-icons/fa";

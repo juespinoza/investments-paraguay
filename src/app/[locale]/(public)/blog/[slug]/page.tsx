@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 import { GuideLeadMagnet } from "@/components/leads/GuideLeadMagnet";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
@@ -8,6 +9,13 @@ import { resolveLocale } from "@/lib/content/public-pages";
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
 };
+
+// Los artículos de la base se guardan en caché y se regeneran cada 5 minutos.
+export const revalidate = 300;
+
+export function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({
   params,
@@ -43,7 +51,8 @@ function buildAuthor(
 }
 
 export default async function PublicBlogPostPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
   const post = await getPublicBlogPostBySlug(slug);
 
   if (!post) {
