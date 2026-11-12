@@ -8,10 +8,11 @@ import { PropertyContactSidebar } from "@/components/landing/property-detail/Pro
 import { PropertyImageGallery } from "@/components/landing/property-detail/PropertyImageGallery";
 import { PropertyMap } from "@/components/PropertyMap";
 import { GuideLeadMagnet } from "@/components/leads/GuideLeadMagnet";
+import { InvestmentAnalysis } from "@/components/landing/property-detail/InvestmentAnalysis";
 import { buildCloudinaryOpenGraphImageUrl } from "@/lib/cloudinary";
 import { buildRealEstateListingJsonLd } from "@/lib/structured-data";
 import { getPublicProperty } from "@/lib/properties/public";
-import { DEFAULT_LOCALE, formatLocale } from "@/lib/i18n";
+import { DEFAULT_LOCALE, formatLocale, type AppLocale } from "@/lib/i18n";
 import { formatPropertyPrice } from "@/lib/properties/format";
 import {
   RichPropertyText,
@@ -19,7 +20,11 @@ import {
 } from "@/components/landing/property-detail/RichPropertyText";
 import { Link } from "@/i18n/navigation";
 import {
+  Bath,
+  BedDouble,
   Building2,
+  Car,
+  LandPlot,
   MapPin,
   Maximize2,
   type LucideIcon,
@@ -50,7 +55,7 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const resolvedLocale = resolveLocale(locale);
   const t = await getTranslations({ locale, namespace: "site.detail" });
-  const property = await getPublicProperty(slug);
+  const property = await getPublicProperty(slug, resolvedLocale);
 
   if (!property) {
     return buildMetadata({
@@ -85,7 +90,7 @@ export async function generateMetadata({
           }),
         })
       : null,
-    resolvedLocale === DEFAULT_LOCALE && property.description
+    property.isTranslated && property.description
       ? toPlainPropertyText(property.description)
       : null,
   ]
@@ -100,11 +105,12 @@ export async function generateMetadata({
     description: summary,
     pathname: `/bienes-raices/propiedades/${slug}`,
     locale: resolvedLocale,
-    // La descripción de la propiedad todavía existe solo en español: las
-    // versiones EN y PT apuntan su canonical a la española y no declaran
-    // hreflang, para que Google no las marque como duplicadas. Cuando lleguen
-    // las traducciones automáticas, cada idioma tendrá su propia URL canónica.
-    contentLocale: DEFAULT_LOCALE,
+    // Con traducción, cada idioma tiene su propia URL canónica y los hreflang
+    // se limitan a los idiomas traducidos. Sin traducción, la versión EN o PT
+    // apunta su canonical a la española para no quedar como duplicada.
+    ...(property.isTranslated
+      ? { availableLocales: property.contentLocales as AppLocale[] }
+      : { contentLocale: DEFAULT_LOCALE }),
     image: ogImageUrl,
     keywords: [
       property.title,
@@ -123,9 +129,11 @@ export default async function PropertyPage({ params }: PageProps) {
   const tStatus = await getTranslations("site.status");
   const numberFormat = formatLocale(locale);
 
-  const property = await getPublicProperty(slug);
+  const property = await getPublicProperty(slug, resolvedLocale);
 
   if (!property) notFound();
+
+  const contentLang = property.isTranslated ? resolvedLocale : DEFAULT_LOCALE;
 
   const locationParts = [
     property.neighborhood,
@@ -149,6 +157,9 @@ export default async function PropertyPage({ params }: PageProps) {
       : [];
   const hasCoordinates = mapProperties.length > 0;
   const validAreaM2 = numberValue(property.areaM2);
+  const builtM2 = numberValue(property.builtM2);
+  const landM2 = numberValue(property.landM2);
+  const m2 = (value: number) => `${value.toLocaleString(numberFormat)} m²`;
   const featureTags = [
     textValue(property.propertyType)
       ? {
@@ -157,12 +168,23 @@ export default async function PropertyPage({ params }: PageProps) {
           icon: Building2,
         }
       : null,
-    validAreaM2 !== null
-      ? {
-          label: t("area"),
-          value: `${validAreaM2.toLocaleString(numberFormat)} m²`,
-          icon: Maximize2,
-        }
+    builtM2 !== null
+      ? { label: t("builtArea"), value: m2(builtM2), icon: Maximize2 }
+      : null,
+    landM2 !== null
+      ? { label: t("landArea"), value: m2(landM2), icon: LandPlot }
+      : null,
+    builtM2 === null && landM2 === null && validAreaM2 !== null
+      ? { label: t("area"), value: m2(validAreaM2), icon: Maximize2 }
+      : null,
+    property.bedrooms
+      ? { label: t("bedrooms"), value: `${property.bedrooms} ${t("bedrooms").toLowerCase()}`, icon: BedDouble }
+      : null,
+    property.bathrooms
+      ? { label: t("bathrooms"), value: `${property.bathrooms} ${t("bathrooms").toLowerCase()}`, icon: Bath }
+      : null,
+    property.garages
+      ? { label: t("garages"), value: `${property.garages} ${t("garages").toLowerCase()}`, icon: Car }
       : null,
   ].filter(Boolean) as Array<{
     label: string;
@@ -264,12 +286,23 @@ export default async function PropertyPage({ params }: PageProps) {
 
             <div className="my-8 h-px bg-(--line)" />
 
+            <InvestmentAnalysis
+              strategy={property.strategy}
+              price={property.price}
+              currency={property.currency}
+              locale={resolvedLocale}
+              propertySlug={property.slug}
+              contentLang={contentLang}
+            />
+
+            <div className="my-8 h-px bg-(--line)" />
+
             {property.description ? (
               <section>
                 <h2 className="font-cormorant text-[30px] font-normal text-primary">
                   {t("about")}
                 </h2>
-                {resolvedLocale !== DEFAULT_LOCALE ? (
+                {!property.isTranslated ? (
                   <p
                     lang={resolvedLocale}
                     className="mt-3 rounded-xs border border-(--line) bg-(--stone) px-4 py-3 text-sm leading-6 text-secondary"
@@ -278,11 +311,28 @@ export default async function PropertyPage({ params }: PageProps) {
                   </p>
                 ) : null}
                 <div
-                  lang={DEFAULT_LOCALE}
+                  lang={contentLang}
                   className="mt-5 text-base leading-[1.8] text-secondary"
                 >
                   <RichPropertyText value={property.description} />
                 </div>
+                {property.amenities.length ? (
+                  <div className="mt-6">
+                    <h3 className="text-[13px] font-semibold uppercase tracking-[0.06em] text-muted">
+                      {t("amenities")}
+                    </h3>
+                    <ul lang={DEFAULT_LOCALE} className="mt-3 flex flex-wrap gap-2">
+                      {property.amenities.map((item) => (
+                        <li
+                          key={item}
+                          className="rounded-full border border-(--line) px-3 py-1 text-[13px] text-secondary"
+                        >
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
               </section>
             ) : null}
 

@@ -152,7 +152,45 @@ async function listPropertySitemapItems() {
     select: {
       slug: true,
       updatedAt: true,
+      translations: { select: { locale: true, updatedAt: true } },
     },
+  });
+}
+
+// Una URL por idioma con contenido propio (español + traducciones), con
+// hreflang solo entre esos idiomas.
+function propertyEntries(property: {
+  slug: string;
+  updatedAt: Date;
+  translations: Array<{ locale: string; updatedAt: Date }>;
+}): MetadataRoute.Sitemap {
+  const path = `/bienes-raices/propiedades/${property.slug}`;
+  const locales = SEO_LOCALES.filter(
+    (locale) =>
+      locale === DEFAULT_LOCALE ||
+      property.translations.some((item) => item.locale === locale),
+  );
+  const languages = {
+    ...Object.fromEntries(
+      locales.map((locale) => [locale, absoluteUrl(locale, path)]),
+    ),
+    "x-default": absoluteUrl(DEFAULT_LOCALE, path),
+  };
+
+  return locales.map((locale) => {
+    const translation = property.translations.find(
+      (item) => item.locale === locale,
+    );
+    const updated = translation && translation.updatedAt > property.updatedAt
+      ? translation.updatedAt
+      : property.updatedAt;
+    return {
+      url: absoluteUrl(locale, path),
+      lastModified: updated,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+      ...(locales.length > 1 ? { alternates: { languages } } : {}),
+    };
   });
 }
 
@@ -172,16 +210,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
-  // Las fichas solo tienen contenido en español hasta que existan las
-  // traducciones: una URL por propiedad, igual que su canonical.
-  const propertyEntries = properties.flatMap((property) =>
-    spanishOnlyEntry({
-      path: `/bienes-raices/propiedades/${property.slug}`,
-      lastModified: property.updatedAt ?? now,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    }),
-  );
+  const propertySitemapEntries = properties.flatMap(propertyEntries);
 
   const dynamicBlogEntries = blogPosts.flatMap((post) =>
     spanishOnlyEntry({
@@ -214,7 +243,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return uniqueByUrl([
     ...staticEntries,
     ...translatedArticleEntries,
-    ...propertyEntries,
+    ...propertySitemapEntries,
     ...dynamicBlogEntries,
     ...staticBlogEntries,
   ]);

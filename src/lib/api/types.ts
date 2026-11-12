@@ -1,6 +1,9 @@
 export type PublicPropertyListItem = {
   slug: string;
   title: string;
+  // Títulos traducidos por idioma (en, pt), si existen.
+  titleTranslations: Record<string, string>;
+  strategyStatus: "PENDING" | "READY";
   subtitle: string | null;
   coverImageUrl: string | null;
   price: number | null;
