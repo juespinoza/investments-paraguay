@@ -1,3 +1,5 @@
+import { toPlainText } from "@/lib/properties/text";
+
 function escapeHtml(value: string) {
   return value
     .replace(/&/g, "&amp;")
@@ -15,11 +17,7 @@ function restoreAllowedInlineMarkup(value: string) {
 }
 
 export function toPlainPropertyText(value: string) {
-  return value
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\*\*/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
+  return toPlainText(value);
 }
 
 export function toSafePropertyHtml(value: string) {

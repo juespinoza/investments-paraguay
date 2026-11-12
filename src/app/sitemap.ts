@@ -8,6 +8,12 @@ import { TRANSLATED_ARTICLES } from "@/lib/content/articles";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
+// Sin esto el sitemap se genera una sola vez en el build y Vercel lo sirve
+// igual hasta el próximo deploy: las propiedades y artículos nuevos no
+// llegaban a Google. Se regenera cada hora y además al guardar una propiedad
+// (revalidatePublicProperties).
+export const revalidate = 3600;
+
 const STATIC_PAGES = [
   {
     path: "",
@@ -166,8 +172,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
+  // Las fichas solo tienen contenido en español hasta que existan las
+  // traducciones: una URL por propiedad, igual que su canonical.
   const propertyEntries = properties.flatMap((property) =>
-    localizedEntries({
+    spanishOnlyEntry({
       path: `/bienes-raices/propiedades/${property.slug}`,
       lastModified: property.updatedAt ?? now,
       changeFrequency: "weekly",

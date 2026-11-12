@@ -1,53 +1,14 @@
-import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import "./globals.css";
-import { cormorantGaramond, dmSans } from "./fonts";
-import { getLocale } from "next-intl/server";
-import { buildMetadata, SITE_NAME, SITE_URL } from "@/lib/seo";
-import { StructuredData } from "@/components/seo/StructuredData";
-import { buildOrganizationJsonLd } from "@/lib/structured-data";
-import { WhatsAppFloat } from "@/components/landing/WhatsAppFloat";
 
-export const metadata: Metadata = {
-  ...buildMetadata({
-    title:
-      "Real Estate & Business Opportunities in Paraguay | Investments Paraguay",
-    description:
-      "Explore real estate investment opportunities, business ideas and strategic advisory for investors in Paraguay.",
-    pathname: "/",
-    locale: "en",
-    image: "/images/og-home.jpg",
-    keywords: [
-      "investments in Paraguay",
-      "real estate Paraguay",
-      "property investment Paraguay",
-      "business opportunities Paraguay",
-      "invest in Paraguay",
-    ],
-  }),
-  applicationName: SITE_NAME,
-  category: "business",
-  creator: SITE_NAME,
-  publisher: SITE_NAME,
-  authors: [{ name: SITE_NAME, url: SITE_URL }],
-  icons: {
-    icon: [{ url: "/favicon.ico" }],
-  },
-};
-
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const locale = await getLocale();
-
-  return (
-    <html lang={locale}>
-      <body className={`${dmSans.variable} ${cormorantGaramond.variable}`}>
-        <StructuredData data={buildOrganizationJsonLd()} />
-        {children}
-        <WhatsAppFloat />
-      </body>
-    </html>
-  );
+// Cada sección arma su propio <html>: el sitio público en
+// [locale]/layout.tsx (con el idioma de la URL) y la oficina virtual en
+// (virtual-office)/virtual-office/layout.tsx.
+//
+// Antes este layout llamaba a getLocale(), que lee las cabeceras de cada
+// pedido y volvía dinámicas todas las páginas: Vercel no guardaba nada en
+// caché (Cache-Control: private, no-store) y el revalidate de cada página
+// no tenía efecto.
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return children;
 }

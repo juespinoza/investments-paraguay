@@ -9,6 +9,10 @@ export const routing = defineRouting({
   // rutas sin prefijo (por ejemplo "/"). Las URLs con /es, /en o /pt nunca
   // se redirigen, así Google indexa cada versión por separado.
   localeDetection: false,
+  // Los hreflang los declara cada página en sus metadatos (buildMetadata).
+  // Las cabeceras Link del middleware los repetían para todas las URLs,
+  // incluso donde no hay traducción (fichas de propiedades).
+  alternateLinks: false,
   localeCookie: {
     name: "locale",
     maxAge: 60 * 60 * 24 * 365,

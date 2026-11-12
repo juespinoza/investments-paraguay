@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/cn";
 import { useTransition } from "react";
-import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { isAnalyticsEnabled } from "@/lib/analytics";
 import { usePathname, useRouter } from "@/i18n/navigation";
@@ -26,7 +25,6 @@ export function LocaleSwitcher({
   const t = useTranslations("site.locale");
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const current = toSupportedLocale(useLocale());
 
@@ -44,7 +42,9 @@ export function LocaleSwitcher({
     }
 
     startTransition(() => {
-      const query = searchParams.toString();
+      // Se lee al hacer clic (y no con useSearchParams) para que el
+      // selector no impida generar las páginas de forma estática.
+      const query = window.location.search.replace(/^\?/, "");
       const nextPath = query ? `${pathname}?${query}` : pathname;
       router.replace(nextPath, { locale });
     });
