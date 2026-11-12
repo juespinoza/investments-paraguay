@@ -51,7 +51,8 @@ export async function getStrategy(propertyId: string) {
 // borra. Pasar a READY exige tesis, tipo de renta y renta mensual.
 export async function upsertStrategy(propertyId: string, input: StrategyInput) {
   const current = await getStrategy(propertyId);
-  const data = toData(input);
+  const { featureOnReady = true, ...fields } = input;
+  const data = toData(fields);
 
   const merged = {
     summary: input.summary !== undefined ? input.summary : current?.summary,
@@ -90,7 +91,7 @@ export async function upsertStrategy(propertyId: string, input: StrategyInput) {
   // Una propiedad con estrategia lista pasa a destacada. Solo en el momento
   // en que pasa a READY: si después se quita el destacado a mano, no se
   // vuelve a marcar.
-  if (nextStatus === "READY" && current?.status !== "READY") {
+  if (featureOnReady && nextStatus === "READY" && current?.status !== "READY") {
     await prisma.property.update({
       where: { id: propertyId },
       data: { isFeatured: true },

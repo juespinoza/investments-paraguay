@@ -106,6 +106,7 @@ Cuerpo del `PUT .../strategy` (todos opcionales; omitido = no se toca, `null` = 
 | `comparables` | `{ title, price, areaM2?, url? }[]` (máx. 12) | |
 | `businessOptions` | `{ title, description }[]` (máx. 8) | Negocios posibles con la propiedad. |
 | `zoneSummary`, `risks`, `methodology` | string ≤ 3000 | Admiten `**negrita**` y párrafos. |
+| `featureOnReady` | boolean | No se guarda. `false` evita que la propiedad pase a destacada al marcarla `READY`. |
 
 Cuando una estrategia pasa a `READY`, la propiedad se marca como destacada (una sola vez: si se le quita el destacado a mano, no se vuelve a marcar).
 

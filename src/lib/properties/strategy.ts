@@ -51,6 +51,9 @@ export const StrategyInputSchema = z
     zoneSummary: text(3000),
     risks: text(3000),
     methodology: text(3000),
+    // No se guarda: false evita que la propiedad pase a destacada al
+    // marcar la estrategia como READY (por defecto, sí pasa).
+    featureOnReady: z.boolean().optional(),
   })
   .strict();
 
