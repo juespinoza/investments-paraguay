@@ -197,7 +197,7 @@
       "viewProperty": "Ver propiedad",
       "viewPropertyAria": "Ver propiedad {title}",
       "priceOnRequest": "Precio a consultar",
-      "roi": "ROI bruto est. ~{value} % anual",
+      "roi": "Rend. neto est. ~{value} % anual",
       "coverAlt": "{title}, foto de portada",
       "photoAlt": "{title}, foto {index} de {total}"
     },
@@ -218,7 +218,7 @@
       "metaFallbackDescription": "Explorá oportunidades inmobiliarias en Paraguay con asesoría profesional.",
       "metaLocation": "{title} en {location}.",
       "metaPrice": "Precio: {price}.",
-      "metaRoi": "ROI bruto estimado ~{roi} % anual.",
+      "metaRoi": "Rendimiento neto estimado ~{roi} % anual.",
       "keywordSale": "propiedad en venta paraguay",
       "keywordInvestment": "inversión inmobiliaria paraguay",
       "garages": "Cocheras",
