@@ -87,6 +87,16 @@ export async function upsertStrategy(propertyId: string, input: StrategyInput) {
     update: data as Prisma.PropertyStrategyUncheckedUpdateInput,
   });
 
+  // Una propiedad con estrategia lista pasa a destacada. Solo en el momento
+  // en que pasa a READY: si después se quita el destacado a mano, no se
+  // vuelve a marcar.
+  if (nextStatus === "READY" && current?.status !== "READY") {
+    await prisma.property.update({
+      where: { id: propertyId },
+      data: { isFeatured: true },
+    });
+  }
+
   revalidatePublicProperties();
   after(() => translatePropertyInBackground(propertyId));
   return saved;

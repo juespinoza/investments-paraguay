@@ -43,7 +43,9 @@ Base: `https://www.investmentsparaguay.com/api/integrations/publisher`
 | `DELETE` | `/properties/{source}/{externalId}` | La retira del sitio (`RETIRADA`, baja lógica). Un `PUT` posterior la restaura. |
 | `GET` / `PUT` | `/properties/{source}/{externalId}/strategy` | Lee o guarda la estrategia de inversión (ver abajo). |
 | `GET` / `PUT` | `/strategies/{slug}` | Lo mismo por slug, para propiedades cargadas a mano en la oficina virtual. |
-| `POST` | `/translations?limit=8` | Traduce a EN y PT las propiedades publicadas que lo necesiten, hasta `limit` por llamada. Repetir hasta que `translated` sea 0. |
+| `GET` | `/translations` | Lista las propiedades publicadas sin traducción o con traducción vieja (cambió el español). |
+| `GET` / `PUT` | `/translations/{slug}` | Lee el texto en español a traducir y guarda a mano la traducción de un idioma (`locale`: `en` o `pt`), como `REVIEWED`. |
+| `POST` | `/translations?limit=8` | **Apagado hasta tener `ANTHROPIC_API_KEY` con saldo.** Traduce automáticamente lo pendiente. Ver la nota al inicio de `src/lib/properties/translate.ts`. |
 
 - `source`: el sistema de origen, en minúsculas, por ejemplo `skyone` (2 a 40 caracteres `a-z`, `0-9`, `-`).
 - `externalId`: el id de la propiedad en ese sistema (1 a 100 caracteres `A-Z`, `a-z`, `0-9`, `.`, `_`, `-`).
@@ -77,7 +79,7 @@ Base: `https://www.investmentsparaguay.com/api/integrations/publisher`
 
 Campos no listados se rechazan con 422, para detectar a tiempo un error de mapeo en el publicador.
 
-Cada alta o edición dispara, después de responder, la traducción automática del título, la descripción y los textos de la estrategia a inglés y portugués (requiere `ANTHROPIC_API_KEY`). Si el texto en español no cambió, no se vuelve a traducir. La respuesta incluye `strategyStatus` y `translatedLocales`.
+Cuando haya `ANTHROPIC_API_KEY` con saldo, cada alta o edición dispara, después de responder, la traducción automática del título, la descripción y los textos de la estrategia a inglés y portugués (requiere `ANTHROPIC_API_KEY`). Si el texto en español no cambió, no se vuelve a traducir. La respuesta incluye `strategyStatus` y `translatedLocales`.
 
 ## Estrategia de inversión
 
@@ -103,6 +105,8 @@ Cuerpo del `PUT .../strategy` (todos opcionales; omitido = no se toca, `null` = 
 | `comparables` | `{ title, price, areaM2?, url? }[]` (máx. 12) | |
 | `businessOptions` | `{ title, description }[]` (máx. 8) | Negocios posibles con la propiedad. |
 | `zoneSummary`, `risks`, `methodology` | string ≤ 3000 | Admiten `**negrita**` y párrafos. |
+
+Cuando una estrategia pasa a `READY`, la propiedad se marca como destacada (una sola vez: si se le quita el destacado a mano, no se vuelve a marcar).
 
 La ficha calcula: rendimiento bruto = renta × 12 × ocupación ÷ precio; neto = (renta cobrada − administración − gastos − impuestos) ÷ (precio + costos de compra); recupero = inversión total ÷ ingreso neto anual. El cálculo está en `src/lib/properties/investment.ts`.
 

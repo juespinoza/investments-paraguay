@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { HIDDEN_PUBLIC_STATUSES } from "@/lib/properties/public";
-import { translateProperty } from "@/lib/properties/translate";
+import {
+  hashSource,
+  loadSource,
+  translateProperty,
+} from "@/lib/properties/translate";
+import { TRANSLATED_LOCALES } from "@/lib/properties/translate-locales";
 import { authorize } from "@/lib/publisher/http";
 
 // Traduce las propiedades publicadas que todavía no tienen traducción (o
@@ -11,6 +16,41 @@ import { authorize } from "@/lib/publisher/http";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
+// Lista las propiedades publicadas a las que les falta una traducción o
+// cuya traducción quedó vieja porque cambió el texto en español.
+// No necesita ANTHROPIC_API_KEY.
+export async function GET(req: Request) {
+  const denied = authorize(req);
+  if (denied) return denied;
+
+  const properties = await prisma.property.findMany({
+    where: { deletedAt: null, status: { notIn: [...HIDDEN_PUBLIC_STATUSES] } },
+    select: { id: true, slug: true },
+    orderBy: { updatedAt: "desc" },
+  });
+
+  const pending: Array<{ slug: string; missing: string[]; stale: string[] }> = [];
+  for (const property of properties) {
+    const loaded = await loadSource(property.id);
+    if (!loaded) continue;
+    const hash = hashSource(loaded.source);
+    const missing = TRANSLATED_LOCALES.filter(
+      (locale) => !loaded.translations.some((item) => item.locale === locale),
+    );
+    const stale = TRANSLATED_LOCALES.filter((locale) =>
+      loaded.translations.some(
+        (item) => item.locale === locale && item.sourceHash !== hash,
+      ),
+    );
+    if (missing.length || stale.length) {
+      pending.push({ slug: property.slug, missing, stale });
+    }
+  }
+
+  return NextResponse.json({ total: properties.length, pending });
+}
+
+// Traducción automática con Claude (requiere ANTHROPIC_API_KEY con saldo).
 export async function POST(req: Request) {
   const denied = authorize(req);
   if (denied) return denied;

@@ -1,4 +1,21 @@
 import "server-only";
+// Traducción de propiedades a EN y PT.
+//
+// HOY (noviembre 2026): la traducción automática está APAGADA porque no hay
+// ANTHROPIC_API_KEY con créditos. Las traducciones se cargan a mano con
+// PUT /api/integrations/publisher/translations/{slug} (estado REVIEWED).
+// GET /api/integrations/publisher/translations lista qué falta traducir.
+//
+// PARA ACTIVARLA MÁS ADELANTE (sin tocar código):
+// 1. platform.claude.com → Agregar fondos (la API es prepaga: cada llamada
+//    se descuenta del saldo; con saldo 0 las llamadas fallan).
+// 2. Claves y acceso → Crear clave → "Continuar con una clave de API" (la
+//    federación de identidades no aplica: Vercel no es un proveedor admitido).
+// 3. Vercel → Settings → Environment Variables: ANTHROPIC_API_KEY en
+//    Production y Preview. Redeploy.
+// 4. POST /api/integrations/publisher/translations?limit=8 hasta que
+//    devuelva translated: 0. Desde ahí cada alta o edición se traduce sola.
+// Las traducciones REVIEWED (cargadas a mano) nunca se pisan.
 import { createHash } from "node:crypto";
 import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
@@ -15,7 +32,7 @@ import {
 
 const MODEL = "claude-opus-5-5";
 
-const TranslatedContentSchema = z.object({
+export const TranslatedContentSchema = z.object({
   title: z.string(),
   description: z.string().nullable(),
   summary: z.string().nullable(),
@@ -32,7 +49,7 @@ const TranslationResponseSchema = z.object({
   pt: TranslatedContentSchema,
 });
 
-type SourceContent = z.infer<typeof TranslatedContentSchema>;
+export type SourceContent = z.infer<typeof TranslatedContentSchema>;
 
 const SYSTEM_PROMPT = `You translate real-estate investment listings published by Investments Paraguay from Spanish (Paraguay) into English and Brazilian Portuguese.
 
@@ -46,11 +63,12 @@ Rules:
 - Write the title in title case for English and sentence case for Portuguese, with no capital-letter shouting.
 - Return null for a field whose source is null, and an empty list when there are no business options.`;
 
-function hashSource(source: SourceContent) {
+export function hashSource(source: SourceContent) {
   return createHash("sha256").update(JSON.stringify(source)).digest("hex");
 }
 
-async function loadSource(propertyId: string) {
+// Texto en español que se traduce, con las traducciones existentes.
+export async function loadSource(propertyId: string) {
   const property = await prisma.property.findUnique({
     where: { id: propertyId },
     select: {
