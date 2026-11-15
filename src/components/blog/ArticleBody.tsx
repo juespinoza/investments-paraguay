@@ -180,7 +180,9 @@ function Block({
             </table>
           </div>
           {block.note ? (
-            <p className="mt-2 text-[12px] text-muted">{block.note}</p>
+            <p className="mt-2 text-[12px] text-muted">
+              <RichInline text={block.note} />
+            </p>
           ) : null}
         </div>
       );
