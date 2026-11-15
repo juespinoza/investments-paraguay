@@ -8,7 +8,7 @@ import type {
 // y actualizar UPDATED + updatedLabel en los tres idiomas.
 const SLUG = "caso-ueno-bank-que-significa-para-invertir";
 const PUBLISHED = "2026-11-04";
-const UPDATED = "2026-11-08";
+const UPDATED = "2026-11-14";
 const J = "/blog/juicio-politico-santiago-pena-que-paso-y-repercusiones";
 
 const U = {
@@ -27,6 +27,9 @@ const U = {
   lanacionPago: "https://www.lanacion.com.py/negocios/2026/11/04/el-bcp-explica-sistema-de-pago-a-ahorristas-de-ueno-bank/",
   hoyPago: "https://www.hoy.com.py/nacionales/2026/11/04/bcp-anuncia-como-y-cuando-pagara-a-los-ahorristas-de-ueno-bank",
   milNoticias: "https://1000noticias.com.py/2026/11/04/el-fondo-de-garantia-arrancara-desembolsos-a-depositantes-de-ueno-bank-tras-promulgarse-la-ley/",
+  abc11: "https://www.abc.com.py/economia/2026/11/11/ahorristas-de-ueno-bcp-dice-que-culmino-el-proceso-de-acreditacion-al-100-de-beneficiarios-pero-persisten-bloqueos/",
+  elTiempo: "https://eltiempo.com/mundo/latinoamerica/crisis-en-paraguay-fiscalia-pide-ampliar-la-imputacion-contra-el-expresidente-santiago-pena-y-lo-acusa-de-liderar-una-asociacion-criminal-3600892",
+  infobae15: "https://infobae.com/america/america-latina/2026/11/11/la-fiscalia-de-paraguay-estimo-que-santiago-pena-podria-recibir-hasta-15-anos-de-carcel-por-el-caso-ueno-bank",
   lnPagados: "https://www.lanacion.com.py/politica_edicion_impresa/2026/11/08/bcp-ya-devolvio-ahorros-a-casi-12-millones-de-clientes-de-ueno/",
   lnLunes: "https://www.lanacion.com.py/negocios/2026/11/07/ueno-bank-desde-el-lunes-pagaran-a-ahorristas-con-deudas-y-cuentas-bloqueadas-anuncio-el-bcp/",
   abcJuicio: "https://www.abc.com.py/politica/2026/11/06/en-vivo-juicio-politico-a-pena-senado-retoma-proceso-en-medio-de-renuncia-trabada-y-pedido-de-prorroga/",
@@ -37,6 +40,9 @@ const U = {
 };
 
 const SOURCES: ArticleSource[] = [
+  { label: "ABC Color — El BCP culminó la acreditación del anticipo al 100 % de beneficiarios (11 nov 2026)", url: U.abc11 },
+  { label: "El Tiempo — La Fiscalía pide ampliar la imputación contra Peña por asociación criminal (13 nov 2026)", url: U.elTiempo },
+  { label: "Infobae — La Fiscalía estima hasta 15 años de cárcel para Peña (11 nov 2026)", url: U.infobae15 },
   { label: "La Nación — El BCP ya devolvió ahorros a casi 1,2 millones de clientes de ueno (8 nov 2026)", url: U.lnPagados },
   { label: "La Nación — Desde el lunes pagarán a ahorristas con deudas y cuentas bloqueadas (7 nov 2026)", url: U.lnLunes },
   { label: "ABC Color — Cronología del juicio político: destitución de Peña y asunción de Alliana (6 nov 2026)", url: U.abcJuicio },
@@ -71,7 +77,7 @@ const es: LocalizedArticle = {
   lead:
     "El Banco Central del Paraguay (BCP) inició la resolución de ueno bank, el quinto banco privado del país, porque su solvencia cayó por debajo de la mitad del mínimo legal. Te cuento qué se sabe hasta hoy, qué pasa con los depósitos y los créditos, y qué cambia (y qué no) para quien está por comprar un inmueble.",
   readingTime: "7 min de lectura",
-  updatedLabel: "Actualizado: 8 nov 2026",
+  updatedLabel: "Actualizado: 14 nov 2026",
   authorRole: "Asesora inmobiliaria en SkyOne",
   tocTitle: "En este artículo",
   sourcesTitle: "Fuentes",
@@ -90,15 +96,16 @@ const es: LocalizedArticle = {
     {
       type: "callout",
       title: "Situación en desarrollo",
-      text: "Datos actualizados al 8 de noviembre de 2026. El BCP ya pagó el anticipo a casi 1,2 millones de cuentas y desde el lunes 9 sigue con quienes tienen deudas, varias cuentas o cuentas bloqueadas.",
+      text: "Datos actualizados al 14 de noviembre de 2026. El BCP terminó de pagar el anticipo a 1,8 millones de ahorristas; el saldo hasta 75 salarios mínimos se pagaría después del balance de exclusión, con fecha tentativa el lunes 16.",
     },
-    { type: "h2", id: "novedades", text: "Novedades al 8 de noviembre" },
+    { type: "h2", id: "novedades", text: "Novedades al 14 de noviembre" },
     {
       type: "ul",
       items: [
-        `**Pagos:** el BCP ya acreditó el anticipo a unas **1.197.000 cuentas**, por **Gs. 996.000 millones** (unos USD 168 millones), en dos tandas. De 1.867.000 cuentas con saldo que califican, quedan unas 670.000 por pagar ([La Nación](${U.lnPagados})).`,
-        `**Desde el lunes 9 de noviembre:** se paga a quienes tienen **deudas con ueno** (préstamos, sobregiros y tarjetas vencidas se descuentan antes de acreditar), a quienes tienen **varias cuentas** que hay que unificar y a quienes quedaron afuera por **cuentas bloqueadas** u otras verificaciones, como tarde el martes ([La Nación](${U.lnLunes}), [La Nación](${U.lnPagados})).`,
-        `**Consultas sobre montos o pagos:** por correo a **pagosacreditadosfgd@bcp.gov.py**; los reclamos se atienden por orden de llegada ([La Nación](${U.lnLunes})).`,
+        `**Anticipo pagado:** el 11 de noviembre el BCP informó que terminó de acreditar el anticipo a **1.812.348 ahorristas**, por unos **Gs. 3,9 billones** (unos USD 644 millones), hasta 40 salarios mínimos (Gs. 121.760.000) por persona ([ABC](${U.abc11})).`,
+        `**Cuentas bloqueadas:** a quienes tenían CDA el dinero ya se les acreditó, pero queda bloqueado hasta que registren sus datos en la plataforma del BCP subiendo una foto del CDA o una captura de la app de ueno. Quien no tenga ninguno de los dos debe indicarlo en la misma plataforma ([ABC](${U.abc11})).`,
+        `**Saldo hasta 75 salarios mínimos (Gs. 228.300.000):** se pagaría después del balance de exclusión, con fecha tentativa el **lunes 16 de noviembre**, y se acreditaría "en los siguientes días", según el BCP ([ABC](${U.abc11})).`,
+        `**Consultas:** quienes no recibieron el pago o tienen dudas pueden escribir a **fgdpagos@bcp.gov.py** ([ABC](${U.abc11})).`,
         `**Crisis política:** el 6 de noviembre el Senado destituyó al presidente Santiago Peña por mal desempeño de funciones y asumió Pedro Alliana. El 7, un juez ordenó la prisión preventiva de Peña ([ABC](${U.abcJuicio}), [ABC](${U.abcPreso})). Lo explico en detalle en [Juicio político a Santiago Peña: qué pasó y qué puede cambiar](${J}).`,
       ],
     },
@@ -135,6 +142,7 @@ const es: LocalizedArticle = {
       type: "table",
       head: ["Fecha", "Qué pasó"],
       rows: [
+        ["11–13 nov 2026", `El BCP termina de pagar el anticipo a 1.812.348 ahorristas ([ABC](${U.abc11})). La Fiscalía pide ampliar la imputación de Peña por asociación criminal junto con exautoridades del BCP; un juez todavía debe decidirlo. Son detenidos el superintendente de bancos, Holger Insfrán, y cuatro exmiembros del directorio del BCP ([El Tiempo](${U.elTiempo})).`],
         ["6–7 nov 2026", `El Senado destituye a Peña por mal desempeño de funciones (44 votos) y Pedro Alliana jura como presidente; Antonio Barrios es electo vicepresidente ([ABC](${U.abcJuicio})). La Fiscalía imputa a Peña y al expresidente del BCP Carlos Carvallo y pide su prisión preventiva; el 7, el juez Humberto Otazú la ordena para Peña. Miguel Vásquez, fundador de ueno, y cinco directivos son trasladados a un penal ([ABC](${U.abcPreso}), [Infobae](${U.infobaeCarvallo})).`],
         ["4–5 nov 2026", `Se promulga la Ley 7.755/26 de anticipos y el BCP anuncia el pago desde el 5 de noviembre. Pedro de Jesús Acosta asume como presidente interino del BCP ([ABC](${U.abcAcosta})). El juez de Garantías admite la imputación contra 27 personas; la audiencia de medidas cautelares de los ocho detenidos está fijada para el 5 de noviembre ([Diario HOY](${U.hoyPago})).`],
         ["3–4 nov 2026", `La Fiscalía detiene a ocho directivos, entre ellos el CEO, en una causa iniciada por denuncia del BCP por presunta lesión de confianza y otros delitos ([Infobae](${U.infobaeDetenidos})).`],
@@ -213,7 +221,7 @@ const en: LocalizedArticle = {
   lead:
     "The Central Bank of Paraguay (BCP) started the resolution of ueno bank, the country's fifth-largest private bank, because its solvency fell below half the legal minimum. Here is what we know so far, what happens to deposits and loans, and what changes (and what does not) for anyone about to buy property.",
   readingTime: "7 min read",
-  updatedLabel: "Updated: Nov 8, 2026",
+  updatedLabel: "Updated: Nov 14, 2026",
   authorRole: "Real estate advisor at SkyOne",
   tocTitle: "In this article",
   sourcesTitle: "Sources",
@@ -232,15 +240,16 @@ const en: LocalizedArticle = {
     {
       type: "callout",
       title: "Developing story",
-      text: "Figures as of November 8, 2026. The BCP has already paid the advance to almost 1.2 million accounts and, from Monday the 9th, continues with savers who have debts, several accounts or blocked accounts.",
+      text: "Figures as of November 14, 2026. The BCP has finished paying the advance to 1.8 million savers; the balance up to 75 minimum wages would be paid after the exclusion balance sheet, tentatively from Monday the 16th.",
     },
-    { type: "h2", id: "novedades", text: "Updates as of November 8" },
+    { type: "h2", id: "novedades", text: "Updates as of November 14" },
     {
       type: "ul",
       items: [
-        `**Payments:** the BCP has credited the advance to about **1,197,000 accounts**, totaling **PYG 996 billion** (about USD 168 million), in two batches. Of the 1,867,000 eligible accounts with balances, about 670,000 are still pending ([La Nación](${U.lnPagados})).`,
-        `**From Monday, November 9:** payouts go to savers with **debts to ueno** (overdue loans, overdrafts and cards are deducted first), to those with **several accounts** that must be merged, and to those left out because of **blocked accounts** or other checks, by Tuesday at the latest ([La Nación](${U.lnLunes}), [La Nación](${U.lnPagados})).`,
-        `**Questions about amounts or payments:** email **pagosacreditadosfgd@bcp.gov.py**; claims are handled in order of arrival ([La Nación](${U.lnLunes})).`,
+        `**Advance paid:** on November 11 the BCP said it had finished crediting the advance to **1,812,348 savers**, totaling about **PYG 3.9 trillion** (about USD 644 million), up to 40 minimum wages (PYG 121,760,000) per person ([ABC](${U.abc11})).`,
+        `**Blocked accounts:** for CD holders the money has been credited but stays blocked until they register on the BCP platform by uploading a photo of the CD or a screenshot of the ueno app. Anyone with neither must say so on the same platform ([ABC](${U.abc11})).`,
+        `**Balance up to 75 minimum wages (PYG 228,300,000):** it would be paid after the exclusion balance sheet, tentatively from **Monday, November 16**, and credited "in the following days", according to the BCP ([ABC](${U.abc11})).`,
+        `**Questions:** savers who have not been paid or have questions can email **fgdpagos@bcp.gov.py** ([ABC](${U.abc11})).`,
         `**Political crisis:** on November 6 the Senate removed President Santiago Peña for poor performance of his duties and Pedro Alliana took office. On the 7th, a judge ordered Peña's pretrial detention ([ABC](${U.abcJuicio}), [ABC](${U.abcPreso})). Full details in [The impeachment of Santiago Peña: what happened and what may change](${J}).`,
       ],
     },
@@ -277,6 +286,7 @@ const en: LocalizedArticle = {
       type: "table",
       head: ["Date", "What happened"],
       rows: [
+        ["Nov 11–13, 2026", `The BCP finishes paying the advance to 1,812,348 savers ([ABC](${U.abc11})). Prosecutors ask to expand the charges against Peña to include criminal association with former BCP officials; a judge has yet to rule. Bank superintendent Holger Insfrán and four former BCP board members are detained ([El Tiempo](${U.elTiempo})).`],
         ["Nov 6–7, 2026", `The Senate removes Peña for poor performance of his duties (44 votes) and Pedro Alliana is sworn in as president; Antonio Barrios is elected vice president ([ABC](${U.abcJuicio})). Prosecutors charge Peña and former BCP president Carlos Carvallo and request pretrial detention; on the 7th, Judge Humberto Otazú orders it for Peña. ueno founder Miguel Vásquez and five executives are moved to prison ([ABC](${U.abcPreso}), [Infobae](${U.infobaeCarvallo})).`],
         ["Nov 4–5, 2026", `Law 7.755/26 on advance payments is enacted and the BCP announces payouts from November 5. Pedro de Jesús Acosta becomes interim BCP president ([ABC](${U.abcAcosta})). A judge admits charges against 27 people; the hearing on precautionary measures for the eight detainees is set for November 5 ([Diario HOY](${U.hoyPago})).`],
         ["Nov 3–4, 2026", `Prosecutors detain eight executives, including the CEO, in a case opened on a BCP complaint for alleged breach of trust and other offenses ([Infobae](${U.infobaeDetenidos})).`],
@@ -355,7 +365,7 @@ const pt: LocalizedArticle = {
   lead:
     "O Banco Central do Paraguai (BCP) iniciou a resolução do ueno bank, o quinto maior banco privado do país, porque sua solvência caiu abaixo da metade do mínimo legal. Conto o que se sabe até hoje, o que acontece com depósitos e créditos e o que muda (e o que não muda) para quem vai comprar um imóvel.",
   readingTime: "7 min de leitura",
-  updatedLabel: "Atualizado: 8 nov 2026",
+  updatedLabel: "Atualizado: 14 nov 2026",
   authorRole: "Consultora imobiliária na SkyOne",
   tocTitle: "Neste artigo",
   sourcesTitle: "Fontes",
@@ -374,15 +384,16 @@ const pt: LocalizedArticle = {
     {
       type: "callout",
       title: "Situação em andamento",
-      text: "Dados atualizados em 8 de novembro de 2026. O BCP já pagou o adiantamento a quase 1,2 milhão de contas e, a partir de segunda-feira, 9, continua com quem tem dívidas, várias contas ou contas bloqueadas.",
+      text: "Dados atualizados em 14 de novembro de 2026. O BCP terminou de pagar o adiantamento a 1,8 milhão de poupadores; o saldo até 75 salários mínimos seria pago depois do balanço de exclusão, com data provisória na segunda-feira, 16.",
     },
-    { type: "h2", id: "novedades", text: "Novidades em 8 de novembro" },
+    { type: "h2", id: "novedades", text: "Novidades em 14 de novembro" },
     {
       type: "ul",
       items: [
-        `**Pagamentos:** o BCP já creditou o adiantamento a cerca de **1.197.000 contas**, somando **PYG 996 bilhões** (cerca de USD 168 milhões), em dois lotes. Das 1.867.000 contas com saldo que se qualificam, faltam cerca de 670.000 ([La Nación](${U.lnPagados})).`,
-        `**A partir de segunda-feira, 9 de novembro:** recebem os poupadores com **dívidas com o ueno** (empréstimos, cheque especial e cartões vencidos são descontados antes), os que têm **várias contas** a unificar e os que ficaram de fora por **contas bloqueadas** ou outras verificações, no mais tardar na terça-feira ([La Nación](${U.lnLunes}), [La Nación](${U.lnPagados})).`,
-        `**Dúvidas sobre valores ou pagamentos:** pelo e-mail **pagosacreditadosfgd@bcp.gov.py**; as reclamações são atendidas por ordem de chegada ([La Nación](${U.lnLunes})).`,
+        `**Adiantamento pago:** em 11 de novembro o BCP informou que terminou de creditar o adiantamento a **1.812.348 poupadores**, somando cerca de **PYG 3,9 trilhões** (cerca de USD 644 milhões), até 40 salários mínimos (PYG 121.760.000) por pessoa ([ABC](${U.abc11})).`,
+        `**Contas bloqueadas:** para quem tinha CDB o dinheiro já foi creditado, mas fica bloqueado até que se registre na plataforma do BCP enviando uma foto do certificado ou uma captura do app do ueno. Quem não tiver nenhum dos dois deve informar isso na mesma plataforma ([ABC](${U.abc11})).`,
+        `**Saldo até 75 salários mínimos (PYG 228.300.000):** seria pago depois do balanço de exclusão, com data provisória na **segunda-feira, 16 de novembro**, e creditado "nos dias seguintes", segundo o BCP ([ABC](${U.abc11})).`,
+        `**Dúvidas:** quem não recebeu ou tem dúvidas pode escrever para **fgdpagos@bcp.gov.py** ([ABC](${U.abc11})).`,
         `**Crise política:** em 6 de novembro o Senado destituiu o presidente Santiago Peña por mau desempenho de funções e Pedro Alliana assumiu. No dia 7, um juiz ordenou a prisão preventiva de Peña ([ABC](${U.abcJuicio}), [ABC](${U.abcPreso})). Os detalhes estão em [Julgamento político de Santiago Peña: o que aconteceu e o que pode mudar](${J}).`,
       ],
     },
@@ -419,6 +430,7 @@ const pt: LocalizedArticle = {
       type: "table",
       head: ["Data", "O que aconteceu"],
       rows: [
+        ["11–13 nov 2026", `O BCP termina de pagar o adiantamento a 1.812.348 poupadores ([ABC](${U.abc11})). O Ministério Público pede ampliar a imputação de Peña por associação criminosa com ex-autoridades do BCP; um juiz ainda deve decidir. São detidos o superintendente de bancos, Holger Insfrán, e quatro ex-membros da diretoria do BCP ([El Tiempo](${U.elTiempo})).`],
         ["6–7 nov 2026", `O Senado destitui Peña por mau desempenho de funções (44 votos) e Pedro Alliana assume como presidente; Antonio Barrios é eleito vice-presidente ([ABC](${U.abcJuicio})). O Ministério Público imputa Peña e o ex-presidente do BCP Carlos Carvallo e pede sua prisão preventiva; no dia 7, o juiz Humberto Otazú a ordena para Peña. Miguel Vásquez, fundador do ueno, e cinco diretores são transferidos para um presídio ([ABC](${U.abcPreso}), [Infobae](${U.infobaeCarvallo})).`],
         ["4–5 nov 2026", `É promulgada a Lei 7.755/26 de adiantamentos e o BCP anuncia o pagamento a partir de 5 de novembro. Pedro de Jesús Acosta assume como presidente interino do BCP ([ABC](${U.abcAcosta})). O juiz de Garantias admite a imputação contra 27 pessoas; a audiência de medidas cautelares dos oito detidos está marcada para 5 de novembro ([Diario HOY](${U.hoyPago})).`],
         ["3–4 nov 2026", `O Ministério Público detém oito diretores, entre eles o CEO, em um caso aberto por denúncia do BCP por suposta lesão de confiança e outros crimes ([Infobae](${U.infobaeDetenidos})).`],
