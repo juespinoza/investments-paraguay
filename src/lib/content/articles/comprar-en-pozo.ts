@@ -425,6 +425,17 @@ const pt: LocalizedArticle = {
 
 export const offPlanArticle: ArticleDefinition = {
   slug: SLUG,
+  cover: {
+    src: "/blog/comprar-en-pozo-hero.webp",
+    og: "/blog/comprar-en-pozo-og.jpg",
+    width: 1672,
+    height: 941,
+    alt: {
+      es: "Checklist con lupa y planos junto a la maqueta de un edificio en construcción con una grúa",
+      en: "Checklist with a magnifying glass and floor plans next to a scale model of a building under construction with a crane",
+      pt: "Checklist com lupa e plantas ao lado da maquete de um prédio em construção com um guindaste",
+    },
+  },
   published: PUBLISHED,
   updated: UPDATED,
   category: "guides",
