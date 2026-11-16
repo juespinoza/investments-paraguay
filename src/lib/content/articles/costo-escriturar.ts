@@ -38,14 +38,14 @@ const es: LocalizedArticle = {
   excerpt:
     "Un presupuesto real de escrituración, línea por línea: qué es cada concepto, de dónde sale el número y cómo estimar el tuyo.",
   lead:
-    "Cuando preguntás cuánto cuesta escriturar, la respuesta típica es \"entre 2 y 3 %\". Es cierto, pero no sirve para planificar. Acá te muestro el presupuesto real que me pasó una escribanía en julio de 2026 para escriturar mi departamento en Asunción: cada línea, qué es, de dónde sale el número y cómo calcular el tuyo.",
+    "Cuando preguntás cuánto cuesta escriturar, la respuesta típica es \"entre 2 y 3 %\". Es cierto, pero no sirve para planificar. Acá te muestro un presupuesto real de una escribanía de Asunción, de julio de 2026, para escriturar un departamento: cada línea, qué es, de dónde sale el número y cómo calcular el tuyo.",
   readingTime: "7 min de lectura",
   updatedLabel: "Actualizado: 15 nov 2026",
   authorRole: "Asesora inmobiliaria en SkyOne",
   tocTitle: "En este artículo",
   sourcesTitle: "Fuentes",
   disclaimer:
-    "Este artículo es informativo. Los montos son de un presupuesto real de julio de 2026 y pueden variar según la escribanía, el municipio, el valor fiscal del inmueble y el jornal mínimo vigente. Pedí siempre tu presupuesto por escrito.",
+    "Este artículo es informativo. Los montos son de un presupuesto real de una escribanía de Asunción, de julio de 2026 y pueden variar según la escribanía, el municipio, el valor fiscal del inmueble y el jornal mínimo vigente. Pedí siempre tu presupuesto por escrito.",
   cta: {
     title: "¿Querés saber cuánto te costaría escriturar?",
     text: "Pasame el valor del departamento y la ciudad, y te armo una estimación con esta misma estructura.",
@@ -59,7 +59,7 @@ const es: LocalizedArticle = {
     { type: "h2", id: "el-caso", text: "El caso: un departamento de USD 58.870 en Asunción" },
     {
       type: "p",
-      text: "Compra de un departamento terminado a una desarrolladora, en Asunción, por **USD 58.870** (unos Gs. 339 millones al cambio de julio de 2026). Presupuesto total de escrituración: **Gs. 7.322.160**, es decir, unos **USD 1.270** o el **2,2 %** del precio. Se paga el 50 % al iniciar el trámite y el resto al terminar.",
+      text: "Compra de un departamento terminado a una desarrolladora, en Asunción, por **USD 58.870** (unos Gs. 339 millones al cambio de julio de 2026). Presupuesto total de escrituración: **Gs. 7.322.160**, es decir, unos **USD 1.270** o el **2,2 %** del precio. En este caso se paga el 50 % al iniciar el trámite y el resto al terminar.",
     },
     {
       type: "table",
@@ -153,14 +153,14 @@ const en: LocalizedArticle = {
   excerpt:
     "A real deed-and-registration quote, line by line: what each item is, where the number comes from and how to estimate yours.",
   lead:
-    "When you ask how much it costs to deed a property, the usual answer is \"between 2 and 3%\". True, but useless for planning. Here is the actual quote a notary gave me in July 2026 to deed my apartment in Asunción: every line, what it is, where the number comes from and how to work out yours.",
+    "When you ask how much it costs to deed a property, the usual answer is \"between 2 and 3%\". True, but useless for planning. Here is a real quote from an Asunción notary, from July 2026, for deeding an apartment: every line, what it is, where the number comes from and how to work out yours.",
   readingTime: "7 min read",
   updatedLabel: "Updated: Nov 15, 2026",
   authorRole: "Real estate advisor at SkyOne",
   tocTitle: "In this article",
   sourcesTitle: "Sources",
   disclaimer:
-    "This article is for information only. The amounts come from a real quote from July 2026 and may vary by notary, municipality, the property's fiscal value and the current minimum daily wage. Always ask for your quote in writing.",
+    "This article is for information only. The amounts come from a real quote from an Asunción notary, July 2026 and may vary by notary, municipality, the property's fiscal value and the current minimum daily wage. Always ask for your quote in writing.",
   cta: {
     title: "Want to know what deeding would cost you?",
     text: "Send me the apartment's price and city and I will put together an estimate with this same structure.",
@@ -174,7 +174,7 @@ const en: LocalizedArticle = {
     { type: "h2", id: "el-caso", text: "The case: a USD 58,870 apartment in Asunción" },
     {
       type: "p",
-      text: "Purchase of a finished apartment from a developer in Asunción for **USD 58,870** (about PYG 339 million at the July 2026 rate). Total deed-and-registration quote: **PYG 7,322,160**, about **USD 1,270** or **2.2%** of the price. 50% is paid to start the process and the rest on completion.",
+      text: "Purchase of a finished apartment from a developer in Asunción for **USD 58,870** (about PYG 339 million at the July 2026 rate). Total deed-and-registration quote: **PYG 7,322,160**, about **USD 1,270** or **2.2%** of the price. In this case, 50% is paid to start the process and the rest on completion.",
     },
     {
       type: "table",
@@ -268,14 +268,14 @@ const pt: LocalizedArticle = {
   excerpt:
     "Um orçamento real de escrituração, linha por linha: o que é cada item, de onde sai o número e como estimar o seu.",
   lead:
-    "Quando você pergunta quanto custa escriturar, a resposta típica é \"entre 2 e 3%\". É verdade, mas não serve para planejar. Aqui mostro o orçamento real que um cartório me passou em julho de 2026 para escriturar meu apartamento em Assunção: cada linha, o que é, de onde sai o número e como calcular o seu.",
+    "Quando você pergunta quanto custa escriturar, a resposta típica é \"entre 2 e 3%\". É verdade, mas não serve para planejar. Aqui mostro um orçamento real de um cartório de Assunção, de julho de 2026, para escriturar um apartamento: cada linha, o que é, de onde sai o número e como calcular o seu.",
   readingTime: "7 min de leitura",
   updatedLabel: "Atualizado: 15 nov 2026",
   authorRole: "Consultora imobiliária na SkyOne",
   tocTitle: "Neste artigo",
   sourcesTitle: "Fontes",
   disclaimer:
-    "Este artigo é informativo. Os valores são de um orçamento real de julho de 2026 e podem variar conforme o cartório, o município, o valor fiscal do imóvel e o salário-dia mínimo vigente. Peça sempre seu orçamento por escrito.",
+    "Este artigo é informativo. Os valores são de um orçamento real de um cartório de Assunção, de julho de 2026 e podem variar conforme o cartório, o município, o valor fiscal do imóvel e o salário-dia mínimo vigente. Peça sempre seu orçamento por escrito.",
   cta: {
     title: "Quer saber quanto custaria escriturar no seu caso?",
     text: "Me envie o valor do apartamento e a cidade, e monto uma estimativa com esta mesma estrutura.",
@@ -289,7 +289,7 @@ const pt: LocalizedArticle = {
     { type: "h2", id: "el-caso", text: "O caso: um apartamento de USD 58.870 em Assunção" },
     {
       type: "p",
-      text: "Compra de um apartamento pronto de uma incorporadora, em Assunção, por **USD 58.870** (cerca de PYG 339 milhões ao câmbio de julho de 2026). Orçamento total de escrituração: **PYG 7.322.160**, ou seja, cerca de **USD 1.270** ou **2,2%** do preço. Paga-se 50% ao iniciar o processo e o restante ao concluir.",
+      text: "Compra de um apartamento pronto de uma incorporadora, em Assunção, por **USD 58.870** (cerca de PYG 339 milhões ao câmbio de julho de 2026). Orçamento total de escrituração: **PYG 7.322.160**, ou seja, cerca de **USD 1.270** ou **2,2%** do preço. Neste caso, paga-se 50% ao iniciar o processo e o restante ao concluir.",
     },
     {
       type: "table",
