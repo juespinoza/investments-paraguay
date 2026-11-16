@@ -4,11 +4,13 @@ import { uenoBankArticle } from "@/lib/content/articles/caso-ueno-bank";
 import { impeachmentArticle } from "@/lib/content/articles/juicio-politico-pena";
 import { asuncionGuideArticle } from "@/lib/content/articles/guia-asuncion";
 import { offPlanArticle } from "@/lib/content/articles/comprar-en-pozo";
+import { deedCostArticle } from "@/lib/content/articles/costo-escriturar";
 
 // Artículos fijos traducidos a todos los idiomas. Para sumar uno nuevo:
 // crear su archivo de contenido, agregarlo acá y crear su page.tsx con
 // StaticArticlePage. El índice del blog y el sitemap lo toman solos.
 export const TRANSLATED_ARTICLES: ArticleDefinition[] = [
+  deedCostArticle,
   offPlanArticle,
   asuncionGuideArticle,
   impeachmentArticle,
@@ -24,6 +26,7 @@ export function getTranslatedArticle(slug: string) {
 
 export {
   asuncionGuideArticle,
+  deedCostArticle,
   offPlanArticle,
   foreignInvestorArticle,
   impeachmentArticle,
