@@ -377,6 +377,17 @@ const pt: LocalizedArticle = {
 
 export const deedCostArticle: ArticleDefinition = {
   slug: SLUG,
+  cover: {
+    src: "/blog/costo-escriturar-hero.webp",
+    og: "/blog/costo-escriturar-og.jpg",
+    width: 1672,
+    height: 941,
+    alt: {
+      es: "Calculadora, presupuesto, lapicera y llave junto a la maqueta de un edificio de departamentos",
+      en: "Calculator, quote, pen and key next to a scale model of an apartment building",
+      pt: "Calculadora, orçamento, caneta e chave ao lado da maquete de um prédio de apartamentos",
+    },
+  },
   published: PUBLISHED,
   updated: UPDATED,
   category: "guides",
