@@ -9,7 +9,7 @@ import type {
 // repercusiones atribuidas a datos o analistas (sin pronósticos propios).
 const SLUG = "juicio-politico-santiago-pena-que-paso-y-repercusiones";
 const PUBLISHED = "2026-11-08";
-const UPDATED = "2026-11-14";
+const UPDATED = "2026-11-25";
 const UENO = "/blog/caso-ueno-bank-que-significa-para-invertir";
 
 const U = {
@@ -21,6 +21,14 @@ const U = {
   infobaePreventiva: "https://www.infobae.com/america/america-latina/2026/11/07/la-fiscalia-de-paraguay-pidio-la-prision-preventiva-del-ex-presidente-santiago-pena-por-el-colapso-del-ueno-bank/",
   abcBonos: "https://www.abc.com.py/negocios/2026/11/06/en-medio-de-la-crisis-de-ueno-bank-precios-de-bonos-soberanos-de-paraguay-se-desploman/",
   bloomberg: "https://bloomberglinea.com/latinoamerica/como-se-movio-el-riesgo-pais-en-paraguay-luego-de-la-crisis-de-ueno-bank-y-la-renuncia-de-pena",
+  lnCreditos: "https://www.lanacion.com.py/negocios/2026/11/24/pago-de-cuotas-por-creditos-de-ueno-bank-esta-en-pausa-recuerda-el-bcp/",
+  hoyResto: "https://www.hoy.com.py/nacionales/2026/11/16/asi-sera-el-proceso-para-devolver-el-resto-de-los-ahorros-pendientes-y-fondos-publicos",
+  abcProtesta: "https://www.abc.com.py/economia/2026/11/16/ueno-bank-ahorristas-protestan-frente-al-bcp-por-pagos-pendientes-y-falta-de-respuestas/",
+  fitch: "https://www.abc.com.py/economia/2026/11/11/efecto-ueno-fitch-pone-a-paraguay-en-revision-negativa-lejos-del-grado-de-inversion/",
+  sp: "https://www.lanacion.com.py/negocios/2026/11/07/transicion-politica-no-altera-la-calificacion-de-paraguay-segun-sp-global-ratings/",
+  lnAsociacion: "https://www.lanacion.com.py/politica/2026/11/13/caso-ueno-fiscalia-imputa-por-asociacion-criminal-a-pena-y-cinco-autoridades-del-bcp/",
+  abcLavado: "https://abc.com.py/nacionales/2026/11/24/caso-ueno-imputan-a-santiago-pena-ahora-por-lavado-de-activos-y-cohecho-pasivo",
+  aljazeera: "https://aljazeera.com/news/2026/11/16/paraguay-ex-president-moved-to-military-jail-amid-special-treatment-reports",
   abc11: "https://www.abc.com.py/economia/2026/11/11/ahorristas-de-ueno-bcp-dice-que-culmino-el-proceso-de-acreditacion-al-100-de-beneficiarios-pero-persisten-bloqueos/",
   elTiempo: "https://eltiempo.com/mundo/latinoamerica/crisis-en-paraguay-fiscalia-pide-ampliar-la-imputacion-contra-el-expresidente-santiago-pena-y-lo-acusa-de-liderar-una-asociacion-criminal-3600892",
   infobae15: "https://infobae.com/america/america-latina/2026/11/11/la-fiscalia-de-paraguay-estimo-que-santiago-pena-podria-recibir-hasta-15-anos-de-carcel-por-el-caso-ueno-bank",
@@ -28,6 +36,12 @@ const U = {
 };
 
 const SOURCES: ArticleSource[] = [
+  { label: "ABC Color — Efecto ueno: Fitch pone a Paraguay en revisión negativa (11 nov 2026)", url: U.fitch },
+  { label: "La Nación — S&P: la transición política no altera la calificación de Paraguay (7 nov 2026)", url: U.sp },
+  { label: "La Nación — Caso ueno: imputan por asociación criminal a Peña y cinco autoridades del BCP (13 nov 2026)", url: U.lnAsociacion },
+  { label: "ABC Color — Caso ueno: imputan a Peña por lavado de activos y cohecho pasivo (24 nov 2026)", url: U.abcLavado },
+  { label: "Al Jazeera — Paraguay ex-president moved to military jail (16 nov 2026)", url: U.aljazeera },
+  { label: "La Nación — El pago de cuotas de créditos de ueno está en pausa (24 nov 2026)", url: U.lnCreditos },
   { label: "ABC Color — El BCP culminó la acreditación del anticipo al 100 % de beneficiarios (11 nov 2026)", url: U.abc11 },
   { label: "El Tiempo — La Fiscalía pide ampliar la imputación contra Peña por asociación criminal (13 nov 2026)", url: U.elTiempo },
   { label: "Infobae — La Fiscalía estima hasta 15 años de cárcel para Peña (11 nov 2026)", url: U.infobae15 },
@@ -52,7 +66,7 @@ const es: LocalizedArticle = {
   lead:
     "En tres días, Paraguay pasó de la caída de ueno bank a la destitución de su presidente. Santiago Peña presentó su renuncia, el Congreso siguió adelante con el juicio político y el Senado lo destituyó el 6 de noviembre. Pedro Alliana asumió la presidencia y, un día después, un juez ordenó la prisión preventiva de Peña. Acá ordeno los hechos, las posturas de la acusación y de la defensa, y las primeras repercusiones económicas que ya se pueden medir.",
   readingTime: "8 min de lectura",
-  updatedLabel: "Actualizado: 14 nov 2026",
+  updatedLabel: "Actualizado: 25 nov 2026",
   authorRole: "Asesora inmobiliaria en SkyOne",
   tocTitle: "En este artículo",
   sourcesTitle: "Fuentes",
@@ -71,7 +85,7 @@ const es: LocalizedArticle = {
     {
       type: "callout",
       title: "Situación en desarrollo",
-      text: "Hechos confirmados al 14 de noviembre de 2026, con fuentes al final. Las causas judiciales siguen abiertas.",
+      text: "Hechos confirmados al 25 de noviembre de 2026, con fuentes al final. Las causas judiciales siguen abiertas.",
     },
     { type: "h2", id: "que-paso", text: "Qué pasó, día por día" },
     {
@@ -83,7 +97,8 @@ const es: LocalizedArticle = {
         ["5 nov", `La renuncia no se procesa: la sesión conjunta que debía tratarla pierde quórum. Quienes impulsaban el juicio argumentaron que aceptarla le daría a Peña la banca de senador vitalicio y sus fueros ([Infobae](${U.infobaeRenuncia})).`],
         ["6 nov", `El Senado rechaza el pedido de prórroga de la defensa (39 en contra, 3 a favor y 2 abstenciones), admite las pruebas (41 a 0) y destituye a Peña por mal desempeño de funciones con 44 votos. A las 19:45, Alliana jura como presidente y el Congreso elige vicepresidente al senador Antonio Barrios ([ABC](${U.abcJuicio})).`],
         ["6 nov", `La Fiscalía ordena la detención de Peña, que se cumple en su residencia, y la del expresidente del BCP Carlos Carvallo, que se presenta ([ABC](${U.abcJuicio}), [Infobae](${U.infobaePreventiva})).`],
-        ["11–13 nov", `La fiscal Verónica Valdez estima que Peña podría enfrentar hasta 15 años de prisión con las imputaciones actuales; es la estimación de la acusación ([Infobae](${U.infobae15})). El 13, la Fiscalía pide ampliar la imputación por asociación criminal: sostiene que Peña habría actuado "como jefe de la estructura" junto con Carvallo y exmiembros del directorio del BCP. Un juez todavía debe decidir. Son detenidos el superintendente de bancos, Holger Insfrán, y cuatro exmiembros del directorio del BCP; Carvallo está en prisión preventiva. La Fiscalía dice que pedirá congelar fondos vinculados hallados en otros países ([El Tiempo](${U.elTiempo})).`],
+        ["16–24 nov", `El juez ordena trasladar a Peña a la prisión militar de Viñas Cué, tras denuncias de privilegios en su lugar de detención ([Al Jazeera](${U.aljazeera})). El 24, la Fiscalía amplía otra vez la imputación: suma lavado de activos y cohecho pasivo agravado, e imputa también a su hermano Francisco Peña y a su cuñada Rocío Caballero por la compra de un campo de 1.184 hectáreas en Paraguarí financiada con un préstamo de ueno. Son hipótesis de la Fiscalía; un juez debe convocar a la audiencia de medidas cautelares ([ABC](${U.abcLavado})).`],
+        ["11–13 nov", `La fiscal Verónica Valdez estima que Peña podría enfrentar hasta 15 años de prisión con las imputaciones actuales; es la estimación de la acusación ([Infobae](${U.infobae15})). El 13, la Fiscalía amplía la imputación por asociación criminal a Peña y cinco autoridades del BCP: sostiene que Peña habría actuado "como jefe de la estructura" junto con Carvallo ([La Nación](${U.lnAsociacion})). Son detenidos el superintendente de bancos, Holger Insfrán, y cuatro exmiembros del directorio del BCP; Carvallo está en prisión preventiva. La Fiscalía dice que pedirá congelar fondos vinculados hallados en otros países ([El Tiempo](${U.elTiempo})).`],
         ["7 nov", `Peña es imputado por lesión de confianza, como instigador, y administración en provecho propio, como autor. El juez Humberto Otazú ordena su prisión preventiva por peligro de fuga, en el Regimiento Escolta Presidencial. La Fiscalía también pide prisión preventiva para Carvallo; en la causa hay 27 imputados ([ABC](${U.abcPreso}), [Infobae](${U.infobaePreventiva})).`],
       ],
     },
@@ -130,8 +145,8 @@ const es: LocalizedArticle = {
       rows: [
         ["Riesgo país (EMBI)", `Pasó de 125 puntos el 2 de noviembre a 137 el 4; el 5 tocó 157 durante el día y cerró en 143–144. Como referencia, ese día Uruguay cerró en 85, Chile en 104 y Perú en 121 ([ABC](${U.abcBonos})).`],
         ["Bonos soberanos", `Los bonos de largo plazo perdieron entre 1,5 y 1,8 centavos ([ABC](${U.abcBonos})).`],
-        ["Calificación", `Moody's y S&P mantienen a Paraguay en el límite inferior del grado de inversión; Fitch, en BB+. Una baja de Moody's o de S&P lo sacaría del grado de inversión en los índices internacionales ([ABC](${U.abcBonos})).`],
-        ["Ahorristas de ueno", `El BCP terminó de pagar el anticipo a 1.812.348 ahorristas, por unos Gs. 3,9 billones; el saldo hasta 75 salarios mínimos tiene fecha tentativa desde el 16 de noviembre ([ABC](${U.abc11})).`],
+        ["Calificación", `**Fitch** le quitó la perspectiva positiva el 11 de noviembre y puso a Paraguay en **revisión negativa**, en BB+, por la caída de ueno, el juicio político y el deterioro fiscal; proyecta un déficit de 3,2 % del PIB en 2026 y 3,9 % en 2027 ([ABC](${U.fitch})). **S&P** mantuvo BBB- estable y dijo que la asunción de Alliana no cambia su evaluación ([La Nación](${U.sp})). **Moody's** sigue en Baa3 estable. Una baja de Moody's o de S&P sacaría a Paraguay del grado de inversión en los índices internacionales ([ABC](${U.abcBonos})).`],
+        ["Ahorristas de ueno", `El anticipo ya se pagó a 1.812.348 ahorristas ([ABC](${U.abc11})). El saldo hasta 75 salarios mínimos sigue pendiente, sin fecha, y las cuotas de los créditos de ueno están en pausa ([La Nación](${U.lnCreditos})).`],
       ],
     },
     {
@@ -157,10 +172,10 @@ const es: LocalizedArticle = {
     {
       type: "ol",
       items: [
-        "La decisión del juez sobre el pedido de ampliar la imputación de Peña por asociación criminal, y las audiencias de los demás detenidos.",
+        "La audiencia de medidas cautelares por las nuevas imputaciones de lavado de activos y cohecho, y la situación de los demás imputados.",
         "La presentación de la defensa de Peña ante el sistema interamericano de derechos humanos.",
         "Las primeras medidas económicas del gobierno de Alliana y el nombramiento definitivo de la presidencia del BCP.",
-        "Cualquier comunicado de Moody's, S&P o Fitch sobre la calificación de Paraguay.",
+        "La decisión de Fitch al cerrar la revisión negativa, y cualquier cambio de Moody's o S&P.",
         `El pago a las cuentas de ueno que faltan y el calendario del saldo hasta 75 salarios mínimos. Lo voy actualizando en [Caso ueno bank](${UENO}).`,
       ],
     },
@@ -178,7 +193,7 @@ const en: LocalizedArticle = {
   lead:
     "In three days, Paraguay went from the collapse of ueno bank to the removal of its president. Santiago Peña submitted his resignation, Congress pressed ahead with the impeachment and the Senate removed him on November 6. Pedro Alliana took office and, a day later, a judge ordered Peña's pretrial detention. Here are the facts, the arguments of the prosecution and the defense, and the first measurable economic effects.",
   readingTime: "8 min read",
-  updatedLabel: "Updated: Nov 14, 2026",
+  updatedLabel: "Updated: Nov 25, 2026",
   authorRole: "Real estate advisor at SkyOne",
   tocTitle: "In this article",
   sourcesTitle: "Sources",
@@ -197,7 +212,7 @@ const en: LocalizedArticle = {
     {
       type: "callout",
       title: "Developing story",
-      text: "Facts confirmed as of November 14, 2026, with sources at the end. The criminal cases are still open.",
+      text: "Facts confirmed as of November 25, 2026, with sources at the end. The criminal cases are still open.",
     },
     { type: "h2", id: "que-paso", text: "What happened, day by day" },
     {
@@ -209,7 +224,8 @@ const en: LocalizedArticle = {
         ["Nov 5", `The resignation is not processed: the joint session that was to consider it loses its quorum. Supporters of the impeachment argued that accepting it would give Peña a lifetime Senate seat and its immunity ([Infobae](${U.infobaeRenuncia})).`],
         ["Nov 6", `The Senate rejects the defense's request for more time (39 against, 3 in favor, 2 abstentions), admits the evidence (41 to 0) and removes Peña for poor performance of his duties with 44 votes. At 7:45 p.m., Alliana is sworn in as president and Congress elects Senator Antonio Barrios as vice president ([ABC](${U.abcJuicio})).`],
         ["Nov 6", `Prosecutors order the arrest of Peña, carried out at his residence, and of former BCP president Carlos Carvallo, who turns himself in ([ABC](${U.abcJuicio}), [Infobae](${U.infobaePreventiva})).`],
-        ["Nov 11–13", `Prosecutor Verónica Valdez estimates Peña could face up to 15 years in prison under the current charges; this is the prosecution's estimate ([Infobae](${U.infobae15})). On the 13th, prosecutors ask to expand the charges to criminal association, arguing Peña acted "as head of the structure" with Carvallo and former BCP board members. A judge has yet to rule. Bank superintendent Holger Insfrán and four former BCP board members are detained; Carvallo is in pretrial detention. Prosecutors say they will seek to freeze linked funds found in other countries ([El Tiempo](${U.elTiempo})).`],
+        ["Nov 16–24", `A judge orders Peña moved to the Viñas Cué military prison after reports of special treatment where he was held ([Al Jazeera](${U.aljazeera})). On the 24th, prosecutors expand the charges again, adding money laundering and aggravated passive bribery, and also charge his brother Francisco Peña and sister-in-law Rocío Caballero over the purchase of a 1,184-hectare property in Paraguarí financed with a ueno loan. These are the prosecution's allegations; a judge must call the hearing on precautionary measures ([ABC](${U.abcLavado})).`],
+        ["Nov 11–13", `Prosecutor Verónica Valdez estimates Peña could face up to 15 years in prison under the current charges; this is the prosecution's estimate ([Infobae](${U.infobae15})). On the 13th, prosecutors expand the charges to criminal association against Peña and five BCP officials, arguing Peña acted "as head of the structure" with Carvallo ([La Nación](${U.lnAsociacion})). Bank superintendent Holger Insfrán and four former BCP board members are detained; Carvallo is in pretrial detention. Prosecutors say they will seek to freeze linked funds found in other countries ([El Tiempo](${U.elTiempo})).`],
         ["Nov 7", `Peña is charged with breach of trust, as instigator, and self-serving administration, as perpetrator. Judge Humberto Otazú orders his pretrial detention over flight risk, at the Presidential Escort Regiment. Prosecutors also request pretrial detention for Carvallo; 27 people have been charged in the case ([ABC](${U.abcPreso}), [Infobae](${U.infobaePreventiva})).`],
       ],
     },
@@ -256,8 +272,8 @@ const en: LocalizedArticle = {
       rows: [
         ["Country risk (EMBI)", `It rose from 125 basis points on November 2 to 137 on the 4th; on the 5th it hit 157 intraday and closed at 143–144. For reference, that day Uruguay closed at 85, Chile at 104 and Peru at 121 ([ABC](${U.abcBonos})).`],
         ["Sovereign bonds", `Long-dated bonds lost between 1.5 and 1.8 cents ([ABC](${U.abcBonos})).`],
-        ["Credit rating", `Moody's and S&P keep Paraguay at the lowest investment-grade rung; Fitch rates it BB+. A downgrade by Moody's or S&P would push it out of investment grade in international indices ([ABC](${U.abcBonos})).`],
-        ["ueno savers", `The BCP has finished paying the advance to 1,812,348 savers, about PYG 3.9 trillion; the balance up to 75 minimum wages is tentatively due from November 16 ([ABC](${U.abc11})).`],
+        ["Credit rating", `**Fitch** removed the positive outlook on November 11 and placed Paraguay on **negative watch** at BB+, citing the ueno collapse, the impeachment and fiscal deterioration; it projects deficits of 3.2% of GDP in 2026 and 3.9% in 2027 ([ABC](${U.fitch})). **S&P** kept BBB- stable and said Alliana taking office does not change its assessment ([La Nación](${U.sp})). **Moody's** remains at Baa3 stable. A downgrade by Moody's or S&P would push Paraguay out of investment grade in international indices ([ABC](${U.abcBonos})).`],
+        ["ueno savers", `The advance has been paid to 1,812,348 savers ([ABC](${U.abc11})). The balance up to 75 minimum wages is still pending, with no date, and ueno loan installments are on hold ([La Nación](${U.lnCreditos})).`],
       ],
     },
     {
@@ -283,10 +299,10 @@ const en: LocalizedArticle = {
     {
       type: "ol",
       items: [
-        "The judge's ruling on the request to expand Peña's charges to criminal association, and hearings for the other detainees.",
+        "The precautionary-measures hearing on the new money-laundering and bribery charges, and the situation of the other defendants.",
         "The Peña defense's filing with the inter-American human rights system.",
         "The Alliana government's first economic measures and the permanent appointment at the head of the BCP.",
-        "Any statement from Moody's, S&P or Fitch on Paraguay's rating.",
+        "Fitch's decision when it closes the negative watch, and any change by Moody's or S&P.",
         `Payment to the remaining ueno accounts and the schedule for the balance up to 75 minimum wages. I keep it updated in [The ueno bank case](${UENO}).`,
       ],
     },
@@ -304,7 +320,7 @@ const pt: LocalizedArticle = {
   lead:
     "Em três dias, o Paraguai passou da quebra do ueno bank à destituição do seu presidente. Santiago Peña apresentou sua renúncia, o Congresso seguiu com o julgamento político e o Senado o destituiu em 6 de novembro. Pedro Alliana assumiu a presidência e, um dia depois, um juiz ordenou a prisão preventiva de Peña. Aqui organizo os fatos, os argumentos da acusação e da defesa, e os primeiros efeitos econômicos que já podem ser medidos.",
   readingTime: "8 min de leitura",
-  updatedLabel: "Atualizado: 14 nov 2026",
+  updatedLabel: "Atualizado: 25 nov 2026",
   authorRole: "Consultora imobiliária na SkyOne",
   tocTitle: "Neste artigo",
   sourcesTitle: "Fontes",
@@ -323,7 +339,7 @@ const pt: LocalizedArticle = {
     {
       type: "callout",
       title: "Situação em andamento",
-      text: "Fatos confirmados até 14 de novembro de 2026, com fontes no final. Os processos judiciais continuam abertos.",
+      text: "Fatos confirmados até 25 de novembro de 2026, com fontes no final. Os processos judiciais continuam abertos.",
     },
     { type: "h2", id: "que-paso", text: "O que aconteceu, dia a dia" },
     {
@@ -335,7 +351,8 @@ const pt: LocalizedArticle = {
         ["5 nov", `A renúncia não é processada: a sessão conjunta que deveria tratá-la perde o quórum. Os defensores do julgamento argumentaram que aceitá-la daria a Peña uma cadeira vitalícia no Senado e sua imunidade ([Infobae](${U.infobaeRenuncia})).`],
         ["6 nov", `O Senado rejeita o pedido de prorrogação da defesa (39 contra, 3 a favor e 2 abstenções), admite as provas (41 a 0) e destitui Peña por mau desempenho de funções com 44 votos. Às 19h45, Alliana assume como presidente e o Congresso elege o senador Antonio Barrios como vice-presidente ([ABC](${U.abcJuicio})).`],
         ["6 nov", `O Ministério Público ordena a detenção de Peña, cumprida em sua residência, e a do ex-presidente do BCP Carlos Carvallo, que se apresenta ([ABC](${U.abcJuicio}), [Infobae](${U.infobaePreventiva})).`],
-        ["11–13 nov", `A promotora Verónica Valdez estima que Peña poderia enfrentar até 15 anos de prisão com as imputações atuais; é a estimativa da acusação ([Infobae](${U.infobae15})). No dia 13, o Ministério Público pede ampliar a imputação para associação criminosa, sustentando que Peña teria agido "como chefe da estrutura" com Carvallo e ex-membros da diretoria do BCP. Um juiz ainda deve decidir. São detidos o superintendente de bancos, Holger Insfrán, e quatro ex-membros da diretoria do BCP; Carvallo está em prisão preventiva. O Ministério Público diz que pedirá o bloqueio de recursos vinculados encontrados em outros países ([El Tiempo](${U.elTiempo})).`],
+        ["16–24 nov", `O juiz ordena transferir Peña para a prisão militar de Viñas Cué, após denúncias de privilégios no local onde estava detido ([Al Jazeera](${U.aljazeera})). No dia 24, o Ministério Público amplia de novo a imputação: soma lavagem de dinheiro e corrupção passiva agravada, e imputa também seu irmão Francisco Peña e sua cunhada Rocío Caballero pela compra de um imóvel rural de 1.184 hectares em Paraguarí financiada com um empréstimo do ueno. São hipóteses do Ministério Público; um juiz deve convocar a audiência de medidas cautelares ([ABC](${U.abcLavado})).`],
+        ["11–13 nov", `A promotora Verónica Valdez estima que Peña poderia enfrentar até 15 anos de prisão com as imputações atuais; é a estimativa da acusação ([Infobae](${U.infobae15})). No dia 13, o Ministério Público amplia a imputação para associação criminosa contra Peña e cinco autoridades do BCP, sustentando que Peña teria agido "como chefe da estrutura" com Carvallo ([La Nación](${U.lnAsociacion})). São detidos o superintendente de bancos, Holger Insfrán, e quatro ex-membros da diretoria do BCP; Carvallo está em prisão preventiva. O Ministério Público diz que pedirá o bloqueio de recursos vinculados encontrados em outros países ([El Tiempo](${U.elTiempo})).`],
         ["7 nov", `Peña é imputado por lesão de confiança, como instigador, e administração em proveito próprio, como autor. O juiz Humberto Otazú ordena sua prisão preventiva por risco de fuga, no Regimento Escolta Presidencial. O Ministério Público também pede prisão preventiva para Carvallo; há 27 imputados no caso ([ABC](${U.abcPreso}), [Infobae](${U.infobaePreventiva})).`],
       ],
     },
@@ -382,8 +399,8 @@ const pt: LocalizedArticle = {
       rows: [
         ["Risco-país (EMBI)", `Passou de 125 pontos em 2 de novembro para 137 no dia 4; no dia 5 chegou a 157 durante o pregão e fechou em 143–144. Como referência, nesse dia o Uruguai fechou em 85, o Chile em 104 e o Peru em 121 ([ABC](${U.abcBonos})).`],
         ["Títulos soberanos", `Os títulos de longo prazo perderam entre 1,5 e 1,8 centavos ([ABC](${U.abcBonos})).`],
-        ["Classificação de risco", `Moody's e S&P mantêm o Paraguai no limite inferior do grau de investimento; a Fitch, em BB+. Um rebaixamento da Moody's ou da S&P o tiraria do grau de investimento nos índices internacionais ([ABC](${U.abcBonos})).`],
-        ["Poupadores do ueno", `O BCP terminou de pagar o adiantamento a 1.812.348 poupadores, cerca de PYG 3,9 trilhões; o saldo até 75 salários mínimos tem data provisória a partir de 16 de novembro ([ABC](${U.abc11})).`],
+        ["Classificação de risco", `A **Fitch** retirou a perspectiva positiva em 11 de novembro e colocou o Paraguai em **revisão negativa**, em BB+, pela quebra do ueno, o julgamento político e a piora fiscal; projeta déficit de 3,2% do PIB em 2026 e 3,9% em 2027 ([ABC](${U.fitch})). A **S&P** manteve BBB- estável e disse que a posse de Alliana não muda sua avaliação ([La Nación](${U.sp})). A **Moody's** segue em Baa3 estável. Um rebaixamento da Moody's ou da S&P tiraria o Paraguai do grau de investimento nos índices internacionais ([ABC](${U.abcBonos})).`],
+        ["Poupadores do ueno", `O adiantamento já foi pago a 1.812.348 poupadores ([ABC](${U.abc11})). O saldo até 75 salários mínimos continua pendente, sem data, e as parcelas dos créditos do ueno estão suspensas ([La Nación](${U.lnCreditos})).`],
       ],
     },
     {
@@ -409,10 +426,10 @@ const pt: LocalizedArticle = {
     {
       type: "ol",
       items: [
-        "A decisão do juiz sobre o pedido de ampliar a imputação de Peña para associação criminosa, e as audiências dos demais detidos.",
+        "A audiência de medidas cautelares pelas novas imputações de lavagem de dinheiro e corrupção, e a situação dos demais imputados.",
         "A apresentação da defesa de Peña ao sistema interamericano de direitos humanos.",
         "As primeiras medidas econômicas do governo Alliana e a nomeação definitiva para a presidência do BCP.",
-        "Qualquer comunicado da Moody's, S&P ou Fitch sobre a classificação do Paraguai.",
+        "A decisão da Fitch ao encerrar a revisão negativa, e qualquer mudança da Moody's ou da S&P.",
         `O pagamento às contas do ueno que faltam e o calendário do saldo até 75 salários mínimos. Vou atualizando em [Caso ueno bank](${UENO}).`,
       ],
     },
