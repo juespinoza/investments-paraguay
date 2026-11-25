@@ -432,5 +432,16 @@ export const investmentGradeArticle: ArticleDefinition = {
   updated: UPDATED,
   category: "guides",
   sources: SOURCES,
+  cover: {
+    src: "/blog/grado-de-inversion-hero.webp",
+    og: "/blog/grado-de-inversion-og.jpg",
+    width: 1672,
+    height: 941,
+    alt: {
+      es: "Libro azul con el mapa de Paraguay, una escala de calificación dorada y la maqueta de un edificio de departamentos",
+      en: "Blue book with a map of Paraguay, a gold rating scale and a scale model of an apartment building",
+      pt: "Livro azul com o mapa do Paraguai, uma escala de classificação dourada e a maquete de um prédio de apartamentos",
+    },
+  },
   content: { es, en, pt },
 };
