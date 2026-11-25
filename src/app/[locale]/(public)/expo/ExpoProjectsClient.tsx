@@ -3,6 +3,7 @@
 import { MapPin } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./expo-projects.module.css";
+import { useLeadGuard } from "@/components/leads/useLeadGuard";
 
 type Stat = {
   num: string;
@@ -335,6 +336,7 @@ function TourStageImage({
 }
 
 export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
+  const { honeypot, guard: leadGuard } = useLeadGuard();
   const [currentProjectId, setCurrentProjectId] = useState(
     data.projects[0]?.id ?? "",
   );
@@ -510,6 +512,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          ...leadGuard(),
           fullName,
           email,
           whatsapp,
@@ -829,6 +832,7 @@ export function ExpoProjectsClient({ data }: { data: ExpoProjectsData }) {
             ref={formRef}
             onSubmit={onSubmit}
           >
+            {honeypot}
             <div className={styles.field}>
               <label htmlFor="f_name">Nombre completo</label>
               <input
