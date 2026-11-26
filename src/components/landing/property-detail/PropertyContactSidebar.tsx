@@ -10,6 +10,7 @@ import { KEY_EVENTS, trackEvent } from "@/lib/analytics";
 import { formatLocale } from "@/lib/i18n";
 import { formatPropertyPrice } from "@/lib/properties/format";
 import { SITE_URL } from "@/lib/seo";
+import { useLeadGuard } from "@/components/leads/useLeadGuard";
 
 type Advisor = {
   slug: string;
@@ -52,6 +53,7 @@ export function PropertyContactSidebar({
   const locale = useLocale();
   const t = useTranslations("site");
   const numberFormat = formatLocale(locale);
+  const { honeypot, guard: leadGuard } = useLeadGuard();
   const [formOpen, setFormOpen] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -89,6 +91,7 @@ export function PropertyContactSidebar({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          ...leadGuard(),
           fullName,
           email,
           notes,
@@ -198,6 +201,7 @@ export function PropertyContactSidebar({
 
       {formOpen ? (
         <form onSubmit={onSubmit} className="mt-5 grid gap-3">
+          {honeypot}
           <input
             required
             value={fullName}

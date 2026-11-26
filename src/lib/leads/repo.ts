@@ -11,6 +11,7 @@ export type LeadInput = {
   advisorSlug?: string | null;
   propertySlug?: string | null;
   notes?: string | null;
+  status?: LeadStatus;
 };
 
 export type LeadRow = {
@@ -66,7 +67,7 @@ export async function createLead(input: LeadInput): Promise<number> {
       property_slug,
       notes,
       status
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,'NEW')
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
     RETURNING id;
   `,
     input.fullName,
@@ -76,6 +77,7 @@ export async function createLead(input: LeadInput): Promise<number> {
     input.advisorSlug ?? null,
     input.propertySlug ?? null,
     input.notes ?? null,
+    input.status ?? "NEW",
   );
   return normalizeLeadId(rows[0]?.id);
 }

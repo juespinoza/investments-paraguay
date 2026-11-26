@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { BookOpen, Check, Download } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { KEY_EVENTS, trackEvent } from "@/lib/analytics";
+import { useLeadGuard } from "@/components/leads/useLeadGuard";
 
 // PDF servido desde /public. Al actualizar la guía, reemplazar este archivo.
 export const GUIDE_PDF_PATH = "/guias/guia-invertir-departamentos-asuncion.pdf";
@@ -43,6 +44,7 @@ export function GuideLeadMagnet({
 }) {
   const t = useTranslations("site.guide");
   const locale = useLocale();
+  const { honeypot, guard: leadGuard } = useLeadGuard();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -76,6 +78,7 @@ export function GuideLeadMagnet({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          ...leadGuard(),
           fullName,
           email,
           whatsapp,
@@ -180,6 +183,7 @@ export function GuideLeadMagnet({
     </div>
   ) : (
     <form onSubmit={onSubmit} className="grid gap-3" noValidate>
+      {honeypot}
       <input
         required
         minLength={2}
