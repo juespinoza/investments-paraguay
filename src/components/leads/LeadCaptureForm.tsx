@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { KEY_EVENTS, trackEvent } from "@/lib/analytics";
+import { useLeadGuard } from "@/components/leads/useLeadGuard";
 
 export function LeadCaptureForm({
   sourcePage,
@@ -26,6 +27,7 @@ export function LeadCaptureForm({
     success: string;
   };
 }) {
+  const { honeypot, guard: leadGuard } = useLeadGuard();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -44,6 +46,7 @@ export function LeadCaptureForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          ...leadGuard(),
           fullName,
           email,
           whatsapp,
@@ -76,6 +79,7 @@ export function LeadCaptureForm({
 
   return (
     <form onSubmit={onSubmit} className="grid gap-4">
+      {honeypot}
       <input
         required
         value={fullName}

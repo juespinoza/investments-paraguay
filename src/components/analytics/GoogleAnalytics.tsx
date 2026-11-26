@@ -135,6 +135,11 @@ export default function GoogleAnalytics({ locale }: { locale: string }) {
       />
       <Script id="google-analytics" strategy="afterInteractive">
         {`
+          // Navegadores automatizados (bots con Chrome headless, Playwright)
+          // declaran navigator.webdriver: no se miden en GA4.
+          if (navigator.webdriver) {
+            window['ga-disable-${GA_MEASUREMENT_ID}'] = true;
+          }
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           window.gtag = gtag;

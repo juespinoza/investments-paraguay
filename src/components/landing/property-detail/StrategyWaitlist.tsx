@@ -4,12 +4,14 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { KEY_EVENTS, trackEvent } from "@/lib/analytics";
+import { useLeadGuard } from "@/components/leads/useLeadGuard";
 
 // Formulario corto para propiedades sin estrategia: el contacto entra como
 // lead con la propiedad identificada y se le avisa cuando el análisis esté.
 export function StrategyWaitlist({ propertySlug }: { propertySlug: string }) {
   const t = useTranslations("site.strategy");
   const locale = useLocale();
+  const { honeypot, guard: leadGuard } = useLeadGuard();
   const [fullName, setFullName] = useState("");
   const [contact, setContact] = useState({ email: "", whatsapp: "" });
   const [state, setState] = useState<"idle" | "sending" | "done">("idle");
@@ -30,6 +32,7 @@ export function StrategyWaitlist({ propertySlug }: { propertySlug: string }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          ...leadGuard(),
           fullName,
           email: contact.email,
           whatsapp: contact.whatsapp,
@@ -72,6 +75,7 @@ export function StrategyWaitlist({ propertySlug }: { propertySlug: string }) {
 
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-3 md:grid-cols-3">
+      {honeypot}
       <label className="grid gap-1 text-[13px] text-secondary">
         {t("pendingName")}
         <input

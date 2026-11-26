@@ -9,7 +9,7 @@ export type { ArticleBlock, ArticleSource, LocalizedArticle } from "@/lib/conten
 
 export const ARTICLE_SLUG = "invertir-en-paraguay-siendo-extranjero";
 export const ARTICLE_PUBLISHED = "2026-11-04";
-export const ARTICLE_UPDATED = "2026-11-04";
+export const ARTICLE_UPDATED = "2026-11-25";
 
 const SOURCES: ArticleSource[] = [
   {
@@ -52,7 +52,7 @@ const es: LocalizedArticle = {
   lead:
     "Un extranjero puede comprar casas y departamentos en Paraguay con los mismos derechos que un paraguayo, sin residencia y sin viajar. Te cuento qué pide el proceso, cuánto cuesta y dónde se equivoca la mayoría.",
   readingTime: "8 min de lectura",
-  updatedLabel: "Actualizado: 4 nov 2026",
+  updatedLabel: "Actualizado: 25 nov 2026",
   authorRole: "Asesora inmobiliaria en SkyOne",
   tocTitle: "En este artículo",
   sourcesTitle: "Fuentes",
@@ -133,7 +133,7 @@ const es: LocalizedArticle = {
         ["Seña de reserva", "10–20 % en reventas · USD 1.000–5.000 en pozo"],
         ["Escrituración y transferencia", "Hasta ~3 % del valor escriturado"],
         ["Verificación legal del inmueble", "USD 300–600"],
-        ["Mi caso: monoambiente de USD 60.000", "Escritura Gs. 7.322.160 (~USD 1.225, cerca del 2 %)"],
+        ["Ejemplo real: departamento de USD 58.870 en Asunción", "Escritura Gs. 7.322.160 (~USD 1.270, 2,2 %). [Ver el presupuesto línea por línea](/blog/cuanto-cuesta-escriturar-un-departamento-en-paraguay)"],
       ],
       note: "Montos orientativos según las fuentes citadas. Cada operación se cotiza aparte.",
     },
@@ -183,7 +183,7 @@ const en: LocalizedArticle = {
   lead:
     "Foreigners can buy houses and apartments in Paraguay with the same rights as Paraguayans, without residency and without traveling. Here is what the process requires, what it costs and where most buyers go wrong.",
   readingTime: "8 min read",
-  updatedLabel: "Updated: Nov 4, 2026",
+  updatedLabel: "Updated: Nov 25, 2026",
   authorRole: "Real estate advisor at SkyOne",
   tocTitle: "In this article",
   sourcesTitle: "Sources",
@@ -264,7 +264,7 @@ const en: LocalizedArticle = {
         ["Reservation deposit", "10–20% on resales · USD 1,000–5,000 off-plan"],
         ["Deed and transfer", "Up to ~3% of the deed value"],
         ["Legal title check", "USD 300–600"],
-        ["My case: USD 60,000 studio", "Deed PYG 7,322,160 (~USD 1,225, about 2%)"],
+        ["Real example: USD 58,870 apartment in Asunción", "Deed PYG 7,322,160 (~USD 1,270, 2.2%). [See the quote line by line](/blog/cuanto-cuesta-escriturar-un-departamento-en-paraguay)"],
       ],
       note: "Indicative amounts from the sources cited. Every deal is quoted separately.",
     },
@@ -314,7 +314,7 @@ const pt: LocalizedArticle = {
   lead:
     "Um estrangeiro pode comprar casas e apartamentos no Paraguai com os mesmos direitos de um paraguaio, sem residência e sem viajar. Conto o que o processo exige, quanto custa e onde a maioria erra.",
   readingTime: "8 min de leitura",
-  updatedLabel: "Atualizado: 4 nov 2026",
+  updatedLabel: "Atualizado: 25 nov 2026",
   authorRole: "Consultora imobiliária na SkyOne",
   tocTitle: "Neste artigo",
   sourcesTitle: "Fontes",
@@ -395,7 +395,7 @@ const pt: LocalizedArticle = {
         ["Sinal de reserva", "10–20% em revendas · USD 1.000–5.000 na planta"],
         ["Escritura e transferência", "Até ~3% do valor escriturado"],
         ["Verificação jurídica do imóvel", "USD 300–600"],
-        ["Meu caso: studio de USD 60.000", "Escritura PYG 7.322.160 (~USD 1.225, cerca de 2%)"],
+        ["Exemplo real: apartamento de USD 58.870 em Assunção", "Escritura PYG 7.322.160 (~USD 1.270, 2,2%). [Ver o orçamento linha por linha](/blog/cuanto-cuesta-escriturar-un-departamento-en-paraguay)"],
       ],
       note: "Valores de referência segundo as fontes citadas. Cada operação é orçada à parte.",
     },
